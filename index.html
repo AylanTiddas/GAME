@@ -882,7 +882,7 @@
             padding-left: 1.5rem;
         }
         .rules-book li::before {
-            content: 'â€¢';
+            content: '•';
             position: absolute;
             left: 5px;
             color: var(--wood-medium);
@@ -1132,15 +1132,15 @@
     <div class="language-selector">
         <i class="fas fa-globe"></i>
         <select id="language-select">
-            <option value="fr">FranÃ§ais</option>
+            <option value="fr">Français</option>
             <option value="kab">Taqbaylit</option>
         </select>
     </div>
 
-    <div class="stone-decoration stone-1">âµ£</div>
-    <div class="stone-decoration stone-2">âµ£</div>
-    <div class="stone-decoration stone-3">âµ£</div>
-    <div class="stone-decoration stone-4">âµ£</div>
+    <div class="stone-decoration stone-1">ⵣ</div>
+    <div class="stone-decoration stone-2">ⵣ</div>
+    <div class="stone-decoration stone-3">ⵣ</div>
+    <div class="stone-decoration stone-4">ⵣ</div>
 
     <header id="main-header">
         <h1 data-i18n="appTitle">TIDDAS</h1>
@@ -1152,16 +1152,16 @@
             <div class="version-grid">
                 <div class="version-card" data-variant="tiddezt-no-diag">
                     <h3 data-i18n="tiddeztTitle">TIDDEZT</h3>
-                    <p data-i18n="tiddeztDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. DÃ©placements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
+                    <p data-i18n="tiddeztDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
                 </div>
                 <div class="version-card" data-variant="bessif-tiddezt">
-                    <h3 data-i18n="bessifTitle">UÄÄi bessif TIDDEZT</h3>
-                    <p data-i18n="bessifDesc">MÃªmes rÃ¨gles que TIDDEZT. Victoire inversÃ©e: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions Ã  capturer.</p>
+                    <h3 data-i18n="bessifTitle">Učči bessif TIDDEZT</h3>
+                    <p data-i18n="bessifDesc">Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
                 </div>
             </div>
             <button id="show-rules-btn" class="rules-btn">
                 <i class="fas fa-book-open"></i>
-                <span data-i18n="gameRulesTitle">RÃ¨gles du jeu</span>
+                <span data-i18n="gameRulesTitle">Règles du jeu</span>
             </button>
         </div>
 
@@ -1171,7 +1171,7 @@
                 <button id="play-online-btn" class="option-btn" disabled>
                     <i class="fas fa-globe"></i>
                     <span data-i18n="playOnline">Jouer en ligne</span>
-                    <span data-i18n="playOnlineDesc">BientÃ´t disponible</span>
+                    <span data-i18n="playOnlineDesc">Bientôt disponible</span>
                 </button>
                 <button id="play-ai-btn" class="option-btn">
                     <i class="fas fa-robot"></i>
@@ -1188,7 +1188,7 @@
         </div>
         
         <div id="ai-difficulty-selection-area" class="selection-area">
-            <h2 data-i18n="chooseAIDifficulty">Choisir la difficultÃ© de l'ordinateur</h2>
+            <h2 data-i18n="chooseAIDifficulty">Choisir la difficulté de l'ordinateur</h2>
             <div class="options-group">
                 <button class="option-btn difficulty-btn" data-level="1">
                     <i class="far fa-smile"></i>
@@ -1203,7 +1203,7 @@
                 <button class="option-btn difficulty-btn" data-level="3">
                     <i class="far fa-grimace"></i>
                     <span data-i18n="difficultyHard">Difficile</span>
-                    <span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratÃ¨ge</span>
+                    <span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratège</span>
                 </button>
             </div>
             <button id="back-to-modes-btn" class="back-btn" data-i18n="backToModes">Retour aux modes</button>
@@ -1256,7 +1256,7 @@
                                 <i class="fas fa-compact-disc"></i>
                                 <span class="stat-value" id="p1-count">10</span>
                             </div>
-                            <div class="player-stat" title="Pions capturÃ©s">
+                            <div class="player-stat" title="Pions capturés">
                                 <i class="fas fa-ghost"></i>
                                 <span class="stat-value" id="p1-capt">0</span>
                             </div>
@@ -1292,7 +1292,7 @@
                                 <i class="fas fa-compact-disc"></i>
                                 <span class="stat-value" id="p2-count">10</span>
                             </div>
-                            <div class="player-stat" title="Pions capturÃ©s">
+                            <div class="player-stat" title="Pions capturés">
                                 <i class="fas fa-ghost"></i>
                                 <span class="stat-value" id="p2-capt">0</span>
                             </div>
@@ -1304,12 +1304,12 @@
     </div>
 
     <footer>
-        <div data-i18n="footerHeritage">Patrimoine Culturel Amazigh â€¢ Jeu Traditionnel Kabyle</div>
-        <div class="creator"><span data-i18n="footerCreator">CrÃ©Ã© par</span> Boussad TAMAZIRT</div>
+        <div data-i18n="footerHeritage">Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle</div>
+        <div class="creator"><span data-i18n="footerCreator">Créé par</span> Boussad TAMAZIRT</div>
     </footer>
 
     <div id="winner-overlay" class="winner-overlay">
-        <div class="winner-message" data-i18n="congratulations">FÃ©licitations !</div>
+        <div class="winner-message" data-i18n="congratulations">Félicitations !</div>
         <div class="winner-name"></div>
         <button class="replay-button" id="winner-replay-button" data-i18n="replay">Rejouer</button>
     </div>
@@ -1330,39 +1330,39 @@
             <button id="rules-close-btn" class="rules-close-btn" title="Fermer">&times;</button>
             
             <div class="rules-content" lang="fr">
-                <h3 data-i18n="gameRulesTitle">RÃ¨gles du Jeu</h3>
-                <h4 data-i18n="rulesGeneral">RÃ¨gles GÃ©nÃ©rales de Tiddas (Communes Ã  toutes les variantes) :</h4>
+                <h3 data-i18n="gameRulesTitle">Règles du Jeu</h3>
+                <h4 data-i18n="rulesGeneral">Règles Générales de Tiddas (Communes à toutes les variantes) :</h4>
                 <div class="rules-section">
-                    <p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de rÃ©duire le nombre de pions de votre adversaire Ã  moins de trois, ou de le bloquer de maniÃ¨re Ã  ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante UÄÄi bessif TIDDEZT, l'objectif est inversÃ© : le joueur gagne s'il rÃ©duit son propre nombre de pions Ã  moins de trois, ou s'il est bloquÃ© et ne peut plus effectuer de mouvements valides.</span></p>
-                    <p><strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelÃ©s "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span></p>
+                    <p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.</span></p>
+                    <p><strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelés "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span></p>
                     <p><strong data-i18n="rulesPhasesStrong">Phases de Jeu :</strong></p>
                     <ul>
-                        <li><strong data-i18n="rulesPlacementPhaseStrong">Phase de Placement :</strong> <span data-i18n="rulesPlacementPhase">Les joueurs placent Ã  tour de rÃ´le un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'Ã  ce que les 20 pions (10 pour chaque joueur) soient placÃ©s.</span></li>
-                        <li><strong data-i18n="rulesMovePhaseStrong">Phase de DÃ©placement :</strong> <span data-i18n="rulesMovePhase">Une fois tous les pions placÃ©s, les joueurs dÃ©placent Ã  tour de rÃ´le l'un de leurs pions d'une case Ã  la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.</span></li>
+                        <li><strong data-i18n="rulesPlacementPhaseStrong">Phase de Placement :</strong> <span data-i18n="rulesPlacementPhase">Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.</span></li>
+                        <li><strong data-i18n="rulesMovePhaseStrong">Phase de Déplacement :</strong> <span data-i18n="rulesMovePhase">Une fois tous les pions placés, les joueurs déplacent à tour de rôle l'un de leurs pions d'une case à la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.</span></li>
                     </ul>
-                    <p><strong data-i18n="rulesMillStrong">Moulin (Alignement) :</strong> <span data-i18n="rulesMill">Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considÃ©rÃ©s comme des moulins valides.</strong></span></p>
+                    <p><strong data-i18n="rulesMillStrong">Moulin (Alignement) :</strong> <span data-i18n="rulesMill">Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considérés comme des moulins valides.</strong></span></p>
                     <p><strong data-i18n="rulesCaptureStrong">Capture :</strong> <span data-i18n="rulesCapture">Lorsqu'un joueur forme un moulin (horizontal ou vertical de 3 pions), il a le droit de "manger" (capturer) un pion adverse.</span></p>
-                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Alignement de 3 interdit pendant le placement :</strong> <span data-i18n="rulesCapturePlacementRestriction">Il est interdit de placer un pion de maniÃ¨re Ã  former un moulin de 3 pions ou plus. Par consÃ©quent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de dÃ©placement.</span></p>
-                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Tous les pions sont capturables :</strong> <span data-i18n="rulesCaptureAllPieces">Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent Ãªtre capturÃ©s</strong>, mÃªme s'ils font partie d'un moulin. Il n'y a pas de pions "protÃ©gÃ©s".</span></p>
-                    <p><strong data-i18n="rulesForcedMoveStrong">RÃ¨gle de dÃ©placement forcÃ© de moulin :</strong> <span data-i18n="rulesForcedMove">En phase de dÃ©placement, si un joueur a la possibilitÃ© de former un moulin avec un de ses pions, il est <strong>obligÃ©</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.</span></p>
+                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Alignement de 3 interdit pendant le placement :</strong> <span data-i18n="rulesCapturePlacementRestriction">Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.</span></p>
+                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Tous les pions sont capturables :</strong> <span data-i18n="rulesCaptureAllPieces">Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions "protégés".</span></p>
+                    <p><strong data-i18n="rulesForcedMoveStrong">Règle de déplacement forcé de moulin :</strong> <span data-i18n="rulesForcedMove">En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.</span></p>
                 </div>
-                <h4 data-i18n="rulesDifferences">DiffÃ©rences entre les variantes :</h4>
+                <h4 data-i18n="rulesDifferences">Différences entre les variantes :</h4>
                 <div class="rules-section">
-                    <p data-i18n="rulesDifferencesIntro">Les rÃ¨gles de base s'appliquent, mais chaque variante introduit des spÃ©cificitÃ©s importantes :</p>
+                    <p data-i18n="rulesDifferencesIntro">Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :</p>
                     <p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
                     <ul>
-                        <li><strong data-i18n="rulesTiddeztMovesStrong">DÃ©placements :</strong> <span data-i18n="rulesTiddeztMoves">Uniquement horizontaux/verticaux. Les dÃ©placements en diagonale sont interdits.</span></li>
+                        <li><strong data-i18n="rulesTiddeztMovesStrong">Déplacements :</strong> <span data-i18n="rulesTiddeztMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
                         <li><strong data-i18n="rulesTiddeztCapturesStrong">Captures :</strong> <span data-i18n="rulesTiddeztCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
                         <li><strong data-i18n="rulesTiddeztWinStrong">Victoire :</strong> <span data-i18n="rulesTiddeztWin">Normale.</span></li>
-                        <li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Pas de dÃ©placement forcÃ© de moulin :</strong> <span data-i18n="rulesTiddeztNoForcedMove">La rÃ¨gle du dÃ©placement forcÃ© de moulin ne s'applique pas.</span></li>
+                        <li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTiddeztNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
                     </ul>
-                    <p><strong data-i18n="rulesBessif">UÄÄi Bessif :</strong></p>
+                    <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
                     <ul>
-                        <li><span data-i18n="rulesBessifCombines">Combine les rÃ¨gles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversÃ©e</strong>.</span></li>
-                        <li><strong data-i18n="rulesBessifMovesStrong">DÃ©placements :</strong> <span data-i18n="rulesBessifMoves">Uniquement horizontaux/verticaux.</span></li>
-                        <li><strong data-i18n="rulesBessifInverseWinStrong">Victoire InversÃ©e :</strong> <span data-i18n="rulesBessifInverseWin">Le joueur gagne si son propre nombre de pions est rÃ©duit Ã  moins de trois (c'est-Ã -dire 0, 1 ou 2 pions), OU si son adversaire est bloquÃ© et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.</span></li>
-                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Choix du pion Ã  capturer :</strong> <span data-i18n="rulesBessifOpponentChooses">Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.</span></li>
-                        <li><strong data-i18n="rulesBessifForcedMoveStrong">DÃ©placement forcÃ© pour former un moulin :</strong> <span data-i18n="rulesBessifForcedMove">La rÃ¨gle du dÃ©placement forcÃ© de moulin s'applique.</span></li>
+                        <li><span data-i18n="rulesBessifCombines">Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.</span></li>
+                        <li><strong data-i18n="rulesBessifMovesStrong">Déplacements :</strong> <span data-i18n="rulesBessifMoves">Uniquement horizontaux/verticaux.</span></li>
+                        <li><strong data-i18n="rulesBessifInverseWinStrong">Victoire Inversée :</strong> <span data-i18n="rulesBessifInverseWin">Le joueur gagne si son propre nombre de pions est réduit à moins de trois (c'est-à-dire 0, 1 ou 2 pions), OU si son adversaire est bloqué et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.</span></li>
+                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Choix du pion à capturer :</strong> <span data-i18n="rulesBessifOpponentChooses">Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.</span></li>
+                        <li><strong data-i18n="rulesBessifForcedMoveStrong">Déplacement forcé pour former un moulin :</strong> <span data-i18n="rulesBessifForcedMove">La règle du déplacement forcé de moulin s'applique.</span></li>
                     </ul>
                 </div>
             </div>
@@ -1371,36 +1371,36 @@
                 <h3 data-i18n="gameRulesTitle">Ilugan n wurar</h3>
                 <h4 data-i18n="rulesGeneral">Ilugan s amata n Tiddas :</h4>
                 <div class="rules-section">
-                    <p><strong data-i18n="rulesObjectiveStrong">Iswi :</strong> <span data-i18n="rulesObjective">Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmeÄÄ yiwen uleqqaf n wexá¹£im, neÉ£ aá¸¥bas-is iwakken ur izmer ara ad inaqel. Di tewsit n UÄÄi bessif, yerebá¸¥ win i wummi mmeÄÄen ileqqafen-is.</span></p>
-                    <p><strong data-i18n="rulesPiecesStrong">Ileqqafen :</strong> <span data-i18n="rulesPieces">Yal amyurar yesÉ›a 10 n yileqqafen. Amyurar 2 (Amellal) yettbdu d amezwaru.</span></p>
+                    <p><strong data-i18n="rulesObjectiveStrong">Iswi :</strong> <span data-i18n="rulesObjective">Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, neɣ aḥbas-is iwakken ur izmer ara ad inaqel. Di tewsit n Učči bessif, yerebḥ win i wummi mmeččen ileqqafen-is.</span></p>
+                    <p><strong data-i18n="rulesPiecesStrong">Ileqqafen :</strong> <span data-i18n="rulesPieces">Yal amyurar yesɛa 10 n yileqqafen. Amyurar 2 (Amellal) yettbdu d amezwaru.</span></p>
                     <p><strong data-i18n="rulesPhasesStrong">Talliyin n wurar :</strong></p>
                     <ul>
                         <li><strong data-i18n="rulesPlacementPhaseStrong">Tallit n userrasu :</strong> <span data-i18n="rulesPlacementPhase">Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.</span></li>
-                        <li><strong data-i18n="rulesMovePhaseStrong">Tallit n unaqel :</strong> <span data-i18n="rulesMovePhase">Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen É£er texxamin yexlan yellan É£er yidis yexlan.</span></li>
+                        <li><strong data-i18n="rulesMovePhaseStrong">Tallit n unaqel :</strong> <span data-i18n="rulesMovePhase">Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.</span></li>
                     </ul>
-                    <p><strong data-i18n="rulesMillStrong">Atellet :</strong> <span data-i18n="rulesMill">Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teÉ£zi neÉ£ s tehri).</span></p>
-                    <p><strong data-i18n="rulesCaptureStrong">UÄÄi :</strong> <span data-i18n="rulesCapture">Ma yesdukel amyurar tlata ileqqafen, yezmer ad yeÄÄ aleqqaf n wexá¹£im-is.</span></p>
-                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Yegdel ad tesdukleá¸ 3 deg usersu :</strong> <span data-i18n="rulesCapturePlacementRestriction">Yegdel ad tserseá¸ aleqqaf iwakken ad tesdukleá¸ tlata. Daymi, ulac UÄÄi deg tallit n usersu. UÄÄi tettili kan deg tallit n unaqel.</span></p>
-                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Akk ileqqafen zemren ad mmeÄÄen :</strong> <span data-i18n="rulesCaptureAllPieces">Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeÄÄen</strong>, ula ma llan deg utellet.</span></p>
-                    <p><strong data-i18n="rulesForcedMoveStrong">atellet s tmara:</strong> <span data-i18n="rulesForcedMove">Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aá¹­as n yiberdan, ad yefren yiwen.</span></p>
+                    <p><strong data-i18n="rulesMillStrong">Atellet :</strong> <span data-i18n="rulesMill">Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).</span></p>
+                    <p><strong data-i18n="rulesCaptureStrong">Učči :</strong> <span data-i18n="rulesCapture">Ma yesdukel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.</span></p>
+                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Yegdel ad tesdukleḍ 3 deg usersu :</strong> <span data-i18n="rulesCapturePlacementRestriction">Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usersu. Učči tettili kan deg tallit n unaqel.</span></p>
+                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Akk ileqqafen zemren ad mmeččen :</strong> <span data-i18n="rulesCaptureAllPieces">Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.</span></p>
+                    <p><strong data-i18n="rulesForcedMoveStrong">atellet s tmara:</strong> <span data-i18n="rulesForcedMove">Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.</span></p>
                 </div>
                 <h4 data-i18n="rulesDifferences">Imgired gar tewsiyin :</h4>
                 <div class="rules-section">
-                    <p data-i18n="rulesDifferencesIntro">Yal tawsit tesÉ›a ilugan-is :</p>
+                    <p data-i18n="rulesDifferencesIntro">Yal tawsit tesɛa ilugan-is :</p>
                     <p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
                     <ul>
-                        <li><strong data-i18n="rulesTiddeztMovesStrong">Anaqel :</strong> <span data-i18n="rulesTiddeztMoves">Kan s teÉ£zi neÉ£ s tehri.</span></li>
-                        <li><strong data-i18n="rulesTiddeztCapturesStrong">UÄÄi :</strong> <span data-i18n="rulesTiddeztCaptures">Win yesduklen tlata ad yefren aleqqaf n wexá¹£im-is ara yeÄÄ.</span></li>
-                        <li><strong data-i18n="rulesTiddeztWinStrong">Arbaá¸¥ :</strong> <span data-i18n="rulesTiddeztWin">yerbeá¸¥ win yeÄÄan.</span></li>
+                        <li><strong data-i18n="rulesTiddeztMovesStrong">Anaqel :</strong> <span data-i18n="rulesTiddeztMoves">Kan s teɣzi neɣ s tehri.</span></li>
+                        <li><strong data-i18n="rulesTiddeztCapturesStrong">Učči :</strong> <span data-i18n="rulesTiddeztCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
+                        <li><strong data-i18n="rulesTiddeztWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTiddeztWin">yerbeḥ win yeččan.</span></li>
                         <li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTiddeztNoForcedMove">Alugen n lmakala bessif ur ttilin ara.</span></li>
                     </ul>
-                    <p><strong data-i18n="rulesBessif">UÄÄi Bessif :</strong></p>
+                    <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
                     <ul>
-                        <li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaá¸¥ s wexá¹£ar</strong>.</span></li>
-                        <li><strong data-i18n="rulesBessifMovesStrong">Anaqel :</strong> <span data-i18n="rulesBessifMoves">Kan s teÉ£zi neÉ£ s tehri.</span></li>
-                        <li><strong data-i18n="rulesBessifInverseWinStrong">Arbaá¸¥ s wexá¹£ar :</strong> <span data-i18n="rulesBessifInverseWin">Amyurar ad irebá¸¥ ma yella gran-as-d ala sin (2) ileqqafen, NEÆ” ma yella axá¹£im-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesÉ›a drus n yileqqafen.</span></li>
-                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Axá¹£im ad yefren :</strong> <span data-i18n="rulesBessifOpponentChooses">Ma yella tetelteá¸, d <strong>axá¹£im-ik</strong> ara d-ifernen aleqqaf-is ara teÄÄeá¸.</span></li>
-                        <li><strong data-i18n="rulesBessifForcedMoveStrong">atellet s tmara :</strong> <span data-i18n="rulesBessifForcedMove">Ur d ak d iá¹£aá¸¥ ara ad tenaqleá¸ alqqaf É£er w anda ur tettellit ara ma yella yezmer.</span></li>
+                        <li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.</span></li>
+                        <li><strong data-i18n="rulesBessifMovesStrong">Anaqel :</strong> <span data-i18n="rulesBessifMoves">Kan s teɣzi neɣ s tehri.</span></li>
+                        <li><strong data-i18n="rulesBessifInverseWinStrong">Arbaḥ s wexṣar :</strong> <span data-i18n="rulesBessifInverseWin">Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.</span></li>
+                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Axṣim ad yefren :</strong> <span data-i18n="rulesBessifOpponentChooses">Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.</span></li>
+                        <li><strong data-i18n="rulesBessifForcedMoveStrong">atellet s tmara :</strong> <span data-i18n="rulesBessifForcedMove">Ur d ak d iṣaḥ ara ad tenaqleḍ alqqaf ɣer w anda ur tettellit ara ma yella yezmer.</span></li>
                     </ul>
                 </div>
             </div>
@@ -1466,7 +1466,7 @@
         // --- VARIANT CONFIGURATION ---
         const variantConfig = {
             "tiddezt-no-diag": { name: "TIDDEZT", isInverseWin: false, forceMillMove: false },
-            "bessif-tiddezt": { name: "UÄÄi bessif TIDDEZT", isInverseWin: true, forceMillMove: true }
+            "bessif-tiddezt": { name: "Učči bessif TIDDEZT", isInverseWin: true, forceMillMove: true }
         };
         const aiDifficultyNames = { 1: "Easy", 2: "Medium", 3: "Hard" };
 
@@ -1483,24 +1483,24 @@
                 appTitle: "Tiddas - Jeu",
                 chooseVersion: "Choisir la version du jeu :",
                 tiddeztTitle: "TIDDEZT",
-                tiddeztDesc: "Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. DÃ©placements et captures uniquement horizontaux/verticaux. Victoire normale.",
-                bessifTitle: "UÄÄi Bessif",
-                bessifDesc: "MÃªmes rÃ¨gles que TIDDEZT. Victoire inversÃ©e: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions Ã  capturer.",
+                tiddeztDesc: "Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.",
+                bessifTitle: "Učči Bessif",
+                bessifDesc: "Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.",
                 howToPlay: "Comment souhaitez-vous jouer ?",
                 playOnline: "Jouer en ligne",
-                playOnlineDesc: "BientÃ´t disponible",
+                playOnlineDesc: "Bientôt disponible",
                 playAI: "Jouer contre l'ordinateur",
                 playAIDesc: "Affrontez une intelligence artificielle",
                 playOffline: "Jouer hors-ligne",
                 playOfflineDesc: "Partie locale sur votre appareil",
                 backToVersions: "Retour aux versions",
-                chooseAIDifficulty: "Choisir la difficultÃ© de l'ordinateur",
+                chooseAIDifficulty: "Choisir la difficulté de l'ordinateur",
                 difficultyEasy: "Facile",
                 difficultyMedium: "Moyen",
                 difficultyHard: "Difficile",
                 difficultyEasyDesc: "L'ordinateur joue au hasard",
                 difficultyMediumDesc: "L'ordinateur est un adversaire correct",
-                difficultyHardDesc: "L'ordinateur est un vrai stratÃ¨ge",
+                difficultyHardDesc: "L'ordinateur est un vrai stratège",
                 backToModes: "Retour aux modes",
                 playerSetup: "Configuration des joueurs",
                 playerNamesTitle: "Noms des joueurs",
@@ -1516,82 +1516,82 @@
                 player2Color: "Blanc (Joueur 2)",
                 playButton: "Jouer",
                 gameVersion: "Version :",
-                aiDifficultyDisplayLabel: "DifficultÃ© IA :",
+                aiDifficultyDisplayLabel: "Difficulté IA :",
                 ephemeralMill: "Tlata S Ya !",
                 ephemeralCaptureNormal: "Awi-d Wa !",
                 ephemeralCaptureBessif: "Ddem wa !",
-                ephemeralMovePhase: "Phase de dÃ©placement !",
+                ephemeralMovePhase: "Phase de déplacement !",
                 newGame: "Accueil",
                 restartGame: "Recommencer",
                 undoMove: "Annuler",
-                gameRulesTitle: "RÃ¨gles du Jeu",
-                rulesGeneral: "RÃ¨gles GÃ©nÃ©rales de Tiddas (Communes Ã  toutes les variantes) :",
+                gameRulesTitle: "Règles du Jeu",
+                rulesGeneral: "Règles Générales de Tiddas (Communes à toutes les variantes) :",
                 rulesObjectiveStrong: "Objectif :",
-                rulesObjective: "Le but principal est de rÃ©duire le nombre de pions de votre adversaire Ã  moins de trois, ou de le bloquer de maniÃ¨re Ã  ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante UÄÄi bessif TIDDEZT, l'objectif est inversÃ© : le joueur gagne s'il rÃ©duit son propre nombre de pions Ã  moins de trois, ou s'il est bloquÃ© et ne peut plus effectuer de mouvements valides.",
+                rulesObjective: "Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.",
                 rulesPiecesStrong: "Pions :",
-                rulesPieces: "Chaque joueur dispose de 10 pions (appelÃ©s \"cailloux\"). Le Joueur (Blanc) commence toujours.",
+                rulesPieces: "Chaque joueur dispose de 10 pions (appelés \"cailloux\"). Le Joueur (Blanc) commence toujours.",
                 rulesPhasesStrong: "Phases de Jeu :",
                 rulesPlacementPhaseStrong: "Phase de Placement :",
-                rulesPlacementPhase: "Les joueurs placent Ã  tour de rÃ´le un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'Ã  ce que les 20 pions (10 pour chaque joueur) soient placÃ©s.",
-                rulesMovePhaseStrong: "Phase de DÃ©placement :",
-                rulesMovePhase: "Une fois tous les pions placÃ©s, les joueurs dÃ©placent Ã  tour de rÃ´le l'un de leurs pions d'une case Ã  la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.",
+                rulesPlacementPhase: "Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.",
+                rulesMovePhaseStrong: "Phase de Déplacement :",
+                rulesMovePhase: "Une fois tous les pions placés, les joueurs déplacent à tour de rôle l'un de leurs pions d'une case à la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.",
                 rulesMillStrong: "Moulin (Alignement) :",
-                rulesMill: "Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considÃ©rÃ©s comme des moulins valides.</strong>",
+                rulesMill: "Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considérés comme des moulins valides.</strong>",
                 rulesCaptureStrong: "Capture :",
                 rulesCapture: "Lorsqu'un joueur forme un moulin (horizontal ou vertical de 3 pions), il a le droit de \"manger\" (capturer) un pion adverse.",
                 rulesCapturePlacementRestrictionStrong: "Alignement de 3 interdit pendant le placement :",
-                rulesCapturePlacementRestriction: "Il est interdit de placer un pion de maniÃ¨re Ã  former un moulin de 3 pions ou plus. Par consÃ©quent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de dÃ©placement.",
+                rulesCapturePlacementRestriction: "Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.",
                 rulesCaptureAllPiecesStrong: "Tous les pions sont capturables :",
-                rulesCaptureAllPieces: "Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent Ãªtre capturÃ©s</strong>, mÃªme s'ils font partie d'un moulin. Il n'y a pas de pions \"protÃ©gÃ©s\".",
-                rulesForcedMoveStrong: "RÃ¨gle de dÃ©placement forcÃ© de moulin :",
-                rulesForcedMove: "En phase de dÃ©placement, si un joueur a la possibilitÃ© de former un moulin avec un de ses pions, il est <strong>obligÃ©</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.",
-                rulesDifferences: "DiffÃ©rences entre les variantes :",
-                rulesDifferencesIntro: "Les rÃ¨gles de base s'appliquent, mais chaque variante introduit des spÃ©cificitÃ©s importantes :",
+                rulesCaptureAllPieces: "Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions \"protégés\".",
+                rulesForcedMoveStrong: "Règle de déplacement forcé de moulin :",
+                rulesForcedMove: "En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.",
+                rulesDifferences: "Différences entre les variantes :",
+                rulesDifferencesIntro: "Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :",
                 rulesTiddezt: "TIDDEZT :",
-                rulesTiddeztMovesStrong: "DÃ©placements :",
-                rulesTiddeztMoves: "Uniquement horizontaux/verticaux. Les dÃ©placements en diagonale sont interdits.",
+                rulesTiddeztMovesStrong: "Déplacements :",
+                rulesTiddeztMoves: "Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.",
                 rulesTiddeztCapturesStrong: "Captures :",
                 rulesTiddeztCaptures: "Le joueur qui forme le moulin choisit quel pion adverse capturer.",
                 rulesTiddeztWinStrong: "Victoire :",
                 rulesTiddeztWin: "Normale.",
-                rulesTiddeztNoForcedMoveStrong: "Pas de dÃ©placement forcÃ© de moulin :",
-                rulesTiddeztNoForcedMove: "La rÃ¨gle du dÃ©placement forcÃ© de moulin ne s'applique pas.",
-                rulesBessif: "UÄÄi Bessif :",
-                rulesBessifCombines: "Combine les rÃ¨gles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversÃ©e</strong>.",
-                rulesBessifMovesStrong: "DÃ©placements :",
+                rulesTiddeztNoForcedMoveStrong: "Pas de déplacement forcé de moulin :",
+                rulesTiddeztNoForcedMove: "La règle du déplacement forcé de moulin ne s'applique pas.",
+                rulesBessif: "Učči Bessif :",
+                rulesBessifCombines: "Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.",
+                rulesBessifMovesStrong: "Déplacements :",
                 rulesBessifMoves: "Uniquement horizontaux/verticaux.",
-                rulesBessifInverseWinStrong: "Victoire InversÃ©e :",
-                rulesBessifInverseWin: "Le joueur gagne si son propre nombre de pions est rÃ©duit Ã  moins de trois (c'est-Ã -dire 0, 1 ou 2 pions), OU si son adversaire est bloquÃ© et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.",
-                rulesBessifOpponentChoosesStrong: "Choix du pion Ã  capturer :",
+                rulesBessifInverseWinStrong: "Victoire Inversée :",
+                rulesBessifInverseWin: "Le joueur gagne si son propre nombre de pions est réduit à moins de trois (c'est-à-dire 0, 1 ou 2 pions), OU si son adversaire est bloqué et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.",
+                rulesBessifOpponentChoosesStrong: "Choix du pion à capturer :",
                 rulesBessifOpponentChooses: "Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.",
-                rulesBessifForcedMoveStrong: "DÃ©placement forcÃ© pour former un moulin :",
-                rulesBessifForcedMove: "La rÃ¨gle du dÃ©placement forcÃ© de moulin s'applique.",
-                footerHeritage: "Patrimoine Culturel Amazigh â€¢ Jeu Traditionnel Kabyle",
-                footerCreator: "CrÃ©Ã© par",
-                congratulations: "FÃ©licitations !",
-                winnerMessage: "a gagnÃ© !",
+                rulesBessifForcedMoveStrong: "Déplacement forcé pour former un moulin :",
+                rulesBessifForcedMove: "La règle du déplacement forcé de moulin s'applique.",
+                footerHeritage: "Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle",
+                footerCreator: "Créé par",
+                congratulations: "Félicitations !",
+                winnerMessage: "a gagné !",
                 replay: "Rejouer",
                 statusPlayerTurn: "Au tour de",
                 statusChooseCapture: "choisissez un pion de",
-                statusToCapture: "Ã  capturer.",
-                statusChooseSacrifice: "doit choisir un de ses pions Ã  sacrifier.",
+                statusToCapture: "à capturer.",
+                statusChooseSacrifice: "doit choisir un de ses pions à sacrifier.",
                 statusPlacementPhase: "Phase de placement : Au tour de",
-                statusMovePhase: "Phase de dÃ©placement : Au tour de",
+                statusMovePhase: "Phase de déplacement : Au tour de",
                 statusGameOver: "Fin de partie !",
-                statusAlreadyOccupied: "Cette case est dÃ©jÃ  occupÃ©e !",
-                statusNoPiecesToPlace: "Vous n'avez plus de pions Ã  placer !",
+                statusAlreadyOccupied: "Cette case est déjà occupée !",
+                statusNoPiecesToPlace: "Vous n'avez plus de pions à placer !",
                 statusPlacementAlignForbidden: "Alignement de 3 interdit pendant le placement !",
                 statusYourPiecesTurn: "C'est le tour de vos pions !",
-                statusSelectYourPiece: "Veuillez sÃ©lectionner un de vos pions.",
+                statusSelectYourPiece: "Veuillez sélectionner un de vos pions.",
                 statusInvalidMove: "Mouvement invalide.",
                 statusMustMakeMill: "Vous devez faire un moulin si possible !",
-                statusChooseOwnPieceToSacrifice: "Vous devez choisir un de VOS pions Ã  sacrifier !",
-                statusChooseOpponentPieceToCapture: "Vous devez choisir un pion de l'ADVERSAIRE Ã  capturer !",
+                statusChooseOwnPieceToSacrifice: "Vous devez choisir un de VOS pions à sacrifier !",
+                statusChooseOpponentPieceToCapture: "Vous devez choisir un pion de l'ADVERSAIRE à capturer !",
                 aiCannotMove: "L'ordinateur ne peut pas bouger et perd la partie !",
-                youLost: "Vous avez perdu ðŸ˜­",
-                aiWinsMessage: "a gagnÃ© !",
-                surrenderConfirm: "ÃŠtes-vous sÃ»r de vouloir abandonner ?",
-                surrenderMessage: "a abandonnÃ© !"
+                youLost: "Vous avez perdu 😭",
+                aiWinsMessage: "a gagné !",
+                surrenderConfirm: "Êtes-vous sûr de vouloir abandonner ?",
+                surrenderMessage: "a abandonné !"
             },
             kab: {
                 surrender: "Mayna",
@@ -1602,27 +1602,27 @@
                 defaultComputerName: "Aselkim",
                 defaultHumanName: "Amdan",
                 appTitle: "Tiddas - Urar",
-                chooseVersion: "Fren acu n tiddest ara turareá¸ :",
+                chooseVersion: "Fren acu n tiddest ara turareḍ :",
                 tiddeztTitle: "TIDDEZT",
-                tiddeztDesc: "Yerbeá¸¥ win yeÄÄan ileqqafen.",
-                bessifTitle: "UÄÄi Bessif",
-                bessifDesc: "Am ilugan n TIDDEZT, maca yerebá¸¥ win i wummi mmeÄÄen ileqqafen.",
-                howToPlay: "Amek tebÉ£iá¸ ad turareá¸ ?",
+                tiddeztDesc: "Yerbeḥ win yeččan ileqqafen.",
+                bessifTitle: "Učči Bessif",
+                bessifDesc: "Am ilugan n TIDDEZT, maca yerebḥ win i wummi mmeččen ileqqafen.",
+                howToPlay: "Amek tebɣiḍ ad turareḍ ?",
                 playOnline: "Urar s internet",
                 playOnlineDesc: "Ussan-a",
                 playAI: "Urar mgal aselkim",
                 playAIDesc: "Urar i yiman-ik",
                 playOffline: "Urar war internet",
                 playOfflineDesc: "Urar d umeddakul",
-                backToVersions: "TuÉ£alin É£er ufran n Tiddest",
+                backToVersions: "Tuɣalin ɣer ufran n Tiddest",
                 chooseAIDifficulty: "Fren aswir n uselkim",
-                difficultyEasy: "Aá¸¥lawan",
+                difficultyEasy: "Aḥlawan",
                 difficultyMedium: "Alemmas",
                 difficultyHard: "Aquran",
                 difficultyEasyDesc: "Aselkim yetturar kan akka!",
                 difficultyMediumDesc: "Aselkim yetturar swaswa kan",
-                difficultyHardDesc: "Aselkim yewÉ›eá¹› ad t-trebá¸¥eá¸",
-                backToModes: "TuÉ£alin É£er tegnatin",
+                difficultyHardDesc: "Aselkim yewɛeṛ ad t-trebḥeḍ",
+                backToModes: "Tuɣalin ɣer tegnatin",
                 playerSetup: "Aheggi n yemyurar",
                 playerNamesTitle: "Ismawen n yemyurar",
                 chooseYourColorTitle: "Fren ini-k",
@@ -1642,76 +1642,76 @@
                 ephemeralCaptureNormal: "Awi-d Wa !",
                 ephemeralCaptureBessif: "Ddem wa !",
                 ephemeralMovePhase: "Tallit n unaqel !",
-                newGame: "AÉ£aram",
-                restartGame: "Æiwed",
-                undoMove: "UÉ£al",
+                newGame: "Aɣaram",
+                restartGame: "Ɛiwed",
+                undoMove: "Uɣal",
                 gameRulesTitle: "Ilugan n wurar",
                 rulesGeneral: "Ilugan s amata n Tiddas :",
                 rulesObjectiveStrong: "Iswi :",
-                rulesObjective: "Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmeÄÄ yiwen uleqqaf n wexá¹£im, neÉ£ aá¸¥bas-is iwakken ur izmer ara ad inaqel. Di tewsit n UÄÄi bessif, yerebá¸¥ win i wummi mmeÄÄen ileqqafen-is.",
+                rulesObjective: "Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, neɣ aḥbas-is iwakken ur izmer ara ad inaqel. Di tewsit n Učči bessif, yerebḥ win i wummi mmeččen ileqqafen-is.",
                 rulesPiecesStrong: "Ileqqafen :",
-                rulesPieces: "Yal amyurar yesÉ›a 10 n yileqqafen. Amyurar ifarnen ileqqafen imellalen i yebeddun urar.",
+                rulesPieces: "Yal amyurar yesɛa 10 n yileqqafen. Amyurar ifarnen ileqqafen imellalen i yebeddun urar.",
                 rulesPhasesStrong: "Talliyin n wurar :",
                 rulesPlacementPhaseStrong: "Tallit n userrasu :",
                 rulesPlacementPhase: "Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.",
                 rulesMovePhaseStrong: "Tallit n unaqel :",
-                rulesMovePhase: "Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen É£er texxamin yexlan yellan É£er yidis yexlan.",
+                rulesMovePhase: "Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.",
                 rulesMillStrong: "Atellet :",
-                rulesMill: "Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teÉ£zi neÉ£ s tehri).",
-                rulesCaptureStrong: "UÄÄi :",
-                rulesCapture: "Ma yesdukel amyurar tlata ileqqafen, yezmer ad yeÄÄ aleqqaf n wexá¹£im-is.",
-                rulesCapturePlacementRestrictionStrong: "Yegdel ad tesdukleá¸ 3 deg usersu :",
-                rulesCapturePlacementRestriction: "Yegdel ad tserseá¸ aleqqaf iwakken ad tesdukleá¸ tlata. Daymi, ulac UÄÄi deg tallit n usersu. UÄÄi tettili kan deg tallit n unaqel.",
-                rulesCaptureAllPiecesStrong: "Akk ileqqafen zemren ad mmeÄÄen :",
-                rulesCaptureAllPieces: "Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeÄÄen</strong>, ula ma llan deg utellet.",
+                rulesMill: "Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).",
+                rulesCaptureStrong: "Učči :",
+                rulesCapture: "Ma yesdukel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.",
+                rulesCapturePlacementRestrictionStrong: "Yegdel ad tesdukleḍ 3 deg usersu :",
+                rulesCapturePlacementRestriction: "Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usersu. Učči tettili kan deg tallit n unaqel.",
+                rulesCaptureAllPiecesStrong: "Akk ileqqafen zemren ad mmeččen :",
+                rulesCaptureAllPieces: "Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.",
                 rulesForcedMoveStrong: "atellet s tmara:",
-                rulesForcedMove: "Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aá¹­as n yiberdan, ad yefren yiwen.",
+                rulesForcedMove: "Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.",
                 rulesDifferences: "Imgired gar tewsiyin :",
-                rulesDifferencesIntro: "Yal tawsit tesÉ›a ilugan-is :",
+                rulesDifferencesIntro: "Yal tawsit tesɛa ilugan-is :",
                 rulesTiddezt: "TIDDEZT :",
                 rulesTiddeztMovesStrong: "Anaqel :",
-                rulesTiddeztMoves: "Kan s teÉ£zi neÉ£ s tehri.",
-                rulesTiddeztCapturesStrong: "UÄÄi :",
-                rulesTiddeztCaptures: "Win yesduklen tlata ad yefren aleqqaf n wexá¹£im-is ara yeÄÄ.",
-                rulesTiddeztWinStrong: "Arbaá¸¥ :",
-                rulesTiddeztWin: "yerbeá¸¥ win yeÄÄan.",
+                rulesTiddeztMoves: "Kan s teɣzi neɣ s tehri.",
+                rulesTiddeztCapturesStrong: "Učči :",
+                rulesTiddeztCaptures: "Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.",
+                rulesTiddeztWinStrong: "Arbaḥ :",
+                rulesTiddeztWin: "yerbeḥ win yeččan.",
                 rulesTiddeztNoForcedMoveStrong: "Ulac atellet s tmara :",
                 rulesTiddeztNoForcedMove: "Alugen n lmakala bessif ur ttilin ara.",
-                rulesBessif: "UÄÄi Bessif :",
-                rulesBessifCombines: "Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaá¸¥ s wexá¹£ar</strong>.",
+                rulesBessif: "Učči Bessif :",
+                rulesBessifCombines: "Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.",
                 rulesBessifMovesStrong: "Anaqel :",
-                rulesBessifMoves: "Kan s teÉ£zi neÉ£ s tehri.",
-                rulesBessifInverseWinStrong: "Arbaá¸¥ s wexá¹£ar :",
-                rulesBessifInverseWin: "Amyurar ad irebá¸¥ ma yella gran-as-d ala sin (2) ileqqafen, NEÆ” ma yella axá¹£im-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesÉ›a drus n yileqqafen.",
-                rulesBessifOpponentChoosesStrong: "Axá¹£im ad yefren :",
-                rulesBessifOpponentChooses: "Ma yella tetelteá¸, d <strong>axá¹£im-ik</strong> ara d-ifernen aleqqaf-is ara teÄÄeá¸.",
+                rulesBessifMoves: "Kan s teɣzi neɣ s tehri.",
+                rulesBessifInverseWinStrong: "Arbaḥ s wexṣar :",
+                rulesBessifInverseWin: "Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.",
+                rulesBessifOpponentChoosesStrong: "Axṣim ad yefren :",
+                rulesBessifOpponentChooses: "Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.",
                 rulesBessifForcedMoveStrong: "atellet s tmara :",
-                rulesBessifForcedMove: "Ur d ak d iá¹£aá¸¥ ara ad tenaqleá¸ alqqaf É£er w anda ur tettellit ara ma yella yezmer.",
-                footerHeritage: "Adles n ImaziÉ£en â€¢ Urar Aqbur n Leqbayel",
+                rulesBessifForcedMove: "Ur d ak d iṣaḥ ara ad tenaqleḍ alqqaf ɣer w anda ur tettellit ara ma yella yezmer.",
+                footerHeritage: "Adles n Imaziɣen • Urar Aqbur n Leqbayel",
                 footerCreator: "Yexdem-it",
                 congratulations: "Ayuuuuz!",
-                winnerMessage: "yerbeá¸¥ !",
-                replay: "Æiwed urar",
+                winnerMessage: "yerbeḥ !",
+                replay: "Ɛiwed urar",
                 statusPlayerTurn: "D nnuba n",
                 statusChooseCapture: "fren aleqqaf n",
-                statusToCapture: "ad teÄÄeá¸.",
+                statusToCapture: "ad teččeḍ.",
                 statusChooseSacrifice: "ilaq-as ad yefren aleqqaf-is ara yefk.",
                 statusPlacementPhase: "Aserrasu : D nnuba n",
                 statusMovePhase: "Anaqel : D nnuba n",
                 statusGameOver: "Yekfa w urar !",
-                statusAlreadyOccupied: "taxxamt-a teÄÄur !",
+                statusAlreadyOccupied: "taxxamt-a teččur !",
                 statusNoPiecesToPlace: "Ur k-d-qqimen ara yileqqafen !",
-                statusPlacementAlignForbidden: "D awezÉ£i ad tesdukleá¸ 3 deg userrasu !",
+                statusPlacementAlignForbidden: "D awezɣi ad tesdukleḍ 3 deg userrasu !",
                 statusYourPiecesTurn: "D nnuba n yileqqafen-ik !",
                 statusSelectYourPiece: "Fren yiwen uleqqaf-ik.",
-                statusInvalidMove: "Ur d ak d-iá¹£aá¸¥ ara.",
-                statusMustMakeMill: "Ilaq-ak ad tesdukleá¸ tlata ma yella tezmireá¸ !",
-                statusChooseOwnPieceToSacrifice: "Ilaq-ak ad teferneá¸ yiwen uleqqaf-IK ara tefkeá¸ !",
-                statusChooseOpponentPieceToCapture: "Ilaq-ak ad teferneá¸ aleqqaf n WEXá¹¢IM-IK !",
-                aiCannotMove: "Aselkim yeá¸¥bes, yexá¹£er !",
-                youLost: "Txesreá¸ ðŸ˜­",
-                aiWinsMessage: "yerbeá¸¥ !",
-                surrenderConfirm: "TebÉ£iá¸ ad tefkeá¸ Mayna?",
+                statusInvalidMove: "Ur d ak d-iṣaḥ ara.",
+                statusMustMakeMill: "Ilaq-ak ad tesdukleḍ tlata ma yella tezmireḍ !",
+                statusChooseOwnPieceToSacrifice: "Ilaq-ak ad teferneḍ yiwen uleqqaf-IK ara tefkeḍ !",
+                statusChooseOpponentPieceToCapture: "Ilaq-ak ad teferneḍ aleqqaf n WEXṢIM-IK !",
+                aiCannotMove: "Aselkim yeḥbes, yexṣer !",
+                youLost: "Txesreḍ 😭",
+                aiWinsMessage: "yerbeḥ !",
+                surrenderConfirm: "Tebɣiḍ ad tefkeḍ Mayna?",
                 surrenderMessage: "yefka Mayna !"
             }
         };
@@ -2426,7 +2426,7 @@
                 score += getPotentialMillsCount(board, playerToEvaluate) * 30;
                 score -= getPotentialMillsCount(board, opponent) * 40;
             } else {
-                // "UÄÄi Bessif" (Inverse Win) Personality
+                // "Učči Bessif" (Inverse Win) Personality
                 board.forEach((cell, idx) => {
                     if (cell === playerToEvaluate) {
                         if (STRATEGIC_CELLS.center.includes(idx)) score -= 50;
