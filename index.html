@@ -542,7 +542,7 @@
                 gap: 2rem;
                 padding: 1rem 2rem;
                 height: 100%;
-                perspective: 2000px; /* IMPROVEMENT: Added for better 3D effect */
+                perspective: 2000px;
             }
             .player-panel-container {
                 display: flex;
@@ -557,7 +557,7 @@
             }
             .game-board-container {
                 width: clamp(500px, 75vh, 700px);
-                transform: rotateX(10deg) scale(1); /* IMPROVEMENT: Perspective is now on parent */
+                transform: rotateX(10deg) scale(1);
                 transition: transform 0.5s ease;
             }
         }
@@ -589,7 +589,7 @@
             border: 1.5px solid;
             width: 100%;
             height: 100%;
-            transition: all 0.4s ease-in-out; /* IMPROVEMENT: Smoother transition */
+            transition: all 0.4s ease-in-out;
             backdrop-filter: blur(2px);
         }
         .player-title {
@@ -617,7 +617,7 @@
             font-size: clamp(1rem, 2.5vw, 1.2rem);
             color: var(--text-gold);
             opacity: 0.8;
-            text-shadow: 0 0 3px rgba(240, 200, 80, 0.5); /* IMPROVEMENT: Subtle glow */
+            text-shadow: 0 0 3px rgba(240, 200, 80, 0.5);
         }
         .stat-value {
             font-size: clamp(1.2rem, 3.5vw, 1.4rem);
@@ -690,7 +690,6 @@
         .player-info.player1-info { border-color: #333; }
         .player-info.player2-info { border-color: #ccc; }
         
-        /* IMPROVEMENT: More noticeable active player state */
         .player-info.active-player {
             transform: scale(1.05);
             border-color: var(--text-gold) !important;
@@ -1205,6 +1204,11 @@
                     <span data-i18n="difficultyHard">Difficile</span>
                     <span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratège</span>
                 </button>
+                <button class="option-btn difficulty-btn" data-level="4">
+                    <i class="fas fa-skull-crossbones"></i>
+                    <span data-i18n="difficultyImpossible">Impossible</span>
+                    <span data-i18n="difficultyImpossibleDesc">L'IA anticipe vos moindres faits et gestes</span>
+                </button>
             </div>
             <button id="back-to-modes-btn" class="back-btn" data-i18n="backToModes">Retour aux modes</button>
         </div>
@@ -1498,9 +1502,11 @@
                 difficultyEasy: "Facile",
                 difficultyMedium: "Moyen",
                 difficultyHard: "Difficile",
+                difficultyImpossible: "Très Difficile", // NOUVEAU
                 difficultyEasyDesc: "L'ordinateur joue au hasard",
                 difficultyMediumDesc: "L'ordinateur est un adversaire correct",
                 difficultyHardDesc: "L'ordinateur est un vrai stratège",
+                difficultyImpossibleDesc: "L'IA anticipe vos moindres faits et gestes", // NOUVEAU
                 backToModes: "Retour aux modes",
                 playerSetup: "Configuration des joueurs",
                 playerNamesTitle: "Noms des joueurs",
@@ -1619,9 +1625,11 @@
                 difficultyEasy: "Aḥlawan",
                 difficultyMedium: "Alemmas",
                 difficultyHard: "Aquran",
+                difficultyImpossible: "Awessar", // NOUVEAU
                 difficultyEasyDesc: "Aselkim yetturar kan akka!",
                 difficultyMediumDesc: "Aselkim yetturar swaswa kan",
                 difficultyHardDesc: "Aselkim yewɛeṛ ad t-trebḥeḍ",
+                difficultyImpossibleDesc: "Aselkim yeẓra ayen ara txedmeḍ", // NOUVEAU
                 backToModes: "Tuɣalin ɣer tegnatin",
                 playerSetup: "Aheggi n yemyurar",
                 playerNamesTitle: "Ismawen n yemyurar",
@@ -1863,7 +1871,7 @@
             }
 
             if (gameMode === 'ai' && aiDifficulty) {
-                const difficultyNameKey = {1: 'difficultyEasy', 2: 'difficultyMedium', 3: 'difficultyHard'}[aiDifficulty];
+                const difficultyNameKey = {1: 'difficultyEasy', 2: 'difficultyMedium', 3: 'difficultyHard', 4: 'difficultyImpossible'}[aiDifficulty];
                 difficultyInfoEl.innerHTML = `<strong>${translations[currentLanguage].aiDifficultyDisplayLabel}</strong> ${translations[currentLanguage][difficultyNameKey]}`;
                 difficultyInfoEl.style.display = 'block';
             } else {
@@ -1949,7 +1957,11 @@
                 if (p1Input) {
                     if (humanPlayerId === 1) player1Name = p1Input;
                     else player2Name = p1Input;
+                } else {
+                    if (humanPlayerId === 1) player1Name = translations[currentLanguage].defaultHumanName;
+                     else player2Name = translations[currentLanguage].defaultHumanName;
                 }
+
                 if (aiPlayerId === 1) player1Name = translations[currentLanguage].defaultComputerName;
                 else player2Name = translations[currentLanguage].defaultComputerName;
             } else {
@@ -2098,16 +2110,13 @@
             if (undoBtn.disabled) return;
 
             if (gameMode === 'ai') {
-                // In AI games, undo reverses both the player's and the AI's moves.
                 if (moveHistory.length >= 2) {
-                    moveHistory.pop(); // Removes the state before the AI's move.
-                    state = moveHistory.pop(); // Removes and applies the state before the human's move.
+                    moveHistory.pop();
+                    state = moveHistory.pop();
                 } else if (moveHistory.length === 1) {
-                    // This handles the case of undoing the very first move of the game.
                     state = moveHistory.pop();
                 }
             } else {
-                // In a local game, just undo the last move.
                 state = moveHistory.pop();
             }
 
@@ -2297,7 +2306,7 @@
             const playerToAct = state.captureMode ? state.turnForCapture : state.turn;
 
             if (gameMode === 'ai' && playerToAct === aiPlayerId) {
-                const delay = state.captureMode ? 800 : 500;
+                const delay = aiDifficulty === 4 ? 800 : 500; // slightly more delay for the impossible AI to feel like it's "thinking"
                 setTimeout(() => { makeAiMove(); }, delay);
             }
         }
@@ -2415,7 +2424,6 @@
             let score = 0;
 
             if (!variantConfig[variant].isInverseWin) {
-                // "Tiddezt" (Normal Win) Personality
                 board.forEach((cell, idx) => {
                     if (cell === playerToEvaluate) {
                         if (STRATEGIC_CELLS.center.includes(idx)) score += 50;
@@ -2426,7 +2434,6 @@
                 score += getPotentialMillsCount(board, playerToEvaluate) * 30;
                 score -= getPotentialMillsCount(board, opponent) * 40;
             } else {
-                // "Učči Bessif" (Inverse Win) Personality
                 board.forEach((cell, idx) => {
                     if (cell === playerToEvaluate) {
                         if (STRATEGIC_CELLS.center.includes(idx)) score -= 50;
@@ -2444,8 +2451,7 @@
 
         function getPossibleMillMoves(player, board) {
             const millMoves = [];
-            const currentPhase = state.phase; 
-            if (currentPhase === 'placement') return [];
+            if (state.phase === 'placement') return [];
             for (let from = 0; from < SIZE * SIZE; from++) {
                 if (board[from] === player) {
                     for (let to = 0; to < SIZE * SIZE; to++) {
@@ -2494,62 +2500,106 @@
             }
         }
         
+        function isPieceInPotentialMill(board, pieceIndex, player) {
+            const potentialMillsBefore = getPotentialMillsCount(board, player);
+            const tempBoard = [...board];
+            tempBoard[pieceIndex] = null;
+            const potentialMillsAfter = getPotentialMillsCount(tempBoard, player);
+            return potentialMillsAfter < potentialMillsBefore;
+        }
+
         function aiChoosePieceToActOn() {
             const isInverse = variantConfig[variant].isInverseWin;
             const playerToTarget = isInverse ? aiPlayerId : humanPlayerId;
+        
             const possibleTargets = [];
             for (let i = 0; i < state.board.length; i++) {
                 if (state.board[i] === playerToTarget) {
                     possibleTargets.push(i);
                 }
             }
+        
             if (possibleTargets.length === 0) return null;
+        
             if (aiDifficulty === 1) {
                 return possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
             }
-
+        
             let bestTarget = -1;
-            let bestScore = -Infinity;
-
+            let bestScore = isInverse ? Infinity : -Infinity;
+        
             for (const target of possibleTargets) {
-                let score = 0;
                 const tempBoard = [...state.board];
                 tempBoard[target] = null;
-
-                if (isInverse) { // AI is SACRIFICING its own piece
-                    const potentialMillsAfter = getPotentialMillsCount(tempBoard, humanPlayerId);
-                    const potentialMillsBefore = getPotentialMillsCount(state.board, humanPlayerId);
-                    if (potentialMillsAfter > potentialMillsBefore) score += 100;
-
-                    const r = Math.floor(target / SIZE), c = target % SIZE;
-                    const neighbors = [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]];
-                    let adjacentFriends = 0;
-                    for (const [nr, nc] of neighbors) {
-                        if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && state.board[nr * SIZE + nc] === aiPlayerId) {
-                            adjacentFriends++;
-                        }
+                let score = 0;
+        
+                if (isInverse) {
+                    const depth = aiDifficulty >= 3 ? 2 : 1;
+                    score = minimax(tempBoard, depth, false, humanPlayerId, -Infinity, Infinity);
+                } else {
+                    const opponentMillsBefore = getFormedMillsCount(state.board, humanPlayerId);
+                    const opponentMillsAfter = getFormedMillsCount(tempBoard, humanPlayerId);
+                    if (opponentMillsAfter < opponentMillsBefore) {
+                        score += 5000;
                     }
-                    score += adjacentFriends * 20;
-                    if (STRATEGIC_CELLS.inner_ring.includes(target)) score += 50;
-
-                } else { // AI is CAPTURING a human piece
-                    const potentialMillsBefore = getPotentialMillsCount(state.board, humanPlayerId);
-                    const potentialMillsAfter = getPotentialMillsCount(tempBoard, humanPlayerId);
-                    if (potentialMillsAfter < potentialMillsBefore) score += 100;
-                    if (STRATEGIC_CELLS.inner_ring.includes(target)) score += 50;
+        
+                    if (isPieceInPotentialMill(state.board, target, humanPlayerId)) {
+                        score += 3500; 
+                    }
+                    
+                    const opponentCanFormMillBefore = canPlayerFormMillNextTurn(humanPlayerId, state.board);
+                    const opponentCanFormMillAfter = canPlayerFormMillNextTurn(humanPlayerId, tempBoard);
+                    if (opponentCanFormMillBefore && !opponentCanFormMillAfter) {
+                         score += 2500;
+                    }
+                    
+                    if (aiDifficulty >= 3) {
+                        score += minimax(tempBoard, aiDifficulty - 1, false, humanPlayerId, -Infinity, Infinity);
+                    } else {
+                        score += evaluateBoard(tempBoard, aiPlayerId, null);
+                    }
                 }
-
-                if (aiDifficulty === 3) {
-                    const minimaxScore = minimax(tempBoard, aiDifficulty, false, humanPlayerId, -Infinity, Infinity);
-                    score += minimaxScore;
-                }
-
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestTarget = target;
+        
+                if (isInverse) { 
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestTarget = target;
+                    }
+                } else { 
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestTarget = target;
+                    }
                 }
             }
-            return bestTarget !== -1 ? bestTarget : possibleTargets[0];
+            return bestTarget !== -1 ? bestTarget : possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+        }
+
+        function countDoubleMillSetups(board, player) {
+            let hotSpots = {};
+            const lines = [];
+            for (let r = 0; r < SIZE; r++) { for (let c = 0; c < SIZE - 2; c++) { lines.push([r*SIZE+c, r*SIZE+c+1, r*SIZE+c+2]); } }
+            for (let c = 0; c < SIZE; c++) { for (let r = 0; r < SIZE - 2; r++) { lines.push([r*SIZE+c, (r+1)*SIZE+c, (r+2)*SIZE+c]); } }
+
+            for (const line of lines) {
+                let pCount = 0;
+                let emptyIdx = -1;
+                for (const idx of line) {
+                    if (board[idx] === player) pCount++;
+                    else if (board[idx] === null) emptyIdx = idx;
+                }
+                if (pCount === 2 && emptyIdx !== -1) {
+                    hotSpots[emptyIdx] = (hotSpots[emptyIdx] || 0) + 1;
+                }
+            }
+            
+            let doubleMillCount = 0;
+            for (const spot in hotSpots) {
+                if (hotSpots[spot] >= 2) {
+                    doubleMillCount++;
+                }
+            }
+            return doubleMillCount;
         }
 
         function evaluateBoard(board, playerToEvaluate, simulatedWinner) {
@@ -2557,9 +2607,9 @@
 
             if (simulatedWinner !== null) {
                 if (variantConfig[variant].isInverseWin) {
-                    return simulatedWinner === playerToEvaluate ? 10000 : -10000;
+                    return simulatedWinner === playerToEvaluate ? 100000 : -100000;
                 }
-                return simulatedWinner === playerToEvaluate ? 10000 : -10000;
+                return simulatedWinner === playerToEvaluate ? 100000 : -100000;
             }
 
             const playerPieces = board.filter(p => p === playerToEvaluate).length;
@@ -2569,7 +2619,7 @@
 
             let score = 0;
             score += (playerPieces - opponentPieces) * 200;
-            score += (playerMoves - opponentMoves) * 10;
+            score += (playerMoves - opponentMoves) * 30; // Poids de la mobilité augmenté
             
             const playerMills = getFormedMillsCount(board, playerToEvaluate);
             const opponentMills = getFormedMillsCount(board, opponent);
@@ -2579,8 +2629,12 @@
             const opponentPotentialMills = getPotentialMillsCount(board, opponent);
             score += (playerPotentialMills - opponentPotentialMills) * 50;
             
-            if (canPlayerFormMillNextTurn(opponent, board)) score -= 500;
-            if (canPlayerFormMillNextTurn(playerToEvaluate, board)) score += 400;
+            const playerDoubleMills = countDoubleMillSetups(board, playerToEvaluate);
+            const opponentDoubleMills = countDoubleMillSetups(board, opponent);
+            score += (playerDoubleMills - opponentDoubleMills) * 5000;
+            
+            if (canPlayerFormMillNextTurn(opponent, board)) score -= 1000;
+            if (canPlayerFormMillNextTurn(playerToEvaluate, board)) score += 800;
 
             if (variantConfig[variant].isInverseWin) {
                 score = -score;
@@ -2758,6 +2812,21 @@
             const player = aiPlayerId;
             const opponent = humanPlayerId;
             const currentPhase = state.phase;
+            
+            // AMÉLIORATION: Livre d'ouvertures pour le niveau Impossible
+            if (aiDifficulty === 4 && currentPhase === 'placement') {
+                const turnNumber = state.board.filter(p => p !== null).length;
+                if (turnNumber < 2 && state.board[12] === null) {
+                    return { to: 12 }; // 1. Prendre le centre
+                }
+                if (turnNumber < 4 && state.board[12] === aiPlayerId) {
+                    const preferredCorners = [6, 8, 16, 18];
+                    for(const corner of preferredCorners) {
+                        if(state.board[corner] === null) return {to: corner}; // 2. Prendre un coin intérieur
+                    }
+                }
+            }
+
             const possibleMoves = generateAllPossibleMoves(player, state.board, currentPhase);
 
             if (possibleMoves.length === 0) return null;
@@ -2781,7 +2850,13 @@
                 return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
             }
 
-            const depth = aiDifficulty;
+            let depth = {1: 1, 2: 2, 3: 4, 4: 5}[aiDifficulty] || 2;
+            
+            // AMÉLIORATION: Augmentation dynamique de la profondeur en fin de partie pour le niveau Impossible
+            if (aiDifficulty === 4 && state.phase === 'move' && state.board.filter(p => p !== null).length <= 8) {
+                depth += 1; // Passe à une profondeur de 6 en fin de partie
+            }
+
             let bestMove = null;
             let bestScore = -Infinity;
 
