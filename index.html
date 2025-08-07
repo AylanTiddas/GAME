@@ -22,7 +22,6 @@
             --transition-duration: 0.3s;
             --board-border-dark: #201b17;
             --board-surface-light: #e0d4c2;
-            --cell-border: rgba(0,0,0,0.2);
             --parchment-bg: #f5eeda;
             --info-blue: #63a4ff;
 
@@ -1206,7 +1205,7 @@
                 </button>
                 <button class="option-btn difficulty-btn" data-level="4">
                     <i class="fas fa-skull-crossbones"></i>
-                    <span data-i18n="difficultyImpossible">Impossible</span>
+                    <span data-i18n="difficultyImpossible">Expert</span>
                     <span data-i18n="difficultyImpossibleDesc">L'IA anticipe vos moindres faits et gestes</span>
                 </button>
             </div>
@@ -1472,7 +1471,7 @@
             "tiddezt-no-diag": { name: "TIDDEZT", isInverseWin: false, forceMillMove: false },
             "bessif-tiddezt": { name: "Učči bessif TIDDEZT", isInverseWin: true, forceMillMove: true }
         };
-        const aiDifficultyNames = { 1: "Easy", 2: "Medium", 3: "Hard" };
+        const aiDifficultyNames = { 1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert" };
 
         // --- TRANSLATIONS ---
         const translations = {
@@ -1497,17 +1496,17 @@
                 playAIDesc: "Affrontez une intelligence artificielle",
                 playOffline: "Jouer hors-ligne",
                 playOfflineDesc: "Partie locale sur votre appareil",
-                backToVersions: "Retour aux versions",
+                backToVersions: "Retour",
                 chooseAIDifficulty: "Choisir la difficulté de l'ordinateur",
                 difficultyEasy: "Facile",
                 difficultyMedium: "Moyen",
                 difficultyHard: "Difficile",
-                difficultyImpossible: "Très Difficile", // NOUVEAU
+                difficultyImpossible: "Expert", 
                 difficultyEasyDesc: "L'ordinateur joue au hasard",
                 difficultyMediumDesc: "L'ordinateur est un adversaire correct",
                 difficultyHardDesc: "L'ordinateur est un vrai stratège",
-                difficultyImpossibleDesc: "L'IA anticipe vos moindres faits et gestes", // NOUVEAU
-                backToModes: "Retour aux modes",
+                difficultyImpossibleDesc: "L'IA anticipe vos moindres faits et gestes",
+                backToModes: "Retour",
                 playerSetup: "Configuration des joueurs",
                 playerNamesTitle: "Noms des joueurs",
                 chooseYourColorTitle: "Choisir votre couleur",
@@ -1620,17 +1619,17 @@
                 playAIDesc: "Urar i yiman-ik",
                 playOffline: "Urar war internet",
                 playOfflineDesc: "Urar d umeddakul",
-                backToVersions: "Tuɣalin ɣer ufran n Tiddest",
+                backToVersions: "Uɣal",
                 chooseAIDifficulty: "Fren aswir n uselkim",
                 difficultyEasy: "Aḥlawan",
                 difficultyMedium: "Alemmas",
                 difficultyHard: "Aquran",
-                difficultyImpossible: "Awessar", // NOUVEAU
+                difficultyImpossible: "Awessar",
                 difficultyEasyDesc: "Aselkim yetturar kan akka!",
                 difficultyMediumDesc: "Aselkim yetturar swaswa kan",
                 difficultyHardDesc: "Aselkim yewɛeṛ ad t-trebḥeḍ",
-                difficultyImpossibleDesc: "Aselkim yeẓra ayen ara txedmeḍ", // NOUVEAU
-                backToModes: "Tuɣalin ɣer tegnatin",
+                difficultyImpossibleDesc: "Aselkim yeẓra ayen ara txedmeḍ",
+                backToModes: "Uɣal",
                 playerSetup: "Aheggi n yemyurar",
                 playerNamesTitle: "Ismawen n yemyurar",
                 chooseYourColorTitle: "Fren ini-k",
@@ -2306,7 +2305,7 @@
             const playerToAct = state.captureMode ? state.turnForCapture : state.turn;
 
             if (gameMode === 'ai' && playerToAct === aiPlayerId) {
-                const delay = aiDifficulty === 4 ? 800 : 500; // slightly more delay for the impossible AI to feel like it's "thinking"
+                const delay = aiDifficulty === 4 ? 800 : 500; // slightly more delay for the expert AI to feel like it's "thinking"
                 setTimeout(() => { makeAiMove(); }, delay);
             }
         }
@@ -2423,28 +2422,61 @@
             const opponent = 3 - playerToEvaluate;
             let score = 0;
 
+            const playerPotentialMills = getPotentialMillsCount(board, playerToEvaluate);
+            const opponentPotentialMills = getPotentialMillsCount(board, opponent);
+            const playerDoubleMills = countDoubleMillSetups(board, playerToEvaluate);
+            const opponentDoubleMills = countDoubleMillSetups(board, opponent);
+
             if (!variantConfig[variant].isInverseWin) {
+                // --- NORMAL WIN LOGIC ---
+                score += playerDoubleMills * 600;
+                score -= opponentDoubleMills * 700;
+                score += playerPotentialMills * 40;
+                score -= opponentPotentialMills * 50;
+
                 board.forEach((cell, idx) => {
                     if (cell === playerToEvaluate) {
-                        if (STRATEGIC_CELLS.center.includes(idx)) score += 50;
-                        if (STRATEGIC_CELLS.inner_corners.includes(idx)) score += 35;
-                        if (STRATEGIC_CELLS.edge_centers.includes(idx)) score += 20;
+                        if (STRATEGIC_CELLS.center.includes(idx)) score += 40;
+                        if (STRATEGIC_CELLS.inner_corners.includes(idx)) score += 25;
+                        if (STRATEGIC_CELLS.edge_centers.includes(idx)) score += 15;
+                    } else if (cell === opponent) {
+                        if (STRATEGIC_CELLS.center.includes(idx)) score -= 40;
+                        if (STRATEGIC_CELLS.inner_corners.includes(idx)) score -= 25;
                     }
                 });
-                score += getPotentialMillsCount(board, playerToEvaluate) * 30;
-                score -= getPotentialMillsCount(board, opponent) * 40;
+
             } else {
+                // --- INVERSE WIN LOGIC (Učči Bessif) ---
+                // In inverse mode, a higher score is WORSE. The AI tries to find the lowest score.
+                // Huge penalties (add to score) for creating mill setups.
+                score += playerPotentialMills * 500;
+                score += playerDoubleMills * 2000;
+
+                // Rewards (subtract from score) for the opponent having mill setups.
+                score -= opponentPotentialMills * 50;
+                score -= opponentDoubleMills * 500;
+
                 board.forEach((cell, idx) => {
                     if (cell === playerToEvaluate) {
-                        if (STRATEGIC_CELLS.center.includes(idx)) score -= 50;
-                        if (STRATEGIC_CELLS.inner_ring.includes(idx)) score -= 25;
+                        // Penalties for strong positions.
+                        if (STRATEGIC_CELLS.center.includes(idx)) score += 1000;
+                        if (STRATEGIC_CELLS.inner_corners.includes(idx)) score += 500;
+                        if (STRATEGIC_CELLS.edge_centers.includes(idx)) score += 250;
+
                         const r = Math.floor(idx / SIZE), c = idx % SIZE;
-                        if (c > 0 && board[idx - 1] === playerToEvaluate) score -= 30;
-                        if (r > 0 && board[idx - SIZE] === playerToEvaluate) score -= 30;
+                        const neighbors = [[r-1,c], [r+1,c], [r,c-1], [r,c+1]];
+                        neighbors.forEach(([nr, nc]) => {
+                           if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE) {
+                               const nIdx = nr * SIZE + nc;
+                               if(board[nIdx] === playerToEvaluate) {
+                                   score += 750; // Strong penalty for grouping with own pieces.
+                               } else if (board[nIdx] === opponent) {
+                                   score -= 100; // Small reward for being next to an opponent (easier to be captured).
+                               }
+                           }
+                        });
                     }
                 });
-                score -= getPotentialMillsCount(board, playerToEvaluate) * 40;
-                score += getPotentialMillsCount(board, opponent) * 50;
             }
             return score;
         }
@@ -2511,7 +2543,6 @@
         function aiChoosePieceToActOn() {
             const isInverse = variantConfig[variant].isInverseWin;
             const playerToTarget = isInverse ? aiPlayerId : humanPlayerId;
-        
             const possibleTargets = [];
             for (let i = 0; i < state.board.length; i++) {
                 if (state.board[i] === playerToTarget) {
@@ -2520,52 +2551,55 @@
             }
         
             if (possibleTargets.length === 0) return null;
-        
             if (aiDifficulty === 1) {
                 return possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
             }
         
             let bestTarget = -1;
-            let bestScore = isInverse ? Infinity : -Infinity;
-        
-            for (const target of possibleTargets) {
-                const tempBoard = [...state.board];
-                tempBoard[target] = null;
-                let score = 0;
-        
-                if (isInverse) {
-                    const depth = aiDifficulty >= 3 ? 2 : 1;
-                    score = minimax(tempBoard, depth, false, humanPlayerId, -Infinity, Infinity);
-                } else {
+            
+            if (isInverse) {
+                let maxDamageScore = -Infinity;
+                for (const target of possibleTargets) {
+                    let damageScore = 0;
+                    const tempBoard = [...state.board];
+                    tempBoard[target] = null;
+                    
+                    if (isPieceInPotentialMill(state.board, target, aiPlayerId)) {
+                        damageScore += 1000;
+                    }
+                    const setupsBefore = countDoubleMillSetups(state.board, aiPlayerId);
+                    const setupsAfter = countDoubleMillSetups(tempBoard, aiPlayerId);
+                    if (setupsAfter < setupsBefore) {
+                        damageScore += 5000;
+                    }
+
+                    if (damageScore > maxDamageScore) {
+                        maxDamageScore = damageScore;
+                        bestTarget = target;
+                    }
+                }
+
+            } else {
+                let bestScore = -Infinity;
+                for (const target of possibleTargets) {
+                    const tempBoard = [...state.board];
+                    tempBoard[target] = null;
+                    let score = 0;
+
                     const opponentMillsBefore = getFormedMillsCount(state.board, humanPlayerId);
                     const opponentMillsAfter = getFormedMillsCount(tempBoard, humanPlayerId);
-                    if (opponentMillsAfter < opponentMillsBefore) {
-                        score += 5000;
-                    }
-        
-                    if (isPieceInPotentialMill(state.board, target, humanPlayerId)) {
-                        score += 3500; 
-                    }
-                    
+                    if (opponentMillsAfter < opponentMillsBefore) score += 5000;
+                    if (isPieceInPotentialMill(state.board, target, humanPlayerId)) score += 3500;
                     const opponentCanFormMillBefore = canPlayerFormMillNextTurn(humanPlayerId, state.board);
                     const opponentCanFormMillAfter = canPlayerFormMillNextTurn(humanPlayerId, tempBoard);
-                    if (opponentCanFormMillBefore && !opponentCanFormMillAfter) {
-                         score += 2500;
-                    }
+                    if (opponentCanFormMillBefore && !opponentCanFormMillAfter) score += 2500;
                     
                     if (aiDifficulty >= 3) {
-                        score += minimax(tempBoard, aiDifficulty - 1, false, humanPlayerId, -Infinity, Infinity);
+                         score += minimax(tempBoard, (aiDifficulty === 4 ? 3 : aiDifficulty - 1), false, humanPlayerId, -Infinity, Infinity);
                     } else {
                         score += evaluateBoard(tempBoard, aiPlayerId, null);
                     }
-                }
-        
-                if (isInverse) { 
-                    if (score < bestScore) {
-                        bestScore = score;
-                        bestTarget = target;
-                    }
-                } else { 
+                    
                     if (score > bestScore) {
                         bestScore = score;
                         bestTarget = target;
@@ -2619,7 +2653,7 @@
 
             let score = 0;
             score += (playerPieces - opponentPieces) * 200;
-            score += (playerMoves - opponentMoves) * 30; // Poids de la mobilité augmenté
+            score += (playerMoves - opponentMoves) * 60; 
             
             const playerMills = getFormedMillsCount(board, playerToEvaluate);
             const opponentMills = getFormedMillsCount(board, opponent);
@@ -2627,18 +2661,27 @@
 
             const playerPotentialMills = getPotentialMillsCount(board, playerToEvaluate);
             const opponentPotentialMills = getPotentialMillsCount(board, opponent);
-            score += (playerPotentialMills - opponentPotentialMills) * 50;
+            score += (playerPotentialMills - opponentPotentialMills) * 75;
             
             const playerDoubleMills = countDoubleMillSetups(board, playerToEvaluate);
             const opponentDoubleMills = countDoubleMillSetups(board, opponent);
             score += (playerDoubleMills - opponentDoubleMills) * 5000;
             
             if (canPlayerFormMillNextTurn(opponent, board)) score -= 1000;
-            if (canPlayerFormMillNextTurn(playerToEvaluate, board)) score += 800;
+            if (canPlayerFormMillNextTurn(playerToEvaluate, board)) score += 900;
 
             if (variantConfig[variant].isInverseWin) {
                 score = -score;
-                score -= playerMills * 300;
+                score -= playerMills * 300; // Extra penalty for having formed mills in inverse mode
+                
+                // Huge penalty if AI is in a state where it's forced to make a mill
+                if(variantConfig[variant].forceMillMove){
+                    const allAiMoves = generateAllPossibleMoves(playerToEvaluate, board, 'move');
+                    const millAiMoves = getPossibleMillMoves(playerToEvaluate, board);
+                    if (allAiMoves.length > 0 && allAiMoves.length === millAiMoves.length) {
+                        score += 50000; // Add a massive penalty (higher score is worse for inverse-win)
+                    }
+                }
             }
             
             return score;
@@ -2662,6 +2705,40 @@
             return count;
         }
         
+        function isGrouped(board, pieceIndex, player) {
+            const r = Math.floor(pieceIndex / SIZE);
+            const c = pieceIndex % SIZE;
+            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+            for (const [dr, dc] of directions) {
+                const nr = r + dr;
+                const nc = c + dc;
+                if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE) {
+                    const neighborIndex = nr * SIZE + nc;
+                    if (board[neighborIndex] === player) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function canPlayerFormMillByMoving(player, board) {
+            for (let from = 0; from < SIZE * SIZE; from++) {
+                if (board[from] === player) {
+                    for (let to = 0; to < SIZE * SIZE; to++) {
+                        if (board[to] === null && isAdjacent(from, to)) {
+                            const tempBoard = simulateMove(board, {from, to}, player);
+                            if (findAllMills(board, tempBoard, from, to, player).length > 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         function canPlayerFormMillNextTurn(player, board) {
             return getPossibleMillMoves(player, board).length > 0;
         }
@@ -2790,13 +2867,15 @@
 
         function getWinnerInState(board) {
             const isMovePhase = (board.filter(p => p !== null).length >= PIECES * 2);
+            if (!isMovePhase) return null;
+
             const p1Pieces = board.filter(p => p === 1).length;
             const p2Pieces = board.filter(p => p === 2).length;
             const p1CanMove = canPlayerMove(1, board);
             const p2CanMove = canPlayerMove(2, board);
             
-            const p1Loses = p1Pieces < 3 || (isMovePhase && !p1CanMove);
-            const p2Loses = p2Pieces < 3 || (isMovePhase && !p2CanMove);
+            const p1Loses = p1Pieces < 3 || !p1CanMove;
+            const p2Loses = p2Pieces < 3 || !p2CanMove;
             
             if (variantConfig[variant].isInverseWin) { 
                 if (p1Loses) return 1;
@@ -2812,28 +2891,62 @@
             const player = aiPlayerId;
             const opponent = humanPlayerId;
             const currentPhase = state.phase;
+            const isInverse = variantConfig[variant].isInverseWin;
             
-            // AMÉLIORATION: Livre d'ouvertures pour le niveau Impossible
-            if (aiDifficulty === 4 && currentPhase === 'placement') {
+            // This hardcoded opening is only for the NORMAL win variant.
+            if (!isInverse && aiDifficulty === 4 && currentPhase === 'placement') {
                 const turnNumber = state.board.filter(p => p !== null).length;
                 if (turnNumber < 2 && state.board[12] === null) {
-                    return { to: 12 }; // 1. Prendre le centre
+                    return { to: 12 }; 
                 }
                 if (turnNumber < 4 && state.board[12] === aiPlayerId) {
                     const preferredCorners = [6, 8, 16, 18];
                     for(const corner of preferredCorners) {
-                        if(state.board[corner] === null) return {to: corner}; // 2. Prendre un coin intérieur
+                        if(state.board[corner] === null) return {to: corner};
                     }
                 }
             }
 
-            const possibleMoves = generateAllPossibleMoves(player, state.board, currentPhase);
-
+            let possibleMoves = generateAllPossibleMoves(player, state.board, currentPhase);
             if (possibleMoves.length === 0) return null;
             
-            if (currentPhase === 'move') {
+            if (isInverse) {
+                if (currentPhase === 'placement') {
+                    const idealMoves = possibleMoves.filter(move => {
+                        const newBoard = simulateMove(state.board, move, player);
+                        const avoidsMillSetup = !canPlayerFormMillByMoving(player, newBoard);
+                        const avoidsGrouping = !isGrouped(newBoard, move.to, player);
+                        return avoidsMillSetup && avoidsGrouping;
+                    });
+
+                    if (idealMoves.length > 0) {
+                        possibleMoves = idealMoves;
+                    } else {
+                        const nonMillSetupMoves = possibleMoves.filter(move => {
+                            const newBoard = simulateMove(state.board, move, player);
+                            return !canPlayerFormMillByMoving(player, newBoard);
+                        });
+                        if (nonMillSetupMoves.length > 0) {
+                            possibleMoves = nonMillSetupMoves;
+                        }
+                    }
+                } else { // Move phase
+                    const potentialMillsBefore = getPotentialMillsCount(state.board, player);
+                    const safeMoves = possibleMoves.filter(move => {
+                        const newBoard = simulateMove(state.board, move, player);
+                        const potentialMillsAfter = getPotentialMillsCount(newBoard, player);
+                        return potentialMillsAfter <= potentialMillsBefore;
+                    });
+
+                    if (safeMoves.length > 0) {
+                        possibleMoves = safeMoves;
+                    }
+                }
+            }
+            
+            if (currentPhase === 'move' && !isInverse) {
                 const millMoves = getPossibleMillMoves(player, state.board);
-                if (millMoves.length > 0 && !variantConfig[variant].isInverseWin) {
+                if (millMoves.length > 0) {
                     return millMoves[Math.floor(Math.random() * millMoves.length)];
                 }
                 const opponentMillMoves = getPossibleMillMoves(opponent, state.board);
@@ -2851,21 +2964,30 @@
             }
 
             let depth = {1: 1, 2: 2, 3: 4, 4: 5}[aiDifficulty] || 2;
-            
-            // AMÉLIORATION: Augmentation dynamique de la profondeur en fin de partie pour le niveau Impossible
-            if (aiDifficulty === 4 && state.phase === 'move' && state.board.filter(p => p !== null).length <= 8) {
-                depth += 1; // Passe à une profondeur de 6 en fin de partie
+            if (currentPhase === 'placement' && depth > 4) {
+                 depth = 4;
+            }
+            if (aiDifficulty === 4 && state.phase === 'move' && state.board.filter(p => p !== null).length <= 10) {
+                depth++;
             }
 
             let bestMove = null;
-            let bestScore = -Infinity;
+            let bestScore = isInverse ? Infinity : -Infinity;
 
             for (const move of possibleMoves) {
                 const newBoard = simulateMove(state.board, move, player);
-                const score = minimax(newBoard, depth - 1, false, opponent, -Infinity, Infinity);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = move;
+                const score = minimax(newBoard, depth - 1, isInverse, opponent, -Infinity, Infinity);
+                
+                if (isInverse) {
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestMove = move;
+                    }
+                } else {
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = move;
+                    }
                 }
             }
             
