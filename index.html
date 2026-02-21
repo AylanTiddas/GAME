@@ -3877,17 +3877,6 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
   transform: translateY(-1px);
 }
 
-/* Hint clavier replay */
-.replay-kbd-hint {
-  font-size: 0.72rem;
-  opacity: 0.55;
-  letter-spacing: 0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--modal-subtext);
-  white-space: nowrap;
-  cursor: help;
-}
-
 /* Indicateur de lecture sur le plateau (bande translucide) */
 .replay-board-indicator {
   position: fixed;
@@ -3908,54 +3897,6 @@ body.replay-active .replay-board-indicator { display: block; }
 @keyframes replayBarPulse {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 0.9; }
-}
-
-/* ────────────────────────────────────────────────────────────────
-   REPLAY — Supprimer les cues interactifs pendant le replay
-   Les cases "capturable", "selected", "possible-move" ne doivent
-   pas donner l'impression d'être cliquables pendant la lecture.
-   ──────────────────────────────────────────────────────────────── */
-body.replay-active .cell {
-  cursor: default !important;
-  pointer-events: none !important;
-}
-body.replay-active .cell.capturable {
-  animation: none !important;
-  outline: 2px dashed rgba(255, 77, 77, 0.55) !important;
-  background: rgba(255, 0, 0, 0.10) !important;
-}
-body.replay-active .cell.possible-move {
-  animation: none !important;
-  outline-style: dashed !important;
-  outline-color: rgba(240, 200, 80, 0.40) !important;
-  background: rgba(240, 200, 80, 0.08) !important;
-}
-body.replay-active .cell.selected {
-  animation: none !important;
-  box-shadow: none !important;
-}
-body.replay-active .stone.selected {
-  animation: none !important;
-  transform: scale(1) !important;
-  filter: none !important;
-}
-body.replay-active .stone.hint-piece {
-  animation: none !important;
-}
-/* Libérer de la place pour le panneau de contrôle replay fixé en bas */
-body.replay-active .game-play-area.active {
-  padding-bottom: calc(220px + env(safe-area-inset-bottom, 0px)) !important;
-  overflow-y: auto;
-}
-/* Garantir la visibilité de la barre de statut (#status) pendant le replay */
-body.replay-active #status {
-  opacity: 1 !important;
-  pointer-events: none;
-}
-/* Badge REPLAY : on le monte légèrement pour éviter la superposition avec le header */
-body.replay-active .replay-badge {
-  top: 0.5rem;
-  z-index: 6100;
 }
 
 /* Badge "REPLAY" flottant sur le plateau */
@@ -7557,7 +7498,6 @@ function loadAndResume() {
 <option value="3">3×</option>
 </select>
 </label>
-<span class="replay-kbd-hint" title="Raccourcis : ← → pour naviguer · Espace pour lecture/pause · Échap pour fermer">⌨ ← ▶ →</span>
 <button id="replay-exit-btn" type="button"><span data-i18n="close">✕ Fermer</span></button>
 </div>
 </div>
@@ -7977,29 +7917,6 @@ function loadAndResume() {
       const [a, b] = diff;
       if (oldB[a] != null && newB[a] == null && oldB[b] == null && newB[b] != null) { d.from = a; d.to = b; }
       else if (oldB[b] != null && newB[b] == null && oldB[a] == null && newB[a] != null) { d.from = b; d.to = a; }
-    } else if (diff.length === 3) {
-      // Cas : déplacement + capture dans le même frame
-      // Une case libérée (pion qui bouge), une case occupée (destination), une capturée (adversaire)
-      let disappearedA = null, disappearedB = null, appeared = null;
-      for (const i of diff) {
-        if (oldB[i] != null && newB[i] == null) {
-          if (disappearedA === null) disappearedA = i; else disappearedB = i;
-        } else if (oldB[i] == null && newB[i] != null) {
-          appeared = i;
-        }
-      }
-      if (appeared !== null && disappearedA !== null && disappearedB !== null) {
-        // Le "from" est celui dont le joueur correspond à la destination ; l'autre est la capture
-        if (oldB[disappearedA] === newB[appeared]) {
-          d.from = disappearedA; d.to = appeared; d.capture = disappearedB;
-        } else {
-          d.from = disappearedB; d.to = appeared; d.capture = disappearedA;
-        }
-      } else if (appeared !== null && disappearedA !== null) {
-        d.from = disappearedA; d.to = appeared;
-      } else if (disappearedA !== null) {
-        d.capture = disappearedA;
-      }
     }
     return d;
   }
@@ -8034,7 +7951,8 @@ function loadAndResume() {
       winner: s.winner ?? null,
       highlightedMills: Array.isArray(s.highlightedMills) ? [...s.highlightedMills] : [],
       pendingCaptures: s.pendingCaptures ?? 0,
-      placedCount: s.placedCount ?? null
+      consecutivePiece: s.consecutivePiece ? { ...s.consecutivePiece } : { 1: null, 2: null },
+      consecutiveCount: s.consecutiveCount ? { ...s.consecutiveCount } : { 1: 0, 2: 0 }
     };
   }
 
@@ -8610,29 +8528,7 @@ function loadAndResume() {
     const p1 = meta.player1Name || 'J1';
     const p2 = meta.player2Name || 'J2';
     replayMetaEl.textContent = `${vName} · ${mode}${diff} · ${p1} vs ${p2}`;
-
-    // Indicateur de coup enrichi : numéro + phase + action en cours
-    const frame = replay.frames[replay.idx];
-    let phaseLabel = '';
-    let actionLabel = '';
-    if (frame) {
-      if (frame.phase === 'placement') {
-        phaseLabel = '📥 Placement';
-      } else if (frame.phase === 'move') {
-        phaseLabel = '♟ Déplacement';
-      } else if (frame.winner) {
-        phaseLabel = '🏆 Fin de partie';
-      }
-      if (frame.captureMode) {
-        actionLabel = ' · 🗡 Capture';
-      }
-      if (frame.winner) {
-        const winnerName = frame.winner === 1 ? (meta.player1Name || 'J1') : (meta.player2Name || 'J2');
-        actionLabel = ` · 🏆 ${winnerName} gagne`;
-      }
-    }
-    const stepText = `Coup ${replay.idx + 1} / ${replay.frames.length}${phaseLabel ? '  •  ' + phaseLabel : ''}${actionLabel}`;
-    if (replayStepEl) replayStepEl.textContent = stepText;
+    if (replayStepEl) replayStepEl.textContent = `Coup ${replay.idx + 1} / ${replay.frames.length}`;
   }
 
   function setReplayIndex(i) {
@@ -8656,8 +8552,13 @@ function loadAndResume() {
     try {
       window.state = clone(replay.frames[replay.idx]);
       window.state.selected = null;
+      // Les frames minifiées ne contiennent pas ces champs requis par renderBoard()
+      // en phase de déplacement. Sans eux, state.consecutivePiece[p] lève une TypeError
+      // silencieusement avalée, et le plateau n'est jamais dessiné.
+      if (!window.state.consecutivePiece) window.state.consecutivePiece = { 1: null, 2: null };
+      if (!window.state.consecutiveCount) window.state.consecutiveCount = { 1: 0, 2: 0 };
       window.renderAll?.();
-    } catch(_) {}
+    } catch(e) { console.error('[Replay] renderAll error:', e); }
   }
 
   function stopReplayTimer() {
@@ -8677,8 +8578,6 @@ function loadAndResume() {
     if (!replay.frames.length) return;
     const speed = Number(replaySpeed?.value || '1') || 1;
     const delay = Math.max(180, Math.floor(700 / speed));
-    // Persister la vitesse choisie
-    try { localStorage.setItem('tiddas_replay_speed', String(replaySpeed?.value || '1')); } catch(_) {}
 
     const tick = () => {
       if (!replay.active) return;
@@ -8779,17 +8678,7 @@ function loadAndResume() {
       replayRange.value = '0';
     }
 
-    // Restaurer la vitesse sauvegardée
-    if (replaySpeed) {
-      try {
-        const savedSpeed = localStorage.getItem('tiddas_replay_speed');
-        if (savedSpeed) replaySpeed.value = savedSpeed;
-      } catch(_) {}
-    }
-
     setReplayIndex(0);
-    // Donner le focus au bouton play pour accessibilité clavier
-    try { replayPlayBtn?.focus(); } catch(_) {}
   }
 
   function closeReplay() {
@@ -8846,27 +8735,6 @@ function loadAndResume() {
   if (replayNextBtn) replayNextBtn.addEventListener('click', () => stepReplay(1));
   if (replayFirstBtn) replayFirstBtn.addEventListener('click', () => { stopReplayTimer(); setReplayIndex(0); });
   if (replayLastBtn) replayLastBtn.addEventListener('click', () => { stopReplayTimer(); setReplayIndex(replay.frames.length - 1); });
-
-  // Persistance de la vitesse de replay
-  if (replaySpeed) {
-    replaySpeed.addEventListener('change', () => {
-      try { localStorage.setItem('tiddas_replay_speed', replaySpeed.value); } catch(_) {}
-    });
-  }
-
-  // Raccourcis clavier pour le replay
-  document.addEventListener('keydown', (e) => {
-    if (!replay.active) return;
-    // Ne pas intercepter si le focus est dans un champ de saisie
-    const tag = document.activeElement?.tagName;
-    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
-    if (e.key === 'ArrowLeft') { e.preventDefault(); stepReplay(-1); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); stepReplay(1); }
-    else if (e.key === ' ') { e.preventDefault(); playReplay(); }
-    else if (e.key === 'Home') { e.preventDefault(); stopReplayTimer(); setReplayIndex(0); }
-    else if (e.key === 'End') { e.preventDefault(); stopReplayTimer(); setReplayIndex(replay.frames.length - 1); }
-    else if (e.key === 'Escape') { e.preventDefault(); closeReplay(); }
-  });
 
   // ---------------------------------------------------------
   // 11) PWA install + Service Worker (best effort)
