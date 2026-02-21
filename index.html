@@ -3485,6 +3485,602 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
   padding-bottom: env(safe-area-inset-bottom);
 }
 </style>
+<style nonce="tiddas">
+/* ═══════════════════════════════════════════════════════════════════
+   TIDDAS — PATCH GLOBAL : REPLAY FLOTTANT + VISIBILITÉ THÈMES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────
+   1. TOKENS UNIVERSELS PAR THÈME (modale + stat-cards)
+   ──────────────────────────────────────────────────────────────── */
+:root {
+  /* Thème sombre par défaut */
+  --modal-surface:       linear-gradient(160deg, #3a2d25 0%, #2a201a 100%);
+  --modal-text:          rgba(245,245,245,0.94);
+  --modal-subtext:       rgba(245,245,245,0.68);
+  --modal-heading:       #f0c850;
+  --modal-border:        rgba(240,200,80,0.45);
+
+  --stat-surface:        rgba(255,255,255,0.07);
+  --stat-border-c:       rgba(240,200,80,0.18);
+  --stat-label:          rgba(245,235,200,0.70);
+  --stat-value:          #f0c850;
+  --stat-misc-text:      rgba(245,235,200,0.82);
+}
+
+[data-theme="nuit"] {
+  --modal-surface:       linear-gradient(160deg, #0e0b22 0%, #08061a 100%);
+  --modal-text:          rgba(240,234,255,0.94);
+  --modal-subtext:       rgba(240,234,255,0.60);
+  --modal-heading:       #bb86fc;
+  --modal-border:        rgba(187,134,252,0.38);
+  --stat-surface:        rgba(187,134,252,0.10);
+  --stat-border-c:       rgba(187,134,252,0.20);
+  --stat-label:          rgba(240,234,255,0.58);
+  --stat-value:          #bb86fc;
+  --stat-misc-text:      rgba(240,234,255,0.78);
+}
+
+[data-theme="glass"] {
+  --modal-surface:       linear-gradient(160deg, rgba(30,15,60,0.88), rgba(15,8,40,0.92));
+  --modal-text:          rgba(240,234,255,0.96);
+  --modal-subtext:       rgba(240,234,255,0.62);
+  --modal-heading:       #e8b4f8;
+  --modal-border:        rgba(232,180,248,0.38);
+  --stat-surface:        rgba(255,255,255,0.08);
+  --stat-border-c:       rgba(232,180,248,0.20);
+  --stat-label:          rgba(240,234,255,0.58);
+  --stat-value:          #e8b4f8;
+  --stat-misc-text:      rgba(240,234,255,0.78);
+}
+
+[data-theme="desert"] {
+  --modal-surface:       linear-gradient(160deg, #fffbf0 0%, #fff3d8 100%);
+  --modal-text:          #2a1e0a;
+  --modal-subtext:       #6a5540;
+  --modal-heading:       #8a4500;
+  --modal-border:        rgba(122,58,10,0.28);
+  --stat-surface:        rgba(122,58,10,0.07);
+  --stat-border-c:       rgba(122,58,10,0.14);
+  --stat-label:          #7a6050;
+  --stat-value:          #8a4500;
+  --stat-misc-text:      #5a4030;
+}
+
+[data-theme="kabylie"] {
+  --modal-surface:       linear-gradient(160deg, #ffffff 0%, #f4f8ff 100%);
+  --modal-text:          #1a1612;
+  --modal-subtext:       #4a4a5a;
+  --modal-heading:       #1565c0;
+  --modal-border:        rgba(21,101,192,0.25);
+  --stat-surface:        rgba(30,136,229,0.06);
+  --stat-border-c:       rgba(30,136,229,0.14);
+  --stat-label:          #5a5a6e;
+  --stat-value:          #1565c0;
+  --stat-misc-text:      #3a3a4a;
+}
+
+[data-theme="modern"] {
+  --modal-surface:       #ffffff;
+  --modal-text:          #0f172a;
+  --modal-subtext:       #475569;
+  --modal-heading:       #2563eb;
+  --modal-border:        rgba(15,23,42,0.10);
+  --stat-surface:        rgba(37,99,235,0.06);
+  --stat-border-c:       rgba(37,99,235,0.13);
+  --stat-label:          #64748b;
+  --stat-value:          #2563eb;
+  --stat-misc-text:      #334155;
+}
+
+[data-theme="modern-dark"] {
+  --modal-surface:       #0d1526;
+  --modal-text:          rgba(232,240,254,0.96);
+  --modal-subtext:       rgba(229,231,235,0.64);
+  --modal-heading:       #38bdf8;
+  --modal-border:        rgba(148,163,184,0.18);
+  --stat-surface:        rgba(14,165,233,0.10);
+  --stat-border-c:       rgba(14,165,233,0.18);
+  --stat-label:          rgba(229,231,235,0.58);
+  --stat-value:          #38bdf8;
+  --stat-misc-text:      rgba(229,231,235,0.78);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   2. MODALES — Fond, texte, titres universels
+   ──────────────────────────────────────────────────────────────── */
+.modal-content {
+  background: var(--modal-surface) !important;
+  color: var(--modal-text) !important;
+  border-color: var(--modal-border) !important;
+}
+.modal-content h3 {
+  color: var(--modal-heading) !important;
+  text-shadow: none !important;
+}
+.modal-content p,
+.modal-content label,
+.modal-content span:not(.icon):not([class*="lang"]) {
+  color: inherit;
+}
+.modal-actions button {
+  /* reset couleur texte selon thème dans les actions */
+}
+
+/* ────────────────────────────────────────────────────────────────
+   3. STATS — stat-card, .k, .v universellement lisibles
+   ──────────────────────────────────────────────────────────────── */
+.stat-card {
+  background: var(--stat-surface) !important;
+  border: 1px solid var(--stat-border-c) !important;
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: var(--modal-text) !important;
+}
+.stat-card .k {
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.55px !important;
+  color: var(--stat-label) !important;
+  opacity: 1 !important;
+}
+.stat-card .v {
+  font-size: 1.18rem !important;
+  font-weight: 800 !important;
+  color: var(--stat-value) !important;
+  margin-top: 5px;
+}
+/* Textes libres dans stat-card (dates, etc.) */
+#stats-content div[style*="font-size"] {
+  color: var(--stat-misc-text) !important;
+}
+#stats-content strong {
+  color: var(--stat-value) !important;
+}
+/* Barre de progression */
+.progress-bar {
+  background: var(--stat-border-c) !important;
+  border-color: transparent !important;
+}
+.progress-bar > div {
+  background: linear-gradient(90deg, var(--stat-value), var(--modal-heading)) !important;
+}
+
+/* Stats modal scroll */
+.stats-modal-content { overflow-y: auto; max-height: 85vh; }
+
+/* ────────────────────────────────────────────────────────────────
+   4. REPLAY — PANNEAU FLOTTANT (le plateau reste visible)
+   ──────────────────────────────────────────────────────────────── */
+#replay-modal {
+  /* Écrase le comportement overlay plein écran */
+  position: fixed !important;
+  top: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  /* Pas de fond sombre */
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  /* Centrage du panneau */
+  display: none;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 0 0.75rem 0.75rem !important;
+  z-index: 6000;
+  pointer-events: none;
+}
+#replay-modal.active {
+  display: flex !important;
+  pointer-events: auto;
+}
+
+/* Le panneau lui-même */
+.replay-modal-content {
+  width: 100%;
+  max-width: 580px;
+  /* Fond opaque avec backdrop blur fort pour lisibilité */
+  background: var(--modal-surface) !important;
+  color: var(--modal-text) !important;
+  border: 1.5px solid var(--modal-border) !important;
+  border-radius: 20px 20px 14px 14px !important;
+  padding: 1rem 1.2rem 0.9rem !important;
+  box-shadow:
+    0 -6px 40px rgba(0,0,0,0.38),
+    0 -1px 12px rgba(0,0,0,0.20),
+    0 4px 16px rgba(0,0,0,0.18) !important;
+  backdrop-filter: blur(22px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.4) !important;
+}
+
+/* Titre du panneau replay */
+.replay-modal-content h3 {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: var(--modal-heading) !important;
+  text-align: center;
+  margin-bottom: 0.5rem !important;
+  letter-spacing: 0.3px;
+}
+
+/* Méta (variante · mode · joueurs) */
+.replay-meta {
+  font-size: 0.78rem !important;
+  text-align: center;
+  color: var(--modal-subtext) !important;
+  margin: 0 0 0.55rem !important;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Slider de timeline */
+.replay-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--stat-border-c) !important;
+  outline: none;
+  margin: 0 0 0.45rem !important;
+  cursor: pointer;
+  accent-color: var(--modal-heading);
+}
+.replay-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--modal-heading);
+  border: 2px solid rgba(255,255,255,0.65);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.28);
+  cursor: pointer;
+  transition: transform 0.14s;
+}
+.replay-range::-webkit-slider-thumb:hover { transform: scale(1.25); }
+.replay-range::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--modal-heading);
+  border: 2px solid rgba(255,255,255,0.65);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.28);
+}
+
+/* Indicateur tour courant */
+.replay-step-indicator {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--modal-subtext) !important;
+  margin: -2px 0 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Boutons de contrôle */
+.replay-controls {
+  display: flex !important;
+  gap: 5px !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;
+  margin: 0 0 0.6rem !important;
+}
+.replay-controls button {
+  all: unset;
+  flex: 1;
+  min-width: 38px;
+  max-width: 58px;
+  padding: 0.55rem 0.4rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--modal-border) !important;
+  background: var(--stat-surface) !important;
+  color: var(--modal-text) !important;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.16s, transform 0.12s, box-shadow 0.12s;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.replay-controls button:hover {
+  background: var(--stat-border-c) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18) !important;
+}
+.replay-controls button:active { transform: translateY(0); }
+
+/* Bouton Play : mis en valeur */
+#replay-play-btn {
+  background: color-mix(in srgb, var(--modal-heading) 20%, transparent) !important;
+  border-color: color-mix(in srgb, var(--modal-heading) 55%, transparent) !important;
+  flex: 1.5 !important;
+  max-width: 70px !important;
+  font-size: 1.15rem !important;
+}
+#replay-play-btn:hover {
+  background: color-mix(in srgb, var(--modal-heading) 35%, transparent) !important;
+}
+
+/* Fallback pour les navigateurs sans color-mix */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  #replay-play-btn {
+    background: var(--stat-surface) !important;
+    border-color: var(--modal-heading) !important;
+  }
+}
+
+/* Footer : vitesse + fermer */
+.replay-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin: 0 !important;
+  padding-top: 0.55rem !important;
+  border-top: 1px solid var(--modal-border) !important;
+}
+.replay-footer label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem !important;
+  font-weight: 500;
+  color: var(--modal-subtext) !important;
+  opacity: 1 !important;
+}
+.replay-footer select {
+  all: unset;
+  background: var(--stat-surface) !important;
+  border: 1.5px solid var(--modal-border) !important;
+  color: var(--modal-text) !important;
+  border-radius: 9px;
+  padding: 5px 28px 5px 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.replay-footer select option {
+  background: var(--modal-surface, #2a201a);
+  color: var(--modal-text, #f5f5f5);
+}
+.replay-footer select:hover { border-color: var(--modal-heading) !important; }
+
+/* Bouton Fermer du replay */
+#replay-exit-btn {
+  all: unset;
+  padding: 0.45rem 1rem !important;
+  border-radius: 9px !important;
+  border: 1.5px solid var(--modal-border) !important;
+  background: var(--stat-surface) !important;
+  color: var(--modal-text) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.15s, transform 0.12s !important;
+}
+#replay-exit-btn:hover {
+  background: var(--stat-border-c) !important;
+  transform: translateY(-1px);
+}
+
+/* Hint clavier replay */
+.replay-kbd-hint {
+  font-size: 0.72rem;
+  opacity: 0.55;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--modal-subtext);
+  white-space: nowrap;
+  cursor: help;
+}
+
+/* Indicateur de lecture sur le plateau (bande translucide) */
+.replay-board-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--modal-heading);
+  opacity: 0.7;
+  z-index: 5999;
+  display: none;
+  transform-origin: left;
+  animation: replayBarPulse 1.8s ease-in-out infinite;
+}
+#replay-modal.active ~ .replay-board-indicator,
+body.replay-active .replay-board-indicator { display: block; }
+
+@keyframes replayBarPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   REPLAY — Supprimer les cues interactifs pendant le replay
+   Les cases "capturable", "selected", "possible-move" ne doivent
+   pas donner l'impression d'être cliquables pendant la lecture.
+   ──────────────────────────────────────────────────────────────── */
+body.replay-active .cell {
+  cursor: default !important;
+  pointer-events: none !important;
+}
+body.replay-active .cell.capturable {
+  animation: none !important;
+  outline: 2px dashed rgba(255, 77, 77, 0.55) !important;
+  background: rgba(255, 0, 0, 0.10) !important;
+}
+body.replay-active .cell.possible-move {
+  animation: none !important;
+  outline-style: dashed !important;
+  outline-color: rgba(240, 200, 80, 0.40) !important;
+  background: rgba(240, 200, 80, 0.08) !important;
+}
+body.replay-active .cell.selected {
+  animation: none !important;
+  box-shadow: none !important;
+}
+body.replay-active .stone.selected {
+  animation: none !important;
+  transform: scale(1) !important;
+  filter: none !important;
+}
+body.replay-active .stone.hint-piece {
+  animation: none !important;
+}
+/* Libérer de la place pour le panneau de contrôle replay fixé en bas */
+body.replay-active .game-play-area.active {
+  padding-bottom: calc(220px + env(safe-area-inset-bottom, 0px)) !important;
+  overflow-y: auto;
+}
+/* Garantir la visibilité de la barre de statut (#status) pendant le replay */
+body.replay-active #status {
+  opacity: 1 !important;
+  pointer-events: none;
+}
+/* Badge REPLAY : on le monte légèrement pour éviter la superposition avec le header */
+body.replay-active .replay-badge {
+  top: 0.5rem;
+  z-index: 6100;
+}
+
+/* Badge "REPLAY" flottant sur le plateau */
+.replay-badge {
+  position: fixed;
+  top: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--modal-heading);
+  color: var(--modal-surface, #1a1a1a);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 3px 12px;
+  border-radius: 999px;
+  z-index: 5998;
+  display: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+body.replay-active .replay-badge { display: block; }
+
+/* ────────────────────────────────────────────────────────────────
+   5. WINNER OVERLAY — masqué pendant le replay
+   ──────────────────────────────────────────────────────────────── */
+body.replay-active .winner-overlay.active {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease !important;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   6. BOUTONS MODAL-ACTIONS — force lisibilité
+   ──────────────────────────────────────────────────────────────── */
+.modal-actions button {
+  background: var(--stat-surface) !important;
+  border: 1.5px solid var(--modal-border) !important;
+  color: var(--modal-text) !important;
+  border-radius: 12px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.16s, transform 0.12s !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.modal-actions button:hover {
+  background: var(--stat-border-c) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   7. LABEL + SELECT DANS TOUTES MODALES
+   ──────────────────────────────────────────────────────────────── */
+.modal-content label {
+  color: var(--modal-subtext) !important;
+  font-size: 0.88rem;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   8. PION BLOQUÉ (même pion 3× de suite)
+      Croix rouge en overlay + animation de pulsation
+   ──────────────────────────────────────────────────────────────── */
+
+/* La cellule hôte du pion bloqué */
+.consecutive-blocked-cell {
+  cursor: not-allowed !important;
+}
+
+/* Le pion bloqué lui-même */
+.stone.consecutive-blocked {
+  /* Filtre visuel : désaturé + teinte rouge */
+  filter: grayscale(55%) sepia(0.6) saturate(2.5) hue-rotate(300deg) brightness(0.82) !important;
+  /* Bordure rouge pulsée */
+  outline: 3px solid rgba(255, 60, 60, 0.90) !important;
+  outline-offset: 2px !important;
+  border-radius: 50% !important;
+  animation: blockedPulse 1.4s ease-in-out infinite !important;
+  cursor: not-allowed !important;
+  position: relative;
+}
+
+/* Pseudo-élément : croix ✕ en overlay sur le pion */
+.consecutive-blocked-cell::after {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.85rem, 2.8vw, 1.1rem);
+  font-weight: 900;
+  color: rgba(255, 60, 60, 0.92);
+  text-shadow: 0 0 6px rgba(0,0,0,0.7);
+  pointer-events: none;
+  z-index: 10;
+  line-height: 1;
+}
+
+/* Animation de pulsation rouge */
+@keyframes blockedPulse {
+  0%, 100% {
+    outline-color: rgba(255, 60, 60, 0.85);
+    box-shadow: 0 0 0 0 rgba(255, 60, 60, 0);
+  }
+  50% {
+    outline-color: rgba(255, 60, 60, 1);
+    box-shadow: 0 0 0 5px rgba(255, 60, 60, 0.22);
+  }
+}
+
+/* Adaptation thème Kabylie / Desert / Modern (clairs) */
+[data-theme="kabylie"] .stone.consecutive-blocked,
+[data-theme="desert"] .stone.consecutive-blocked,
+[data-theme="modern"] .stone.consecutive-blocked {
+  outline-color: rgba(200, 20, 20, 0.90) !important;
+}
+[data-theme="kabylie"] .consecutive-blocked-cell::after,
+[data-theme="desert"] .consecutive-blocked-cell::after,
+[data-theme="modern"] .consecutive-blocked-cell::after {
+  color: rgba(200, 20, 20, 0.95);
+}
+</style>
 </head>
 <body>
 <!-- ===== LANGUAGE SPLASH SCREEN ===== -->
@@ -4067,6 +4663,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 statusChooseOwnPieceToSacrifice: "Vous devez choisir un de VOS pions à sacrifier !",
                 statusChooseOpponentPieceToCapture: "Vous devez choisir un pion de l'ADVERSAIRE à capturer !",
                 aiCannotMove: "L'ordinateur ne peut pas bouger et perd la partie !",
+                statusConsecutiveBlocked: "Ce pion a déjà joué 3 fois de suite ! Jouez un autre pion.",
                 youLost: "Vous avez perdu 😭",
                 aiWinsMessage: "a gagné !",
                 surrenderConfirm: "Êtes-vous sûr de vouloir abandonner ?",
@@ -4214,6 +4811,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 statusChooseOwnPieceToSacrifice: "Ilaq-ak ad teferneḍ yiwen uleqqaf-IK ara tefkeḍ !",
                 statusChooseOpponentPieceToCapture: "Ilaq-ak ad teferneḍ aleqqaf n WEXṢIM-IK !",
                 aiCannotMove: "Aselkim yeḥbes, yexṣer !",
+                statusConsecutiveBlocked: "Aleqqaf-a yurar 3 tikkal i deffir ! Aru wayed.",
                 youLost: "Txesreḍ 😭",
                 aiWinsMessage: "yerbeḥ !",
                 surrenderConfirm: "Tebɣiḍ ad tefkeḍ Mayna?",
@@ -4519,9 +5117,72 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 captureMode: false,
                 winner: null,
                 highlightedMills: [],
-                pendingCaptures: 0, 
+                pendingCaptures: 0,
+                // --- RÈGLE : même pion max 3 fois de suite ---
+                // consecutivePiece[p] = indice actuel du pion surveillé pour le joueur p
+                // consecutiveCount[p] = combien de fois consécutives ce pion a été déplacé
+                consecutivePiece: { 1: null, 2: null },
+                consecutiveCount: { 1: 0, 2: 0 },
             };
         }
+
+
+        // ─────────────────────────────────────────────────────────────
+        // RÈGLE : Même pion max 3 fois consécutives
+        // ─────────────────────────────────────────────────────────────
+
+        /**
+         * Vérifie si le pion à la position fromIdx est interdit pour player
+         * parce quil a déjà été déplacé 3 fois de suite.
+         * Exception : si cest le SEUL pion que le joueur peut bouger (deadlock)
+         */
+        function isConsecutiveBlocked(player, fromIdx) {
+            if (state.phase !== 'move') return false;
+            if (state.consecutivePiece[player] !== fromIdx) return false;
+            if (state.consecutiveCount[player] < 3) return false;
+            return hasAlternativePiece(player, fromIdx);
+        }
+
+        /**
+         * Renvoie true si le joueur possède au moins un autre pion capable de bouger.
+         */
+        function hasAlternativePiece(player, forbiddenIdx) {
+            for (let from = 0; from < SIZE * SIZE; from++) {
+                if (from === forbiddenIdx) continue;
+                if (state.board[from] !== player) continue;
+                for (let to = 0; to < SIZE * SIZE; to++) {
+                    if (state.board[to] === null && isAdjacent(from, to)) return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Met à jour le suivi consécutif APRÈS un déplacement from->to.
+         */
+        function updateConsecutiveTracking(player, fromIdx, toIdx) {
+            if (state.consecutivePiece[player] === fromIdx) {
+                state.consecutiveCount[player] = Math.min(state.consecutiveCount[player] + 1, 99);
+            } else {
+                state.consecutiveCount[player] = 1;
+            }
+            state.consecutivePiece[player] = toIdx;
+        }
+
+        /**
+         * Filtre une liste de mouvements pour retirer le pion interdit.
+         * Exception : si aucun autre mouvement nexiste, garde tout (deadlock).
+         */
+        function filterConsecutiveMoves(player, moves) {
+            if (state.phase !== 'move') return moves;
+            const forbidden = state.consecutivePiece[player];
+            if (forbidden === null) return moves;
+            if (state.consecutiveCount[player] < 3) return moves;
+            const allowed = moves.filter(m => m.from !== forbidden);
+            return allowed.length > 0 ? allowed : moves;
+        }
+
+        // ─────────────────────────────────────────────────────────────
 
         function startGame() {
             state = initState();
@@ -4564,6 +5225,16 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 
         function renderBoard() {
             boardDiv.innerHTML = '';
+            // Calcul du pion bloqué pour le joueur actif (affichage visuel)
+            const blockedIdx = (state.phase === 'move' && !state.captureMode)
+                ? (() => {
+                    const p = state.turn;
+                    const idx = state.consecutivePiece[p];
+                    if (idx === null || state.consecutiveCount[p] < 3) return null;
+                    return hasAlternativePiece(p, idx) ? idx : null;
+                  })()
+                : null;
+
             for(let i = 0; i < SIZE * SIZE; i++) {
                 const cell = document.createElement('div');
                 cell.className = "cell";
@@ -4584,8 +5255,12 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                     const stone = document.createElement('div');
                     stone.className = `stone player${state.board[i]}`;
                     if(state.selected === i) stone.classList.add("selected");
+                    // ── Marquage pion épuisé (3 fois de suite) ──
+                    if (i === blockedIdx) stone.classList.add("consecutive-blocked");
                     cell.appendChild(stone);
                 }
+                // Marquer la cellule aussi si le pion y est bloqué
+                if (i === blockedIdx) cell.classList.add("consecutive-blocked-cell");
                 cell.onclick = () => onCellClick(i);
                 boardDiv.appendChild(cell);
             }
@@ -4757,6 +5432,12 @@ function handleUndo() {
         function handleMove(i) {
             if (state.selected === null) {
                 if (state.board[i] === state.turn) {
+                    // ── Règle : pion joué 3× de suite interdit ──
+                    if (isConsecutiveBlocked(state.turn, i)) {
+                        showStatusError('statusConsecutiveBlocked');
+                        moveHistory.pop();
+                        return;
+                    }
                     state.selected = i;
                     moveHistory.pop(); 
                     renderBoard(); 
@@ -4770,7 +5451,23 @@ function handleUndo() {
                 const from = state.selected;
                 const to = i;
                 if (to === from) { state.selected = null; moveHistory.pop(); renderBoard(); updateStatus(); return; }
-                if (state.board[to] === state.turn) { state.selected = to; moveHistory.pop(); renderBoard(); updateStatus(); return; }
+                // Si le joueur clique sur un autre de ses pions → le sélectionner
+                // Mais vérifier la règle consécutive sur le nouveau pion aussi
+                if (state.board[to] === state.turn) {
+                    if (isConsecutiveBlocked(state.turn, to)) {
+                        showStatusError('statusConsecutiveBlocked');
+                        state.selected = null;
+                        moveHistory.pop();
+                        renderBoard();
+                        updateStatus();
+                        return;
+                    }
+                    state.selected = to;
+                    moveHistory.pop();
+                    renderBoard();
+                    updateStatus();
+                    return;
+                }
                 if (state.board[to] === null && isAdjacent(from, to)) {
                     if (variantConfig[variant].forceMillMove) {
                         const allPossibleMillMovesForPlayer = getPossibleMillMoves(state.turn, state.board, 'move');
@@ -4786,19 +5483,27 @@ function handleUndo() {
                         }
                     }
                     
+                    // ── Mémoriser le joueur AVANT l'animation (state.turn peut changer) ──
+                    const movingPlayer = state.turn;
+                    const moveFrom = from;
+                    const moveTo = to;
+
                     animateStoneMove(from, to);
                     setTimeout(() => {
                         const originalBoard = [...state.board];
-                        state.board[to] = state.turn;
-                        state.board[from] = null;
+                        state.board[moveTo] = movingPlayer;
+                        state.board[moveFrom] = null;
                         state.selected = null;
 
-                        const formedMills = findAllMills(originalBoard, state.board, from, to, state.turn);
+                        // ── Mise à jour suivi consécutif ──
+                        updateConsecutiveTracking(movingPlayer, moveFrom, moveTo);
+
+                        const formedMills = findAllMills(originalBoard, state.board, moveFrom, moveTo, movingPlayer);
                         
                         if (formedMills.length > 0) { 
                             state.captureMode = true; 
                             state.pendingCaptures = formedMills.length;
-                            state.turnForCapture = variantConfig[variant].isInverseWin ? (3 - state.turn) : state.turn;
+                            state.turnForCapture = variantConfig[variant].isInverseWin ? (3 - movingPlayer) : movingPlayer;
                             state.highlightedMills = formedMills.flat();
 
                             const emoji = variantConfig[variant].isInverseWin ? 'far fa-frown' : 'far fa-grin-beam';
@@ -5579,6 +6284,9 @@ function handleUndo() {
 
             let possibleMoves = generateAllPossibleMoves(player, state.board, currentPhase);
             if (possibleMoves.length === 0) return null;
+            
+            // ── Règle : exclure le pion joué 3× de suite (sauf deadlock) ──
+            possibleMoves = filterConsecutiveMoves(player, possibleMoves);
             
             if (isInverse) {
                 if (currentPhase === 'placement') {
@@ -6827,29 +7535,37 @@ function loadAndResume() {
 </div>
 <div aria-hidden="true" class="modal-overlay app-modal" id="replay-modal">
 <div aria-labelledby="replay-modal-title" aria-modal="true" class="modal-content replay-modal-content" role="dialog">
-<h3 data-i18n="replayTitle" id="replay-modal-title">Replay</h3>
+<h3 data-i18n="replayTitle" id="replay-modal-title">⏯ Replay</h3>
 <div class="replay-meta" id="replay-meta"></div>
-<div aria-label="Replay controls" class="replay-controls">
-<button aria-label="Début" id="replay-first-btn" type="button">⏮</button>
-<button aria-label="Précédent" id="replay-prev-btn" type="button">⏪</button>
-<button aria-label="Lecture/Pause" id="replay-play-btn" type="button">▶️</button>
-<button aria-label="Suivant" id="replay-next-btn" type="button">⏩</button>
-<button aria-label="Fin" id="replay-last-btn" type="button">⏭</button>
-</div>
 <input aria-label="Timeline" class="replay-range" id="replay-range" max="0" min="0" step="1" type="range" value="0"/>
+<div class="replay-step-indicator" id="replay-step-indicator">— / —</div>
+<div aria-label="Contrôles replay" class="replay-controls">
+<button aria-label="Début" id="replay-first-btn" title="Début" type="button">⏮</button>
+<button aria-label="Précédent" id="replay-prev-btn" title="Coup précédent" type="button">⏪</button>
+<button aria-label="Lecture/Pause" id="replay-play-btn" title="Lecture/Pause" type="button">▶️</button>
+<button aria-label="Suivant" id="replay-next-btn" title="Coup suivant" type="button">⏩</button>
+<button aria-label="Fin" id="replay-last-btn" title="Fin" type="button">⏭</button>
+</div>
 <div class="replay-footer">
 <label>
 <span data-i18n="speed">Vitesse</span>
 <select id="replay-speed">
-<option value="1">1×</option>
+<option value="0.5">0.5×</option>
+<option selected value="1">1×</option>
 <option value="1.5">1.5×</option>
 <option value="2">2×</option>
+<option value="3">3×</option>
 </select>
 </label>
-<button id="replay-exit-btn" type="button"><span data-i18n="close">Fermer</span></button>
+<span class="replay-kbd-hint" title="Raccourcis : ← → pour naviguer · Espace pour lecture/pause · Échap pour fermer">⌨ ← ▶ →</span>
+<button id="replay-exit-btn" type="button"><span data-i18n="close">✕ Fermer</span></button>
 </div>
 </div>
 </div>
+<!-- Badge REPLAY sur le plateau -->
+<div class="replay-badge" id="replay-badge">⏯ Replay</div>
+<!-- Barre d'état replay en haut -->
+<div class="replay-board-indicator" id="replay-board-indicator"></div>
 <div aria-hidden="true" class="modal-overlay app-modal" id="install-help-modal">
 <div aria-labelledby="install-modal-title" aria-modal="true" class="modal-content install-modal-content" role="dialog">
 <h3 data-i18n="installHelpTitle" id="install-modal-title">Installer l'app</h3>
@@ -7261,6 +7977,29 @@ function loadAndResume() {
       const [a, b] = diff;
       if (oldB[a] != null && newB[a] == null && oldB[b] == null && newB[b] != null) { d.from = a; d.to = b; }
       else if (oldB[b] != null && newB[b] == null && oldB[a] == null && newB[a] != null) { d.from = b; d.to = a; }
+    } else if (diff.length === 3) {
+      // Cas : déplacement + capture dans le même frame
+      // Une case libérée (pion qui bouge), une case occupée (destination), une capturée (adversaire)
+      let disappearedA = null, disappearedB = null, appeared = null;
+      for (const i of diff) {
+        if (oldB[i] != null && newB[i] == null) {
+          if (disappearedA === null) disappearedA = i; else disappearedB = i;
+        } else if (oldB[i] == null && newB[i] != null) {
+          appeared = i;
+        }
+      }
+      if (appeared !== null && disappearedA !== null && disappearedB !== null) {
+        // Le "from" est celui dont le joueur correspond à la destination ; l'autre est la capture
+        if (oldB[disappearedA] === newB[appeared]) {
+          d.from = disappearedA; d.to = appeared; d.capture = disappearedB;
+        } else {
+          d.from = disappearedB; d.to = appeared; d.capture = disappearedA;
+        }
+      } else if (appeared !== null && disappearedA !== null) {
+        d.from = disappearedA; d.to = appeared;
+      } else if (disappearedA !== null) {
+        d.capture = disappearedA;
+      }
     }
     return d;
   }
@@ -7294,7 +8033,8 @@ function loadAndResume() {
       captureMode: !!s.captureMode,
       winner: s.winner ?? null,
       highlightedMills: Array.isArray(s.highlightedMills) ? [...s.highlightedMills] : [],
-      pendingCaptures: s.pendingCaptures ?? 0
+      pendingCaptures: s.pendingCaptures ?? 0,
+      placedCount: s.placedCount ?? null
     };
   }
 
@@ -7852,14 +8592,47 @@ function loadAndResume() {
     if (winnerReplayLastBtn) winnerReplayLastBtn.disabled = !has;
   }
 
+  const replayStepEl = $('#replay-step-indicator');
+
   function updateReplayMeta() {
     if (!replayMetaEl) return;
-    if (!replay.data) { replayMetaEl.textContent = ''; return; }
+    if (!replay.data) {
+      replayMetaEl.textContent = '';
+      if (replayStepEl) replayStepEl.textContent = '— / —';
+      return;
+    }
     const meta = replay.data.meta || {};
-    const vName = (window.variantConfig && meta.variant && window.variantConfig[meta.variant]?.name) ? window.variantConfig[meta.variant].name : (meta.variant || '—');
+    const vName = (window.variantConfig && meta.variant && window.variantConfig[meta.variant]?.name)
+      ? window.variantConfig[meta.variant].name
+      : (meta.variant || '—');
     const mode = meta.gameMode || '—';
-    const diff = meta.aiDifficulty ? ` • AI ${meta.aiDifficulty}` : '';
-    replayMetaEl.textContent = `${vName} • ${mode}${diff}  •  ${replay.idx + 1}/${replay.frames.length}`;
+    const diff = meta.aiDifficulty ? ` · AI ${meta.aiDifficulty}` : '';
+    const p1 = meta.player1Name || 'J1';
+    const p2 = meta.player2Name || 'J2';
+    replayMetaEl.textContent = `${vName} · ${mode}${diff} · ${p1} vs ${p2}`;
+
+    // Indicateur de coup enrichi : numéro + phase + action en cours
+    const frame = replay.frames[replay.idx];
+    let phaseLabel = '';
+    let actionLabel = '';
+    if (frame) {
+      if (frame.phase === 'placement') {
+        phaseLabel = '📥 Placement';
+      } else if (frame.phase === 'move') {
+        phaseLabel = '♟ Déplacement';
+      } else if (frame.winner) {
+        phaseLabel = '🏆 Fin de partie';
+      }
+      if (frame.captureMode) {
+        actionLabel = ' · 🗡 Capture';
+      }
+      if (frame.winner) {
+        const winnerName = frame.winner === 1 ? (meta.player1Name || 'J1') : (meta.player2Name || 'J2');
+        actionLabel = ` · 🏆 ${winnerName} gagne`;
+      }
+    }
+    const stepText = `Coup ${replay.idx + 1} / ${replay.frames.length}${phaseLabel ? '  •  ' + phaseLabel : ''}${actionLabel}`;
+    if (replayStepEl) replayStepEl.textContent = stepText;
   }
 
   function setReplayIndex(i) {
@@ -7904,6 +8677,8 @@ function loadAndResume() {
     if (!replay.frames.length) return;
     const speed = Number(replaySpeed?.value || '1') || 1;
     const delay = Math.max(180, Math.floor(700 / speed));
+    // Persister la vitesse choisie
+    try { localStorage.setItem('tiddas_replay_speed', String(replaySpeed?.value || '1')); } catch(_) {}
 
     const tick = () => {
       if (!replay.active) return;
@@ -7958,9 +8733,40 @@ function loadAndResume() {
       player2Name: window.player2Name
     };
 
+    // Rétablir les valeurs du replay pour que renderAll affiche correctement
+    try {
+      if (data.meta) {
+        if (data.meta.variant) window.variant = data.meta.variant;
+        if (data.meta.gameMode) window.gameMode = data.meta.gameMode;
+        if (data.meta.aiDifficulty) window.aiDifficulty = data.meta.aiDifficulty;
+        if (data.meta.humanPlayerId) window.humanPlayerId = data.meta.humanPlayerId;
+        if (data.meta.player1Name) window.player1Name = data.meta.player1Name;
+        if (data.meta.player2Name) window.player2Name = data.meta.player2Name;
+      }
+    } catch(_) {}
+
     replay.active = true;
     disableGameControls(true);
     stopReplayTimer();
+
+    // S'assurer que le plateau de jeu est visible (masquer winner overlay)
+    try {
+      const winnerOverlay = document.getElementById('winner-overlay');
+      if (winnerOverlay) winnerOverlay.classList.remove('active');
+    } catch(_) {}
+
+    // S'assurer que l'écran de jeu est actif
+    try {
+      const screens = document.querySelectorAll('.selection-area, .game-play-area');
+      screens.forEach(s => s.classList.remove('active'));
+      const gameArea = document.getElementById('game-play-area');
+      if (gameArea) gameArea.classList.add('active');
+      const header = document.getElementById('main-header');
+      if (header) header.classList.add('hidden');
+    } catch(_) {}
+
+    // Ajouter classe sur body pour CSS
+    document.body.classList.add('replay-active');
 
     if (replayModal) {
       replayModal.classList.add('active');
@@ -7973,11 +8779,25 @@ function loadAndResume() {
       replayRange.value = '0';
     }
 
+    // Restaurer la vitesse sauvegardée
+    if (replaySpeed) {
+      try {
+        const savedSpeed = localStorage.getItem('tiddas_replay_speed');
+        if (savedSpeed) replaySpeed.value = savedSpeed;
+      } catch(_) {}
+    }
+
     setReplayIndex(0);
+    // Donner le focus au bouton play pour accessibilité clavier
+    try { replayPlayBtn?.focus(); } catch(_) {}
   }
 
   function closeReplay() {
     stopReplayTimer();
+
+    // Retirer classe body
+    document.body.classList.remove('replay-active');
+
     if (replayModal) {
       replayModal.classList.remove('active');
       replayModal.setAttribute('aria-hidden', 'true');
@@ -7999,6 +8819,13 @@ function loadAndResume() {
       }
       replay.active = false;
       disableGameControls(false);
+
+      // Restaurer l'en-tête si nécessaire
+      try {
+        const header = document.getElementById('main-header');
+        if (header && window.state?.phase) header.classList.add('hidden');
+      } catch(_) {}
+
       window.renderAll?.();
       try { window.renderMoveLog?.(); } catch(_) {}
     } catch(_) {
@@ -8019,6 +8846,27 @@ function loadAndResume() {
   if (replayNextBtn) replayNextBtn.addEventListener('click', () => stepReplay(1));
   if (replayFirstBtn) replayFirstBtn.addEventListener('click', () => { stopReplayTimer(); setReplayIndex(0); });
   if (replayLastBtn) replayLastBtn.addEventListener('click', () => { stopReplayTimer(); setReplayIndex(replay.frames.length - 1); });
+
+  // Persistance de la vitesse de replay
+  if (replaySpeed) {
+    replaySpeed.addEventListener('change', () => {
+      try { localStorage.setItem('tiddas_replay_speed', replaySpeed.value); } catch(_) {}
+    });
+  }
+
+  // Raccourcis clavier pour le replay
+  document.addEventListener('keydown', (e) => {
+    if (!replay.active) return;
+    // Ne pas intercepter si le focus est dans un champ de saisie
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); stepReplay(-1); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); stepReplay(1); }
+    else if (e.key === ' ') { e.preventDefault(); playReplay(); }
+    else if (e.key === 'Home') { e.preventDefault(); stopReplayTimer(); setReplayIndex(0); }
+    else if (e.key === 'End') { e.preventDefault(); stopReplayTimer(); setReplayIndex(replay.frames.length - 1); }
+    else if (e.key === 'Escape') { e.preventDefault(); closeReplay(); }
+  });
 
   // ---------------------------------------------------------
   // 11) PWA install + Service Worker (best effort)
