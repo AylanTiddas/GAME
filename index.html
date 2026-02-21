@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html data-theme="modern" lang="fr">
+<html data-theme="kabylie" lang="fr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -496,36 +496,58 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            padding: 1rem 2.5rem;
-            border-radius: 35px;
-            background: linear-gradient(145deg, #FFD700, #FFA500);
-            color: #4a2b1f;
+            padding: 1.1rem 3rem;
+            border-radius: 50px;
+            background: linear-gradient(145deg, #FFE066, #FFB700, #FF8C00);
+            color: #3a1a08;
             font-family: var(--font-title);
-            font-size: clamp(1.5rem, 5vw, 1.8rem);
-            font-weight: bold;
+            font-size: clamp(1.4rem, 5vw, 1.9rem);
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-            border: 3px solid #8B4513;
-            letter-spacing: 3px;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 0 rgba(255,200,0,0.5), 0 3px 0 rgba(0,0,0,0.35);
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.2);
+            border: 3px solid rgba(139,69,19,0.6);
+            letter-spacing: 4px;
             text-transform: uppercase;
             margin-top: 1.5rem;
             position: relative;
             overflow: hidden;
             z-index: 1;
+            animation: playBtnPulse 2.5s ease-in-out infinite;
         }
-        .start-game-btn i { font-size: 0.9em; }
+        .start-game-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -60%;
+            width: 40%; height: 200%;
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.5), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 2.8s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -60%; opacity: 0; }
+            20% { opacity: 1; }
+            60% { left: 130%; opacity: 1; }
+            100% { left: 130%; opacity: 0; }
+        }
+        @keyframes playBtnPulse {
+            0%, 100% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 0 rgba(255,200,0,0.6), 0 3px 0 rgba(0,0,0,0.35); }
+            50% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 8px rgba(255,200,0,0), 0 3px 0 rgba(0,0,0,0.35); }
+        }
+        .start-game-btn i { font-size: 0.9em; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); }
         .start-game-btn:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,1);
-            background: linear-gradient(145deg, #FFD700, #FFC107, #FFA500);
+            transform: translateY(-6px) scale(1.06);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.7), 0 0 40px rgba(255,200,0,0.7), 0 4px 0 rgba(0,0,0,0.4);
+            background: linear-gradient(145deg, #FFE880, #FFD000, #FFA000);
             border-color: #A0522D;
+            letter-spacing: 5px;
         }
         .start-game-btn:active {
-            transform: translateY(3px) scale(0.97);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            background: linear-gradient(145deg, #FFA500, #FFD700);
+            transform: translateY(2px) scale(0.97);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+            background: linear-gradient(145deg, #FFB700, #FF8C00, #FFE066);
+            animation: none;
         }
         .game-play-area {
             display: none;
@@ -1349,10 +1371,15 @@
         [data-theme="kabylie"] .stone.selected { outline-color: rgba(210,47,47,0.85); }
 
         [data-theme="kabylie"] .move-history-panel {
-            background: rgba(255,255,255,0.90);
+            background: rgba(255,255,255,0.92);
             color: var(--text-main);
-            border-color: rgba(31,26,18,0.18);
+            border-color: rgba(31,26,18,0.22);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
         }
+        [data-theme="kabylie"] .move-log-entry { color: var(--text-main); }
+        [data-theme="kabylie"] .move-history-title { color: var(--kab-blue); opacity: 1; }
+        [data-theme="kabylie"] .move-log-entry.mill-entry { background: rgba(30,136,229,0.10); border-left-color: var(--kab-blue); }
+        [data-theme="kabylie"] .move-log-entry.capture-entry { background: rgba(198,40,40,0.08); border-left-color: var(--kab-red); }
 
         [data-theme="desert"] {
             --stone-dark: #3d2a14;
@@ -1379,6 +1406,25 @@
             background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
             color: var(--text-main, var(--text-light));
         }
+        [data-theme="desert"] .move-history-panel { background: rgba(255,248,232,0.92); color: var(--text-main); border-color: rgba(61,42,20,0.30); }
+        [data-theme="desert"] .move-log-entry { color: var(--text-main); }
+        [data-theme="desert"] .move-history-title { color: var(--text-gold); opacity: 1; }
+        [data-theme="desert"] .move-log-entry.mill-entry { background: rgba(160,86,30,0.10); border-left-color: var(--wood-medium); }
+        [data-theme="desert"] .move-log-entry.capture-entry { background: rgba(122,58,10,0.10); border-left-color: var(--wood-dark); }
+        [data-theme="desert"] .status { background: rgba(255,248,232,0.90); color: var(--text-main); border-color: rgba(61,42,20,0.28); }
+        [data-theme="desert"] .game-info-display { background: rgba(255,248,232,0.88); color: var(--text-main); border-color: rgba(61,42,20,0.20); }
+        [data-theme="desert"] .game-info-display strong { color: var(--wood-dark); }
+        [data-theme="desert"] .player-info { background: rgba(255,248,232,0.86); color: var(--text-main); border-color: rgba(61,42,20,0.22) !important; }
+        [data-theme="desert"] .player-title { color: var(--wood-dark); text-shadow: none; }
+        [data-theme="desert"] .stat-value { color: var(--wood-medium); text-shadow: none; }
+        [data-theme="desert"] .player-stat i { color: var(--wood-light); opacity: 1; }
+        [data-theme="desert"] .player-info.active-player { background: rgba(200,112,48,0.12); border-color: rgba(200,112,48,0.55) !important; box-shadow: 0 0 20px rgba(200,112,48,0.25); }
+        [data-theme="desert"] .selection-area, [data-theme="desert"] .version-card { background: rgba(255,248,232,0.90); border-color: rgba(61,42,20,0.22); color: var(--text-main); }
+        [data-theme="desert"] .version-card h3, [data-theme="desert"] .selection-area h2 { color: var(--wood-dark); text-shadow: none; }
+        [data-theme="desert"] .version-card p { color: var(--text-muted); }
+        [data-theme="desert"] .option-btn { background: rgba(255,248,232,0.88); color: var(--text-main); border-color: rgba(61,42,20,0.22); }
+        [data-theme="desert"] .option-btn span { color: var(--text-muted); }
+        [data-theme="desert"] .option-btn i { color: var(--wood-medium); }
         [data-theme="nuit"] {
 --stone-dark: #080818;
 --stone-medium: #1a1a3a;
@@ -1434,6 +1480,18 @@
         [data-theme="nuit"] .cell.mill-highlight { background: rgba(187,134,252,0.2); outline-color: #bb86fc; }
         [data-theme="nuit"] .stone.player1.selected,
         [data-theme="nuit"] .stone.player2.selected { filter: brightness(1.3); }
+        [data-theme="nuit"] .move-history-panel { background: rgba(10,8,30,0.8); border-color: rgba(187,134,252,0.28); color: var(--text-main); }
+        [data-theme="nuit"] .move-log-entry { color: rgba(240,234,255,0.95); }
+        [data-theme="nuit"] .move-history-title { color: #bb86fc; opacity: 1; }
+        [data-theme="nuit"] .move-log-entry.mill-entry { background: rgba(3,218,198,0.12); border-left-color: #03dac6; }
+        [data-theme="nuit"] .move-log-entry.capture-entry { background: rgba(255,107,138,0.12); border-left-color: #ff6b8a; }
+        [data-theme="nuit"] .status { background: rgba(10,8,30,0.78); color: var(--text-main); border-color: rgba(187,134,252,0.30); }
+        [data-theme="nuit"] .game-info-display { background: rgba(10,8,30,0.75); color: var(--text-main); border-color: rgba(187,134,252,0.25); }
+        [data-theme="nuit"] .game-info-display strong { color: #bb86fc; }
+        [data-theme="nuit"] .player-info { background: rgba(10,8,30,0.72); color: var(--text-main); border-color: rgba(187,134,252,0.22) !important; }
+        [data-theme="nuit"] .player-title { color: #bb86fc; }
+        [data-theme="nuit"] .stat-value { color: #bb86fc; }
+        [data-theme="nuit"] .player-stat i { color: #03dac6; }
 
         /* ==================== GLASSMORPHISM THEME ==================== */
         [data-theme="glass"] {
@@ -1532,8 +1590,12 @@
             border-color: rgba(232,180,248,0.22);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 4px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10);
-            color: var(--text-light);
+            color: #f0eaff;
         }
+        [data-theme="glass"] .move-log-entry { color: rgba(240,234,255,0.95); }
+        [data-theme="glass"] .move-history-title { color: #e8b4f8; opacity: 1; }
+        [data-theme="glass"] .move-log-entry.mill-entry { background: rgba(125,211,247,0.12); border-left-color: #7dd3f7; }
+        [data-theme="glass"] .move-log-entry.capture-entry { background: rgba(255,126,179,0.12); border-left-color: #ff7eb3; }
         [data-theme="glass"] .player-info { border-color: rgba(232,180,248,0.18) !important; }
         [data-theme="glass"] .player-info.active-player {
             background: linear-gradient(135deg, rgba(168,85,247,0.22), rgba(59,130,246,0.14));
@@ -1583,12 +1645,13 @@
         }
         [data-theme="glass"] .back-btn:hover, [data-theme="glass"] .rules-btn:hover { background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(59,130,246,0.12)); border-color: rgba(232,180,248,0.55); }
         [data-theme="glass"] .start-game-btn {
-            background: linear-gradient(145deg, #a78bfa, #7c3aed);
+            background: linear-gradient(145deg, #c4b5fd, #7c3aed, #5b21b6);
             border-color: rgba(232,180,248,0.6);
             color: #fff;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 24px rgba(168,85,247,0.4);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.6), 0 0 30px rgba(168,85,247,0.5);
         }
-        [data-theme="glass"] .start-game-btn:hover { background: linear-gradient(145deg, #c4b5fd, #a78bfa); box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 36px rgba(168,85,247,0.55); }
+        [data-theme="glass"] .start-game-btn:hover { background: linear-gradient(145deg, #ddd6fe, #a78bfa, #7c3aed); box-shadow: 0 14px 40px rgba(0,0,0,0.7), 0 0 50px rgba(168,85,247,0.65); }
         [data-theme="glass"] .player-setup-area { background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04)); border-color: rgba(232,180,248,0.3); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
         [data-theme="glass"] .player-setup-area .setup-section { background: rgba(255,255,255,0.05); border-color: rgba(232,180,248,0.18); }
         [data-theme="glass"] .player-setup-area input[type="text"] { background: rgba(255,255,255,0.07); border-color: rgba(232,180,248,0.35); color: #f0eaff; }
@@ -1623,6 +1686,14 @@
     border-color: rgba(46,125,50,0.55) !important;
     box-shadow: 0 0 22px rgba(46,125,50,0.28), 0 10px 22px rgba(0,0,0,0.10);
 }
+[data-theme="kabylie"] .start-game-btn {
+    background: linear-gradient(145deg, #43a047, #1b5e20);
+    border-color: rgba(27,94,32,0.7);
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25), 0 0 24px rgba(67,160,71,0.4);
+}
+[data-theme="kabylie"] .start-game-btn:hover { background: linear-gradient(145deg, #66bb6a, #2e7d32); box-shadow: 0 12px 32px rgba(0,0,0,0.28), 0 0 36px rgba(67,160,71,0.55); }
 
 /* ==================== HIGH-CONTRAST THEME ==================== */
 [data-theme="contrast"] {
@@ -1677,6 +1748,10 @@
     color: #ffffff !important;
 }
 [data-theme="contrast"] .option-btn i { color: var(--text-gold); filter: none; }
+[data-theme="contrast"] .move-log-entry { color: #ffffff; }
+[data-theme="contrast"] .move-history-title { color: var(--text-gold); opacity: 1; }
+[data-theme="contrast"] .move-log-entry.mill-entry { background: rgba(0,229,255,0.15); border-left-color: var(--highlight-cyan); }
+[data-theme="contrast"] .move-log-entry.capture-entry { background: rgba(255,59,59,0.15); border-left-color: var(--danger-red); }
 [data-theme="contrast"] .game-board-container { box-shadow: none !important; border-color: #ffffff !important; }
 [data-theme="contrast"] .game-board { background: #000000; border-color: #ffffff; box-shadow: none !important; }
 [data-theme="contrast"] .cell { box-shadow: none !important; }
@@ -1835,44 +1910,46 @@
         /* ==================== MOVE HISTORY PANEL ==================== */
         .move-history-panel {
             width: 100%;
-            max-height: 130px;
+            max-height: 160px;
             overflow: hidden;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(240,200,80,0.3);
+            background: rgba(0,0,0,0.5);
+            border: 1.5px solid rgba(240,200,80,0.4);
             border-radius: 10px;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.85rem;
             transition: max-height 0.3s ease;
         }
         .move-history-title {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-gold);
-            opacity: 0.7;
+            opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             gap: 6px;
+            font-weight: 700;
         }
         .move-log-list {
             display: flex;
             flex-direction: column-reverse;
-            gap: 2px;
-            max-height: 96px;
+            gap: 3px;
+            max-height: 110px;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: rgba(240,200,80,0.3) transparent;
         }
         .move-log-entry {
-            font-size: 0.78rem;
-            color: var(--text-light);
-            opacity: 0.85;
-            padding: 1px 4px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            opacity: 1;
+            padding: 2px 6px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             gap: 6px;
             animation: logFadeIn 0.3s ease;
+            font-weight: 500;
         }
         .move-log-entry .log-stone {
             width: 10px;
@@ -1882,11 +1959,11 @@
         }
         .move-log-entry .log-stone.p1 { background: var(--player1-stone-color-light); border: 1px solid #555; }
         .move-log-entry .log-stone.p2 { background: var(--player2-stone-color-light); border: 1px solid #ccc; }
-        .move-log-entry.mill-entry { background: rgba(0,255,255,0.08); }
-        .move-log-entry.capture-entry { background: rgba(255,77,77,0.08); }
+        .move-log-entry.mill-entry { background: rgba(0,255,255,0.12); border-left: 2px solid var(--highlight-cyan); }
+        .move-log-entry.capture-entry { background: rgba(255,77,77,0.12); border-left: 2px solid var(--danger-red); }
         @keyframes logFadeIn {
             from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 0.85; transform: translateX(0); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         /* ==================== SPECTATOR MODE ==================== */
@@ -2825,6 +2902,37 @@ select:hover, input[type="text"]:hover{
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Move history visibility in modern themes */
+[data-theme="modern"] .move-log-entry { color: var(--text-main) !important; }
+[data-theme="modern"] .move-history-title { color: var(--wood-medium) !important; opacity: 1 !important; }
+[data-theme="modern"] .move-log-entry.mill-entry { background: rgba(6,182,212,0.10) !important; border-left-color: var(--highlight-cyan) !important; }
+[data-theme="modern"] .move-log-entry.capture-entry { background: rgba(239,68,68,0.08) !important; border-left-color: var(--danger-red) !important; }
+[data-theme="modern-dark"] .move-log-entry { color: var(--text-main) !important; }
+[data-theme="modern-dark"] .move-history-title { color: var(--text-gold) !important; opacity: 1 !important; }
+[data-theme="modern-dark"] .move-log-entry.mill-entry { background: rgba(34,211,238,0.12) !important; border-left-color: var(--highlight-cyan) !important; }
+[data-theme="modern-dark"] .move-log-entry.capture-entry { background: rgba(251,113,133,0.12) !important; border-left-color: var(--danger-red) !important; }
+
+/* Modern theme play button */
+[data-theme="modern"] .start-game-btn,
+[data-theme="modern-dark"] .start-game-btn {
+    background: linear-gradient(145deg, #3b82f6, #2563eb, #1d4ed8) !important;
+    color: #ffffff !important;
+    border-color: rgba(15,23,42,0.2) !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 8px 24px rgba(37,99,235,0.4), 0 3px 0 rgba(0,0,0,0.2) !important;
+    letter-spacing: 3px !important;
+    animation: playBtnPulseBlue 2.5s ease-in-out infinite !important;
+}
+[data-theme="modern"] .start-game-btn:hover,
+[data-theme="modern-dark"] .start-game-btn:hover {
+    background: linear-gradient(145deg, #60a5fa, #3b82f6, #2563eb) !important;
+    box-shadow: 0 14px 36px rgba(37,99,235,0.5), 0 0 40px rgba(59,130,246,0.45) !important;
+}
+@keyframes playBtnPulseBlue {
+    0%, 100% { box-shadow: 0 8px 24px rgba(37,99,235,0.4), 0 0 0 0 rgba(59,130,246,0.5), 0 3px 0 rgba(0,0,0,0.2); }
+    50% { box-shadow: 0 8px 24px rgba(37,99,235,0.4), 0 0 0 8px rgba(59,130,246,0), 0 3px 0 rgba(0,0,0,0.2); }
 }
 
 
@@ -5632,7 +5740,7 @@ body.replay-active .winner-overlay.active {
         }
         
         
-function handleUndo() {
+        function handleUndo() {
             if (undoBtn.disabled) return;
             if (moveHistory.length === 0) return;
 
@@ -6467,7 +6575,7 @@ function handleUndo() {
             }
             return s;
         }
-function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, beta, piecesPlaced) {
+        function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, beta, piecesPlaced) {
             // piecesPlaced = total pieces ever placed (doesn't decrease on capture)
             const currentPiecesPlaced = piecesPlaced !== undefined ? piecesPlaced : (currentBoard.filter(p => p !== null).length + 0);
             const currentPhase = currentPiecesPlaced < PIECES * 2 ? 'placement' : 'move';
@@ -6863,7 +6971,7 @@ function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, 
         let soundEnabled = true;
         const THEMES = ['kabylie', 'desert', 'nuit', 'glass', 'contrast', 'modern', 'modern-dark'];
         const THEME_ICONS = ['ⵣ', '🏜️', '🌙', '💎', '⚡', '✨', '🌑'];
-        let currentTheme = THEMES.indexOf('modern');
+        let currentTheme = THEMES.indexOf('kabylie'); // default: kabylie
         let moveLog = []; // for move history log
         let spectatorDelay = 700;
 
@@ -7002,7 +7110,7 @@ function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, 
 
         // --- THEME SYSTEM ---
         function applyTheme(themeIndex) {
-            const theme = THEMES[themeIndex] || 'modern';
+            const theme = THEMES[themeIndex] || 'kabylie';
             document.documentElement.setAttribute('data-theme', theme);
             const btn = document.getElementById('theme-btn');
             if (btn) {
@@ -7041,7 +7149,7 @@ function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, 
             try { localStorage.removeItem(SAVE_KEY); } catch(e){}
         }
         
-function loadAndResume() {
+        function loadAndResume() {
             try {
                 const raw = localStorage.getItem(SAVE_KEY);
                 if (!raw) return;
@@ -8256,8 +8364,8 @@ function loadAndResume() {
       scope: "./",
       display: "standalone",
       orientation: "portrait-primary",
-      background_color: "#2c2722",
-      theme_color: "#2c2722",
+      background_color: "#fff3bf",
+      theme_color: "#1e88e5",
       lang: document.documentElement.lang || "fr",
       icons: [
         { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 192 192\"><rect width=\"192\" height=\"192\" rx=\"32\" fill=\"#2c2722\"/><text x=\"96\" y=\"130\" font-size=\"110\" text-anchor=\"middle\" fill=\"#f0c850\">ⵣ</text></svg>'), sizes: "192x192", type: "image/svg+xml" },
@@ -8633,11 +8741,11 @@ function loadAndResume() {
                     start_url: "./",
                     display: "standalone",
                     orientation: "portrait-primary",
-                    background_color: "#2c2722",
-                    theme_color: "#2c2722",
+                    background_color: "#fff3bf",
+                    theme_color: "#1e88e5",
                     lang: "fr",
                     icons: [
-                        { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="#2c2722"/><text x="96" y="130" font-size="110" text-anchor="middle" fill="#f0c850">ⵣ</text></svg>'), sizes: "192x192", type: "image/svg+xml" }
+                        { src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmM2JmO3N0b3Atb3BhY2l0eToxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Q3ZjNmZjtzdG9wLW9wYWNpdHk6MSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYm9hcmQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZDRhOTZhO3N0b3Atb3BhY2l0eToxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2EwNzA0MDtzdG9wLW9wYWNpdHk6MSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic3RvbmUxIiB4MT0iMzAlIiB5MT0iMzAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNTU1O3N0b3Atb3BhY2l0eToxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzExMTtzdG9wLW9wYWNpdHk6MSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic3RvbmUyIiB4MT0iMzAlIiB5MT0iMzAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmO3N0b3Atb3BhY2l0eToxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2NjYztzdG9wLW9wYWNpdHk6MSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ic2hpbmUxIiBjeD0iMzUlIiBjeT0iMzUlIiByPSI1MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmO3N0b3Atb3BhY2l0eTowLjYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmO3N0b3Atb3BhY2l0eTowIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJzaGluZTIiIGN4PSIzNSUiIGN5PSIzNSUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjAuOSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJzaGFkb3ciPgogICAgICA8ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iNCIgc3RkRGV2aWF0aW9uPSI4IiBmbG9vZC1vcGFjaXR5PSIwLjI1Ii8+CiAgICA8L2ZpbHRlcj4KICA8L2RlZnM+CgogIDwhLS0gQmFja2dyb3VuZCB3aXRoIHJvdW5kZWQgY29ybmVycyAtLT4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9Ijk2IiBmaWxsPSJ1cmwoI2JnKSIvPgogIAogIDwhLS0gT3V0ZXIgZGVjb3JhdGl2ZSBib3JkZXIgLSBBbWF6aWdoIGdlb21ldHJpYyBwYXR0ZXJuIC0tPgogIDxyZWN0IHg9IjEyIiB5PSIxMiIgd2lkdGg9IjQ4OCIgaGVpZ2h0PSI0ODgiIHJ4PSI4NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWU4OGU1IiBzdHJva2Utd2lkdGg9IjgiIG9wYWNpdHk9IjAuMjUiLz4KICA8cmVjdCB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0NjQiIGhlaWdodD0iNDY0IiByeD0iNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJlN2QzMiIgc3Ryb2tlLXdpZHRoPSI0IiBvcGFjaXR5PSIwLjE1Ii8+CgogIDwhLS0gQ29ybmVyIGRpYW1vbmQgZGVjb3JhdGlvbnMgKEFtYXppZ2ggZ2VvbWV0cmljIG1vdGlmcykgLS0+CiAgPGcgb3BhY2l0eT0iMC40IiBmaWxsPSIjZDMyZjJmIj4KICAgIDxwb2x5Z29uIHBvaW50cz0iNTAsNTAgNzAsMzAgOTAsNTAgNzAsNzAiLz4KICAgIDxwb2x5Z29uIHBvaW50cz0iNDIyLDUwIDQ0MiwzMCA0NjIsNTAgNDQyLDcwIi8+CiAgICA8cG9seWdvbiBwb2ludHM9IjUwLDQ2MiA3MCw0NDIgOTAsNDYyIDcwLDQ4MiIvPgogICAgPHBvbHlnb24gcG9pbnRzPSI0MjIsNDYyIDQ0Miw0NDIgNDYyLDQ2MiA0NDIsNDgyIi8+CiAgPC9nPgoKICA8IS0tIEdhbWUgYm9hcmQgKHNpbXBsaWZpZWQgM3gzIGdyaWQsIHRoZSBjbGFzc2ljIFRpZGRhcyBwYXR0ZXJuKSAtLT4KICA8cmVjdCB4PSIxMzYiIHk9IjEzNiIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHJ4PSIxMiIgZmlsbD0idXJsKCNib2FyZCkiIGZpbHRlcj0idXJsKCNzaGFkb3cpIi8+CiAgCiAgPCEtLSBCb2FyZCBncmlkIGxpbmVzIC0tPgogIDxnIHN0cm9rZT0iIzZiM2ExMCIgc3Ryb2tlLXdpZHRoPSIzIiBvcGFjaXR5PSIwLjciPgogICAgPCEtLSBPdXRlciBzcXVhcmUgLS0+CiAgICA8cmVjdCB4PSIxNDgiIHk9IjE0OCIgd2lkdGg9IjIxNiIgaGVpZ2h0PSIyMTYiIGZpbGw9Im5vbmUiLz4KICAgIDwhLS0gTWlkZGxlIHNxdWFyZSAtLT4KICAgIDxyZWN0IHg9IjE4NCIgeT0iMTg0IiB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgZmlsbD0ibm9uZSIvPgogICAgPCEtLSBJbm5lciBzcXVhcmUgLS0+CiAgICA8cmVjdCB4PSIyMjAiIHk9IjIyMCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiBmaWxsPSJub25lIi8+CiAgICA8IS0tIENyb3NzIGxpbmVzIC0tPgogICAgPGxpbmUgeDE9IjI1NiIgeTE9IjE0OCIgeDI9IjI1NiIgeTI9IjE4NCIvPgogICAgPGxpbmUgeDE9IjI1NiIgeTE9IjMyOCIgeDI9IjI1NiIgeTI9IjM2NCIvPgogICAgPGxpbmUgeDE9IjE0OCIgeTE9IjI1NiIgeDI9IjE4NCIgeTI9IjI1NiIvPgogICAgPGxpbmUgeDE9IjMyOCIgeTE9IjI1NiIgeDI9IjM2NCIgeTI9IjI1NiIvPgogICAgPCEtLSBJbm5lciBjcm9zcyBsaW5lcyAtLT4KICAgIDxsaW5lIHgxPSIyNTYiIHkxPSIxODQiIHgyPSIyNTYiIHkyPSIyMjAiLz4KICAgIDxsaW5lIHgxPSIyNTYiIHkxPSIyOTIiIHgyPSIyNTYiIHkyPSIzMjgiLz4KICAgIDxsaW5lIHgxPSIxODQiIHkxPSIyNTYiIHgyPSIyMjAiIHkyPSIyNTYiLz4KICAgIDxsaW5lIHgxPSIyOTIiIHkxPSIyNTYiIHgyPSIzMjgiIHkyPSIyNTYiLz4KICAgIDwhLS0gRGlhZ29uYWwgbGluZXMgLS0+CiAgICA8bGluZSB4MT0iMTQ4IiB5MT0iMTQ4IiB4Mj0iMjIwIiB5Mj0iMjIwIi8+CiAgICA8bGluZSB4MT0iMzY0IiB5MT0iMTQ4IiB4Mj0iMjkyIiB5Mj0iMjIwIi8+CiAgICA8bGluZSB4MT0iMTQ4IiB5MT0iMzY0IiB4Mj0iMjIwIiB5Mj0iMjkyIi8+CiAgICA8bGluZSB4MT0iMzY0IiB5MT0iMzY0IiB4Mj0iMjkyIiB5Mj0iMjkyIi8+CiAgPC9nPgoKICA8IS0tIEJvYXJkIGludGVyc2VjdGlvbiBkb3RzIC0tPgogIDxnIGZpbGw9IiM1YTMwMTAiIG9wYWNpdHk9IjAuNSI+CiAgICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIxNDgiIHI9IjQiLz4KICAgIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjM2NCIgcj0iNCIvPgogICAgPGNpcmNsZSBjeD0iMTQ4IiBjeT0iMjU2IiByPSI0Ii8+CiAgICA8Y2lyY2xlIGN4PSIzNjQiIGN5PSIyNTYiIHI9IjQiLz4KICA8L2c+CgogIDwhLS0gRGFyayBzdG9uZSAocGxheWVyIDEpIC0tPgogIDxjaXJjbGUgY3g9IjIyMCIgY3k9IjIyMCIgcj0iMjYiIGZpbGw9InVybCgjc3RvbmUxKSIgZmlsdGVyPSJ1cmwoI3NoYWRvdykiLz4KICA8Y2lyY2xlIGN4PSIyMjAiIGN5PSIyMjAiIHI9IjI2IiBmaWxsPSJ1cmwoI3NoaW5lMSkiLz4KICAKICA8IS0tIExpZ2h0IHN0b25lIChwbGF5ZXIgMikgLS0+CiAgPGNpcmNsZSBjeD0iMjkyIiBjeT0iMjkyIiByPSIyNiIgZmlsbD0idXJsKCNzdG9uZTIpIiBmaWx0ZXI9InVybCgjc2hhZG93KSIvPgogIDxjaXJjbGUgY3g9IjI5MiIgY3k9IjI5MiIgcj0iMjYiIGZpbGw9InVybCgjc2hpbmUyKSIvPgoKICA8IS0tIEV4dHJhIHN0b25lcyBmb3IgdmlzdWFsIHJpY2huZXNzIC0tPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjE0OCIgcj0iMTgiIGZpbGw9InVybCgjc3RvbmUxKSIgZmlsdGVyPSJ1cmwoI3NoYWRvdykiLz4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIxNDgiIHI9IjE4IiBmaWxsPSJ1cmwoI3NoaW5lMSkiLz4KICA8Y2lyY2xlIGN4PSIzNjQiIGN5PSIyNTYiIHI9IjE4IiBmaWxsPSJ1cmwoI3N0b25lMikiIGZpbHRlcj0idXJsKCNzaGFkb3cpIi8+CiAgPGNpcmNsZSBjeD0iMzY0IiBjeT0iMjU2IiByPSIxOCIgZmlsbD0idXJsKCNzaGluZTIpIi8+CgogIDwhLS0gVGlmaW5hZ2gg4rWjIHN5bWJvbCBjZW50ZXJlZCAoc3VidGxlLCBlbGVnYW50KSAtLT4KICA8dGV4dCB4PSIyNTYiIHk9IjQ0MCIgCiAgICBmb250LWZhbWlseT0ic2VyaWYiIAogICAgZm9udC1zaXplPSI1MiIgCiAgICBmb250LXdlaWdodD0iYm9sZCIKICAgIHRleHQtYW5jaG9yPSJtaWRkbGUiIAogICAgZmlsbD0iIzFlODhlNSIgCiAgICBvcGFjaXR5PSIwLjg1Ij7itaM8L3RleHQ+CiAgCiAgPCEtLSBBcHAgbmFtZSB0ZXh0IC0tPgogIDx0ZXh0IHg9IjI1NiIgeT0iMTA0IiAKICAgIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiAKICAgIGZvbnQtc2l6ZT0iNDIiIAogICAgZm9udC13ZWlnaHQ9IjkwMCIKICAgIGxldHRlci1zcGFjaW5nPSI2IgogICAgdGV4dC1hbmNob3I9Im1pZGRsZSIgCiAgICBmaWxsPSIjZDMyZjJmIgogICAgb3BhY2l0eT0iMC45Ij5USUREQVM8L3RleHQ+Cjwvc3ZnPg==", sizes: "192x192 512x512 any", type: "image/svg+xml", purpose: "any maskable" }
                     ]
                 };
                 const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
@@ -8646,7 +8754,7 @@ function loadAndResume() {
                 if (link) link.href = url;
             } catch(e){}
 
-languageSelect.addEventListener('change', (e) => updateLanguage(e.target.value));
+            languageSelect.addEventListener('change', (e) => updateLanguage(e.target.value));
             
             document.querySelectorAll('.version-card').forEach(card => card.addEventListener('click', () => {
                 versionCards.forEach(vc => vc.classList.remove('active'));
@@ -8724,8 +8832,7 @@ languageSelect.addEventListener('change', (e) => updateLanguage(e.target.value))
             // Initialize replay button states
             if (typeof refreshReplayButtons === 'function') refreshReplayButtons();
 
-            // Init lang splash
-            initLangSplash();
+            // Init lang splash — already auto-executed as IIFE above
 
             // A11y board
             if (typeof attachBoardA11yOnce === 'function') attachBoardA11yOnce();
