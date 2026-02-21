@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="modern">
+
+<html data-theme="modern" lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Security hardening -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'nonce-tiddas'; script-src 'self' 'nonce-tiddas'; connect-src 'self'; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:">
-    <meta name="referrer" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
-    <meta name="color-scheme" content="dark light">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!-- Security hardening -->
+<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'nonce-tiddas'; script-src 'self' 'nonce-tiddas'; connect-src 'self'; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy"/>
+<meta content="no-referrer" name="referrer"/>
+<meta content="camera=(), microphone=(), geolocation=(), payment=(), usb=()" http-equiv="Permissions-Policy"/>
+<meta content="dark light" name="color-scheme"/>
 <title data-i18n="appTitle">Tiddas - Jeu</title>
-    <link id="pwa-manifest" rel="manifest" href="#">
-    <meta name="theme-color" content="#fff3bf">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Tiddas">
+<link href="#" id="pwa-manifest" rel="manifest"/>
+<meta content="#fff3bf" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Tiddas" name="apple-mobile-web-app-title"/>
 <style nonce="tiddas">
         :root {
     /* Core palette */
@@ -82,6 +82,7 @@
         }
         body {
             min-height: 100vh;
+            min-height: 100dvh;
             background: linear-gradient(135deg, #3a2d25, #2a201a);
             color: var(--text-main);
             font-family: var(--font-body);
@@ -550,7 +551,8 @@
         }
         .game-board-container {
             position: relative;
-            width: min(95vw, 95vh - 10rem, 600px);
+            width: min(95vw, calc(95vh - 10rem), 600px);
+            width: min(95vw, calc(95dvh - 10rem), 600px);
             max-width: 600px;
             aspect-ratio: 1 / 1;
             padding: 15px;
@@ -3443,365 +3445,383 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
   letter-spacing: .08em;
   text-align: center;
 }
+</style><style nonce="tiddas">
+/* =========================================================
+   TIDDAS v9.2 – Cleanup patch (auto-generated)
+   - Fix invalid min()/vh arithmetic
+   - Improve mobile viewport handling (dvh)
+   - Reduce theme conflicts by making components rely on CSS vars
+   ========================================================= */
+
+/* Make viewport height stable on mobile browsers */
+:root { --app-dvh: 100vh; }
+@supports (height: 100dvh) {
+  :root { --app-dvh: 100dvh; }
+}
+
+/* Normalize the main container sizing */
+:root[data-theme] body { min-height: var(--app-dvh); }
+
+/* Ensure board sizing stays valid everywhere (desktop + mobile) */
+:root[data-theme] .game-board-container{
+  width: min(95vw, calc(95vh - 10rem), 600px);
+  width: min(95vw, calc(95dvh - 10rem), 600px);
+}
+
+/* Components should be driven by vars; give them a consistent baseline */
+:root[data-theme] .selection-area,
+:root[data-theme] .player-setup-area,
+:root[data-theme] .game-play-area,
+:root[data-theme] .move-history-panel,
+:root[data-theme] .version-card,
+:root[data-theme] .mode-card,
+:root[data-theme] .difficulty-card{
+  background: var(--panel-bg, rgba(255,255,255,0.92));
+  border: 1px solid var(--panel-border, rgba(0,0,0,0.18));
+}
+
+/* Respect safe areas on modern phones */
+:root[data-theme] .toolbar-buttons{
+  padding-bottom: env(safe-area-inset-bottom);
+}
 </style>
 </head>
 <body>
-    <!-- ===== LANGUAGE SPLASH SCREEN ===== -->
-    <div id="lang-splash" role="dialog" aria-modal="true" aria-label="Choix de la langue / Tifert n tutlayt">
-      <div class="splash-logo">TIDDAS</div>
-      <div class="splash-tifinagh">ⵜⵉⴷⴷⴰⵙ</div>
-      <div class="splash-divider"></div>
-      <p class="splash-prompt">Choisissez votre langue &nbsp;/&nbsp; Fren tutlayt-ik</p>
-      <div class="splash-langs">
-        <button class="splash-lang-btn" data-lang="fr" aria-label="Français">
-          <span class="splash-lang-flag">FR</span>
-          <span class="splash-lang-name">Français</span>
-          <span class="splash-lang-sub">Jouer en français</span>
-        </button>
-        <button class="splash-lang-btn" data-lang="kab" aria-label="Taqbaylit">
-          <span class="splash-lang-flag">ⵣ</span>
-          <span class="splash-lang-name">Taqbaylit</span>
-          <span class="splash-lang-sub">Urar s taqbaylit</span>
-        </button>
-      </div>
-      <p class="splash-footer">Patrimoine Amazigh • Adles Amaziɣ</p>
-    </div>
-
-    <div class="toolbar-buttons" id="toolbar-buttons">
-        <div class="settings-tray" id="settings-tray">
-            <button class="toolbar-btn" id="theme-btn" title="Changer de thème" aria-label="Thème">🎨 <span style="font-size:0.78rem;" data-i18n="btnTheme">Thème</span></button>
-            <button class="toolbar-btn" id="sound-btn" title="Son On/Off" aria-label="Son">🔊 <span style="font-size:0.78rem;" data-i18n="btnSound">Son</span></button>
-
-            <button class="toolbar-btn" id="install-btn" title="Installer l'application" aria-label="Installer">
-                ⬇️ <span style="font-size:0.78rem;" data-i18n="installApp">Installer</span>
-            </button>
-            <button class="toolbar-btn" id="stats-btn" title="Statistiques" aria-label="Stats">
-                📈 <span style="font-size:0.78rem;" data-i18n="stats">Stats</span>
-            </button>
-            <button class="toolbar-btn" id="guided-btn" title="Mode guidé" aria-label="Mode guidé" aria-pressed="true">
-                🧭 <span style="font-size:0.78rem;" data-i18n="guidedMode">Guidé</span>
-            </button>
-            <button class="toolbar-btn" id="replay-btn" title="Revoir la dernière partie" aria-label="Replay" disabled>
-                ⏯️ <span style="font-size:0.78rem;" data-i18n="replayLast">Replay</span>
-            </button>
-            <div class="language-selector">
-                <span class="icon" aria-hidden="true">🗣️</span>
-                <select id="language-select" aria-label="Langue / Tutlayt">
-                    <option value="fr">Français</option>
-                    <option value="kab">ⵣ Taqbaylit</option>
-                </select>
-            </div>
-        </div>
-        <button id="settings-fab" aria-label="Paramètres" title="Paramètres"><span class="settings-icon" aria-hidden="true">⚙️</span><span class="settings-label" data-i18n="btnSettings">Paramètres</span></button>
-    </div>
-
-    <div class="stone-decoration stone-1">ⵣ</div>
-    <div class="stone-decoration stone-2">ⵣ</div>
-    <div class="stone-decoration stone-3">ⵣ</div>
-    <div class="stone-decoration stone-4">ⵣ</div>
-
-    <header id="main-header">
-        <h1 data-i18n="appTitle">TIDDAS</h1>
-    </header>
-
-    <div class="game-container">
-        <div id="version-selection-area" class="selection-area active">
-            <h2 data-i18n="chooseVersion">Choisir la version du jeu :</h2>
-            <div class="version-grid">
-                <div class="version-card" data-variant="tiddezt-no-diag">
-                    <h3 data-i18n="tiddeztTitle">TIDDEZT</h3>
-                    <p data-i18n="tiddeztDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
-                </div>
-                <div class="version-card" data-variant="bessif-tiddezt">
-                    <h3 data-i18n="bessifTitle">Učči bessif TIDDEZT</h3>
-                    <p data-i18n="bessifDesc">Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
-                </div>
-            </div>
-            <button id="show-rules-btn" class="rules-btn">
-                <span class="icon" aria-hidden="true">📖</span>
-                <span data-i18n="gameRulesTitle">Règles du jeu</span>
-            </button>
-        </div>
-
-        <div id="mode-selection-area" class="selection-area">
-            <h2 data-i18n="howToPlay">Comment souhaitez-vous jouer ?</h2>
-            <div class="options-group">
-                <button id="play-online-btn" class="option-btn" disabled>
-                    <span class="icon" aria-hidden="true">🌐</span>
-                    <span data-i18n="playOnline">Jouer en ligne</span>
-                    <span data-i18n="playOnlineDesc">Bientôt disponible</span>
-                </button>
-                <button id="play-ai-btn" class="option-btn">
-                    <span class="icon" aria-hidden="true">🤖</span>
-                    <span data-i18n="playAI">Jouer contre l'ordinateur</span>
-                    <span data-i18n="playAIDesc">Affrontez une intelligence artificielle</span>
-                </button>
-                <button id="play-offline-btn" class="option-btn">
-                   <span class="icon" aria-hidden="true">👥</span>
-                    <span data-i18n="playOffline">Jouer hors-ligne</span>
-                    <span data-i18n="playOfflineDesc">Partie locale sur votre appareil</span>
-                </button>
-                <button id="play-spectator-btn" class="option-btn">
-                   <span class="icon" aria-hidden="true">👁️</span>
-                    <span data-i18n="playSpectator">Mode Spectateur</span>
-                    <span data-i18n="playSpectatorDesc">Regardez deux IA s'affronter</span>
-                </button>
-            </div>
-            <button id="back-to-versions-btn" class="back-btn" data-i18n="backToVersions">Retour aux versions</button>
-        </div>
-        
-        <div id="ai-difficulty-selection-area" class="selection-area">
-            <h2 data-i18n="chooseAIDifficulty">Choisir la difficulté de l'ordinateur</h2>
-            <div class="options-group">
-                <button class="option-btn difficulty-btn" data-level="1">
-                    <span class="icon" aria-hidden="true">🙂</span>
-                    <span data-i18n="difficultyEasy">Facile</span>
-                    <span data-i18n="difficultyEasyDesc">L'ordinateur joue au hasard</span>
-                </button>
-                <button class="option-btn difficulty-btn" data-level="2">
-                    <span class="icon" aria-hidden="true">😐</span>
-                    <span data-i18n="difficultyMedium">Moyen</span>
-                    <span data-i18n="difficultyMediumDesc">L'ordinateur est un adversaire correct</span>
-                </button>
-                <button class="option-btn difficulty-btn" data-level="3">
-                    <span class="icon" aria-hidden="true">😬</span>
-                    <span data-i18n="difficultyHard">Difficile</span>
-                    <span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratège</span>
-                </button>
-                <button class="option-btn difficulty-btn" data-level="4">
-                    <span class="icon" aria-hidden="true">☠️</span>
-                    <span data-i18n="difficultyImpossible">Expert</span>
-                    <span data-i18n="difficultyImpossibleDesc">L'IA anticipe vos moindres faits et gestes</span>
-                </button>
-            </div>
-            <button id="back-to-modes-btn" class="back-btn" data-i18n="backToModes">Retour aux modes</button>
-        </div>
-
-        <div id="player-setup-area" class="selection-area player-setup-area">
-            <h2 data-i18n="playerSetup">Configuration des joueurs</h2>
-            <div class="setup-section" id="player-naming-section">
-                <h3 data-i18n="playerNamesTitle">Noms des joueurs</h3>
-                <div class="input-group">
-                    <label for="player1-name-input" id="player1-name-label" data-i18n="player1NameLabel">Nom du Joueur 1 (Noir) :</label>
-                    <input type="text" id="player1-name-input" data-i18n-placeholder="yourNamePlaceholder" placeholder="Votre Nom">
-                </div>
-                <div class="input-group" id="player2-name-group">
-                    <label for="player2-name-input" data-i18n="player2NameLabel">Nom du Joueur 2 (Blanc) :</label>
-                    <input type="text" id="player2-name-input" data-i18n-placeholder="player2Placeholder" placeholder="Joueur 2">
-                </div>
-            </div>
-            <div class="setup-section" id="color-choice-section">
-                <h3 data-i18n="chooseYourColorTitle">Choisir votre couleur</h3>
-                <div class="color-choice-group">
-                    <label class="color-option" data-player="1">
-                        <input type="radio" name="human-color" value="1" checked>
-                        <div class="stone-preview player1"></div>
-                        <span id="color-option-1-text" data-i18n="player1Color">Noir (Joueur 1)</span>
-                        <div class="checkmark"><span class="icon" aria-hidden="true">✅</span></div>
-                    </label>
-                    <label class="color-option" data-player="2">
-                        <input type="radio" name="human-color" value="2">
-                        <div class="stone-preview player2"></div>
-                        <span id="color-option-2-text" data-i18n="player2Color">Blanc (Joueur 2)</span>
-                        <div class="checkmark"><span class="icon" aria-hidden="true">✅</span></div>
-                    </label>
-                </div>
-            </div>
-            <button id="start-game-from-setup" class="start-game-btn">
-                <span class="icon" aria-hidden="true">▶️</span>
-                <span data-i18n="playButton">Jouer</span>
-            </button>
-            <button id="back-to-modes-from-setup-btn" class="back-btn" data-i18n="backToModes">Retour aux modes</button>
-        </div>
-
-        <div id="game-play-area" class="game-play-area">
-            <div class="player-panel-container player-panel-left">
-                <div class="player-panel">
-                    <div class="player-info player1-info">
-                        <div class="player-title" id="p1-display-name"></div>
-                        <div class="player-stats">
-                            <div class="player-stat" title="Pions restants">
-                                <span class="icon" aria-hidden="true">💿</span>
-                                <span class="stat-value" id="p1-count">10</span>
-                            </div>
-                            <div class="player-stat" title="Pions capturés">
-                                <span class="icon" aria-hidden="true">👻</span>
-                                <span class="stat-value" id="p1-capt">0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="center-column">
-                <div class="game-info-display">
-                    <span id="game-variant-info"></span>
-                    <span id="game-difficulty-info"></span>
-                </div>
-                <div class="status" id="status" role="alert" aria-live="polite"></div>
-                <div class="game-board-container">
-                    <div class="game-board" id="board"></div>
-                    <div id="ephemeral-message-bubble" class="ephemeral-message-bubble"></div>
-                </div>
-                <div class="controls">
-                    <button id="new-game"><span class="icon" aria-hidden="true">🏠</span> <span data-i18n="newGame">Accueil</span></button>
-                    <button id="undo-btn"><span class="icon" aria-hidden="true">↩️</span> <span data-i18n="undoMove">Annuler</span></button>
-                    <button id="restart"><span class="icon" aria-hidden="true">↪️</span> <span data-i18n="restartGame">Recommencer</span></button>
-                    <button id="surrender" class="surrender-btn"><span class="icon" aria-hidden="true">🏳️</span> <span data-i18n="surrender">Abandonner</span></button>
-                </div>
-                <div class="spectator-controls" id="spectator-controls">
-                    <span class="icon" aria-hidden="true">👁️</span>
-                    <span data-i18n="spectatorSpeed">Vitesse :</span>
-                    <select id="spectator-speed">
-                        <option value="1200" data-i18n="speedSlow">Lente</option>
-                        <option value="700" selected data-i18n="speedNormal">Normale</option>
-                        <option value="300" data-i18n="speedFast">Rapide</option>
-                    </select>
-                </div>
-                <div class="move-history-panel" id="move-history-panel">
-                    <div class="move-history-title"><span class="icon" aria-hidden="true">•</span> <span data-i18n="moveHistoryTitle">Historique des coups</span></div>
-                    <div id="move-log-list" class="move-log-list"></div>
-                </div>
-            </div>
-
-            <div class="player-panel-container player-panel-right">
-                 <div class="player-panel">
-                    <div class="player-info player2-info">
-                        <div class="player-title" id="p2-display-name"></div>
-                        <div class="player-stats">
-                            <div class="player-stat" title="Pions restants">
-                                <span class="icon" aria-hidden="true">💿</span>
-                                <span class="stat-value" id="p2-count">10</span>
-                            </div>
-                            <div class="player-stat" title="Pions capturés">
-                                <span class="icon" aria-hidden="true">👻</span>
-                                <span class="stat-value" id="p2-capt">0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div data-i18n="footerHeritage">Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle</div>
-        <div class="creator"><span data-i18n="footerCreator">Créé par</span> Boussad TAMAZIRT</div>
-    </footer>
-
-    <div id="winner-overlay" class="winner-overlay">
-        <div class="winner-message" data-i18n="congratulations">Félicitations !</div>
-        <div class="winner-name"></div>
-        <button class="replay-button" id="winner-replay-button" data-i18n="replay">Rejouer</button>
-        <button class="replay-button secondary" id="winner-replay-last-btn" disabled>⏯️ <span data-i18n="replayLast">Replay</span></button>
-        <button class="replay-button secondary" id="winner-stats-btn">📈 <span data-i18n="stats">Stats</span></button>
-    </div>
-
-    <div class="spectator-badge" id="spectator-badge" data-i18n="spectatorBadgeTxt">👁 Mode Spectateur</div>
-
-    <div class="save-notification" id="save-notification">
-        <span id="save-notification-text" data-i18n="savedGameFound">Partie sauvegardée trouvée. Reprendre ?</span>
-        <div class="save-btns">
-            <button class="btn-resume" id="btn-resume">Reprendre</button>
-            <button class="btn-discard" id="btn-discard">Non</button>
-        </div>
-    </div>
-
-    <div id="confirmation-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="modal-title"></h3>
-            <p id="modal-message"></p>
-            <div class="modal-actions">
-                <button id="modal-cancel-btn" class="modal-cancel-btn"></button>
-                <button id="modal-confirm-btn" class="modal-confirm-btn"></button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="rules-modal" class="rules-modal-overlay">
-        <div class="rules-book">
-            <button id="rules-close-btn" class="rules-close-btn" title="Fermer">&times;</button>
-            
-            <div class="rules-content" lang="fr">
-                <h3 data-i18n="gameRulesTitle">Règles du Jeu</h3>
-                <h4 data-i18n="rulesGeneral">Règles Générales de Tiddas (Communes à toutes les variantes) :</h4>
-                <div class="rules-section">
-                    <p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.</span></p>
-                    <p><strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelés "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span></p>
-                    <p><strong data-i18n="rulesPhasesStrong">Phases de Jeu :</strong></p>
-                    <ul>
-                        <li><strong data-i18n="rulesPlacementPhaseStrong">Phase de Placement :</strong> <span data-i18n="rulesPlacementPhase">Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.</span></li>
-                        <li><strong data-i18n="rulesMovePhaseStrong">Phase de Déplacement :</strong> <span data-i18n="rulesMovePhase">Une fois tous les pions placés, les joueurs déplacent à tour de rôle l'un de leurs pions d'une case à la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.</span></li>
-                    </ul>
-                    <p><strong data-i18n="rulesMillStrong">Moulin (Alignement) :</strong> <span data-i18n="rulesMill">Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considérés comme des moulins valides.</strong></span></p>
-                    <p><strong data-i18n="rulesCaptureStrong">Capture :</strong> <span data-i18n="rulesCapture">Lorsqu'un joueur forme un moulin (horizontal ou vertical de 3 pions), il a le droit de "manger" (capturer) un pion adverse.</span></p>
-                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Alignement de 3 interdit pendant le placement :</strong> <span data-i18n="rulesCapturePlacementRestriction">Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.</span></p>
-                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Tous les pions sont capturables :</strong> <span data-i18n="rulesCaptureAllPieces">Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions "protégés".</span></p>
-                    <p><strong data-i18n="rulesForcedMoveStrong">Règle de déplacement forcé de moulin :</strong> <span data-i18n="rulesForcedMove">En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.</span></p>
-                </div>
-                <h4 data-i18n="rulesDifferences">Différences entre les variantes :</h4>
-                <div class="rules-section">
-                    <p data-i18n="rulesDifferencesIntro">Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :</p>
-                    <p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
-                    <ul>
-                        <li><strong data-i18n="rulesTiddeztMovesStrong">Déplacements :</strong> <span data-i18n="rulesTiddeztMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
-                        <li><strong data-i18n="rulesTiddeztCapturesStrong">Captures :</strong> <span data-i18n="rulesTiddeztCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
-                        <li><strong data-i18n="rulesTiddeztWinStrong">Victoire :</strong> <span data-i18n="rulesTiddeztWin">Normale.</span></li>
-                        <li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTiddeztNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
-                    </ul>
-                    <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
-                    <ul>
-                        <li><span data-i18n="rulesBessifCombines">Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.</span></li>
-                        <li><strong data-i18n="rulesBessifMovesStrong">Déplacements :</strong> <span data-i18n="rulesBessifMoves">Uniquement horizontaux/verticaux.</span></li>
-                        <li><strong data-i18n="rulesBessifInverseWinStrong">Victoire Inversée :</strong> <span data-i18n="rulesBessifInverseWin">Le joueur gagne si son propre nombre de pions est réduit à moins de trois (c'est-à-dire 0, 1 ou 2 pions), OU si son adversaire est bloqué et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.</span></li>
-                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Choix du pion à capturer :</strong> <span data-i18n="rulesBessifOpponentChooses">Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.</span></li>
-                        <li><strong data-i18n="rulesBessifForcedMoveStrong">Déplacement forcé pour former un moulin :</strong> <span data-i18n="rulesBessifForcedMove">La règle du déplacement forcé de moulin s'applique.</span></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="rules-content" lang="kab">
-                <h3 data-i18n="gameRulesTitle">Ilugan n wurar</h3>
-                <h4 data-i18n="rulesGeneral">Ilugan s amata n Tiddas :</h4>
-                <div class="rules-section">
-                    <p><strong data-i18n="rulesObjectiveStrong">Iswi :</strong> <span data-i18n="rulesObjective">Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, neɣ aḥbas-is iwakken ur izmer ara ad inaqel. Di tewsit n Učči bessif, yerebḥ win i wummi mmeččen ileqqafen-is.</span></p>
-                    <p><strong data-i18n="rulesPiecesStrong">Ileqqafen :</strong> <span data-i18n="rulesPieces">Yal amyurar yesɛa 10 n yileqqafen. Amyurar 2 (Amellal) yettbdu d amezwaru.</span></p>
-                    <p><strong data-i18n="rulesPhasesStrong">Talliyin n wurar :</strong></p>
-                    <ul>
-                        <li><strong data-i18n="rulesPlacementPhaseStrong">Tallit n userrasu :</strong> <span data-i18n="rulesPlacementPhase">Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.</span></li>
-                        <li><strong data-i18n="rulesMovePhaseStrong">Tallit n unaqel :</strong> <span data-i18n="rulesMovePhase">Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.</span></li>
-                    </ul>
-                    <p><strong data-i18n="rulesMillStrong">Atellet :</strong> <span data-i18n="rulesMill">Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).</span></p>
-                    <p><strong data-i18n="rulesCaptureStrong">Učči :</strong> <span data-i18n="rulesCapture">Ma yesdukel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.</span></p>
-                    <p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Yegdel ad tesdukleḍ 3 deg usersu :</strong> <span data-i18n="rulesCapturePlacementRestriction">Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usersu. Učči tettili kan deg tallit n unaqel.</span></p>
-                    <p><strong data-i18n="rulesCaptureAllPiecesStrong">Akk ileqqafen zemren ad mmeččen :</strong> <span data-i18n="rulesCaptureAllPieces">Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.</span></p>
-                    <p><strong data-i18n="rulesForcedMoveStrong">atellet s tmara:</strong> <span data-i18n="rulesForcedMove">Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.</span></p>
-                </div>
-                <h4 data-i18n="rulesDifferences">Imgired gar tewsiyin :</h4>
-                <div class="rules-section">
-                    <p data-i18n="rulesDifferencesIntro">Yal tawsit tesɛa ilugan-is :</p>
-                    <p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
-                    <ul>
-                        <li><strong data-i18n="rulesTiddeztMovesStrong">Anaqel :</strong> <span data-i18n="rulesTiddeztMoves">Kan s teɣzi neɣ s tehri.</span></li>
-                        <li><strong data-i18n="rulesTiddeztCapturesStrong">Učči :</strong> <span data-i18n="rulesTiddeztCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
-                        <li><strong data-i18n="rulesTiddeztWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTiddeztWin">yerbeḥ win yeččan.</span></li>
-                        <li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTiddeztNoForcedMove">Alugen n lmakala bessif ur ttilin ara.</span></li>
-                    </ul>
-                    <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
-                    <ul>
-                        <li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.</span></li>
-                        <li><strong data-i18n="rulesBessifMovesStrong">Anaqel :</strong> <span data-i18n="rulesBessifMoves">Kan s teɣzi neɣ s tehri.</span></li>
-                        <li><strong data-i18n="rulesBessifInverseWinStrong">Arbaḥ s wexṣar :</strong> <span data-i18n="rulesBessifInverseWin">Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.</span></li>
-                        <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Axṣim ad yefren :</strong> <span data-i18n="rulesBessifOpponentChooses">Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.</span></li>
-                        <li><strong data-i18n="rulesBessifForcedMoveStrong">atellet s tmara :</strong> <span data-i18n="rulesBessifForcedMove">Ur d ak d iṣaḥ ara ad tenaqleḍ alqqaf ɣer w anda ur tettellit ara ma yella yezmer.</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <script nonce="tiddas">
+<!-- ===== LANGUAGE SPLASH SCREEN ===== -->
+<div aria-label="Choix de la langue / Tifert n tutlayt" aria-modal="true" id="lang-splash" role="dialog">
+<div class="splash-logo">TIDDAS</div>
+<div class="splash-tifinagh">ⵜⵉⴷⴷⴰⵙ</div>
+<div class="splash-divider"></div>
+<p class="splash-prompt">Choisissez votre langue  /  Fren tutlayt-ik</p>
+<div class="splash-langs">
+<button aria-label="Français" class="splash-lang-btn" data-lang="fr">
+<span class="splash-lang-flag">FR</span>
+<span class="splash-lang-name">Français</span>
+<span class="splash-lang-sub">Jouer en français</span>
+</button>
+<button aria-label="Taqbaylit" class="splash-lang-btn" data-lang="kab">
+<span class="splash-lang-flag">ⵣ</span>
+<span class="splash-lang-name">Taqbaylit</span>
+<span class="splash-lang-sub">Urar s taqbaylit</span>
+</button>
+</div>
+<p class="splash-footer">Patrimoine Amazigh • Adles Amaziɣ</p>
+</div>
+<div class="toolbar-buttons" id="toolbar-buttons">
+<div class="settings-tray" id="settings-tray">
+<button aria-label="Thème" class="toolbar-btn" id="theme-btn" title="Changer de thème">🎨 <span data-i18n="btnTheme" style="font-size:0.78rem;">Thème</span></button>
+<button aria-label="Son" class="toolbar-btn" id="sound-btn" title="Son On/Off">🔊 <span data-i18n="btnSound" style="font-size:0.78rem;">Son</span></button>
+<button aria-label="Installer" class="toolbar-btn" id="install-btn" title="Installer l'application">
+                ⬇️ <span data-i18n="installApp" style="font-size:0.78rem;">Installer</span>
+</button>
+<button aria-label="Stats" class="toolbar-btn" id="stats-btn" title="Statistiques">
+                📈 <span data-i18n="stats" style="font-size:0.78rem;">Stats</span>
+</button>
+<button aria-label="Mode guidé" aria-pressed="true" class="toolbar-btn" id="guided-btn" title="Mode guidé">
+                🧭 <span data-i18n="guidedMode" style="font-size:0.78rem;">Guidé</span>
+</button>
+<button aria-label="Replay" class="toolbar-btn" disabled="" id="replay-btn" title="Revoir la dernière partie">
+                ⏯️ <span data-i18n="replayLast" style="font-size:0.78rem;">Replay</span>
+</button>
+<div class="language-selector">
+<span aria-hidden="true" class="icon">🗣️</span>
+<select aria-label="Langue / Tutlayt" id="language-select">
+<option value="fr">Français</option>
+<option value="kab">ⵣ Taqbaylit</option>
+</select>
+</div>
+</div>
+<button aria-label="Paramètres" id="settings-fab" title="Paramètres"><span aria-hidden="true" class="settings-icon">⚙️</span><span class="settings-label" data-i18n="btnSettings">Paramètres</span></button>
+</div>
+<div class="stone-decoration stone-1">ⵣ</div>
+<div class="stone-decoration stone-2">ⵣ</div>
+<div class="stone-decoration stone-3">ⵣ</div>
+<div class="stone-decoration stone-4">ⵣ</div>
+<header id="main-header">
+<h1 data-i18n="appTitle">TIDDAS</h1>
+</header>
+<div class="game-container">
+<div class="selection-area active" id="version-selection-area">
+<h2 data-i18n="chooseVersion">Choisir la version du jeu :</h2>
+<div class="version-grid">
+<div class="version-card" data-variant="tiddezt-no-diag">
+<h3 data-i18n="tiddeztTitle">TIDDEZT</h3>
+<p data-i18n="tiddeztDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
+</div>
+<div class="version-card" data-variant="bessif-tiddezt">
+<h3 data-i18n="bessifTitle">Učči bessif TIDDEZT</h3>
+<p data-i18n="bessifDesc">Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
+</div>
+</div>
+<button class="rules-btn" id="show-rules-btn">
+<span aria-hidden="true" class="icon">📖</span>
+<span data-i18n="gameRulesTitle">Règles du jeu</span>
+</button>
+</div>
+<div class="selection-area" id="mode-selection-area">
+<h2 data-i18n="howToPlay">Comment souhaitez-vous jouer ?</h2>
+<div class="options-group">
+<button class="option-btn" disabled="" id="play-online-btn">
+<span aria-hidden="true" class="icon">🌐</span>
+<span data-i18n="playOnline">Jouer en ligne</span>
+<span data-i18n="playOnlineDesc">Bientôt disponible</span>
+</button>
+<button class="option-btn" id="play-ai-btn">
+<span aria-hidden="true" class="icon">🤖</span>
+<span data-i18n="playAI">Jouer contre l'ordinateur</span>
+<span data-i18n="playAIDesc">Affrontez une intelligence artificielle</span>
+</button>
+<button class="option-btn" id="play-offline-btn">
+<span aria-hidden="true" class="icon">👥</span>
+<span data-i18n="playOffline">Jouer hors-ligne</span>
+<span data-i18n="playOfflineDesc">Partie locale sur votre appareil</span>
+</button>
+<button class="option-btn" id="play-spectator-btn">
+<span aria-hidden="true" class="icon">👁️</span>
+<span data-i18n="playSpectator">Mode Spectateur</span>
+<span data-i18n="playSpectatorDesc">Regardez deux IA s'affronter</span>
+</button>
+</div>
+<button class="back-btn" data-i18n="backToVersions" id="back-to-versions-btn">Retour aux versions</button>
+</div>
+<div class="selection-area" id="ai-difficulty-selection-area">
+<h2 data-i18n="chooseAIDifficulty">Choisir la difficulté de l'ordinateur</h2>
+<div class="options-group">
+<button class="option-btn difficulty-btn" data-level="1">
+<span aria-hidden="true" class="icon">🙂</span>
+<span data-i18n="difficultyEasy">Facile</span>
+<span data-i18n="difficultyEasyDesc">L'ordinateur joue au hasard</span>
+</button>
+<button class="option-btn difficulty-btn" data-level="2">
+<span aria-hidden="true" class="icon">😐</span>
+<span data-i18n="difficultyMedium">Moyen</span>
+<span data-i18n="difficultyMediumDesc">L'ordinateur est un adversaire correct</span>
+</button>
+<button class="option-btn difficulty-btn" data-level="3">
+<span aria-hidden="true" class="icon">😬</span>
+<span data-i18n="difficultyHard">Difficile</span>
+<span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratège</span>
+</button>
+<button class="option-btn difficulty-btn" data-level="4">
+<span aria-hidden="true" class="icon">☠️</span>
+<span data-i18n="difficultyImpossible">Expert</span>
+<span data-i18n="difficultyImpossibleDesc">L'IA anticipe vos moindres faits et gestes</span>
+</button>
+</div>
+<button class="back-btn" data-i18n="backToModes" id="back-to-modes-btn">Retour aux modes</button>
+</div>
+<div class="selection-area player-setup-area" id="player-setup-area">
+<h2 data-i18n="playerSetup">Configuration des joueurs</h2>
+<div class="setup-section" id="player-naming-section">
+<h3 data-i18n="playerNamesTitle">Noms des joueurs</h3>
+<div class="input-group">
+<label data-i18n="player1NameLabel" for="player1-name-input" id="player1-name-label">Nom du Joueur 1 (Noir) :</label>
+<input data-i18n-placeholder="yourNamePlaceholder" id="player1-name-input" placeholder="Votre Nom" type="text"/>
+</div>
+<div class="input-group" id="player2-name-group">
+<label data-i18n="player2NameLabel" for="player2-name-input">Nom du Joueur 2 (Blanc) :</label>
+<input data-i18n-placeholder="player2Placeholder" id="player2-name-input" placeholder="Joueur 2" type="text"/>
+</div>
+</div>
+<div class="setup-section" id="color-choice-section">
+<h3 data-i18n="chooseYourColorTitle">Choisir votre couleur</h3>
+<div class="color-choice-group">
+<label class="color-option" data-player="1">
+<input checked="" name="human-color" type="radio" value="1"/>
+<div class="stone-preview player1"></div>
+<span data-i18n="player1Color" id="color-option-1-text">Noir (Joueur 1)</span>
+<div class="checkmark"><span aria-hidden="true" class="icon">✅</span></div>
+</label>
+<label class="color-option" data-player="2">
+<input name="human-color" type="radio" value="2"/>
+<div class="stone-preview player2"></div>
+<span data-i18n="player2Color" id="color-option-2-text">Blanc (Joueur 2)</span>
+<div class="checkmark"><span aria-hidden="true" class="icon">✅</span></div>
+</label>
+</div>
+</div>
+<button class="start-game-btn" id="start-game-from-setup">
+<span aria-hidden="true" class="icon">▶️</span>
+<span data-i18n="playButton">Jouer</span>
+</button>
+<button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-setup-btn">Retour aux modes</button>
+</div>
+<div class="game-play-area" id="game-play-area">
+<div class="player-panel-container player-panel-left">
+<div class="player-panel">
+<div class="player-info player1-info">
+<div class="player-title" id="p1-display-name"></div>
+<div class="player-stats">
+<div class="player-stat" title="Pions restants">
+<span aria-hidden="true" class="icon">💿</span>
+<span class="stat-value" id="p1-count">10</span>
+</div>
+<div class="player-stat" title="Pions capturés">
+<span aria-hidden="true" class="icon">👻</span>
+<span class="stat-value" id="p1-capt">0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="center-column">
+<div class="game-info-display">
+<span id="game-variant-info"></span>
+<span id="game-difficulty-info"></span>
+</div>
+<div aria-live="polite" class="status" id="status" role="alert"></div>
+<div class="game-board-container">
+<div class="game-board" id="board"></div>
+<div class="ephemeral-message-bubble" id="ephemeral-message-bubble"></div>
+</div>
+<div class="controls">
+<button id="new-game"><span aria-hidden="true" class="icon">🏠</span> <span data-i18n="newGame">Accueil</span></button>
+<button id="undo-btn"><span aria-hidden="true" class="icon">↩️</span> <span data-i18n="undoMove">Annuler</span></button>
+<button id="restart"><span aria-hidden="true" class="icon">↪️</span> <span data-i18n="restartGame">Recommencer</span></button>
+<button class="surrender-btn" id="surrender"><span aria-hidden="true" class="icon">🏳️</span> <span data-i18n="surrender">Abandonner</span></button>
+</div>
+<div class="spectator-controls" id="spectator-controls">
+<span aria-hidden="true" class="icon">👁️</span>
+<span data-i18n="spectatorSpeed">Vitesse :</span>
+<select id="spectator-speed">
+<option data-i18n="speedSlow" value="1200">Lente</option>
+<option data-i18n="speedNormal" selected="" value="700">Normale</option>
+<option data-i18n="speedFast" value="300">Rapide</option>
+</select>
+</div>
+<div class="move-history-panel" id="move-history-panel">
+<div class="move-history-title"><span aria-hidden="true" class="icon">•</span> <span data-i18n="moveHistoryTitle">Historique des coups</span></div>
+<div class="move-log-list" id="move-log-list"></div>
+</div>
+</div>
+<div class="player-panel-container player-panel-right">
+<div class="player-panel">
+<div class="player-info player2-info">
+<div class="player-title" id="p2-display-name"></div>
+<div class="player-stats">
+<div class="player-stat" title="Pions restants">
+<span aria-hidden="true" class="icon">💿</span>
+<span class="stat-value" id="p2-count">10</span>
+</div>
+<div class="player-stat" title="Pions capturés">
+<span aria-hidden="true" class="icon">👻</span>
+<span class="stat-value" id="p2-capt">0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div data-i18n="footerHeritage">Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle</div>
+<div class="creator"><span data-i18n="footerCreator">Créé par</span> Boussad TAMAZIRT</div>
+</footer>
+<div class="winner-overlay" id="winner-overlay">
+<div class="winner-message" data-i18n="congratulations">Félicitations !</div>
+<div class="winner-name"></div>
+<button class="replay-button" data-i18n="replay" id="winner-replay-button">Rejouer</button>
+<button class="replay-button secondary" disabled="" id="winner-replay-last-btn">⏯️ <span data-i18n="replayLast">Replay</span></button>
+<button class="replay-button secondary" id="winner-stats-btn">📈 <span data-i18n="stats">Stats</span></button>
+</div>
+<div class="spectator-badge" data-i18n="spectatorBadgeTxt" id="spectator-badge">👁 Mode Spectateur</div>
+<div class="save-notification" id="save-notification">
+<span data-i18n="savedGameFound" id="save-notification-text">Partie sauvegardée trouvée. Reprendre ?</span>
+<div class="save-btns">
+<button class="btn-resume" id="btn-resume">Reprendre</button>
+<button class="btn-discard" id="btn-discard">Non</button>
+</div>
+</div>
+<div class="modal-overlay" id="confirmation-modal">
+<div class="modal-content">
+<h3 id="modal-title"></h3>
+<p id="modal-message"></p>
+<div class="modal-actions">
+<button class="modal-cancel-btn" id="modal-cancel-btn"></button>
+<button class="modal-confirm-btn" id="modal-confirm-btn"></button>
+</div>
+</div>
+</div>
+<div class="rules-modal-overlay" id="rules-modal">
+<div class="rules-book">
+<button class="rules-close-btn" id="rules-close-btn" title="Fermer">×</button>
+<div class="rules-content" lang="fr">
+<h3 data-i18n="gameRulesTitle">Règles du Jeu</h3>
+<h4 data-i18n="rulesGeneral">Règles Générales de Tiddas (Communes à toutes les variantes) :</h4>
+<div class="rules-section">
+<p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.</span></p>
+<p><strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelés "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span></p>
+<p><strong data-i18n="rulesPhasesStrong">Phases de Jeu :</strong></p>
+<ul>
+<li><strong data-i18n="rulesPlacementPhaseStrong">Phase de Placement :</strong> <span data-i18n="rulesPlacementPhase">Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.</span></li>
+<li><strong data-i18n="rulesMovePhaseStrong">Phase de Déplacement :</strong> <span data-i18n="rulesMovePhase">Une fois tous les pions placés, les joueurs déplacent à tour de rôle l'un de leurs pions d'une case à la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.</span></li>
+</ul>
+<p><strong data-i18n="rulesMillStrong">Moulin (Alignement) :</strong> <span data-i18n="rulesMill">Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considérés comme des moulins valides.</strong></span></p>
+<p><strong data-i18n="rulesCaptureStrong">Capture :</strong> <span data-i18n="rulesCapture">Lorsqu'un joueur forme un moulin (horizontal ou vertical de 3 pions), il a le droit de "manger" (capturer) un pion adverse.</span></p>
+<p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Alignement de 3 interdit pendant le placement :</strong> <span data-i18n="rulesCapturePlacementRestriction">Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.</span></p>
+<p><strong data-i18n="rulesCaptureAllPiecesStrong">Tous les pions sont capturables :</strong> <span data-i18n="rulesCaptureAllPieces">Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions "protégés".</span></p>
+<p><strong data-i18n="rulesForcedMoveStrong">Règle de déplacement forcé de moulin :</strong> <span data-i18n="rulesForcedMove">En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.</span></p>
+</div>
+<h4 data-i18n="rulesDifferences">Différences entre les variantes :</h4>
+<div class="rules-section">
+<p data-i18n="rulesDifferencesIntro">Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :</p>
+<p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
+<ul>
+<li><strong data-i18n="rulesTiddeztMovesStrong">Déplacements :</strong> <span data-i18n="rulesTiddeztMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
+<li><strong data-i18n="rulesTiddeztCapturesStrong">Captures :</strong> <span data-i18n="rulesTiddeztCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
+<li><strong data-i18n="rulesTiddeztWinStrong">Victoire :</strong> <span data-i18n="rulesTiddeztWin">Normale.</span></li>
+<li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTiddeztNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
+</ul>
+<p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
+<ul>
+<li><span data-i18n="rulesBessifCombines">Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.</span></li>
+<li><strong data-i18n="rulesBessifMovesStrong">Déplacements :</strong> <span data-i18n="rulesBessifMoves">Uniquement horizontaux/verticaux.</span></li>
+<li><strong data-i18n="rulesBessifInverseWinStrong">Victoire Inversée :</strong> <span data-i18n="rulesBessifInverseWin">Le joueur gagne si son propre nombre de pions est réduit à moins de trois (c'est-à-dire 0, 1 ou 2 pions), OU si son adversaire est bloqué et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.</span></li>
+<li><strong data-i18n="rulesBessifOpponentChoosesStrong">Choix du pion à capturer :</strong> <span data-i18n="rulesBessifOpponentChooses">Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.</span></li>
+<li><strong data-i18n="rulesBessifForcedMoveStrong">Déplacement forcé pour former un moulin :</strong> <span data-i18n="rulesBessifForcedMove">La règle du déplacement forcé de moulin s'applique.</span></li>
+</ul>
+</div>
+</div>
+<div class="rules-content" lang="kab">
+<h3 data-i18n="gameRulesTitle">Ilugan n wurar</h3>
+<h4 data-i18n="rulesGeneral">Ilugan s amata n Tiddas :</h4>
+<div class="rules-section">
+<p><strong data-i18n="rulesObjectiveStrong">Iswi :</strong> <span data-i18n="rulesObjective">Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, neɣ aḥbas-is iwakken ur izmer ara ad inaqel. Di tewsit n Učči bessif, yerebḥ win i wummi mmeččen ileqqafen-is.</span></p>
+<p><strong data-i18n="rulesPiecesStrong">Ileqqafen :</strong> <span data-i18n="rulesPieces">Yal amyurar yesɛa 10 n yileqqafen. Amyurar 2 (Amellal) yettbdu d amezwaru.</span></p>
+<p><strong data-i18n="rulesPhasesStrong">Talliyin n wurar :</strong></p>
+<ul>
+<li><strong data-i18n="rulesPlacementPhaseStrong">Tallit n userrasu :</strong> <span data-i18n="rulesPlacementPhase">Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.</span></li>
+<li><strong data-i18n="rulesMovePhaseStrong">Tallit n unaqel :</strong> <span data-i18n="rulesMovePhase">Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.</span></li>
+</ul>
+<p><strong data-i18n="rulesMillStrong">Atellet :</strong> <span data-i18n="rulesMill">Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).</span></p>
+<p><strong data-i18n="rulesCaptureStrong">Učči :</strong> <span data-i18n="rulesCapture">Ma yesdukel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.</span></p>
+<p><strong data-i18n="rulesCapturePlacementRestrictionStrong">Yegdel ad tesdukleḍ 3 deg usersu :</strong> <span data-i18n="rulesCapturePlacementRestriction">Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usersu. Učči tettili kan deg tallit n unaqel.</span></p>
+<p><strong data-i18n="rulesCaptureAllPiecesStrong">Akk ileqqafen zemren ad mmeččen :</strong> <span data-i18n="rulesCaptureAllPieces">Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.</span></p>
+<p><strong data-i18n="rulesForcedMoveStrong">atellet s tmara:</strong> <span data-i18n="rulesForcedMove">Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.</span></p>
+</div>
+<h4 data-i18n="rulesDifferences">Imgired gar tewsiyin :</h4>
+<div class="rules-section">
+<p data-i18n="rulesDifferencesIntro">Yal tawsit tesɛa ilugan-is :</p>
+<p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
+<ul>
+<li><strong data-i18n="rulesTiddeztMovesStrong">Anaqel :</strong> <span data-i18n="rulesTiddeztMoves">Kan s teɣzi neɣ s tehri.</span></li>
+<li><strong data-i18n="rulesTiddeztCapturesStrong">Učči :</strong> <span data-i18n="rulesTiddeztCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
+<li><strong data-i18n="rulesTiddeztWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTiddeztWin">yerbeḥ win yeččan.</span></li>
+<li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTiddeztNoForcedMove">Alugen n lmakala bessif ur ttilin ara.</span></li>
+</ul>
+<p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
+<ul>
+<li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.</span></li>
+<li><strong data-i18n="rulesBessifMovesStrong">Anaqel :</strong> <span data-i18n="rulesBessifMoves">Kan s teɣzi neɣ s tehri.</span></li>
+<li><strong data-i18n="rulesBessifInverseWinStrong">Arbaḥ s wexṣar :</strong> <span data-i18n="rulesBessifInverseWin">Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.</span></li>
+<li><strong data-i18n="rulesBessifOpponentChoosesStrong">Axṣim ad yefren :</strong> <span data-i18n="rulesBessifOpponentChooses">Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.</span></li>
+<li><strong data-i18n="rulesBessifForcedMoveStrong">atellet s tmara :</strong> <span data-i18n="rulesBessifForcedMove">Ur d ak d iṣaḥ ara ad tenaqleḍ alqqaf ɣer w anda ur tettellit ara ma yella yezmer.</span></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<script nonce="tiddas">
 
 /* ===== UI micro-interactions (single-file) ===== */
 (function(){
@@ -3813,11 +3833,23 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
     el.style.setProperty('--mx', x.toFixed(2) + '%');
     el.style.setProperty('--my', y.toFixed(2) + '%');
   };
+  // Throttle pointermove updates to one per animation frame (perf on mobile)
+  let __tiddasRaf = 0;
+  let __tiddasLast = null;
   document.addEventListener('pointermove', (ev) => {
     const t = ev.target;
     if(!(t instanceof Element)) return;
-    const el = t.closest && t.closest('button, .version-card, .difficulty-card, .mode-card, .option-btn, .toolbar-btn, #settings-fab');
-    if(el) setXY(el, ev);
+    __tiddasLast = { t, x: ev.clientX, y: ev.clientY };
+    if (__tiddasRaf) return;
+    __tiddasRaf = requestAnimationFrame(() => {
+      __tiddasRaf = 0;
+      const last = __tiddasLast;
+      if (!last) return;
+      const el = last.t.closest && last.t.closest('button, .version-card, .difficulty-card, .mode-card, .option-btn, .toolbar-btn, #settings-fab');
+      if (!el) return;
+      // call setXY with a minimal event-like object
+      setXY(el, { clientX: last.x, clientY: last.y });
+    });
   }, {passive:true});
 
   // Replace any leftover font-awesome tags gracefully
@@ -4577,8 +4609,15 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
         }
 
         function updateInfo() {
-            p1Count.textContent = state.counts[1];
-            p2Count.textContent = state.counts[2];
+            if (state.phase === 'placement') {
+                // During placement: show remaining pieces to place
+                p1Count.textContent = state.counts[1];
+                p2Count.textContent = state.counts[2];
+            } else {
+                // During move phase: show pieces on the board
+                p1Count.textContent = state.board.filter(p => p === 1).length;
+                p2Count.textContent = state.board.filter(p => p === 2).length;
+            }
             p1Capt.textContent = state.captured[1];
             p2Capt.textContent = state.captured[2];
         }
@@ -4600,9 +4639,8 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             const p2NameForStatus = p2DisplayName.textContent.split(' (')[0];
             
             if (state.captureMode) {
-                const totalCaptures = state.captured[state.turnForCapture] + state.pendingCaptures;
-                const currentCaptureNumber = totalCaptures - state.pendingCaptures + 1;
-                const captureCountInfo = state.pendingCaptures > 1 ? ` (${currentCaptureNumber}/${state.captured[state.turnForCapture] + state.pendingCaptures + state.pendingCaptures -1})` : '';
+                // captureCountInfo: only shown if multiple captures remain in one turn
+                const captureCountInfo = state.pendingCaptures > 1 ? ` (×${state.pendingCaptures})` : '';
                 
                 const playerWhoChoosesName = (state.turnForCapture === 1) ? p1NameForStatus : p2NameForStatus;
 
@@ -4652,30 +4690,33 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             }
         }
         
-        function handleUndo() {
+        
+function handleUndo() {
             if (undoBtn.disabled) return;
             if (moveHistory.length === 0) return;
 
             if (gameMode === 'ai') {
                 // In AI mode we want to land back on a normal, playable HUMAN turn.
-                // We therefore pop history frames until:
+                // We pop history frames until:
                 //  - it's the human's turn, AND
                 //  - not in captureMode (capture is part of the same atomic turn).
                 const isPlayableHumanTurn = (s) => s && !s.captureMode && s.turn === humanPlayerId;
 
-                let candidate = moveHistory.pop();
-                let safety = 0;
-                while (!isPlayableHumanTurn(candidate) && moveHistory.length > 0 && safety < 10) {
+                let candidate = null;
+                while (moveHistory.length > 0) {
                     candidate = moveHistory.pop();
-                    safety++;
+                    if (isPlayableHumanTurn(candidate)) break;
                 }
-                state = candidate;
+                if (candidate) state = candidate;
             } else {
                 state = moveHistory.pop();
             }
 
             renderAll();
+            // If after undo it's AI's turn (or any automatic action), continue to avoid getting "stuck"
+            if (!state.winner) triggerNextAction();
         }
+
 
         function handleCaptureClick(i) {
             if (!state.captureMode || state.winner) return;
@@ -4701,7 +4742,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             
             const tempBoard = [...state.board];
             tempBoard[i] = state.turn;
-            if (getFormedMills(i, state.turn, tempBoard).length > 0) {
+            if (formsForbiddenPlacementAlignment(i, state.turn, tempBoard)) {
                 showStatusError('statusPlacementAlignForbidden');
                 moveHistory.pop();
                 return;
@@ -4732,7 +4773,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 if (state.board[to] === state.turn) { state.selected = to; moveHistory.pop(); renderBoard(); updateStatus(); return; }
                 if (state.board[to] === null && isAdjacent(from, to)) {
                     if (variantConfig[variant].forceMillMove) {
-                        const allPossibleMillMovesForPlayer = getPossibleMillMoves(state.turn, state.board);
+                        const allPossibleMillMovesForPlayer = getPossibleMillMoves(state.turn, state.board, 'move');
                         const tempBoard = simulateMove(state.board, {from, to}, state.turn);
                         const isCurrentMoveAMill = findAllMills(state.board, tempBoard, from, to, state.turn).length > 0;
                         if (allPossibleMillMovesForPlayer.length > 0 && !isCurrentMoveAMill) {
@@ -4918,6 +4959,34 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             return mills;
         }
         
+
+
+        // Placement rule: it is forbidden to create an alignment of 3 OR MORE stones during placement.
+        // (Mills during movement remain STRICTLY 3 stones.)
+        function formsForbiddenPlacementAlignment(idx, player, board) {
+            const r = Math.floor(idx / SIZE), c = idx % SIZE;
+
+            const countDir = (dr, dc) => {
+                let n = 0;
+                let rr = r + dr, cc = c + dc;
+                while (rr >= 0 && rr < SIZE && cc >= 0 && cc < SIZE) {
+                    const ii = rr * SIZE + cc;
+                    if (board[ii] === player) { n++; rr += dr; cc += dc; }
+                    else break;
+                }
+                return n;
+            };
+
+            // Horizontal length through idx
+            const h = 1 + countDir(0, -1) + countDir(0, 1);
+            if (h >= 3) return true;
+
+            // Vertical length through idx
+            const v = 1 + countDir(-1, 0) + countDir(1, 0);
+            if (v >= 3) return true;
+
+            return false;
+        }
         function isAdjacent(a, b) {
             const r1 = Math.floor(a / SIZE), c1 = a % SIZE;
             const r2 = Math.floor(b / SIZE), c2 = b % SIZE;
@@ -4953,8 +5022,9 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             if (state.winner) endGame();
         }
         
-        function countPlayerMoves(player, board) {
-            if (state.phase === 'placement') return board.filter(p => p === null).length;
+        function countPlayerMoves(player, board, phase) {
+            const currentPhase = phase !== undefined ? phase : state.phase;
+            if (currentPhase === 'placement') return board.filter(p => p === null).length;
             let moveCount = 0;
             for (let i = 0; i < SIZE * SIZE; i++) {
                 if (board[i] === player) {
@@ -5003,7 +5073,8 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 
             } else {
                 // --- INVERSE WIN LOGIC (Učči Bessif) ---
-                // In inverse mode, a higher score is WORSE. The AI tries to find the lowest score.
+                // In inverse mode, a higher evaluatePlacement score means AI is in a strategically weaker position (more isolated, fewer mill setups),
+                // which is actually GOOD for the inverse AI goal. The minimax tree always maximizes for AI (same as evaluateBoard which negates for inverse).
                 // Huge penalties (add to score) for creating mill setups.
                 score += playerPotentialMills * 500;
                 score += playerDoubleMills * 2000;
@@ -5037,9 +5108,10 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             return score;
         }
 
-        function getPossibleMillMoves(player, board) {
+        function getPossibleMillMoves(player, board, phase) {
+            const currentPhase = phase !== undefined ? phase : state.phase;
             const millMoves = [];
-            if (state.phase === 'placement') return [];
+            if (currentPhase === 'placement') return [];
             for (let from = 0; from < SIZE * SIZE; from++) {
                 if (board[from] === player) {
                     for (let to = 0; to < SIZE * SIZE; to++) {
@@ -5064,17 +5136,24 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 const pieceToActOn = aiChoosePieceToActOn();
                 if (pieceToActOn !== null) {
                     handleCapture(pieceToActOn);
+                } else {
+                    // No valid capture target (shouldn't happen, but prevent infinite captureMode lock)
+                    state.captureMode = false;
+                    state.turnForCapture = null;
+                    state.pendingCaptures = 0;
+                    state.highlightedMills = [];
+                    endTurn();
                 }
                 return;
             }
             let move = aiFindBestMove();
             if (state.phase === 'placement') {
                 if (move) { handlePlacement(move.to); } 
-                else { state.winner = humanPlayerId; endGame(); }
+                else { state.winner = 3 - aiPlayerId; endGame(); } // use opponent ID, not humanPlayerId (spectator-safe)
             } else {
                 if (!canPlayerMove(aiPlayerId, state.board)) { 
                     showStatusError('aiCannotMove');
-                    state.winner = humanPlayerId; 
+                    state.winner = 3 - aiPlayerId; // use opponent ID, not humanPlayerId (spectator-safe)
                     endGame(); 
                     return; 
                 }
@@ -5083,7 +5162,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                     renderBoard(); 
                     setTimeout(() => { handleMove(move.to); }, 150);
                 } else { 
-                    state.winner = humanPlayerId;
+                    state.winner = 3 - aiPlayerId; // use opponent ID, not humanPlayerId (spectator-safe)
                     endGame(); 
                 }
             }
@@ -5147,14 +5226,16 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                     const opponentMillsAfter = getFormedMillsCount(tempBoard, humanPlayerId);
                     if (opponentMillsAfter < opponentMillsBefore) score += 5000;
                     if (isPieceInPotentialMill(state.board, target, humanPlayerId)) score += 3500;
-                    const opponentCanFormMillBefore = canPlayerFormMillNextTurn(humanPlayerId, state.board);
-                    const opponentCanFormMillAfter = canPlayerFormMillNextTurn(humanPlayerId, tempBoard);
+                    const opponentCanFormMillBefore = canPlayerFormMillNextTurn(humanPlayerId, state.board, 'move');
+                    const opponentCanFormMillAfter = canPlayerFormMillNextTurn(humanPlayerId, tempBoard, 'move');
                     if (opponentCanFormMillBefore && !opponentCanFormMillAfter) score += 2500;
                     
+                    // Capture happens in move phase - compute piecesPlaced for correct phase tracking
+                    const captPiecesPlaced = state.board.filter(p => p !== null).length + state.captured[1] + state.captured[2];
                     if (aiDifficulty >= 3) {
-                         score += minimax(tempBoard, (aiDifficulty === 4 ? 3 : aiDifficulty - 1), false, humanPlayerId, -Infinity, Infinity);
+                         score += minimax(tempBoard, (aiDifficulty === 4 ? 3 : aiDifficulty - 1), false, humanPlayerId, -Infinity, Infinity, captPiecesPlaced);
                     } else {
-                        score += evaluateBoard(tempBoard, aiPlayerId, null);
+                        score += evaluateBoard(tempBoard, aiPlayerId, null, 'move');
                     }
                     
                     if (score > bestScore) {
@@ -5193,20 +5274,20 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             return doubleMillCount;
         }
 
-        function evaluateBoard(board, playerToEvaluate, simulatedWinner) {
+        function evaluateBoard(board, playerToEvaluate, simulatedWinner, phase) {
             const opponent = 3 - playerToEvaluate;
+            const currentPhase = phase !== undefined ? phase : state.phase;
 
             if (simulatedWinner !== null) {
-                if (variantConfig[variant].isInverseWin) {
-                    return simulatedWinner === playerToEvaluate ? 100000 : -100000;
-                }
+                // In normal mode: winner wins (positive), loser loses (negative)
+                // In inverse mode: same scoring - evaluateBoard always evaluates from aiPlayerId perspective
                 return simulatedWinner === playerToEvaluate ? 100000 : -100000;
             }
 
             const playerPieces = board.filter(p => p === playerToEvaluate).length;
             const opponentPieces = board.filter(p => p === opponent).length;
-            const playerMoves = countPlayerMoves(playerToEvaluate, board);
-            const opponentMoves = countPlayerMoves(opponent, board);
+            const playerMoves = countPlayerMoves(playerToEvaluate, board, currentPhase);
+            const opponentMoves = countPlayerMoves(opponent, board, currentPhase);
 
             let score = 0;
             score += (playerPieces - opponentPieces) * 200;
@@ -5224,17 +5305,18 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             const opponentDoubleMills = countDoubleMillSetups(board, opponent);
             score += (playerDoubleMills - opponentDoubleMills) * 5000;
             
-            if (canPlayerFormMillNextTurn(opponent, board)) score -= 1000;
-            if (canPlayerFormMillNextTurn(playerToEvaluate, board)) score += 900;
+            if (canPlayerFormMillNextTurn(opponent, board, currentPhase)) score -= 1000;
+            if (canPlayerFormMillNextTurn(playerToEvaluate, board, currentPhase)) score += 900;
 
             if (variantConfig[variant].isInverseWin) {
+                // In inverse mode, negate: fewer pieces and fewer moves = better for AI
                 score = -score;
                 score -= playerMills * 300; // Extra penalty for having formed mills in inverse mode
                 
                 // Huge penalty if AI is in a state where it's forced to make a mill
                 if(variantConfig[variant].forceMillMove){
-                    const allAiMoves = generateAllPossibleMoves(playerToEvaluate, board, 'move');
-                    const millAiMoves = getPossibleMillMoves(playerToEvaluate, board);
+                    const allAiMoves = generateAllPossibleMoves(playerToEvaluate, board, currentPhase);
+                    const millAiMoves = getPossibleMillMoves(playerToEvaluate, board, currentPhase);
                     if (allAiMoves.length > 0 && allAiMoves.length === millAiMoves.length) {
                         score += 50000; // Add a massive penalty (higher score is worse for inverse-win)
                     }
@@ -5296,8 +5378,8 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             return false;
         }
 
-        function canPlayerFormMillNextTurn(player, board) {
-            return getPossibleMillMoves(player, board).length > 0;
+        function canPlayerFormMillNextTurn(player, board, phase) {
+            return getPossibleMillMoves(player, board, phase).length > 0;
         }
 
         function getPotentialMillsCount(board, player) {
@@ -5313,20 +5395,44 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                     if (board[idx] === player) pCount++;
                     else if (board[idx] === null) eCount++; 
                 }
-                if (pCount === 2 && eCount === 1) count++;
+                if (pCount === 2 && eCount === 1) {
+                    // Ensure this window is not part of a longer line of player pieces (would form 4+ in a row, not a valid mill)
+                    const isHorizontal = (Math.floor(line[0] / SIZE) === Math.floor(line[1] / SIZE));
+                    let cellBefore = -1, cellAfter = -1;
+                    if (isHorizontal) {
+                        const r = Math.floor(line[0] / SIZE);
+                        const cStart = line[0] % SIZE;
+                        const cEnd = line[2] % SIZE;
+                        if (cStart > 0) cellBefore = r * SIZE + (cStart - 1);
+                        if (cEnd < SIZE - 1) cellAfter = r * SIZE + (cEnd + 1);
+                    } else {
+                        const c = line[0] % SIZE;
+                        const rStart = Math.floor(line[0] / SIZE);
+                        const rEnd = Math.floor(line[2] / SIZE);
+                        if (rStart > 0) cellBefore = (rStart - 1) * SIZE + c;
+                        if (rEnd < SIZE - 1) cellAfter = (rEnd + 1) * SIZE + c;
+                    }
+                    // Only count if the adjacent cells won't extend this to a 4+ chain
+                    const beforeOk = cellBefore === -1 || board[cellBefore] !== player;
+                    const afterOk = cellAfter === -1 || board[cellAfter] !== player;
+                    if (beforeOk && afterOk) count++;
+                }
             }
             return count;
         }
 
-        function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, beta) {
-            const currentPhase = (currentBoard.filter(p => p !== null).length < PIECES * 2) ? 'placement' : 'move';
-            const simulatedWinner = getWinnerInState(currentBoard);
+        function minimax(currentBoard, depth, isMaximizingPlayer, currentPlayer, alpha, beta, piecesPlaced) {
+            // Use piecesPlaced to track placement phase correctly even after captures
+            // piecesPlaced = total pieces ever placed (doesn't decrease on capture)
+            const currentPiecesPlaced = piecesPlaced !== undefined ? piecesPlaced : (currentBoard.filter(p => p !== null).length + 0);
+            const currentPhase = currentPiecesPlaced < PIECES * 2 ? 'placement' : 'move';
+            const simulatedWinner = getWinnerInState(currentBoard, currentPhase);
 
             if (depth === 0 || simulatedWinner !== null) {
                 if (currentPhase === 'placement') {
                     return evaluatePlacement(currentBoard, aiPlayerId);
                 }
-                return evaluateBoard(currentBoard, aiPlayerId, simulatedWinner);
+                return evaluateBoard(currentBoard, aiPlayerId, simulatedWinner, currentPhase);
             }
 
             const opponentPlayer = 3 - currentPlayer;
@@ -5335,7 +5441,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 if (currentPhase === 'placement') {
                     return evaluatePlacement(currentBoard, aiPlayerId);
                 }
-                return evaluateBoard(currentBoard, aiPlayerId, opponentPlayer);
+                return evaluateBoard(currentBoard, aiPlayerId, opponentPlayer, currentPhase);
             }
 
             let bestEval = isMaximizingPlayer ? -Infinity : Infinity;
@@ -5344,7 +5450,10 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 const from = move.from !== undefined ? move.from : move.to;
                 const formedMills = findAllMills(currentBoard, newBoard, from, move.to, currentPlayer);
                 
-                let eval;
+                // Increment piecesPlaced only during placement phase
+                const nextPiecesPlaced = currentPhase === 'placement' ? currentPiecesPlaced + 1 : currentPiecesPlaced;
+                
+                let evaluation;
                 if (formedMills.length > 0) {
                     let captureEval = isMaximizingPlayer ? -Infinity : Infinity;
                     const playerWhoLosesPiece = variantConfig[variant].isInverseWin ? currentPlayer : opponentPlayer;
@@ -5357,27 +5466,28 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                         for(const pieceToCapture of capturablePieces) {
                              const boardAfterCapture = [...newBoard];
                              boardAfterCapture[pieceToCapture] = null;
-                             const currentCaptureEval = minimax(boardAfterCapture, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta);
+                             // piecesPlaced doesn't change after capture, phase stays move
+                             const currentCaptureEval = minimax(boardAfterCapture, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta, nextPiecesPlaced);
                              if (isMaximizingPlayer) { 
                                  captureEval = Math.max(captureEval, currentCaptureEval);
                              } else { 
                                  captureEval = Math.min(captureEval, currentCaptureEval);
                              }
                         }
-                        eval = captureEval;
+                        evaluation = captureEval;
                     } else { 
-                        eval = minimax(newBoard, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta);
+                        evaluation = minimax(newBoard, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta, nextPiecesPlaced);
                     }
                 } else { 
-                    eval = minimax(newBoard, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta);
+                    evaluation = minimax(newBoard, depth - 1, !isMaximizingPlayer, opponentPlayer, alpha, beta, nextPiecesPlaced);
                 }
 
                 if (isMaximizingPlayer) { 
-                    bestEval = Math.max(bestEval, eval);
-                    alpha = Math.max(alpha, eval); 
+                    bestEval = Math.max(bestEval, evaluation);
+                    alpha = Math.max(alpha, evaluation); 
                 } else { 
-                    bestEval = Math.min(bestEval, eval);
-                    beta = Math.min(beta, eval); 
+                    bestEval = Math.min(bestEval, evaluation);
+                    beta = Math.min(beta, evaluation); 
                 }
                 if (beta <= alpha) break;
             }
@@ -5399,13 +5509,13 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 for (let i = 0; i < SIZE * SIZE; i++) {
                     if (board[i] === null) {
                         const tempBoard = simulateMove(board, { to: i }, player);
-                        if (getFormedMills(i, player, tempBoard).length === 0) { 
+                        if (!formsForbiddenPlacementAlignment(i, player, tempBoard)) {
                             moves.push({ to: i });
                         }
                     }
                 }
             } else {
-                const millMoves = getPossibleMillMoves(player, board);
+                const millMoves = getPossibleMillMoves(player, board, phase);
                 if (variantConfig[variant].forceMillMove && millMoves.length > 0) {
                     return millMoves;
                 }
@@ -5422,9 +5532,10 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             return moves;
         }
 
-        function getWinnerInState(board) {
-            const isMovePhase = (board.filter(p => p !== null).length >= PIECES * 2);
-            if (!isMovePhase) return null;
+        function getWinnerInState(board, phase) {
+            // Accept explicit phase to handle captures correctly (captures reduce piece count below PIECES*2 even in move phase)
+            const currentPhase = phase !== undefined ? phase : (board.filter(p => p !== null).length >= PIECES * 2 ? 'move' : 'placement');
+            if (currentPhase !== 'move') return null;
 
             const p1Pieces = board.filter(p => p === 1).length;
             const p2Pieces = board.filter(p => p === 2).length;
@@ -5435,9 +5546,11 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             const p2Loses = p2Pieces < 3 || !p2CanMove;
             
             if (variantConfig[variant].isInverseWin) { 
+                // Inverse win: the player who "loses" (has <3 pieces or can't move) actually WINS
                 if (p1Loses) return 1;
                 if (p2Loses) return 2; 
             } else { 
+                // Normal win: the player who causes the opponent to "lose" wins
                 if (p1Loses) return 2;
                 if (p2Loses) return 1;
             }
@@ -5502,11 +5615,11 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             }
             
             if (currentPhase === 'move' && !isInverse) {
-                const millMoves = getPossibleMillMoves(player, state.board);
+                const millMoves = getPossibleMillMoves(player, state.board, 'move');
                 if (millMoves.length > 0) {
                     return millMoves[Math.floor(Math.random() * millMoves.length)];
                 }
-                const opponentMillMoves = getPossibleMillMoves(opponent, state.board);
+                const opponentMillMoves = getPossibleMillMoves(opponent, state.board, 'move');
                 if (opponentMillMoves.length > 0) {
                     const blockingMoveTargets = opponentMillMoves.map(move => move.to);
                     const availableBlockingMoves = possibleMoves.filter(move => blockingMoveTargets.includes(move.to));
@@ -5529,22 +5642,21 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             }
 
             let bestMove = null;
-            let bestScore = isInverse ? Infinity : -Infinity;
+            let bestScore = -Infinity;
+
+            // Compute piecesPlaced for minimax phase tracking
+            const piecesPlacedSoFar = state.board.filter(p => p !== null).length + state.captured[1] + state.captured[2];
 
             for (const move of possibleMoves) {
                 const newBoard = simulateMove(state.board, move, player);
-                const score = minimax(newBoard, depth - 1, isInverse, opponent, -Infinity, Infinity);
+                const nextPiecesPlaced = currentPhase === 'placement' ? piecesPlacedSoFar + 1 : piecesPlacedSoFar;
+                // AI always maximizes; evaluateBoard negates for inverse mode, so minimax tree is consistent.
+                // Opponent minimizes (isMaximizingPlayer = false for opponent's subtree).
+                const score = minimax(newBoard, depth - 1, false, opponent, -Infinity, Infinity, nextPiecesPlaced);
                 
-                if (isInverse) {
-                    if (score < bestScore) {
-                        bestScore = score;
-                        bestMove = move;
-                    }
-                } else {
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = move;
-                    }
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
                 }
             }
             
@@ -5664,20 +5776,57 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
         function clearSave() {
             try { localStorage.removeItem(SAVE_KEY); } catch(e){}
         }
-        function loadAndResume() {
+        
+function loadAndResume() {
             try {
                 const raw = localStorage.getItem(SAVE_KEY);
                 if (!raw) return;
                 const save = JSON.parse(raw);
-                variant = save.variant;
-                gameMode = save.gameMode;
-                aiDifficulty = save.aiDifficulty;
-                humanPlayerId = save.humanPlayerId;
+
+                // Restore meta
+                variant = save.variant || variant;
+                gameMode = save.gameMode || gameMode;
+                aiDifficulty = (save.aiDifficulty ?? aiDifficulty);
+                humanPlayerId = (save.humanPlayerId ?? humanPlayerId);
                 aiPlayerId = gameMode === 'ai' ? (3 - humanPlayerId) : null;
-                player1Name = save.player1Name;
-                player2Name = save.player2Name;
-                state = save.state;
-                moveLog = save.moveLog || [];
+                player1Name = save.player1Name || player1Name;
+                player2Name = save.player2Name || player2Name;
+
+                // Restore state with forward-compatible defaults (prevents broken saves after updates)
+                const defaults = initState();
+                const s = save.state || {};
+                const merged = {
+                    ...defaults,
+                    ...s,
+                    counts: { ...defaults.counts, ...(s.counts || {}) },
+                    captured: { ...defaults.captured, ...(s.captured || {}) }
+                };
+
+                // Sanitize board size/content
+                if (!Array.isArray(merged.board)) merged.board = defaults.board.slice();
+                if (merged.board.length !== SIZE * SIZE) {
+                    const fixed = Array(SIZE * SIZE).fill(null);
+                    const src = merged.board;
+                    for (let i = 0; i < Math.min(src.length, fixed.length); i++) fixed[i] = (src[i] === 1 || src[i] === 2) ? src[i] : null;
+                    merged.board = fixed;
+                } else {
+                    // normalize values
+                    merged.board = merged.board.map(v => (v === 1 || v === 2) ? v : null);
+                }
+
+                // Sanitize primitive fields
+                merged.turn = (merged.turn === 1 || merged.turn === 2) ? merged.turn : defaults.turn;
+                merged.phase = (merged.phase === 'placement' || merged.phase === 'move') ? merged.phase : defaults.phase;
+                merged.captureMode = !!merged.captureMode;
+                merged.pendingCaptures = Number.isFinite(merged.pendingCaptures) ? merged.pendingCaptures : 0;
+                merged.turnForCapture = (merged.turnForCapture === 1 || merged.turnForCapture === 2) ? merged.turnForCapture : null;
+                merged.selected = Number.isInteger(merged.selected) ? merged.selected : null;
+                merged.highlightedMills = Array.isArray(merged.highlightedMills) ? merged.highlightedMills : [];
+                merged.winner = (merged.winner === 1 || merged.winner === 2) ? merged.winner : null;
+
+                state = merged;
+
+                moveLog = Array.isArray(save.moveLog) ? save.moveLog : [];
                 moveHistory = [];
                 clearSave();
                 hideSaveNotification();
@@ -5688,6 +5837,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 triggerNextAction();
             } catch(e) { clearSave(); }
         }
+
         function checkForSavedGame() {
             try {
                 const raw = localStorage.getItem(SAVE_KEY);
@@ -5776,10 +5926,27 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             const playerToAct = state.captureMode ? state.turnForCapture : state.turn;
 
             if (gameMode === 'spectator') {
+                // Temporarily set AI/human IDs for this AI turn without permanently mutating globals
+                // Save current values
+                const _savedAiId = aiPlayerId;
+                const _savedHumanId = humanPlayerId;
                 aiPlayerId = playerToAct;
                 humanPlayerId = 3 - playerToAct;
                 const spd = parseInt(document.getElementById('spectator-speed')?.value || '700');
-                setTimeout(() => { makeAiMove(); }, spd);
+                setTimeout(() => {
+                    // Re-check that we're still in spectator mode (user may have navigated away)
+                    if (gameMode !== 'spectator') return;
+                    // Re-set for this specific turn (state.turn may have advanced)
+                    const currentActor = state.captureMode ? state.turnForCapture : state.turn;
+                    aiPlayerId = currentActor;
+                    humanPlayerId = 3 - currentActor;
+                    makeAiMove();
+                    // Restore globals after makeAiMove so they don't bleed into other logic
+                    if (gameMode !== 'spectator') {
+                        aiPlayerId = _savedAiId;
+                        humanPlayerId = _savedHumanId;
+                    }
+                }, spd);
                 return;
             }
             if (gameMode === 'ai' && playerToAct === aiPlayerId) {
@@ -5788,14 +5955,14 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             }
         };
 
-        // Patch handlePlacement to add sound + save + log
+        // Patch handlePlacement to save after a successful placement
         const _origHandlePlacement = handlePlacement;
         handlePlacement = function(i) {
             const prevCount = state.counts[state.turn];
-            const prevPhase = state.phase;
             _origHandlePlacement.call(this, i);
-            if (state.counts[state.turn] < prevCount || (state.board && state.board[i] !== null && state.board[i] === (state.turn === 1 ? 1 : 2))) {
-                // Placement happened
+            // Check if placement actually happened (count decreased = piece was placed)
+            if (state.counts[state.turn] < prevCount) {
+                saveGame();
             }
         };
 
@@ -5897,7 +6064,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
                 const tempB = simulateMove(board, m, player);
                 if (findAllMills(board, tempB, m.from, m.to, player).length > 0) millMoves.add(JSON.stringify(m));
             });
-            const opponentMillTargets = getPossibleMillMoves(opponent, board).map(m => m.to);
+            const opponentMillTargets = getPossibleMillMoves(opponent, board, 'move').map(m => m.to);
             const ordered = [];
             const rest = [];
             moves.forEach(m => {
@@ -6100,7 +6267,6 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
             showScreen('version-selection-area');
         });
     </script>
-
 <script nonce="tiddas">
 (() => {
   'use strict';
@@ -6645,79 +6811,69 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 
 })();
 </script>
-
-
-    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
-    <!-- ===== Pack Produit: Stats / Replay / Install UI (single-file) ===== -->
-    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
-    <div id="stats-modal" class="modal-overlay app-modal" aria-hidden="true">
-        <div class="modal-content stats-modal-content" role="dialog" aria-modal="true" aria-labelledby="stats-modal-title">
-            <h3 id="stats-modal-title" data-i18n="statsTitle">Stats &amp; progression</h3>
-            <div id="stats-content"></div>
-            <div class="modal-actions">
-                <button type="button" id="stats-reset-btn"><span data-i18n="resetStats">Réinitialiser</span></button>
-                <button type="button" id="stats-export-btn"><span data-i18n="exportStats">Exporter</span></button>
-                <button type="button" id="stats-close-btn"><span data-i18n="close">Fermer</span></button>
-            </div>
-        </div>
-    </div>
-
-    <div id="replay-modal" class="modal-overlay app-modal" aria-hidden="true">
-        <div class="modal-content replay-modal-content" role="dialog" aria-modal="true" aria-labelledby="replay-modal-title">
-            <h3 id="replay-modal-title" data-i18n="replayTitle">Replay</h3>
-            <div class="replay-meta" id="replay-meta"></div>
-
-            <div class="replay-controls" aria-label="Replay controls">
-                <button type="button" id="replay-first-btn" aria-label="Début">⏮</button>
-                <button type="button" id="replay-prev-btn" aria-label="Précédent">⏪</button>
-                <button type="button" id="replay-play-btn" aria-label="Lecture/Pause">▶️</button>
-                <button type="button" id="replay-next-btn" aria-label="Suivant">⏩</button>
-                <button type="button" id="replay-last-btn" aria-label="Fin">⏭</button>
-            </div>
-
-            <input id="replay-range" class="replay-range" type="range" min="0" max="0" value="0" step="1" aria-label="Timeline">
-
-            <div class="replay-footer">
-                <label>
-                    <span data-i18n="speed">Vitesse</span>
-                    <select id="replay-speed">
-                        <option value="1">1×</option>
-                        <option value="1.5">1.5×</option>
-                        <option value="2">2×</option>
-                    </select>
-                </label>
-
-                <button type="button" id="replay-exit-btn"><span data-i18n="close">Fermer</span></button>
-            </div>
-        </div>
-    </div>
-
-    <div id="install-help-modal" class="modal-overlay app-modal" aria-hidden="true">
-        <div class="modal-content install-modal-content" role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
-            <h3 id="install-modal-title" data-i18n="installHelpTitle">Installer l'app</h3>
-            <div id="install-help-content">
-                <p data-i18n="installHelpBody">
+<canvas aria-hidden="true" id="confetti-canvas"></canvas>
+<!-- ===== Pack Produit: Stats / Replay / Install UI (single-file) ===== -->
+<div aria-atomic="true" aria-live="polite" class="toast" id="toast" role="status"></div>
+<div aria-hidden="true" class="modal-overlay app-modal" id="stats-modal">
+<div aria-labelledby="stats-modal-title" aria-modal="true" class="modal-content stats-modal-content" role="dialog">
+<h3 data-i18n="statsTitle" id="stats-modal-title">Stats &amp; progression</h3>
+<div id="stats-content"></div>
+<div class="modal-actions">
+<button id="stats-reset-btn" type="button"><span data-i18n="resetStats">Réinitialiser</span></button>
+<button id="stats-export-btn" type="button"><span data-i18n="exportStats">Exporter</span></button>
+<button id="stats-close-btn" type="button"><span data-i18n="close">Fermer</span></button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modal-overlay app-modal" id="replay-modal">
+<div aria-labelledby="replay-modal-title" aria-modal="true" class="modal-content replay-modal-content" role="dialog">
+<h3 data-i18n="replayTitle" id="replay-modal-title">Replay</h3>
+<div class="replay-meta" id="replay-meta"></div>
+<div aria-label="Replay controls" class="replay-controls">
+<button aria-label="Début" id="replay-first-btn" type="button">⏮</button>
+<button aria-label="Précédent" id="replay-prev-btn" type="button">⏪</button>
+<button aria-label="Lecture/Pause" id="replay-play-btn" type="button">▶️</button>
+<button aria-label="Suivant" id="replay-next-btn" type="button">⏩</button>
+<button aria-label="Fin" id="replay-last-btn" type="button">⏭</button>
+</div>
+<input aria-label="Timeline" class="replay-range" id="replay-range" max="0" min="0" step="1" type="range" value="0"/>
+<div class="replay-footer">
+<label>
+<span data-i18n="speed">Vitesse</span>
+<select id="replay-speed">
+<option value="1">1×</option>
+<option value="1.5">1.5×</option>
+<option value="2">2×</option>
+</select>
+</label>
+<button id="replay-exit-btn" type="button"><span data-i18n="close">Fermer</span></button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modal-overlay app-modal" id="install-help-modal">
+<div aria-labelledby="install-modal-title" aria-modal="true" class="modal-content install-modal-content" role="dialog">
+<h3 data-i18n="installHelpTitle" id="install-modal-title">Installer l'app</h3>
+<div id="install-help-content">
+<p data-i18n="installHelpBody">
                     Astuce : sur iPhone/iPad, utilisez “Partager” → “Sur l'écran d'accueil”. Sur Android/Chrome, le bouton “Installer” apparaît si l'app est éligible.
                 </p>
-            </div>
-            <div class="modal-actions">
-                <button type="button" id="install-help-close-btn"><span data-i18n="close">Fermer</span></button>
-            </div>
-        </div>
-    </div>
-    <div id="debug-overlay" class="debug-overlay" role="status" aria-live="polite" aria-atomic="false">
-        <header>
-            <div class="title">Tiddas • Diagnostic</div>
-            <div class="actions">
-                <button type="button" id="debug-clear-btn" aria-label="Effacer les logs">Clear</button>
-                <button type="button" id="debug-tests-btn" aria-label="Lancer les tests">Tests</button>
-                <button type="button" id="debug-close-btn" aria-label="Fermer">Close</button>
-            </div>
-        </header>
-        <div class="log" id="debug-log"></div>
-    </div>
-
+</div>
+<div class="modal-actions">
+<button id="install-help-close-btn" type="button"><span data-i18n="close">Fermer</span></button>
+</div>
+</div>
+</div>
+<div aria-atomic="false" aria-live="polite" class="debug-overlay" id="debug-overlay" role="status">
+<header>
+<div class="title">Tiddas • Diagnostic</div>
+<div class="actions">
+<button aria-label="Effacer les logs" id="debug-clear-btn" type="button">Clear</button>
+<button aria-label="Lancer les tests" id="debug-tests-btn" type="button">Tests</button>
+<button aria-label="Fermer" id="debug-close-btn" type="button">Close</button>
+</div>
+</header>
+<div class="log" id="debug-log"></div>
+</div>
 <script nonce="tiddas">
 (() => {
   'use strict';
@@ -6903,61 +7059,61 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
       installApp: "Asebded",
       stats: "Isaliten",
       statsTitle: "Isaliten & usemmed",
-      resetStats: "Sefḍu",
-      exportStats: "Suffɣ",
+      resetStats: "Sfeḍ",
+      exportStats: "Ssufeɣ-d",
       close: "Mdel",
-      replayTitle: "Taneɣlit",
-      replayLast: "Taneɣlit",
+      replayTitle: "aɛiwed",
+      replayLast: "aɛiwed",
       guidedMode: "Aseddu",
-      speed: "Tazleqt",
-      installHelpTitle: "Asebded n uɣmis",
-      installHelpBody: "Asteqsi : iPhone/iPad «Bder» → «Deg ufelwit n uɣmis». Android/Chrome: «Asebded» ma yella d yella.",
-      toastInstalled: "✅ Aɣmis yettwasebded.",
-      toastInstallUnavailable: "ℹ️ Asebded ur tella ara.",
-      toastReplayReady: "⏯️ Taneɣlit tewjed.",
-      toastNoReplay: "Ulac taneɣlit.",
-      toastStatsReset: "Isaliten ttwasefḍent.",
-      toastExported: "Asuffɣ yettwaru.",
-      toastSWReady: "✅ War-aẓar yewjed.",
-      toastSWUpdate: "🔄 Lqem yettwafer.",
-      boardAria: "Tafelwit n wurar",
-      cellLabel: "Tiqerṭ",
-      cellEmpty: "ilelli",
-      gamesPlayedLabel: "Tirar",
-      winsLabel: "Tirawin",
-      lossesLabel: "Tirawin yettwasruḥen",
-      winRateLabel: "Afmiḍi n tirawin",
-      streakLabel: "Amḍan n tirawin",
-      bestStreakLabel: "Amḍan amenzu",
-      movesLabel: "Tineqlayin",
-      capturesLabel: "Amsali",
-      millsLabel: "Tiddas",
+      speed: "aɣiwel",
+      installHelpTitle: "Asebded n wurar",
+      installHelpBody: "awelleh : iPhone/iPad «zuzer» → «Deg ​usebtar agejdan». Android/Chrome: «Asebded» ma yella.",
+      toastInstalled: "✅ urar yettwasebded.",
+      toastInstallUnavailable: "ℹ️ Asebded ur yelli ara.",
+      toastReplayReady: "⏯️ Aɛiwed yewjed.",
+      toastNoReplay: "Ulac aɛiwed.",
+      toastStatsReset: "Agemmuḍ ittwasfeḍ.",
+      toastExported: "Asuffeɣ yekfa.",
+      toastSWReady: "✅ War-internet ihegga.",
+      toastSWUpdate: "🔄 Aleqqem yewjed.",
+      boardAria: "Taslaḍt n wurar",
+      cellLabel: "Taxxamt",
+      cellEmpty: "texla",
+      gamesPlayedLabel: "timlilit",
+      winsLabel: "timliliyin yettwarebḥen",
+      lossesLabel: "Timliliyin yettwaxesren",
+      winRateLabel: "Agemmuḍ n rbeḥ",
+      streakLabel: "Agraw",
+      bestStreakLabel: "Agraw ifazen",
+      movesLabel: "Ambiwel",
+      capturesLabel: "Učči",
+      millsLabel: "Atellet",
       durationLabel: "Akud",
       levelLabel: "Aswir",
       xpLabel: "XP",
       lastGameLabel: "Urar aneggaru",
-      debugTestsRunning: "Isekyaden…",
-      debugTestsDone: "Isekyaden fukken",
-      btnTheme: "Aẓar",
-      btnSound: "Ameslaw",
-      btnSettings: "Iɣewwaren",
-      themeGlass: "Ajgu",
-      themeContrast: "Aglam",
-      themeModern: "Ameẓyan",
-      themeModernDark: "Ameẓyan n Timeddit",
+      debugTestsRunning: "Ikayaden…",
+      debugTestsDone: "Ikayaden fukken",
+      btnTheme: "Asentel",
+      btnSound: "Ṣṣut",
+      btnSettings: "Aseggem",
+      themeGlass: "zǧǧaǧ",
+      themeContrast: "Amgired",
+      themeModern: "Amaynut",
+      themeModernDark: "Amaynut qessiḥen",
       themeKabylie: "Taqbaylit",
       // NEW: hardcoded UI elements not previously translated
-      spectatorBadgeTxt: "👁 Asniwen",
+      spectatorBadgeTxt: "👁 Amuqel",
       btnResume: "Kemmel",
       btnDiscard: "Ala",
       ariaRulesClose: "Mdel",
-      ariaReplayFirst: "Aɣbalu",
+      ariaReplayFirst: "Bdu",
       ariaReplayPrev: "Yeldin",
       ariaReplayPlay: "Urar/Ḥbes",
-      ariaReplayNext: "D-amezwaru",
-      ariaReplayLast: "Agmaḍ",
-      ariaSettingsFab: "Iɣewwaren",
-      ariaInstallBtn: "Asebded n uɣmis",
+      ariaReplayNext: "wayeḍ",
+      ariaReplayLast: "taggara",
+      ariaSettingsFab: "Aseggem",
+      ariaInstallBtn: "Asebded n wurar",
       ariaModeGuide: "Aseddu"
     });
     } catch(_) {}
@@ -6969,7 +7125,13 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
   let toastTimer = null;
   function showToast(message, ms = 2200) {
     if (!toastEl) return;
-    toastEl.innerHTML = String(message ?? '');
+    // Use innerHTML only for safe internal messages (no user data); strip scripts defensively
+    toastEl.textContent = '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = String(message ?? '');
+    // Allow only simple formatting (span, strong) in toasts - strip any unsafe content
+    tmp.querySelectorAll('script, style, iframe, object, embed').forEach(el => el.remove());
+    toastEl.innerHTML = tmp.innerHTML;
     toastEl.classList.add('show');
     window.clearTimeout(toastTimer);
     toastTimer = window.setTimeout(() => toastEl.classList.remove('show'), ms);
@@ -7475,10 +7637,10 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
         stats.xp += 10 + Math.min(25, session.moves);
       }
     } else if (window.gameMode === 'local') {
-      // Two-player local
+      // Two-player local: only track per-player wins, not global wins/losses
+      // (wins/losses are AI-mode concepts; for local, see p1Wins/p2Wins)
       if (session.winner === 1) stats.p1Wins += 1;
       if (session.winner === 2) stats.p2Wins += 1;
-      stats.wins += 1; // total wins (always one winner)
       stats.xp += 12 + Math.min(30, session.moves);
     } else {
       // Other modes: count as games only
@@ -7553,7 +7715,10 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
     const games = stats.games || 0;
     const wins = stats.wins || 0;
     const losses = stats.losses || 0;
-    const winRate = games > 0 ? Math.round((wins / games) * 100) : 0;
+    // Win rate is only meaningful for AI-mode games (wins/losses are only tracked in AI mode)
+    const aiGames = (stats.winsHuman || 0) + (stats.lossesHuman || 0);
+    const winRate = aiGames > 0 ? Math.round(((stats.winsHuman || 0) / aiGames) * 100) : (games > 0 ? null : 0);
+    const winRateStr = winRate !== null ? `${winRate}%` : '—';
 
     const lp = levelProgress(stats.xp);
     const lastReplay = loadLastReplay();
@@ -7569,7 +7734,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
     statsContent.innerHTML = `
       <div class="stats-grid">
         <div class="stat-card"><div class="k">${t('gamesPlayedLabel','Parties')}</div><div class="v">${games}</div></div>
-        <div class="stat-card"><div class="k">${t('winRateLabel','Taux de victoire')}</div><div class="v">${winRate}%</div></div>
+        <div class="stat-card"><div class="k">${t('winRateLabel','Taux de victoire')}</div><div class="v">${winRateStr}</div></div>
         <div class="stat-card"><div class="k">${t('winsLabel','Victoires')}</div><div class="v">${wins}</div></div>
         <div class="stat-card"><div class="k">${t('lossesLabel','Défaites')}</div><div class="v">${losses}</div></div>
         <div class="stat-card"><div class="k">${t('movesLabel','Coups')}</div><div class="v">${stats.moves || 0}</div></div>
@@ -8048,7 +8213,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
       const bn = Array(25).fill(null);
       bn[0] = 1; bn[1] = 1; bn[2] = 1;
       bn[10] = 2; bn[11] = 2; // only 2 pieces for player 2
-      const wn = window.getWinnerInState?.(bn);
+      const wn = window.getWinnerInState?.(bn, 'move'); // Need explicit 'move' phase (board has <20 pieces, can't auto-detect)
       assert('Winner normal when P2<3 => P1', wn === 1);
 
       // Winner logic (inverse): player with <3 wins
@@ -8057,7 +8222,7 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
       // Player 1 only 2 pieces -> should be winner in inverse
       bi[0] = 1; bi[1] = 1;
       bi[10] = 2; bi[11] = 2; bi[12] = 2;
-      const wi = window.getWinnerInState?.(bi);
+      const wi = window.getWinnerInState?.(bi, 'move'); // Need explicit 'move' phase (board has <20 pieces, can't auto-detect)
       assert('Winner inverse when P1<3 => P1', wi === 1);
 
       // Move generation placement: should have moves on empty board
@@ -8223,6 +8388,5 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 
 })();
 </script>
-
 </body>
 </html>
