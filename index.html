@@ -3714,9 +3714,6 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 .modal-content span:not(.icon):not([class*="lang"]) {
   color: inherit;
 }
-.modal-actions button {
-  /* reset couleur texte selon thème dans les actions */
-}
 
 /* ────────────────────────────────────────────────────────────────
    3. STATS — stat-card, .k, .v universellement lisibles
@@ -4192,13 +4189,13 @@ body.replay-active .winner-overlay.active {
 <div class="selection-area active" id="version-selection-area">
 <h2 data-i18n="chooseVersion">Choisir la version du jeu :</h2>
 <div class="version-grid">
-<div class="version-card" data-variant="tiddezt-no-diag">
-<h3 data-i18n="tiddeztTitle">TIDDEZT</h3>
-<p data-i18n="tiddeztDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
+<div class="version-card" data-variant="TIDDEST-no-diag">
+<h3 data-i18n="TIDDESTTitle">TIDDEST</h3>
+<p data-i18n="TIDDESTDesc">Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.</p>
 </div>
-<div class="version-card" data-variant="bessif-tiddezt">
-<h3 data-i18n="bessifTitle">Učči bessif TIDDEZT</h3>
-<p data-i18n="bessifDesc">Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
+<div class="version-card" data-variant="bessif-TIDDEST">
+<h3 data-i18n="bessifTitle">Učči bessif TIDDEST</h3>
+<p data-i18n="bessifDesc">Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
 </div>
 </div>
 <button class="rules-btn" id="show-rules-btn">
@@ -4397,7 +4394,7 @@ body.replay-active .winner-overlay.active {
 <h3 data-i18n="gameRulesTitle">Règles du Jeu</h3>
 <h4 data-i18n="rulesGeneral">Règles Générales de Tiddas (Communes à toutes les variantes) :</h4>
 <div class="rules-section">
-<p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.</span></p>
+<p><strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEST, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.</span></p>
 <p><strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelés "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span></p>
 <p><strong data-i18n="rulesPhasesStrong">Phases de Jeu :</strong></p>
 <ul>
@@ -4413,16 +4410,16 @@ body.replay-active .winner-overlay.active {
 <h4 data-i18n="rulesDifferences">Différences entre les variantes :</h4>
 <div class="rules-section">
 <p data-i18n="rulesDifferencesIntro">Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :</p>
-<p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
+<p><strong data-i18n="rulesTIDDEST">TIDDEST :</strong></p>
 <ul>
-<li><strong data-i18n="rulesTiddeztMovesStrong">Déplacements :</strong> <span data-i18n="rulesTiddeztMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
-<li><strong data-i18n="rulesTiddeztCapturesStrong">Captures :</strong> <span data-i18n="rulesTiddeztCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
-<li><strong data-i18n="rulesTiddeztWinStrong">Victoire :</strong> <span data-i18n="rulesTiddeztWin">Normale.</span></li>
-<li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTiddeztNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
+<li><strong data-i18n="rulesTIDDESTMovesStrong">Déplacements :</strong> <span data-i18n="rulesTIDDESTMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
+<li><strong data-i18n="rulesTIDDESTCapturesStrong">Captures :</strong> <span data-i18n="rulesTIDDESTCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
+<li><strong data-i18n="rulesTIDDESTWinStrong">Victoire :</strong> <span data-i18n="rulesTIDDESTWin">Normale.</span></li>
+<li><strong data-i18n="rulesTIDDESTNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTIDDESTNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
 </ul>
 <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
 <ul>
-<li><span data-i18n="rulesBessifCombines">Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.</span></li>
+<li><span data-i18n="rulesBessifCombines">Combine les règles de <strong>TIDDEST</strong> avec le principe de <strong>victoire inversée</strong>.</span></li>
 <li><strong data-i18n="rulesBessifMovesStrong">Déplacements :</strong> <span data-i18n="rulesBessifMoves">Uniquement horizontaux/verticaux.</span></li>
 <li><strong data-i18n="rulesBessifInverseWinStrong">Victoire Inversée :</strong> <span data-i18n="rulesBessifInverseWin">Le joueur gagne si son propre nombre de pions est réduit à moins de trois (c'est-à-dire 0, 1 ou 2 pions), OU si son adversaire est bloqué et qu'il (le joueur qui vient de jouer) a moins de pions sur le plateau que son adversaire.</span></li>
 <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Choix du pion à capturer :</strong> <span data-i18n="rulesBessifOpponentChooses">Lorsque vous formez un moulin, c'est votre <strong>adversaire</strong> qui doit choisir l'un de ses propres pions que vous allez capturer.</span></li>
@@ -4450,16 +4447,16 @@ body.replay-active .winner-overlay.active {
 <h4 data-i18n="rulesDifferences">Imgired gar tewsiyin :</h4>
 <div class="rules-section">
 <p data-i18n="rulesDifferencesIntro">Yal tawsit tesɛa ilugan-is :</p>
-<p><strong data-i18n="rulesTiddezt">TIDDEZT :</strong></p>
+<p><strong data-i18n="rulesTIDDEST">TIDDEST :</strong></p>
 <ul>
-<li><strong data-i18n="rulesTiddeztMovesStrong">Anaqel :</strong> <span data-i18n="rulesTiddeztMoves">Kan s teɣzi neɣ s tehri.</span></li>
-<li><strong data-i18n="rulesTiddeztCapturesStrong">Učči :</strong> <span data-i18n="rulesTiddeztCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
-<li><strong data-i18n="rulesTiddeztWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTiddeztWin">yerbeḥ win yeččan.</span></li>
-<li><strong data-i18n="rulesTiddeztNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTiddeztNoForcedMove">Alugen n lmakala bessif ur ttilin ara.</span></li>
+<li><strong data-i18n="rulesTIDDESTMovesStrong">Anaqel :</strong> <span data-i18n="rulesTIDDESTMoves">Kan s teɣzi neɣ s tehri.</span></li>
+<li><strong data-i18n="rulesTIDDESTCapturesStrong">Učči :</strong> <span data-i18n="rulesTIDDESTCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
+<li><strong data-i18n="rulesTIDDESTWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTIDDESTWin">yerbeḥ win yeččan.</span></li>
+<li><strong data-i18n="rulesTIDDESTNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTIDDESTNoForcedMove">Alugen n lmakala bessif ur ttilin ara.</span></li>
 </ul>
 <p><strong data-i18n="rulesBessif">Učči Bessif :</strong></p>
 <ul>
-<li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.</span></li>
+<li><span data-i18n="rulesBessifCombines">Tesdukel ilugan n <strong>TIDDEST</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.</span></li>
 <li><strong data-i18n="rulesBessifMovesStrong">Anaqel :</strong> <span data-i18n="rulesBessifMoves">Kan s teɣzi neɣ s tehri.</span></li>
 <li><strong data-i18n="rulesBessifInverseWinStrong">Arbaḥ s wexṣar :</strong> <span data-i18n="rulesBessifInverseWin">Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.</span></li>
 <li><strong data-i18n="rulesBessifOpponentChoosesStrong">Axṣim ad yefren :</strong> <span data-i18n="rulesBessifOpponentChooses">Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.</span></li>
@@ -4779,8 +4776,8 @@ body.replay-active .winner-overlay.active {
 
         // --- VARIANT CONFIGURATION ---
         const variantConfig = {
-            "tiddezt-no-diag": { name: "TIDDEZT", isInverseWin: false, forceMillMove: false },
-            "bessif-tiddezt": { name: "Učči bessif TIDDEZT", isInverseWin: true, forceMillMove: true }
+            "TIDDEST-no-diag": { name: "TIDDEST", isInverseWin: false, forceMillMove: false },
+            "bessif-TIDDEST": { name: "Učči bessif TIDDEST", isInverseWin: true, forceMillMove: true }
         };
         const aiDifficultyNames = { 1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert" };
 
@@ -4813,10 +4810,10 @@ body.replay-active .winner-overlay.active {
                 defaultHumanName: "Humain",
                 appTitle: "Tiddas - Jeu",
                 chooseVersion: "Choisir la version du jeu :",
-                tiddeztTitle: "TIDDEZT",
-                tiddeztDesc: "Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.",
+                TIDDESTTitle: "TIDDEST",
+                TIDDESTDesc: "Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.",
                 bessifTitle: "Učči Bessif",
-                bessifDesc: "Mêmes règles que TIDDEZT. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.",
+                bessifDesc: "Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.",
                 howToPlay: "Comment souhaitez-vous jouer ?",
                 playOnline: "Jouer en ligne",
                 playOnlineDesc: "Bientôt disponible",
@@ -4860,7 +4857,7 @@ body.replay-active .winner-overlay.active {
                 gameRulesTitle: "Règles du Jeu",
                 rulesGeneral: "Règles Générales de Tiddas (Communes à toutes les variantes) :",
                 rulesObjectiveStrong: "Objectif :",
-                rulesObjective: "Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEZT, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.",
+                rulesObjective: "Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEST, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois, ou s'il est bloqué et ne peut plus effectuer de mouvements valides.",
                 rulesPiecesStrong: "Pions :",
                 rulesPieces: "Chaque joueur dispose de 10 pions (appelés \"cailloux\"). Le Joueur (Blanc) commence toujours.",
                 rulesPhasesStrong: "Phases de Jeu :",
@@ -4880,17 +4877,17 @@ body.replay-active .winner-overlay.active {
                 rulesForcedMove: "En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.",
                 rulesDifferences: "Différences entre les variantes :",
                 rulesDifferencesIntro: "Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :",
-                rulesTiddezt: "TIDDEZT :",
-                rulesTiddeztMovesStrong: "Déplacements :",
-                rulesTiddeztMoves: "Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.",
-                rulesTiddeztCapturesStrong: "Captures :",
-                rulesTiddeztCaptures: "Le joueur qui forme le moulin choisit quel pion adverse capturer.",
-                rulesTiddeztWinStrong: "Victoire :",
-                rulesTiddeztWin: "Normale.",
-                rulesTiddeztNoForcedMoveStrong: "Pas de déplacement forcé de moulin :",
-                rulesTiddeztNoForcedMove: "La règle du déplacement forcé de moulin ne s'applique pas.",
+                rulesTIDDEST: "TIDDEST :",
+                rulesTIDDESTMovesStrong: "Déplacements :",
+                rulesTIDDESTMoves: "Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.",
+                rulesTIDDESTCapturesStrong: "Captures :",
+                rulesTIDDESTCaptures: "Le joueur qui forme le moulin choisit quel pion adverse capturer.",
+                rulesTIDDESTWinStrong: "Victoire :",
+                rulesTIDDESTWin: "Normale.",
+                rulesTIDDESTNoForcedMoveStrong: "Pas de déplacement forcé de moulin :",
+                rulesTIDDESTNoForcedMove: "La règle du déplacement forcé de moulin ne s'applique pas.",
                 rulesBessif: "Učči Bessif :",
-                rulesBessifCombines: "Combine les règles de <strong>TIDDEZT</strong> avec le principe de <strong>victoire inversée</strong>.",
+                rulesBessifCombines: "Combine les règles de <strong>TIDDEST</strong> avec le principe de <strong>victoire inversée</strong>.",
                 rulesBessifMovesStrong: "Déplacements :",
                 rulesBessifMoves: "Uniquement horizontaux/verticaux.",
                 rulesBessifInverseWinStrong: "Victoire Inversée :",
@@ -4926,6 +4923,7 @@ body.replay-active .winner-overlay.active {
                 aiWinsMessage: "a gagné !",
                 surrenderConfirm: "Êtes-vous sûr de vouloir abandonner ?",
                 surrenderMessage: "a abandonné !",
+
 		stats: "Stats",
       statsTitle: "Stats & progression",
       resetStats: "Réinitialiser",
@@ -4987,8 +4985,8 @@ body.replay-active .winner-overlay.active {
             },
             kab: {
                 surrender: "Mayna",
-		installApp: "Asebded",
-                playSpectator: "Amuqel",
+		            installApp: "Areṣṣi",
+                playSpectator: "Anezzeh",
                 playSpectatorDesc: "Urar n yiselkimen",
                 spectatorSpeed: "tazla :",
                 speedSlow: "s laɛqel",
@@ -5020,10 +5018,10 @@ body.replay-active .winner-overlay.active {
                 defaultHumanName: "Amdan",
                 appTitle: "Tiddas - Urar",
                 chooseVersion: "Fren acu n tiddest ara turareḍ :",
-                tiddeztTitle: "TIDDEZT",
-                tiddeztDesc: "Yerbeḥ win yeččan ileqqafen.",
+                TIDDESTTitle: "TIDDEST",
+                TIDDESTDesc: "Yerbeḥ win yeččan ileqqafen.",
                 bessifTitle: "Učči Bessif",
-                bessifDesc: "Am ilugan n TIDDEZT, maca yerebḥ win i wummi mmeččen ileqqafen.",
+                bessifDesc: "Am ilugan n TIDDEST, maca yerebḥ win i wummi mmeččen ileqqafen.",
                 howToPlay: "Amek tebɣiḍ ad turareḍ ?",
                 playOnline: "Urar s internet",
                 playOnlineDesc: "Ussan-a",
@@ -5087,17 +5085,17 @@ body.replay-active .winner-overlay.active {
                 rulesForcedMove: "Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.",
                 rulesDifferences: "Imgired gar tewsiyin :",
                 rulesDifferencesIntro: "Yal tawsit tesɛa ilugan-is :",
-                rulesTiddezt: "TIDDEZT :",
-                rulesTiddeztMovesStrong: "Anaqel :",
-                rulesTiddeztMoves: "Kan s teɣzi neɣ s tehri.",
-                rulesTiddeztCapturesStrong: "Učči :",
-                rulesTiddeztCaptures: "Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.",
-                rulesTiddeztWinStrong: "Arbaḥ :",
-                rulesTiddeztWin: "yerbeḥ win yeččan.",
-                rulesTiddeztNoForcedMoveStrong: "Ulac atellet s tmara :",
-                rulesTiddeztNoForcedMove: "Alugen n lmakala bessif ur ttilin ara.",
+                rulesTIDDEST: "TIDDEST :",
+                rulesTIDDESTMovesStrong: "Anaqel :",
+                rulesTIDDESTMoves: "Kan s teɣzi neɣ s tehri.",
+                rulesTIDDESTCapturesStrong: "Učči :",
+                rulesTIDDESTCaptures: "Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.",
+                rulesTIDDESTWinStrong: "Arbaḥ :",
+                rulesTIDDESTWin: "yerbeḥ win yeččan.",
+                rulesTIDDESTNoForcedMoveStrong: "Ulac atellet s tmara :",
+                rulesTIDDESTNoForcedMove: "Alugen n lmakala bessif ur ttilin ara.",
                 rulesBessif: "Učči Bessif :",
-                rulesBessifCombines: "Tesdukel ilugan n <strong>TIDDEZT</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.",
+                rulesBessifCombines: "Tesdukel ilugan n <strong>TIDDEST</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.",
                 rulesBessifMovesStrong: "Anaqel :",
                 rulesBessifMoves: "Kan s teɣzi neɣ s tehri.",
                 rulesBessifInverseWinStrong: "Arbaḥ s wexṣar :",
@@ -5133,19 +5131,19 @@ body.replay-active .winner-overlay.active {
                 aiWinsMessage: "yerbeḥ !",
                 surrenderConfirm: "Tebɣiḍ ad tefkeḍ Mayna?",
                 surrenderMessage: "yefka Mayna !",
-		stats: "Igemmaḍ",
-      statsTitle: "Igemmaḍ & usemmed",
-      resetStats: "Sfeḍ",
-      exportStats: "Ssufeɣ-d",
-      close: "Mdel",
-      replayTitle: "aɛiwed",
-      replayLast: "aɛiwed",
-      guidedMode: "Aseddu",
+		            stats: "Igemmaḍ",
+                statsTitle: "Igemmaḍ & usemmed",
+                resetStats: "Sfeḍ",
+                exportStats: "Ssufeɣ-d",
+                close: "Mdel",
+                replayTitle: "aɛiwed",
+                replayLast: "aɛiwed",
+                guidedMode: "Awelleh",
       speed: "aɣiwel",
-      installHelpTitle: "Asebded n wurar",
-      installHelpBody: "awelleh : iPhone/iPad «zuzer» → «Deg ​usebtar agejdan». Android/Chrome: «Asebded» ma yella.",
-      toastInstalled: "✅ urar yettwasebded.",
-      toastInstallUnavailable: "ℹ️ Asebded ur yelli ara.",
+      installHelpTitle: "Areṣṣi n wurar",
+      installHelpBody: "awelleh : iPhone/iPad «zuzer» → «Deg ​usebtar agejdan». Android/Chrome: «Areṣṣi» ma yella.",
+      toastInstalled: "✅ urar yettwareṣṣa.",
+      toastInstallUnavailable: "ℹ️ Areṣṣi ur yelli ara.",
       toastReplayReady: "⏯️ Aɛiwed yewjed.",
       toastNoReplay: "Ulac aɛiwed.",
       toastStatsReset: "Agemmuḍ ittwasfeḍ.",
@@ -5179,18 +5177,18 @@ body.replay-active .winner-overlay.active {
       themeModernDark: "Amaynut qessiḥen",
       themeKabylie: "Taqbaylit",
       // NEW: hardcoded UI elements not previously translated
-      spectatorBadgeTxt: "👁 Amuqel",
+      spectatorBadgeTxt: "👁 Anezzeh",
       btnResume: "Kemmel",
       btnDiscard: "Ala",
       ariaRulesClose: "Mdel",
       ariaReplayFirst: "Bdu",
-      ariaReplayPrev: "Yeldin",
+      ariaReplayPrev: "Yezrin",
       ariaReplayPlay: "Urar/Ḥbes",
       ariaReplayNext: "wayeḍ",
       ariaReplayLast: "taggara",
       ariaSettingsFab: "Aseggem",
-      ariaInstallBtn: "Asebded n wurar",
-      ariaModeGuide: "Aseddu"
+      ariaInstallBtn: "Areṣṣi n wurar",
+      ariaModeGuide: "Awelleh"
             }
         };
         // --- DEEP COPY HELPER ---
@@ -5384,7 +5382,7 @@ body.replay-active .winner-overlay.active {
             const difficultyInfoEl = document.getElementById('game-difficulty-info');
             
             if (variant) {
-                const variantTitleKey = variant === 'tiddezt-no-diag' ? 'tiddeztTitle' : 'bessifTitle';
+                const variantTitleKey = variant === 'TIDDEST-no-diag' ? 'TIDDESTTitle' : 'bessifTitle';
                 variantInfoEl.innerHTML = `<strong>${translations[currentLanguage].gameVersion}</strong> ${translations[currentLanguage][variantTitleKey]}`;
             } else {
                  variantInfoEl.innerHTML = '';
@@ -8489,7 +8487,7 @@ body.replay-active .winner-overlay.active {
       assert('Mill (0,1,2) detected', (getFormedMills?.(0, 1, b) || []).length > 0);
 
       // Winner logic (normal): opponent <3 => current player wins
-      variant = 'tiddezt-no-diag';
+      variant = 'TIDDEST-no-diag';
       const bn = Array(25).fill(null);
       bn[0] = 1; bn[1] = 1; bn[2] = 1;
       bn[10] = 2; bn[11] = 2; // only 2 pieces for player 2
@@ -8497,7 +8495,7 @@ body.replay-active .winner-overlay.active {
       assert('Winner normal when P2<3 => P1', wn === 1);
 
       // Winner logic (inverse): player with <3 wins
-      variant = 'bessif-tiddezt';
+      variant = 'bessif-TIDDEST';
       const bi = Array(25).fill(null);
       // Player 1 only 2 pieces -> should be winner in inverse
       bi[0] = 1; bi[1] = 1;
@@ -8507,7 +8505,7 @@ body.replay-active .winner-overlay.active {
 
       // Move generation placement: should have moves on empty board
       const bp = Array(25).fill(null);
-      variant = 'tiddezt-no-diag';
+      variant = 'TIDDEST-no-diag';
       const moves = generateAllPossibleMoves?.(1, bp, 'placement') || [];
       assert('Placement generates moves', Array.isArray(moves) && moves.length > 0);
     } catch (e) {
@@ -8776,7 +8774,7 @@ body.replay-active .winner-overlay.active {
             document.querySelectorAll('.difficulty-btn').forEach(btn => btn.addEventListener('click', () => {
                 aiDifficulty = parseInt(btn.dataset.level);
                 if (gameMode === 'spectator') {
-                    variant = variant || 'tiddezt-no-diag';
+                    variant = variant || 'TIDDEST-no-diag';
                     startSpectatorGame();
                 } else {
                     showScreen('player-setup-area');
