@@ -3286,6 +3286,97 @@ button, .toolbar-btn, .cell { touch-action: manipulation; }
 .cell.last-move-to   { box-shadow: inset 0 0 0 2px rgba(0,255,255,0.95), 0 0 18px rgba(0,255,255,0.35); }
 .cell.last-capture   { box-shadow: inset 0 0 0 2px rgba(255,77,77,0.98), 0 0 18px rgba(255,77,77,0.35); }
 
+/* Pion sur le point d'être capturé – mise en évidence avant suppression */
+.cell.capture-pending {
+  box-shadow: inset 0 0 0 3px rgba(255,60,60,1), 0 0 28px rgba(255,60,60,0.75);
+  z-index: 2;
+  position: relative;
+}
+.cell.capture-pending .stone {
+  animation: capturePendingPulse 0.45s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 12px rgba(255, 50, 50, 1)) !important;
+  outline: 3px solid rgba(255,60,60,0.95);
+  outline-offset: 2px;
+}
+@keyframes capturePendingPulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.18); opacity: 0.75; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cell.capture-pending .stone { animation: none !important; }
+}
+
+/* ── MODE GLISSER-DÉPOSER ── */
+
+/* Empêche le scroll/zoom pendant le drag (mobile) + évite la sélection de texte */
+.drag-mode-active {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.drag-mode-active .cell,
+.drag-mode-active .stone {
+  touch-action: none;
+}
+
+
+/* Pion en cours de glissement : semi-transparent, légèrement réduit */
+.stone.dragging {
+  opacity: 0.35;
+  transform: scale(0.85);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  filter: brightness(0.7) !important;
+}
+
+/* Case cible valide survolée pendant le glissement */
+.cell.drag-over {
+  background: rgba(240, 200, 80, 0.38) !important;
+  outline: 3px solid var(--text-gold) !important;
+  box-shadow: inset 0 0 18px rgba(240, 200, 80, 0.65), 0 0 22px rgba(240, 200, 80, 0.45) !important;
+  z-index: 5;
+}
+
+/* Curseur grab sur les pions déplaçables en mode drag */
+.drag-mode-active .cell[data-draggable="true"] {
+  cursor: grab;
+}
+.drag-mode-active .cell[data-draggable="true"]:active {
+  cursor: grabbing;
+}
+
+/* Ghost : pion fantôme qui suit le curseur */
+#drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  opacity: 0.85;
+  /* Positionnement via transform = composite GPU, zéro reflow */
+  transform: translate(-9999px, -9999px) scale(1.15);
+  will-change: transform;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 10px rgba(255,255,255,0.3);
+  display: none;
+  transition: none;
+}
+#drag-ghost.visible { display: block; }
+#drag-ghost.player1 { background: radial-gradient(circle at 35% 35%, var(--player1-stone-color-light), var(--player1-stone-color-dark) 60%, #000 90%); }
+#drag-ghost.player2 { background: radial-gradient(circle at 35% 35%, var(--player2-stone-color-light), var(--player2-stone-color-dark) 60%, #e0e0e0 90%); }
+
+/* Bouton drag actif dans la tray */
+#drag-btn.active {
+  background: linear-gradient(145deg, rgba(240,200,80,0.28), rgba(240,200,80,0.14)) !important;
+  border-color: rgba(240,200,80,0.75) !important;
+  color: var(--text-gold) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stone.dragging { transition: none; }
+}
+
 /* Guided mode pulsing pieces */
 .stone.hint-piece {
   animation: tiddasHintPulse 1.05s ease-in-out infinite;
@@ -4165,6 +4256,9 @@ body.replay-active .winner-overlay.active {
 <button aria-label="Mode guidé" aria-pressed="true" class="toolbar-btn" id="guided-btn" title="Mode guidé">
                 🧭 <span data-i18n="guidedMode" style="font-size:0.78rem;">Guidé</span>
 </button>
+<button aria-label="Glisser" aria-pressed="false" class="toolbar-btn" id="drag-btn" title="Déplacer les pions par glissement">
+                🤚 <span data-i18n="btnDragMode" style="font-size:0.78rem;">Glisser</span>
+</button>
 <button aria-label="Replay" class="toolbar-btn" disabled="" id="replay-btn" title="Revoir la dernière partie">
                 ⏯️ <span data-i18n="replayLast" style="font-size:0.78rem;">Replay</span>
 </button>
@@ -4370,6 +4464,7 @@ body.replay-active .winner-overlay.active {
 <button class="replay-button secondary" id="winner-stats-btn">📈 <span data-i18n="stats">Stats</span></button>
 </div>
 <div class="spectator-badge" data-i18n="spectatorBadgeTxt" id="spectator-badge">👁 Mode Spectateur</div>
+<div id="drag-ghost"></div>
 <div class="save-notification" id="save-notification">
 <span data-i18n="savedGameFound" id="save-notification-text">Partie sauvegardée trouvée. Reprendre ?</span>
 <div class="save-btns">
@@ -4779,6 +4874,10 @@ body.replay-active .winner-overlay.active {
             "TIDDEST-no-diag": { name: "TIDDEST", isInverseWin: false, forceMillMove: false },
             "bessif-TIDDEST": { name: "Učči bessif TIDDEST", isInverseWin: true, forceMillMove: true }
         };
+        // Accesseur sécurisé : retourne toujours une config valide même si variant est null/invalide
+        function cfg() {
+            return variantConfig[variant] || variantConfig['TIDDEST-no-diag'];
+        }
         const aiDifficultyNames = { 1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert" };
 
         // --- TRANSLATIONS ---
@@ -4964,6 +5063,7 @@ body.replay-active .winner-overlay.active {
       btnTheme: "Thème",
       btnSound: "Son",
       btnSettings: "Paramètres",
+      btnDragMode: "Glisser",
       themeGlass: "Verre",
       themeContrast: "Contraste",
       themeModern: "Moderne",
@@ -5010,6 +5110,7 @@ body.replay-active .winner-overlay.active {
                 btnTheme: "Asentel",
                 btnSound: "Ṣṣut",
                 btnSettings: "Aseggem",
+                btnDragMode: "Asezger",
                 confirm: "Yahwa-yi",
                 cancel: "ALA",
                 defaultPlayer1: "Amyurar 1",
@@ -5063,22 +5164,22 @@ body.replay-active .winner-overlay.active {
                 restartGame: "Ɛiwed",
                 undoMove: "Uɣal",
                 gameRulesTitle: "Ilugan n wurar",
-                rulesGeneral: "Ilugan s amata n Tiddas :",
+                rulesGeneral: "Ilugan s umata n Tiddas :",
                 rulesObjectiveStrong: "Iswi :",
                 rulesObjective: "Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, neɣ aḥbas-is iwakken ur izmer ara ad inaqel. Di tewsit n Učči bessif, yerebḥ win i wummi mmeččen ileqqafen-is.",
                 rulesPiecesStrong: "Ileqqafen :",
-                rulesPieces: "Yal amyurar yesɛa 10 n yileqqafen. Amyurar ifarnen ileqqafen imellalen i yebeddun urar.",
+                rulesPieces: "Yal amyurar yesɛa 10 yileqqafen. Amyurar ifarnen ileqqafen imellalen i yebeddun urar.",
                 rulesPhasesStrong: "Talliyin n wurar :",
-                rulesPlacementPhaseStrong: "Tallit n userrasu :",
+                rulesPlacementPhaseStrong: "Tallit n usrusu :",
                 rulesPlacementPhase: "Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.",
                 rulesMovePhaseStrong: "Tallit n unaqel :",
                 rulesMovePhase: "Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttnaqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.",
                 rulesMillStrong: "Atellet :",
-                rulesMill: "Aseddukel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).",
+                rulesMill: "Asedukkel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).",
                 rulesCaptureStrong: "Učči :",
                 rulesCapture: "Ma yesdukel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.",
-                rulesCapturePlacementRestrictionStrong: "Yegdel ad tesdukleḍ 3 deg usersu :",
-                rulesCapturePlacementRestriction: "Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usersu. Učči tettili kan deg tallit n unaqel.",
+                rulesCapturePlacementRestrictionStrong: "Yegdel ad tesdukleḍ 3 deg usrusu :",
+                rulesCapturePlacementRestriction: "Yegdel ad tserseḍ aleqqaf i wakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usrusu. Učči yettili kan deg tallit n unaqel.",
                 rulesCaptureAllPiecesStrong: "Akk ileqqafen zemren ad mmeččen :",
                 rulesCaptureAllPieces: "Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.",
                 rulesForcedMoveStrong: "atellet s tmara:",
@@ -5093,17 +5194,17 @@ body.replay-active .winner-overlay.active {
                 rulesTIDDESTWinStrong: "Arbaḥ :",
                 rulesTIDDESTWin: "yerbeḥ win yeččan.",
                 rulesTIDDESTNoForcedMoveStrong: "Ulac atellet s tmara :",
-                rulesTIDDESTNoForcedMove: "Alugen n lmakala bessif ur ttilin ara.",
+                rulesTIDDESTNoForcedMove: "Ilugan n Učči Bessif ur ttilin ara.",
                 rulesBessif: "Učči Bessif :",
                 rulesBessifCombines: "Tesdukel ilugan n <strong>TIDDEST</strong> d umenzay n <strong>A werbaḥ s wexṣar</strong>.",
                 rulesBessifMovesStrong: "Anaqel :",
                 rulesBessifMoves: "Kan s teɣzi neɣ s tehri.",
                 rulesBessifInverseWinStrong: "Arbaḥ s wexṣar :",
-                rulesBessifInverseWin: "Amyurar ad irebḥ ma yella gran-as-d ala sin (2) ileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.",
+                rulesBessifInverseWin: "Amyurar ad irebḥ ma yella ggran-as-d ala sin (2) yileqqafen, NEƔ ma yella axṣim-is ur yezmir ara ad inaqel, u netta (win i d-yuraren) yesɛa drus n yileqqafen.",
                 rulesBessifOpponentChoosesStrong: "Axṣim ad yefren :",
                 rulesBessifOpponentChooses: "Ma yella tetelteḍ, d <strong>axṣim-ik</strong> ara d-ifernen aleqqaf-is ara teččeḍ.",
                 rulesBessifForcedMoveStrong: "atellet s tmara :",
-                rulesBessifForcedMove: "Ur d ak d-iṣaḥ ara ad tenaqleḍ alqqaf ɣer w anda ur tettetelliteḍ ara ma yella tzmereḍ ad tetelteḍ.",
+                rulesBessifForcedMove: "Ur d ak d-iṣaḥ ara ad tneqleḍ alqqaf ɣer w anda ur tettetelliteḍ ara ma yella tzmereḍ ad tetelteḍ.",
                 footerHeritage: "Adles n yimaziɣen • Urar Aqbuṛ n Yeqbayliyen",
                 footerCreator: "Iga-t",
                 congratulations: "Ayuuuuz!",
@@ -5113,16 +5214,16 @@ body.replay-active .winner-overlay.active {
                 statusChooseCapture: "fren aleqqaf n",
                 statusToCapture: "ad teččeḍ.",
                 statusChooseSacrifice: "ilaq-as ad yefren aleqqaf-is ara yefk.",
-                statusPlacementPhase: "Aserrasu : D nnuba n",
+                statusPlacementPhase: "Asrusu : D nnuba n",
                 statusMovePhase: "Anaqel : D nnuba n",
-                statusGameOver: "Yekfa w urar !",
+                statusGameOver: "Yekfa wurar !",
                 statusAlreadyOccupied: "taxxamt-a teččur !",
                 statusNoPiecesToPlace: "Ur k-d-qqimen ara yileqqafen !",
-                statusPlacementAlignForbidden: "D awezɣi ad tesdukleḍ 3 deg userrasu !",
+                statusPlacementAlignForbidden: "D awezɣi ad tesdukleḍ 3 deg usrusu !",
                 statusYourPiecesTurn: "D nnuba n yileqqafen-ik !",
                 statusSelectYourPiece: "Fren yiwen uleqqaf-ik.",
                 statusInvalidMove: "Ur d ak d-iṣaḥ ara.",
-                statusMustMakeMill: "Ilaq-ak ad tesdukleḍ tlata ma yella tezmireḍ !",
+                statusMustMakeMill: "Ilaq-ak ad tesdukleḍ tlata ma yella tzmereḍ !",
                 statusChooseOwnPieceToSacrifice: "Ilaq-ak ad teferneḍ yiwen uleqqaf-IK ara tefkeḍ !",
                 statusChooseOpponentPieceToCapture: "Ilaq-ak ad teferneḍ aleqqaf n WEXṢIM-IK !",
                 aiCannotMove: "Aselkim yeḥbes, yexṣer !",
@@ -5171,7 +5272,7 @@ body.replay-active .winner-overlay.active {
       btnTheme: "Asentel",
       btnSound: "Ṣṣut",
       btnSettings: "Aseggem",
-      themeGlass: "zǧǧaǧ",
+      btnDragMode: "Ajuṛṛu",
       themeContrast: "Amgired",
       themeModern: "Amaynut",
       themeModernDark: "Amaynut qessiḥen",
@@ -5552,7 +5653,9 @@ body.replay-active .winner-overlay.active {
 
         function startGame() {
             state = initState();
-            moveHistory = []; 
+            moveHistory = [];
+            boardPositionHistory = new Map();
+            forbiddenBoardPositions = new Set();
 
             const p1Input = player1NameInput.value.trim();
             const p2Input = player2NameInput.value.trim();
@@ -5632,7 +5735,7 @@ body.replay-active .winner-overlay.active {
             }
 
             if(state.captureMode) {
-                const playerWhosePiecesAreTargetable = variantConfig[variant].isInverseWin ? state.turnForCapture : (3 - state.turnForCapture);
+                const playerWhosePiecesAreTargetable = cfg().isInverseWin ? state.turnForCapture : (3 - state.turnForCapture);
                 for(let i = 0; i < SIZE * SIZE; i++) {
                     if(state.board[i] === playerWhosePiecesAreTargetable) { 
                         boardDiv.children[i].classList.add("capturable");
@@ -5644,6 +5747,24 @@ body.replay-active .winner-overlay.active {
             } else {
                 for(let i = 0; i < SIZE * SIZE; i++) {
                     boardDiv.children[i].onclick = () => onCellClick(i);
+                }
+            }
+
+            
+            // ── Mode glisser-déposer : binder pointerdown sur les pions déplaçables (sans empiler les listeners) ──
+            boardDiv.classList.toggle('drag-mode-active', dragMode);
+            const actor = state.turn;
+            const isHuman = gameMode !== 'spectator' && (gameMode !== 'ai' || actor !== aiPlayerId);
+            for (let i = 0; i < SIZE * SIZE; i++) {
+                const cell = boardDiv.children[i];
+                const canDrag = dragMode && isHuman && state.phase === 'move' && !state.captureMode && !state.winner
+                    && state.board[i] === actor && !isConsecutiveBlocked(actor, i);
+                if (canDrag) {
+                    cell.dataset.draggable = 'true';
+                    cell.onpointerdown = (e) => _onDragStart(e, i);
+                } else {
+                    cell.dataset.draggable = 'false';
+                    cell.onpointerdown = null;
                 }
             }
             updateActivePlayerDisplay();
@@ -5685,7 +5806,7 @@ body.replay-active .winner-overlay.active {
                 
                 const playerWhoChoosesName = (state.turnForCapture === 1) ? p1NameForStatus : p2NameForStatus;
 
-                if (variantConfig[variant].isInverseWin) {
+                if (cfg().isInverseWin) {
                     statusDiv.textContent = `${playerWhoChoosesName} ${translations[currentLanguage].statusChooseSacrifice}${captureCountInfo}`;
                 } else {
                     const playerWhosePieceIsCapturedName = (state.turnForCapture === 1) ? p2NameForStatus : p1NameForStatus;
@@ -5713,6 +5834,7 @@ body.replay-active .winner-overlay.active {
         }
         
         function onCellClick(i) {
+            if (_dragSuppressClick) return; // un glissement vient de se terminer
             if (state.winner) return;
             if (gameMode === 'spectator') return;
             const playerWhoShouldAct = state.captureMode ? state.turnForCapture : state.turn;
@@ -5764,7 +5886,7 @@ body.replay-active .winner-overlay.active {
         function handleCaptureClick(i) {
             if (!state.captureMode || state.winner) return;
             const pieceOwner = state.board[i];
-            const isInverseWin = variantConfig[variant].isInverseWin;
+            const isInverseWin = cfg().isInverseWin;
             if (isInverseWin) {
                 if (pieceOwner !== state.turnForCapture) {
                     showStatusError('statusChooseOwnPieceToSacrifice');
@@ -5837,7 +5959,7 @@ body.replay-active .winner-overlay.active {
                     return;
                 }
                 if (state.board[to] === null && isAdjacent(from, to)) {
-                    if (variantConfig[variant].forceMillMove) {
+                    if (cfg().forceMillMove) {
                         const allPossibleMillMovesForPlayer = getPossibleMillMoves(state.turn, state.board, 'move');
                         const tempBoard = simulateMove(state.board, {from, to}, state.turn);
                         const isCurrentMoveAMill = findAllMills(state.board, tempBoard, from, to, state.turn).length > 0;
@@ -5871,10 +5993,10 @@ body.replay-active .winner-overlay.active {
                         if (formedMills.length > 0) { 
                             state.captureMode = true; 
                             state.pendingCaptures = formedMills.length;
-                            state.turnForCapture = variantConfig[variant].isInverseWin ? (3 - movingPlayer) : movingPlayer;
+                            state.turnForCapture = cfg().isInverseWin ? (3 - movingPlayer) : movingPlayer;
                             state.highlightedMills = formedMills.flat();
 
-                            const emoji = variantConfig[variant].isInverseWin ? 'far fa-frown' : 'far fa-grin-beam';
+                            const emoji = cfg().isInverseWin ? 'far fa-frown' : 'far fa-grin-beam';
                             showEphemeralBubbleMessage('ephemeralMill', emoji);
                 
                             renderBoard();
@@ -5900,32 +6022,41 @@ body.replay-active .winner-overlay.active {
 
         function handleCapture(idxToCapture) {
             const capturerTurn = state.turnForCapture;
-            playSound('capture');
-            addMoveLog({ player: capturerTurn, text: `${(translations[currentLanguage] && translations[currentLanguage].logCapture) || 'Capture'} [${Math.floor(idxToCapture/5)+1},${idxToCapture%5+1}]`, capture: true });
             // Undo behavior: a capture is part of the same "turn transaction" as the move/placement that created it.
             // We deliberately DO NOT push a new snapshot here, otherwise undo can revert to a captureMode state and lock the player.
             if (!state.captureMode || state.winner) return;
-            const playerWhoGetsPoint = variantConfig[variant].isInverseWin ? (3 - state.turnForCapture) : state.turnForCapture;
-            
-            animateStoneCapture(idxToCapture);
-            const messageKey = variantConfig[variant].isInverseWin ? 'ephemeralCaptureBessif' : 'ephemeralCaptureNormal';
-            showEphemeralBubbleMessage(messageKey, 'fas fa-mouse-pointer');
-            
-            setTimeout(() => {
-                state.board[idxToCapture] = null;
-                state.captured[playerWhoGetsPoint]++;
-                state.pendingCaptures--;
+            const playerWhoGetsPoint = cfg().isInverseWin ? (3 - state.turnForCapture) : state.turnForCapture;
 
-                if (state.pendingCaptures > 0) {
-                    renderAll();
-                    triggerNextAction();
-                } else {
-                    state.captureMode = false; 
-                    state.turnForCapture = null;
-                    state.highlightedMills = [];
-                    endTurn();
-                }
-            }, 500);
+            // ── Étape 1 : mettre en évidence le pion capturé pour que l'adversaire puisse le voir ──
+            const messageKey = cfg().isInverseWin ? 'ephemeralCaptureBessif' : 'ephemeralCaptureNormal';
+            showEphemeralBubbleMessage(messageKey, 'fas fa-mouse-pointer');
+            const targetCell = boardDiv.children[idxToCapture];
+            if (targetCell) targetCell.classList.add('capture-pending');
+
+            // ── Étape 2 : après 900 ms, jouer le son + animation de suppression ──
+            setTimeout(() => {
+                if (targetCell) targetCell.classList.remove('capture-pending');
+                playSound('capture');
+                addMoveLog({ player: capturerTurn, text: `${(translations[currentLanguage] && translations[currentLanguage].logCapture) || 'Capture'} [${Math.floor(idxToCapture/5)+1},${idxToCapture%5+1}]`, capture: true });
+                animateStoneCapture(idxToCapture);
+
+                // ── Étape 3 : après encore 500 ms, supprimer réellement le pion et continuer ──
+                setTimeout(() => {
+                    state.board[idxToCapture] = null;
+                    state.captured[playerWhoGetsPoint]++;
+                    state.pendingCaptures--;
+
+                    if (state.pendingCaptures > 0) {
+                        renderAll();
+                        triggerNextAction();
+                    } else {
+                        state.captureMode = false;
+                        state.turnForCapture = null;
+                        state.highlightedMills = [];
+                        endTurn();
+                    }
+                }, 500);
+            }, 900);
         }
 
         function handleSurrender() {
@@ -5945,6 +6076,11 @@ body.replay-active .winner-overlay.active {
 
         function endTurn() {
             state.turn = 3 - state.turn;
+            // ── Enregistrement de la position pour la détection des boucles IA ──
+            const _boardSig = state.board.map(v => v || 0).join('');
+            const _posCount = (boardPositionHistory.get(_boardSig) || 0) + 1;
+            boardPositionHistory.set(_boardSig, _posCount);
+            if (_posCount >= 3) forbiddenBoardPositions.add(_boardSig);
             if (state.phase === 'placement' && state.counts[1] === 0 && state.counts[2] === 0) {
                 state.phase = 'move';
                 showEphemeralBubbleMessage('ephemeralMovePhase', "fas fa-exchange-alt");
@@ -6100,7 +6236,7 @@ body.replay-active .winner-overlay.active {
             const p1CanMove = canPlayerMove(1, state.board);
             const p2CanMove = canPlayerMove(2, state.board);
 
-            if (variantConfig[variant].isInverseWin) {
+            if (cfg().isInverseWin) {
                 if (p1Pieces < 3 || !p1CanMove) state.winner = 1;
                 else if (p2Pieces < 3 || !p2CanMove) state.winner = 2;
             } else {
@@ -6169,7 +6305,7 @@ body.replay-active .winner-overlay.active {
             const playerDoubleMills = countDoubleMillSetups(board, playerToEvaluate);
             const opponentDoubleMills = countDoubleMillSetups(board, opponent);
 
-            if (!variantConfig[variant].isInverseWin) {
+            if (!cfg().isInverseWin) {
                 // --- NORMAL WIN LOGIC ---
                 score += playerDoubleMills * 600;
                 score -= opponentDoubleMills * 700;
@@ -6289,7 +6425,7 @@ body.replay-active .winner-overlay.active {
         }
 
         function aiChoosePieceToActOn() {
-            const isInverse = variantConfig[variant].isInverseWin;
+            const isInverse = cfg().isInverseWin;
             const playerToTarget = isInverse ? aiPlayerId : humanPlayerId;
             const possibleTargets = [];
             for (let i = 0; i < state.board.length; i++) {
@@ -6436,7 +6572,7 @@ body.replay-active .winner-overlay.active {
             if (canPlayerFormMillNextTurn(opponent, board, currentPhase)) score -= 1000;
             if (canPlayerFormMillNextTurn(playerToEvaluate, board, currentPhase)) score += 900;
 
-            if (variantConfig[variant].isInverseWin) {
+            if (cfg().isInverseWin) {
                 // In inverse mode, fewer pieces and fewer moves are GOOD for AI => invert the "normal" score.
                 score = -score;
 
@@ -6455,7 +6591,7 @@ body.replay-active .winner-overlay.active {
                 });
 
                 // Huge penalty if AI is currently forced to make a mill (forced-mill rule active and a mill move exists).
-                if (variantConfig[variant].forceMillMove && currentPhase === 'move') {
+                if (cfg().forceMillMove && currentPhase === 'move') {
                     const millMoves = getPossibleMillMoves(playerToEvaluate, board, currentPhase);
                     if (millMoves.length > 0) {
                         score -= 50000;
@@ -6618,7 +6754,7 @@ body.replay-active .winner-overlay.active {
                     // In normal rules: the mover chooses which opponent piece to capture.
                     // In Učči Bessif: the opponent chooses which of THEIR OWN pieces will be captured.
                     const victim = opponentPlayer;
-                    const chooser = variantConfig[variant].isInverseWin ? opponentPlayer : currentPlayer;
+                    const chooser = cfg().isInverseWin ? opponentPlayer : currentPlayer;
                     const chooserIsAI = chooser === aiPlayerId;
 
                     const capturablePieces = [];
@@ -6691,7 +6827,7 @@ body.replay-active .winner-overlay.active {
                 }
             } else {
                 const millMoves = getPossibleMillMoves(player, board, phase);
-                if (variantConfig[variant].forceMillMove && millMoves.length > 0) {
+                if (cfg().forceMillMove && millMoves.length > 0) {
                     return millMoves;
                 }
                 for (let i = 0; i < SIZE * SIZE; i++) {
@@ -6739,7 +6875,7 @@ body.replay-active .winner-overlay.active {
             const p1Loses = p1Pieces < 3 || !p1CanMove;
             const p2Loses = p2Pieces < 3 || !p2CanMove;
             
-            if (variantConfig[variant].isInverseWin) { 
+            if (cfg().isInverseWin) { 
                 // Inverse win: the player who "loses" (has <3 pieces or can't move) actually WINS
                 if (p1Loses) return 1;
                 if (p2Loses) return 2; 
@@ -6755,7 +6891,7 @@ body.replay-active .winner-overlay.active {
             const player = aiPlayerId;
             const opponent = humanPlayerId;
             const currentPhase = state.phase;
-            const isInverse = variantConfig[variant].isInverseWin;
+            const isInverse = cfg().isInverseWin;
 
             const cmpVec = (a, b) => {
                 for (let i = 0; i < Math.min(a.length, b.length); i++) {
@@ -6848,7 +6984,7 @@ body.replay-active .winner-overlay.active {
                     possibleMoves = candidates.map(x => x.move);
 
                 } else { // Move phase
-                    const mustMakeMill = variantConfig[variant].forceMillMove &&
+                    const mustMakeMill = cfg().forceMillMove &&
                         getPossibleMillMoves(player, state.board, 'move').length > 0;
 
                     const annotated = possibleMoves.map(move => {
@@ -6937,6 +7073,15 @@ body.replay-active .winner-overlay.active {
             // Clear cache each decision for responsiveness
             __MINIMAX_TT.clear();
 
+            // ── Anti-boucle IA vs IA : exclure les positions déjà vues ≥ 3 fois ──
+            if (forbiddenBoardPositions.size > 0) {
+                const nonRepeating = possibleMoves.filter(m => {
+                    const nb = simulateMove(state.board, m, player);
+                    return !forbiddenBoardPositions.has(nb.map(v => v || 0).join(''));
+                });
+                if (nonRepeating.length > 0) possibleMoves = nonRepeating;
+            }
+
             let bestMove = null;
             let bestScore = -Infinity;
             let alpha = -Infinity;
@@ -6949,7 +7094,9 @@ body.replay-active .winner-overlay.active {
                 const newBoard = simulateMove(state.board, move, player);
                 const nextPiecesPlaced = currentPhase === 'placement' ? piecesPlacedSoFar + 1 : piecesPlacedSoFar;
 
-                const score = minimax(newBoard, depth - 1, false, opponent, alpha, beta, nextPiecesPlaced);
+                // Petit jitter aléatoire pour casser les ex-aequo et éviter les cycles
+                const jitter = (Math.random() * 4 - 2);
+                const score = minimax(newBoard, depth - 1, false, opponent, alpha, beta, nextPiecesPlaced) + jitter;
 
                 if (score > bestScore) {
                     bestScore = score;
@@ -6972,6 +7119,31 @@ body.replay-active .winner-overlay.active {
         let currentTheme = THEMES.indexOf('kabylie'); // default: kabylie
         let moveLog = []; // for move history log
         let spectatorDelay = 700;
+
+        // --- ANTI-BOUCLE IA vs IA ---
+        // Mémorise les positions déjà vues pour briser les cycles répétitifs
+        let boardPositionHistory = new Map(); // signature → nb d'occurrences
+        let forbiddenBoardPositions = new Set(); // positions vues ≥ 3 fois (évitées par l'IA)
+
+        // --- MODE GLISSER-DÉPOSER ---
+        let dragMode = false;
+        let _dragActive = false;
+        let _dragFromIdx = null;
+        let _dragOverIdx = null;
+        let _dragStartX = 0;
+        let _dragStartY = 0;
+        let _dragMoved = false;
+        let _dragSuppressClick = false;
+
+        // Pointer drag internals (smooth)
+        let _dragPointerId = null;
+        let _dragRaf = 0;
+        let _dragLastX = 0;
+        let _dragLastY = 0;
+        let _dragTargets = null; // Set<int> of allowed target indices for current drag
+        let _dragVisualReady = false;
+
+        const _DRAG_THRESHOLD = 3; // px min pour considérer que c'est un glissement (plus réactif)
 
         // --- IMPROVED SOUND SYSTEM (Web Audio API with dynamics + reverb) ---
         let __audio = null;
@@ -7134,6 +7306,274 @@ body.replay-active .winner-overlay.active {
             try { localStorage.setItem('tiddas_sound', soundEnabled ? '1' : '0'); } catch(e){}
         }
 
+        // --- MODE GLISSER-DÉPOSER ---
+        function loadDragPref() {
+            try { dragMode = localStorage.getItem('tiddas_drag') === '1'; } catch(e) {}
+        }
+        function saveDragPref() {
+            try { localStorage.setItem('tiddas_drag', dragMode ? '1' : '0'); } catch(e) {}
+        }
+        function toggleDragMode() {
+            dragMode = !dragMode;
+            saveDragPref();
+            applyDragBtn();
+            // Rebind le plateau si une partie est en cours
+            if (state && !state.winner) renderBoard();
+        }
+        function applyDragBtn() {
+            const btn = document.getElementById('drag-btn');
+            if (!btn) return;
+            btn.classList.toggle('active', dragMode);
+            btn.setAttribute('aria-pressed', dragMode ? 'true' : 'false');
+            if (boardDiv) boardDiv.classList.toggle('drag-mode-active', dragMode);
+        }
+
+        
+        // Retourne l'index de la cellule sous le point (x, y), ou null
+        function _cellIdxFromPoint(x, y) {
+            // pointer-events:none sur #drag-ghost → elementFromPoint le traverse nativement.
+            // Pas besoin de display:none (qui causait un scintillement à chaque frame).
+            const el = document.elementFromPoint(x, y);
+            if (!el) return null;
+            const cell = el.classList?.contains('cell') ? el : el.closest?.('.cell');
+            if (!cell) return null;
+            const idx = parseInt(cell.dataset.idx, 10);
+            return Number.isFinite(idx) ? idx : null;
+        }
+
+        function _clearDragUI(fromIdx) {
+            // Stop any pending RAF
+            if (_dragRaf) { cancelAnimationFrame(_dragRaf); _dragRaf = 0; }
+
+            // remove drag-over highlight
+            if (_dragOverIdx !== null) {
+                boardDiv.children[_dragOverIdx]?.classList.remove('drag-over');
+                _dragOverIdx = null;
+            }
+            // remove dragging visual on source stone
+            if (fromIdx !== null && fromIdx !== undefined) {
+                const srcStone = boardDiv.children[fromIdx]?.querySelector('.stone');
+                if (srcStone) srcStone.classList.remove('dragging');
+            }
+            // Filet de sécurité : nettoyer possible-move et selected sur toutes les cellules
+            // (utile si renderBoard() n'est pas appelé après, ex: pointercancel inattendu)
+            boardDiv.querySelectorAll('.cell.possible-move').forEach(c => c.classList.remove('possible-move'));
+            boardDiv.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+            boardDiv.querySelectorAll('.stone.selected').forEach(s => s.classList.remove('selected'));
+            // hide ghost
+            const ghost = document.getElementById('drag-ghost');
+            if (ghost) {
+                ghost.classList.remove('visible');
+                ghost.style.transform = 'translate(-9999px, -9999px) scale(1.15)';
+            }
+            _dragVisualReady = false;
+        }
+
+        function _computeTargetsFrom(fromIdx) {
+            // Si l'UI affiche déjà les coups possibles (pion sélectionné via clic), on réutilise.
+            if (state.selected === fromIdx) {
+                const existing = new Set();
+                boardDiv.querySelectorAll('.cell.possible-move').forEach(c => {
+                    const idx = parseInt(c.dataset.idx, 10);
+                    if (Number.isFinite(idx)) existing.add(idx);
+                });
+                if (existing.size) return existing;
+            }
+            const targets = new Set();
+            for (let i = 0; i < SIZE * SIZE; i++) {
+                if (state.board[i] === null && isAdjacent(fromIdx, i)) targets.add(i);
+            }
+            return targets;
+        }
+
+        function _applyDragSelectionUI(fromIdx) {
+            // MAJ visuelle uniquement : pas de renderBoard() (beaucoup plus fluide)
+            boardDiv.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+            boardDiv.querySelectorAll('.stone.selected').forEach(s => s.classList.remove('selected'));
+            boardDiv.querySelectorAll('.cell.possible-move').forEach(c => c.classList.remove('possible-move'));
+
+            const fromCell = boardDiv.children[fromIdx];
+            if (fromCell) {
+                fromCell.classList.add('selected');
+                fromCell.querySelector('.stone')?.classList.add('selected');
+            }
+
+            const targets = _computeTargetsFrom(fromIdx);
+            targets.forEach(idx => boardDiv.children[idx]?.classList.add('possible-move'));
+            return targets;
+        }
+
+        function _ensureDragVisuals(x, y) {
+            if (_dragVisualReady) return;
+            const fromIdx = _dragFromIdx;
+            if (fromIdx === null) return;
+
+            const srcStone = boardDiv.children[fromIdx]?.querySelector('.stone');
+            if (srcStone) srcStone.classList.add('dragging');
+
+            const ghost = document.getElementById('drag-ghost');
+            if (ghost) {
+                const rect = srcStone ? srcStone.getBoundingClientRect() : null;
+                ghost.style.width  = rect ? rect.width  + 'px' : '48px';
+                ghost.style.height = rect ? rect.height + 'px' : '48px';
+
+                ghost.className = `player${state.board[fromIdx]}`;
+                ghost.classList.add('visible');
+                // Transform GPU composite : pas de reflow, fluide même à 120 Hz
+                ghost.style.transform = 'translate(calc(' + x + 'px - 50%), calc(' + y + 'px - 50%)) scale(1.15)';
+            }
+            _dragVisualReady = true;
+        }
+
+        function _dragUpdateFrame() {
+            _dragRaf = 0;
+            if (!_dragActive || !_dragMoved) return;
+
+            const x = _dragLastX, y = _dragLastY;
+            _ensureDragVisuals(x, y);
+
+            const ghost = document.getElementById('drag-ghost');
+            if (ghost && ghost.classList.contains('visible')) {
+                // Transform GPU composite : pas de reflow
+                ghost.style.transform = 'translate(calc(' + x + 'px - 50%), calc(' + y + 'px - 50%)) scale(1.15)';
+            }
+
+            const idx = _cellIdxFromPoint(x, y);
+            const nextOver = (idx !== null && _dragTargets && _dragTargets.has(idx)) ? idx : null;
+
+            if (nextOver !== _dragOverIdx) {
+                if (_dragOverIdx !== null) boardDiv.children[_dragOverIdx]?.classList.remove('drag-over');
+                if (nextOver !== null) boardDiv.children[nextOver]?.classList.add('drag-over');
+                _dragOverIdx = nextOver;
+            }
+        }
+
+        // Démarre un glissement depuis la cellule fromIdx
+        function _onDragStart(e, fromIdx) {
+            if (!dragMode) return;
+            if (state.winner || state.phase !== 'move' || state.captureMode) return;
+            if (gameMode === 'spectator') return;
+
+            // Ignore non-primary pointers (multi-touch)
+            if (e.isPrimary === false) return;
+
+            const actor = state.turn;
+            if (gameMode === 'ai' && actor === aiPlayerId) return;
+            if (state.board[fromIdx] !== actor) return;
+            if (isConsecutiveBlocked(actor, fromIdx)) return;
+
+            _dragActive = true;
+            _dragFromIdx = fromIdx;
+            _dragOverIdx = null;
+            _dragMoved = false;
+            _dragTargets = null;
+            _dragVisualReady = false;
+
+            _dragPointerId = (typeof e.pointerId === 'number') ? e.pointerId : null;
+            _dragStartX = e.clientX;
+            _dragStartY = e.clientY;
+            _dragLastX = e.clientX;
+            _dragLastY = e.clientY;
+
+            // Pointer capture for reliable move tracking
+            try { e.currentTarget?.setPointerCapture?.(e.pointerId); } catch (_) {}
+
+            window.addEventListener('pointermove', _onDragMove, { passive: false });
+            window.addEventListener('pointerup', _onDragEnd, { once: true });
+            window.addEventListener('pointercancel', _onDragCancel, { once: true });
+        }
+
+        function _onDragMove(e) {
+            if (!_dragActive) return;
+            if (_dragPointerId !== null && e.pointerId !== _dragPointerId) return;
+
+            // Utiliser le dernier événement coalescé pour la position la plus récente
+            // (getCoalescedEvents retourne tous les points intermédiaires — crucial sur mobile haute fréquence)
+            const events = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+            const last = events[events.length - 1] || e;
+            _dragLastX = last.clientX;
+            _dragLastY = last.clientY;
+
+            const dx = _dragLastX - _dragStartX;
+            const dy = _dragLastY - _dragStartY;
+
+            if (!_dragMoved && Math.hypot(dx, dy) >= _DRAG_THRESHOLD) {
+                _dragMoved = true;
+
+                // Sélection logique nécessaire pour handleMove()
+                state.selected = _dragFromIdx;
+
+                // Crée les coups possibles sans renderBoard()
+                _dragTargets = _applyDragSelectionUI(_dragFromIdx);
+            }
+
+            if (_dragMoved) {
+                if (e.cancelable) e.preventDefault();
+                // Un seul RAF par frame : pas de calculs redondants
+                if (!_dragRaf) _dragRaf = requestAnimationFrame(_dragUpdateFrame);
+            }
+        }
+
+        function _onDragEnd(e) {
+            window.removeEventListener('pointermove', _onDragMove);
+            window.removeEventListener('pointercancel', _onDragCancel);
+
+            if (!_dragActive) return;
+            _dragActive = false;
+
+            const fromIdx = _dragFromIdx;
+            _dragFromIdx = null;
+
+            // Si ce n'était pas un glissement, laisser le click normal se faire
+            if (!_dragMoved) {
+                _dragPointerId = null;
+                _clearDragUI(fromIdx);
+                return;
+            }
+
+            _dragSuppressClick = true;
+            setTimeout(() => { _dragSuppressClick = false; }, 220);
+
+            // Drop
+            const raw = _cellIdxFromPoint(e.clientX, e.clientY);
+            const toIdx = (raw !== null && _dragTargets && _dragTargets.has(raw)) ? raw : null;
+
+            _dragPointerId = null;
+
+            _clearDragUI(fromIdx);
+
+            if (toIdx !== null && fromIdx !== null) {
+                // Utilise la logique existante (mill obligatoire, etc.)
+                moveHistory.push(deepCopy(state));
+                handleMove(toIdx);
+                saveGame();
+            } else {
+                // Dépôt invalide : garder la sélection (plus agréable)
+                state.selected = fromIdx;
+                renderBoard();
+                updateStatus();
+            }
+        }
+
+        function _onDragCancel() {
+            window.removeEventListener('pointermove', _onDragMove);
+            window.removeEventListener('pointerup', _onDragEnd);
+
+            if (!_dragActive) return;
+            _dragActive = false;
+
+            const fromIdx = _dragFromIdx;
+            _dragFromIdx = null;
+            _dragPointerId = null;
+
+            _clearDragUI(fromIdx);
+
+            // Restaure la sélection sur le pion source
+            state.selected = fromIdx;
+            renderBoard();
+            updateStatus();
+        }
+
         // --- SAVE / LOAD GAME (localStorage) ---
         const SAVE_KEY = 'tiddas_save_v2';
         function saveGame() {
@@ -7155,6 +7595,8 @@ body.replay-active .winner-overlay.active {
 
                 // Restore meta
                 variant = save.variant || variant;
+                // Validation : si la variante est inconnue, utiliser la valeur par défaut
+                if (!variant || !variantConfig[variant]) variant = 'TIDDEST-no-diag';
                 gameMode = save.gameMode || gameMode;
                 aiDifficulty = (save.aiDifficulty ?? aiDifficulty);
                 humanPlayerId = (save.humanPlayerId ?? humanPlayerId);
@@ -7198,6 +7640,8 @@ body.replay-active .winner-overlay.active {
 
                 moveLog = Array.isArray(save.moveLog) ? save.moveLog : [];
                 moveHistory = [];
+                boardPositionHistory = new Map();
+                forbiddenBoardPositions = new Set();
                 clearSave();
                 hideSaveNotification();
                 updateGameInfoDisplay();
@@ -7270,6 +7714,8 @@ body.replay-active .winner-overlay.active {
             moveLog = [];
             state = initState();
             moveHistory = [];
+            boardPositionHistory = new Map();
+            forbiddenBoardPositions = new Set();
             updateGameInfoDisplay();
             showScreen('game-play-area');
             document.getElementById('spectator-badge').classList.add('visible');
@@ -8837,6 +9283,12 @@ body.replay-active .winner-overlay.active {
 
             // Guided mode button
             if (typeof applyGuidedBtn === 'function') applyGuidedBtn();
+
+            // Mode glisser-déposer
+            loadDragPref();
+            applyDragBtn();
+            const dragBtn = document.getElementById('drag-btn');
+            if (dragBtn) dragBtn.addEventListener('click', toggleDragMode);
 
 
         // Service worker
