@@ -5816,6 +5816,18 @@ header::before {
 .guided-btn-hidden { display: none !important; position: absolute; pointer-events: none; }
 .checkmark-hidden  { display: none; }
 
+/* ── Pions des cartes joueur : couleur selon player1/player2 ── */
+.psu-player-card .stone-preview.player1,
+.psu-color-opt   .stone-preview.player1 {
+  background: radial-gradient(circle at 35% 35%, var(--player1-stone-color-light), var(--player1-stone-color-dark) 60%, #000 90%);
+  transition: background 0.3s ease, transform 0.25s ease;
+}
+.psu-player-card .stone-preview.player2,
+.psu-color-opt   .stone-preview.player2 {
+  background: radial-gradient(circle at 35% 35%, var(--player2-stone-color-light), var(--player2-stone-color-dark) 60%, #e0e0e0 90%);
+  transition: background 0.3s ease, transform 0.25s ease;
+}
+
 </style>
 </head>
 <body>
@@ -5979,7 +5991,7 @@ header::before {
   <div class="psu-header">
     <p class="psu-eyebrow">ⵜⵉⴷⴷⴰⵙ</p>
     <h2 class="psu-title" data-i18n="playerSetup">Configuration</h2>
-    <p class="psu-subtitle">Renseignez vos noms et choisissez votre camp</p>
+    <p class="psu-subtitle" data-i18n="psuSubtitle">Renseignez vos noms et choisissez votre camp</p>
   </div>
 
   <!-- Section noms (conservée pour le JS) -->
@@ -5988,7 +6000,7 @@ header::before {
     <!-- Joueur 1 -->
     <div class="psu-player-card psu-p1" id="player2-name-group-wrapper">
       <div class="psu-stone-wrap">
-        <div class="stone-preview player1 psu-stone"></div>
+        <div class="stone-preview player1 psu-stone" id="card1-stone"></div>
         <div class="psu-stone-ring psu-stone-ring-p1"></div>
       </div>
       <div class="psu-player-info">
@@ -6007,11 +6019,11 @@ header::before {
     <!-- Joueur 2 -->
     <div class="psu-player-card psu-p2" id="player2-name-group">
       <div class="psu-stone-wrap">
-        <div class="stone-preview player2 psu-stone"></div>
+        <div class="stone-preview player2 psu-stone" id="card2-stone"></div>
         <div class="psu-stone-ring psu-stone-ring-p2"></div>
       </div>
       <div class="psu-player-info">
-        <label class="psu-player-tag" data-i18n="player2NameLabel" for="player2-name-input">Joueur 2 · Blanc</label>
+        <label class="psu-player-tag" data-i18n="player2NameLabel" for="player2-name-input" id="player2-name-label">Joueur 2 · Blanc</label>
         <div class="input-group psu-input-wrap">
           <input class="psu-name-input" data-i18n-placeholder="player2Placeholder" id="player2-name-input" maxlength="20" placeholder="Joueur 2" type="text"/>
         </div>
@@ -6021,7 +6033,7 @@ header::before {
 
   <!-- Section couleur (conservée pour le JS) -->
   <div class="setup-section psu-color-section" id="color-choice-section">
-    <p class="psu-color-label" data-i18n="chooseYourColorTitle">Vous jouez avec les&nbsp;:</p>
+    <p class="psu-color-label" id="color-section-label" data-i18n="chooseYourColorTitle">Vous jouez avec les&nbsp;:</p>
     <div class="color-choice-group psu-color-group">
       <label class="color-option psu-color-opt" data-player="1">
         <input checked="" name="human-color" type="radio" value="1"/>
@@ -6029,7 +6041,7 @@ header::before {
           <div class="stone-preview player1 psu-opt-stone"></div>
           <div class="psu-opt-text">
             <span class="psu-opt-name" data-i18n="player1Color" id="color-option-1-text">Pions Noirs</span>
-            <span class="psu-opt-desc">Commence en premier</span>
+            <span class="psu-opt-desc" data-i18n="colorDescBlack">Joue en second</span>
           </div>
           <div class="psu-opt-check" aria-hidden="true">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 6.5 12 13 4"/></svg>
@@ -6043,7 +6055,7 @@ header::before {
           <div class="stone-preview player2 psu-opt-stone"></div>
           <div class="psu-opt-text">
             <span class="psu-opt-name" data-i18n="player2Color" id="color-option-2-text">Pions Blancs</span>
-            <span class="psu-opt-desc">Répond au premier coup</span>
+            <span class="psu-opt-desc" data-i18n="colorDescWhite">Commence en premier</span>
           </div>
           <div class="psu-opt-check" aria-hidden="true">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 6.5 12 13 4"/></svg>
@@ -6612,7 +6624,11 @@ header::before {
                 backToModes: "Retour",
                 playerSetup: "Configuration des joueurs",
                 playerNamesTitle: "Noms des joueurs",
-                chooseYourColorTitle: "Choisir votre couleur",
+                chooseYourColorTitle: "Vous jouez avec les :",
+                colorLabelLocal: "Joueur 1 joue avec les :",
+                psuSubtitle: "Renseignez vos noms et choisissez votre camp",
+                colorDescBlack: "Joue en second",
+                colorDescWhite: "Commence en premier",
                 playerHumanName: "Nom de l'Humain :",
                 player1NameLabel: "Nom du Joueur 1 (Noir) :",
                 player2NameLabel: "Nom du Joueur 2 (Blanc) :",
@@ -6637,7 +6653,7 @@ header::before {
                 rulesObjectiveStrong: "Objectif :",
                 rulesObjective: "Le but principal est de réduire le nombre de pions de votre adversaire à moins de trois, ou de le bloquer de manière à ce qu'il ne puisse plus effectuer de mouvements valides. Pour la variante Učči bessif TIDDEST, l'objectif est inversé : le joueur gagne s'il réduit son propre nombre de pions à moins de trois.",
                 rulesPiecesStrong: "Pions :",
-                rulesPieces: "Chaque joueur dispose de 10 pions (appelés \"cailloux\"). Le Joueur (Blanc) commence toujours.",
+                rulesPieces: "Chaque joueur dispose de 10 pions (appelés \"cailloux\"). Le Joueur 2 (Blanc) commence toujours.",
                 rulesPhasesStrong: "Phases de Jeu :",
                 rulesPlacementPhaseStrong: "Phase de Placement :",
                 rulesPlacementPhase: "Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.",
@@ -6820,7 +6836,11 @@ header::before {
                 backToModes: "Uɣal",
                 playerSetup: "Aheggi n yemyurar",
                 playerNamesTitle: "Ismawen n yemyurar",
-                chooseYourColorTitle: "Fren ini-k",
+                chooseYourColorTitle: "Tturareḍ s :",
+                colorLabelLocal: "Amyurar 1 yetturar s :",
+                psuSubtitle: "Kcem ismawen-nwen u fren ini-nwen",
+                colorDescBlack: "Yebdu d wis sin",
+                colorDescWhite: "Yebdu d amezwaru",
                 playerHumanName: "Isem n umdan :",
                 player1NameLabel: "Isem n umyurar 1 (Aberkan) :",
                 player2NameLabel: "Isem n umyurar 2 (Amellal) :",
@@ -6845,7 +6865,7 @@ header::before {
                 rulesObjectiveStrong: "Iswi :",
                 rulesObjective: "Iswi amenzu, yal ma yetellet yiwen ileqqafen-is ad yemmečč yiwen uleqqaf n wexṣim, alamma yeǧǧa-as-d ala sin neɣ qqel, neɣ aḥbas-is iwakken ur izemmer ara ad inaqel. Di tewsit n Učči bessif, yerbeḥ win i wummi mmeččen ileqqafen-is.",
                 rulesPiecesStrong: "Ileqqafen :",
-                rulesPieces: "Yal amyurar yesɛa 10 yileqqafen. Amyurar ifarnen ileqqafen imellalen i yebeddun urar.",
+                rulesPieces: "Yal amyurar yesɛa 10 yileqqafen. Amyurar 2 (Amellal) yebdu d amezwaru.",
                 rulesPhasesStrong: "Talliyin n wurar :",
                 rulesPlacementPhaseStrong: "Tallit n usrusu :",
                 rulesPlacementPhase: "Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 yileqqafen.",
@@ -7100,6 +7120,13 @@ header::before {
                 guidedBtn.setAttribute('aria-label', tr.ariaModeGuide || 'Mode guidé');
                 guidedBtn.title = tr.ariaModeGuide || 'Mode guidé';
             }
+            // ── Color section label (mode-aware) ────────────────────────────
+            const colorSectionLabel = document.getElementById('color-section-label');
+            if (colorSectionLabel) {
+                const labelKey = (gameMode === 'ai') ? 'chooseYourColorTitle' : 'colorLabelLocal';
+                colorSectionLabel.textContent = tr[labelKey] || colorSectionLabel.textContent;
+                colorSectionLabel.dataset.i18n = labelKey;
+            }
         }
 
         function showScreen(screenId) {
@@ -7117,8 +7144,17 @@ header::before {
             if (screenId === 'player-setup-area') {
                 const isAiMode = gameMode === 'ai';
                 player2NameGroup.style.display = isAiMode ? 'none' : 'flex';
-                colorChoiceSection.style.display = isAiMode ? 'flex' : 'none';
+                // ── Afficher la section couleur dans les 2 modes ──────────────
+                colorChoiceSection.style.display = 'flex';
                 
+                // Adapter le libellé selon le mode
+                const colorSectionLabel = document.getElementById('color-section-label');
+                if (colorSectionLabel) {
+                    const labelKey = isAiMode ? 'chooseYourColorTitle' : 'colorLabelLocal';
+                    colorSectionLabel.textContent = translations[currentLanguage][labelKey] || colorSectionLabel.textContent;
+                    colorSectionLabel.dataset.i18n = labelKey;
+                }
+
                 player1NameLabel.textContent = translations[currentLanguage][isAiMode ? 'playerHumanName' : 'player1NameLabel'];
                 
                 player1NameInput.value = '';
@@ -7129,6 +7165,7 @@ header::before {
                     player1Name = translations[currentLanguage].defaultHumanName;
                     player2Name = translations[currentLanguage].defaultComputerName;
                 } else {
+                    humanPlayerId = 1; // Default: J1 plays Black (Player ID 1)
                     player1Name = translations[currentLanguage].defaultPlayer1;
                     player2Name = translations[currentLanguage].defaultPlayer2;
                 }
@@ -7137,20 +7174,73 @@ header::before {
         }
         
         function updateColorOptionSelection(selectedPlayerId) {
+            // ── 1. Mettre à jour les boutons de choix de couleur ─────────────
             colorOptions.forEach(option => {
                 const id = parseInt(option.dataset.player);
                 const isSelected = id === selectedPlayerId;
                 option.classList.toggle('selected', isSelected);
                 option.querySelector('input[type="radio"]').checked = isSelected;
-                const span = option.querySelector('span');
+                const nameSpan = option.querySelector('.psu-opt-name');
+                if (!nameSpan) return;
                 const colorKey = `player${id}Color`;
-                const colorName = translations[currentLanguage][colorKey].split(' ')[0];
+                const colorName = (translations[currentLanguage][colorKey] || '').split(' ')[0];
                 if (gameMode === 'ai') {
-                    span.textContent = isSelected ? `${translations[currentLanguage].yourColor} (${colorName})` : `${translations[currentLanguage].aiColor} (${colorName})`;
+                    nameSpan.textContent = isSelected
+                        ? `${translations[currentLanguage].yourColor || 'Vous'} (${colorName})`
+                        : `${translations[currentLanguage].aiColor || 'IA'} (${colorName})`;
                 } else {
-                    span.textContent = translations[currentLanguage][colorKey];
+                    const j1Label = translations[currentLanguage].defaultPlayer1 || 'Joueur 1';
+                    const j2Label = translations[currentLanguage].defaultPlayer2 || 'Joueur 2';
+                    const playerLabel = (id === selectedPlayerId) ? j1Label : j2Label;
+                    nameSpan.textContent = `${playerLabel} — ${colorName}`;
                 }
             });
+
+            // ── 2. Synchroniser les pions des cartes joueur ──────────────────
+            // humanPlayerId = l'ID de couleur (1=Noir, 2=Blanc) choisi par le J1 humain
+            // card1 = carte du J1 (champ nom haut), card2 = carte du J2 / IA
+            const card1Stone = document.getElementById('card1-stone');
+            const card2Stone = document.getElementById('card2-stone');
+
+            // Clés de traduction pour le label couleur dans la carte
+            const colorBlackKey = 'player1Color'; // "Noir / Aberkan"
+            const colorWhiteKey = 'player2Color'; // "Blanc / Amellal"
+            const blackLabel = (translations[currentLanguage][colorBlackKey] || 'Noir').split('(')[0].trim();
+            const whiteLabel = (translations[currentLanguage][colorWhiteKey] || 'Blanc').split('(')[0].trim();
+
+            // J1 choisit selectedPlayerId (1=Noir, 2=Blanc)
+            const card1PlayerClass = `player${selectedPlayerId}`;           // couleur choisie par J1
+            const card2PlayerClass = `player${selectedPlayerId === 1 ? 2 : 1}`; // couleur de J2 / IA
+            const card1ColorLabel = selectedPlayerId === 1 ? blackLabel : whiteLabel;
+            const card2ColorLabel = selectedPlayerId === 1 ? whiteLabel : blackLabel;
+
+            if (card1Stone) {
+                card1Stone.classList.remove('player1', 'player2');
+                card1Stone.classList.add(card1PlayerClass);
+            }
+            if (card2Stone) {
+                card2Stone.classList.remove('player1', 'player2');
+                card2Stone.classList.add(card2PlayerClass);
+            }
+
+            // ── 3. Mettre à jour les labels de couleur dans les cartes ───────
+            const label1 = document.getElementById('player1-name-label');
+            const label2 = document.getElementById('player2-name-label');
+            const tr = translations[currentLanguage];
+
+            if (gameMode === 'ai') {
+                // Une seule carte visible : le label indique la couleur du joueur humain
+                if (label1) {
+                    label1.textContent = `${tr.playerHumanName || 'Humain'} · ${card1ColorLabel}`;
+                    label1.removeAttribute('data-i18n'); // géré dynamiquement
+                }
+            } else {
+                // Deux cartes : afficher J1/J2 + leur couleur attribuée
+                const j1 = tr.defaultPlayer1 || 'Joueur 1';
+                const j2 = tr.defaultPlayer2 || 'Joueur 2';
+                if (label1) { label1.textContent = `${j1} · ${card1ColorLabel}`; label1.removeAttribute('data-i18n'); }
+                if (label2) { label2.textContent = `${j2} · ${card2ColorLabel}`; label2.removeAttribute('data-i18n'); }
+            }
         }
 
         function updateGameInfoDisplay() {
@@ -7349,8 +7439,17 @@ header::before {
                 else player2Name = translations[currentLanguage].defaultComputerName;
             } else {
                 aiPlayerId = null;
-                player1Name = p1Input || translations[currentLanguage].defaultPlayer1;
-                player2Name = p2Input || translations[currentLanguage].defaultPlayer2;
+                // humanPlayerId = Player ID (1=Noir, 2=Blanc) choisi par J1 (premier champ nom)
+                // Player ID 2 (Blanc) commence toujours (turn: 2 dans initState)
+                if (humanPlayerId === 1) {
+                    // J1 joue Noir (Player ID 1), J2 joue Blanc (Player ID 2, commence)
+                    player1Name = p1Input || translations[currentLanguage].defaultPlayer1;
+                    player2Name = p2Input || translations[currentLanguage].defaultPlayer2;
+                } else {
+                    // J1 joue Blanc (Player ID 2, commence), J2 joue Noir (Player ID 1)
+                    player1Name = p2Input || translations[currentLanguage].defaultPlayer1; // Noir = J2
+                    player2Name = p1Input || translations[currentLanguage].defaultPlayer2; // Blanc = J1
+                }
             }
             
             updateGameInfoDisplay();
