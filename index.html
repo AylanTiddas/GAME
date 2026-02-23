@@ -1100,6 +1100,277 @@
             letter-spacing: 8px;
             opacity: 0.35;
         }
+
+        /* ─────────────────────────────────────────────
+           BOUTONS ACCUEIL (règles + à propos) en ligne
+        ───────────────────────────────────────────── */
+        .version-btns-row {
+          display: flex;
+          gap: .75rem;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .about-btn { margin-left: 0; }
+
+        /* ─────────────────────────────────────────────
+           MODALE À PROPOS
+        ───────────────────────────────────────────── */
+        @keyframes aboutBookIn {
+          from { opacity: 0; transform: translateY(36px) scale(.94); }
+          to   { opacity: 1; transform: translateY(0)    scale(1);   }
+        }
+        @keyframes aboutGemPulse {
+          0%,100% { opacity: .5; transform: rotate(45deg) scale(1);   }
+          50%      { opacity: 1; transform: rotate(45deg) scale(1.35); }
+        }
+
+        .about-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,.82);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 1300;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          padding: 1rem;
+        }
+        .about-modal-overlay.active { display: flex; }
+
+        .about-book {
+          position: relative;
+          background:
+            linear-gradient(160deg, rgba(255,255,255,.03) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 0%, rgba(240,200,80,.06), transparent 65%),
+            #1c140a;
+          border: 1.5px solid rgba(240,200,80,.28);
+          border-radius: 20px;
+          padding: clamp(1.5rem, 4vw, 2.8rem) clamp(1.5rem, 5vw, 3.2rem);
+          max-width: 660px;
+          width: 100%;
+          max-height: min(90vh, 90dvh);
+          overflow-y: auto;
+          box-shadow:
+            0 0 0 1px rgba(255,255,255,.04),
+            0 0 50px rgba(240,200,80,.18),
+            0 28px 70px rgba(0,0,0,.75);
+          opacity: 0;
+          transform: translateY(36px) scale(.94);
+          transition: opacity .4s ease, transform .4s ease;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(240,200,80,.3) transparent;
+        }
+        .about-modal-overlay.active .about-book {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        /* Scrollbar webkit */
+        .about-book::-webkit-scrollbar { width: 5px; }
+        .about-book::-webkit-scrollbar-track { background: transparent; }
+        .about-book::-webkit-scrollbar-thumb { background: rgba(240,200,80,.3); border-radius: 99px; }
+
+        /* Bouton fermer */
+        .about-close-btn {
+          position: absolute;
+          top: 14px; right: 16px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: rgba(240,200,80,.55);
+          line-height: 1;
+          padding: 4px;
+          border-radius: 6px;
+          transition: color .2s, background .2s;
+          display: flex; align-items: center;
+        }
+        .about-close-btn svg {
+          stroke: currentColor; fill: none; stroke-width: 2.2;
+          stroke-linecap: round; stroke-linejoin: round;
+        }
+        .about-close-btn:hover {
+          color: var(--danger-red, #ff4d4d);
+          background: rgba(255,60,60,.08);
+        }
+
+        /* En-tête */
+        .about-header {
+          text-align: center;
+          margin-bottom: 1.6rem;
+        }
+        .about-tifinagh {
+          font-size: clamp(1.6rem, 5vw, 2.4rem);
+          letter-spacing: .25em;
+          color: rgba(240,200,80,.35);
+          margin-bottom: .4rem;
+          font-weight: 300;
+        }
+        .about-title {
+          font-family: var(--font-title);
+          font-size: clamp(1.25rem, 4vw, 1.75rem);
+          font-weight: 800;
+          color: var(--text-gold, #f0c850);
+          letter-spacing: -.01em;
+          margin: 0 0 .9rem;
+          text-shadow: 0 0 18px rgba(240,200,80,.35);
+        }
+        .about-sep {
+          display: flex; align-items: center; gap: 10px;
+          width: 60%; margin: 0 auto;
+        }
+        .about-sep span {
+          flex: 1; height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(240,200,80,.35), transparent);
+        }
+        .about-gem {
+          font-size: .55rem;
+          color: var(--text-gold, #f0c850);
+          animation: aboutGemPulse 2.8s ease-in-out infinite;
+          transform-origin: center;
+        }
+
+        /* Corps */
+        .about-body {
+          color: rgba(245,235,210,.82);
+          font-size: clamp(.9rem, 2.2vw, 1rem);
+          line-height: 1.78;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .about-body p { margin: 0; }
+        .about-intro {
+          font-size: clamp(.95rem, 2.4vw, 1.08rem) !important;
+          color: rgba(245,235,210,.92) !important;
+        }
+        .about-body strong {
+          color: var(--text-gold, #f0c850);
+          font-weight: 700;
+        }
+        .about-body em {
+          color: #e8c87a;
+          font-style: italic;
+        }
+
+        /* Ligne séparatrice fine */
+        .about-rule-line {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(240,200,80,.22), transparent);
+          margin: .3rem 0;
+        }
+
+        /* Cartes variantes */
+        .about-variants {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .about-variant-card {
+          flex: 1;
+          min-width: 190px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: rgba(240,200,80,.06);
+          border: 1px solid rgba(240,200,80,.2);
+          border-radius: 12px;
+          padding: .85rem 1rem;
+        }
+        .about-variant-icon {
+          font-size: 1.5rem;
+          line-height: 1;
+          flex-shrink: 0;
+        }
+        .about-variant-card strong {
+          display: block;
+          font-size: .95rem;
+          margin-bottom: .2rem;
+        }
+        .about-variant-card span {
+          font-size: .82rem;
+          color: rgba(245,235,210,.65);
+          line-height: 1.4;
+        }
+
+        /* Citation */
+        .about-quote {
+          position: relative;
+          background: rgba(240,200,80,.06);
+          border-left: 3px solid rgba(240,200,80,.5);
+          border-radius: 0 10px 10px 0;
+          padding: 1rem 1.2rem 1rem 1.5rem;
+          margin: .4rem 0;
+        }
+        .about-quote-mark {
+          position: absolute;
+          top: -6px; left: 10px;
+          font-size: 2rem;
+          color: rgba(240,200,80,.25);
+          line-height: 1;
+          font-family: Georgia, serif;
+        }
+        .about-quote blockquote {
+          margin: 0 0 .4rem;
+          font-size: clamp(1rem, 2.5vw, 1.12rem);
+          font-weight: 700;
+          color: var(--text-gold, #f0c850);
+          font-style: italic;
+          font-family: var(--font-title);
+          letter-spacing: .01em;
+          text-shadow: 0 0 14px rgba(240,200,80,.3);
+        }
+        .about-quote cite {
+          font-size: .82rem;
+          color: rgba(245,235,210,.6);
+          font-style: normal;
+        }
+
+        /* Pied de la modale */
+        .about-footer {
+          margin-top: 1.8rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(240,200,80,.12);
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: .45rem;
+        }
+        .about-tifinagh-small {
+          font-size: .9rem;
+          letter-spacing: 10px;
+          color: rgba(240,200,80,.25);
+        }
+        .about-author {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: .9rem;
+          color: rgba(245,235,210,.75);
+        }
+        .about-author-icon {
+          stroke: rgba(240,200,80,.6);
+          fill: none;
+          stroke-width: 1.8;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          flex-shrink: 0;
+        }
+        .about-author strong {
+          color: var(--text-gold, #f0c850);
+        }
+        .about-heritage {
+          font-size: .75rem;
+          color: rgba(245,235,210,.35);
+          letter-spacing: .06em;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+          .about-book { padding: 1.2rem 1.1rem 1.4rem; }
+          .about-variants { flex-direction: column; }
+        }
         /* ═══════════════════════════════════════
            WINNER OVERLAY — redesign complet
         ═══════════════════════════════════════ */
@@ -6106,10 +6377,18 @@ header::before {
 <p data-i18n="bessifDesc">Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.</p>
 </div>
 </div>
+<div class="version-btns-row">
 <button class="rules-btn" id="show-rules-btn">
 <span aria-hidden="true" class="icon">📖</span>
 <span data-i18n="gameRulesTitle">Règles du jeu</span>
 </button>
+<button class="rules-btn about-btn" id="show-about-btn">
+<span aria-hidden="true" class="icon">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+</span>
+<span>À propos</span>
+</button>
+</div>
 </div>
 <div class="selection-area" id="mode-selection-area">
 <h2 data-i18n="howToPlay">Comment souhaitez-vous jouer ?</h2>
@@ -6358,6 +6637,81 @@ header::before {
     </div>
   </div>
 </div>
+<!-- ═══════════════════════ MODALE À PROPOS ═══════════════════════ -->
+<div class="about-modal-overlay" id="about-modal">
+  <div class="about-book">
+    <button class="about-close-btn" id="about-close-btn" title="Fermer" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- En-tête -->
+    <div class="about-header">
+      <div class="about-tifinagh">ⵜⵉⴷⴷⴰⵙ</div>
+      <h2 class="about-title">À propos de l'application</h2>
+      <div class="about-sep"><span></span><div class="about-gem">◆</div><span></span></div>
+    </div>
+
+    <!-- Corps -->
+    <div class="about-body">
+      <p class="about-intro">
+        Cette application est née d'un désir simple : <strong>préserver et transmettre</strong> un trésor de notre patrimoine kabyle.
+      </p>
+
+      <p>
+        <em>Tiddas</em>, pluriel de <em>Tiddest</em>, est bien plus qu'un jeu. C'est un art du raisonnement, un exercice de stratégie, un espace de réflexion où chaque mouvement compte. Autrefois gravé sur les bancs en béton des <em>taɛessast</em> de nos villages, il réunissait enfants, adultes et anciens autour d'un quadrillage de 25 cases et de simples cailloux appelés <em>ileqqafen</em>.
+      </p>
+
+      <p>
+        Ma génération fait sans doute partie des dernières à avoir connu ce jeu dans sa forme traditionnelle&nbsp;: tracé à la craie, gravé dans la pierre ou esquissé au silex. Aujourd'hui, cette application lui offre une nouvelle vie, sans en trahir l'esprit.
+      </p>
+
+      <div class="about-rule-line"></div>
+
+      <p>
+        Tiddas est un jeu de stratégie combinatoire abstrait, proche du jeu de dames et du morpion romain. <strong>Deux joueurs, dix pions chacun.</strong> L'objectif&nbsp;: former un alignement de trois pions pour capturer ceux de l'adversaire, tout en évitant ses pièges.<br>
+        Toute la profondeur du jeu réside dans le placement initial, l'anticipation et la maîtrise des configurations stratégiques comme <em>aseqqi</em>, <em>imenniqel</em>, <em>aɛzal</em> ou <em>lɣuṭ</em>.
+      </p>
+
+      <div class="about-variants">
+        <div class="about-variant-card">
+          <div class="about-variant-icon">♟</div>
+          <div>
+            <strong>TIDDEST</strong>
+            <span>La version classique.</span>
+          </div>
+        </div>
+        <div class="about-variant-card">
+          <div class="about-variant-icon">🔄</div>
+          <div>
+            <strong>Učči Bessif</strong>
+            <span>Perdre tous ses pions devient… la clé de la victoire.</span>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        À travers cette application, nous souhaitons permettre à chacun de redécouvrir ce jeu ancestral, de le transmettre aux nouvelles générations et de perpétuer cet héritage stratégique.
+      </p>
+
+      <div class="about-quote">
+        <div class="about-quote-mark">❝</div>
+        <blockquote>Ddunit am Tiddest, mi k-seqqan xas kker</blockquote>
+        <cite>La vie est comme Tiddest&nbsp;: si tu es pigé, lève-toi.</cite>
+      </div>
+    </div>
+
+    <!-- Pied -->
+    <div class="about-footer">
+      <div class="about-tifinagh-small">ⵣ ⵎ ⵣ</div>
+      <div class="about-author">
+        <svg class="about-author-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Par <strong>Boussad TAMAZIRT</strong>
+      </div>
+      <div class="about-heritage">Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle</div>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
 <div class="spectator-badge" data-i18n="spectatorBadgeTxt" id="spectator-badge">👁 Mode Spectateur</div>
 <div id="drag-ghost"></div>
 <div class="save-notification" id="save-notification">
@@ -6752,6 +7106,9 @@ header::before {
         const rulesModal = document.getElementById('rules-modal');
         const showRulesBtn = document.getElementById('show-rules-btn');
         const rulesCloseBtn = document.getElementById('rules-close-btn');
+        const aboutModal = document.getElementById('about-modal');
+        const showAboutBtn = document.getElementById('show-about-btn');
+        const aboutCloseBtn = document.getElementById('about-close-btn');
 
         // --- VARIANT CONFIGURATION ---
         const variantConfig = {
@@ -7211,6 +7568,15 @@ header::before {
 
         function hideRulesModal() {
             rulesModal.classList.remove('active');
+        }
+
+        function showAboutModal() {
+            aboutModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function hideAboutModal() {
+            aboutModal.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         // --- DISPLAY AND UI FUNCTIONS ---
@@ -11246,6 +11612,15 @@ header::before {
             rulesCloseBtn.addEventListener('click', hideRulesModal);
             rulesModal.addEventListener('click', (e) => {
                 if(e.target === rulesModal) hideRulesModal();
+            });
+
+            if (showAboutBtn) showAboutBtn.addEventListener('click', showAboutModal);
+            if (aboutCloseBtn) aboutCloseBtn.addEventListener('click', hideAboutModal);
+            if (aboutModal) aboutModal.addEventListener('click', (e) => {
+                if (e.target === aboutModal) hideAboutModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active')) hideAboutModal();
             });
             
             updateLanguage(languageSelect.value || 'fr');
