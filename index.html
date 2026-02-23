@@ -72,6 +72,25 @@
   font-size: 1.05em;
   transform: translateY(0.05em);
 }
+.icon.icon-modern{
+  width: 1.15em;
+  height: 1.15em;
+  transform: translateY(0.02em);
+}
+.icon svg{
+  width: 100%;
+  height: 100%;
+  display: block;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon.icon-solid svg{
+  fill: currentColor;
+  stroke: none;
+}
 
 * {
             margin: 0;
@@ -2102,54 +2121,6 @@
             * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
         }
         /* Debug overlay (runtime errors, rejections, logs) */
-        .debug-overlay {
-            position: fixed;
-            inset: auto 12px 12px 12px;
-            max-height: min(55vh, 420px);
-            overflow: auto;
-            z-index: 5000;
-            display: none;
-            padding: 12px 12px 10px;
-            border-radius: 14px;
-            background: rgba(18, 14, 12, 0.92);
-            border: 1px solid rgba(240, 200, 80, 0.25);
-            box-shadow: 0 16px 50px rgba(0,0,0,0.55);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 0.85rem;
-            line-height: 1.35;
-        }
-        .debug-overlay.visible { display: block; }
-        .debug-overlay header {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 10px;
-            padding: 0 0 10px 0;
-            border-bottom: 1px solid rgba(240, 200, 80, 0.16);
-            margin-bottom: 10px;
-        }
-        .debug-overlay .title { font-weight: 700; color: var(--text-gold); letter-spacing: 0.02em; }
-        .debug-overlay .actions { display: flex; gap: 8px; }
-        .debug-overlay button {
-            appearance: none;
-            border: 1px solid rgba(240,200,80,0.25);
-            background: rgba(240,200,80,0.08);
-            color: var(--text-light);
-            padding: 6px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-        }
-        .debug-overlay button:hover { transform: translateY(-1px); background: rgba(240,200,80,0.12); border-color: rgba(240,200,80,0.35); }
-        .debug-overlay button:active { transform: translateY(0px); }
-        .debug-overlay .log { white-space: pre-wrap; word-break: break-word; }
-        .debug-overlay .entry { padding: 10px 0; border-bottom: 1px dashed rgba(240,200,80,0.12); }
-        .debug-overlay .entry:last-child { border-bottom: none; }
-        .debug-overlay .meta { opacity: 0.85; }
-        .debug-overlay .err { color: #ffb3b3; }
-        .debug-overlay .warn { color: #ffd9a8; }
-        .debug-overlay .info { color: #bfe3ff; }
-
         /* Confetti canvas (no external dependency) */
         #confetti-canvas {
             position: fixed;
@@ -2266,16 +2237,16 @@ a, button, select, input, textarea{
 .game-container > *{ position: relative; z-index: 1; }
 
 /* Scrollbars (ergonomie) */
-.selection-area, .rules-book, .move-history-log{
+.selection-area, .rules-book, .move-log-list{
   scrollbar-width: thin;
   scrollbar-color: rgba(240,200,80,.55) transparent;
 }
 .selection-area::-webkit-scrollbar,
 .rules-book::-webkit-scrollbar,
-.move-history-log::-webkit-scrollbar{ width: 10px; }
+.move-log-list::-webkit-scrollbar{ width: 10px; }
 .selection-area::-webkit-scrollbar-thumb,
 .rules-book::-webkit-scrollbar-thumb,
-.move-history-log::-webkit-scrollbar-thumb{
+.move-log-list::-webkit-scrollbar-thumb{
   background: rgba(240,200,80,.35);
   border-radius: 999px;
   border: 2px solid transparent;
@@ -2283,7 +2254,7 @@ a, button, select, input, textarea{
 }
 .selection-area::-webkit-scrollbar-thumb:hover,
 .rules-book::-webkit-scrollbar-thumb:hover,
-.move-history-log::-webkit-scrollbar-thumb:hover{
+.move-log-list::-webkit-scrollbar-thumb:hover{
   background: rgba(240,200,80,.55);
   background-clip: padding-box;
 }
@@ -4220,6 +4191,1631 @@ body.replay-active .winner-overlay.active {
 [data-theme="modern"] .consecutive-blocked-cell::after {
   color: rgba(200, 20, 20, 0.95);
 }
+
+/* =====================================================================
+   OPTIMISATION ERGONOMIE & LISIBILITÉ v5
+   – Taille de caractères augmentée
+   – Graisses améliorées
+   – Responsive sans défilement horizontal
+   – Graphisme renforcé
+   ===================================================================== */
+
+/* ── 1. Base typographique ── */
+html {
+  font-size: clamp(15px, 2vw, 17px);  /* ↑ min 13→15, max 16→17 */
+  overflow-x: hidden;
+}
+
+body {
+  font-weight: 430;
+  letter-spacing: 0.18px;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── 2. Titres ── */
+h1 {
+  font-size: clamp(2.6rem, 7vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+}
+
+h2, .selection-area h2 {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em;
+}
+
+h3, .version-card h3, .mode-card h3, .difficulty-card h3 {
+  font-size: clamp(1.15rem, 3.5vw, 1.5rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.10em;
+}
+
+/* ── 3. Corps de texte dans les cartes ── */
+.version-card p,
+.mode-card p,
+.difficulty-card p,
+.option-btn p {
+  font-size: clamp(0.92rem, 2.5vw, 1.05rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.65 !important;
+  letter-spacing: 0.08px;
+}
+
+/* ── 4. Boutons de contrôle (undo, surrender, new game…) ── */
+.controls button {
+  font-size: clamp(0.92rem, 2.8vw, 1.05rem) !important;
+  font-weight: 700 !important;
+  padding: 0.85rem 1.4rem !important;
+  letter-spacing: 0.3px;
+  min-height: 44px; /* zone tactile confortable */
+}
+
+/* ── 5. Boutons principaux (play, back, rules) ── */
+.start-game-btn {
+  font-size: clamp(1.5rem, 5vw, 2rem) !important;
+  font-weight: 900 !important;
+  padding: 1.2rem 3.2rem !important;
+  letter-spacing: 4px;
+}
+
+.back-btn {
+  font-size: clamp(0.95rem, 2.8vw, 1.1rem) !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 2rem !important;
+  min-height: 44px;
+}
+
+.rules-btn {
+  font-size: clamp(1rem, 3vw, 1.15rem) !important;
+  font-weight: 700 !important;
+  padding: 0.85rem 2rem !important;
+  min-height: 44px;
+}
+
+.option-btn {
+  font-size: clamp(1.05rem, 3.5vw, 1.25rem) !important;
+  font-weight: 700 !important;
+  padding: 1.6rem !important;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.option-btn .icon {
+  font-size: 1.6em !important;
+}
+
+/* ── 6. Toolbar (boutons settings flottants) ── */
+.toolbar-btn {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  padding: 0.65rem 1.1rem !important;
+  min-height: 40px;
+}
+
+/* Override des spans inline font-size:0.78rem mis en dur dans le HTML */
+.toolbar-btn span[data-i18n],
+.toolbar-btn span[style] {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+
+/* ── 7. Sélecteur de langue ── */
+.language-selector select {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
+/* ── 8. Infos de jeu (panneau du bas pendant la partie) ── */
+.game-info-display {
+  font-size: clamp(0.95rem, 2.8vw, 1.08rem) !important;
+  font-weight: 600 !important;
+  padding: 0.85rem 1.4rem !important;
+}
+
+.game-info-display strong {
+  font-weight: 800 !important;
+  font-size: 1.05em;
+}
+
+/* ── 9. Barre de statut ── */
+.status {
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
+  font-weight: 600 !important;
+  min-height: 54px !important;
+  padding: 0.9rem 1.2rem !important;
+}
+
+/* ── 10. Panneaux joueurs ── */
+.player-title {
+  font-size: clamp(1.05rem, 3.2vw, 1.3rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: clamp(1.3rem, 4vw, 1.6rem) !important;
+  font-weight: 900 !important;
+}
+
+.player-stat i {
+  font-size: clamp(1.05rem, 2.8vw, 1.3rem) !important;
+}
+
+/* ── 11. Historique des coups ── */
+.move-history-title {
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px;
+}
+
+.move-log-entry {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+}
+
+/* ── 12. Footer ── */
+footer {
+  font-size: clamp(0.85rem, 2.2vw, 0.98rem) !important;
+  font-weight: 600 !important;
+  opacity: 0.90 !important;
+}
+
+/* ── 13. Toasts ── */
+.toast {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  padding: 12px 18px !important;
+}
+
+/* ── 14. Modales ── */
+.modal-content h3 {
+  font-size: clamp(1.3rem, 4vw, 1.65rem) !important;
+  font-weight: 800 !important;
+}
+
+.modal-actions button {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 1.8rem !important;
+  min-height: 44px;
+}
+
+/* ── 15. Règles du jeu ── */
+.rules-book {
+  font-size: clamp(1rem, 2.8vw, 1.12rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.8 !important;
+}
+
+.rules-book h2 {
+  font-size: clamp(1.4rem, 4vw, 1.8rem) !important;
+  font-weight: 800 !important;
+}
+
+.rules-book h3 {
+  font-size: clamp(1.1rem, 3vw, 1.3rem) !important;
+  font-weight: 700 !important;
+}
+
+/* ── 16. Écran de démarrage (language splash) ── */
+.splash-logo {
+  font-size: clamp(3rem, 10vw, 5.5rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.25em;
+}
+
+.splash-tifinagh {
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem) !important;
+  font-weight: 600 !important;
+}
+
+.splash-prompt {
+  font-size: clamp(1rem, 2.8vw, 1.2rem) !important;
+  font-weight: 500 !important;
+}
+
+.splash-lang-btn {
+  font-size: clamp(1rem, 3vw, 1.15rem) !important;
+  min-height: 80px;
+}
+
+.splash-lang-name {
+  font-size: clamp(1.1rem, 3.5vw, 1.35rem) !important;
+  font-weight: 800 !important;
+}
+
+.splash-lang-sub {
+  font-size: clamp(0.88rem, 2.5vw, 1rem) !important;
+  font-weight: 500 !important;
+}
+
+.splash-footer {
+  font-size: clamp(0.82rem, 2.2vw, 0.95rem) !important;
+  font-weight: 600 !important;
+}
+
+/* ── 17. Stat cards (modal stats) ── */
+.stat-card .k {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+}
+
+.stat-card .v {
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+}
+
+/* ── 18. Responsive strict : zéro scroll horizontal ── */
+*,
+*::before,
+*::after {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.selection-area {
+  width: min(100%, 950px) !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+.version-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 85vw), 1fr)) !important;
+  width: 100% !important;
+}
+
+.options-group {
+  width: 100% !important;
+}
+
+.option-btn {
+  min-width: min(180px, 85vw) !important;
+}
+
+.game-board-container {
+  max-width: min(95vw, calc(95dvh - 9rem), 600px) !important;
+}
+
+/* Conteneur principal : jamais plus large que la fenêtre */
+.game-container {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+/* Toasts ne débordent pas */
+.toast {
+  max-width: min(90vw, 720px) !important;
+  word-break: break-word !important;
+}
+
+/* ── 19. Mobile (< 480px) spécifique ── */
+@media (max-width: 480px) {
+  html { font-size: clamp(14px, 4vw, 16px); }
+
+  h1 { font-size: clamp(2.2rem, 9vw, 3rem) !important; }
+  h2, .selection-area h2 { font-size: clamp(1.35rem, 6vw, 1.7rem) !important; }
+
+  .option-btn {
+    padding: 1.2rem 1rem !important;
+    font-size: 1rem !important;
+    min-width: min(160px, 80vw) !important;
+  }
+
+  .start-game-btn {
+    font-size: 1.3rem !important;
+    padding: 1rem 2rem !important;
+    letter-spacing: 2px;
+  }
+
+  .controls {
+    gap: 0.55rem !important;
+  }
+
+  .controls button {
+    font-size: 0.88rem !important;
+    padding: 0.75rem 1rem !important;
+    flex-basis: 100px !important;
+  }
+
+  .splash-langs {
+    gap: 0.75rem !important;
+  }
+
+  .splash-lang-btn {
+    min-width: min(140px, 42vw) !important;
+    padding: 1rem 0.6rem !important;
+  }
+
+  .game-info-display {
+    font-size: 0.88rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .toolbar-buttons {
+    bottom: 0.75rem !important;
+    right: 0.75rem !important;
+  }
+
+  #settings-fab {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ── 20. Tablette portrait (481–768px) ── */
+@media (min-width: 481px) and (max-width: 768px) {
+  .version-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .options-group {
+    gap: 1rem !important;
+  }
+
+  .option-btn {
+    min-width: min(160px, 42vw) !important;
+    max-width: 260px !important;
+  }
+}
+
+/* ── 21. Améliorations graphiques supplémentaires ── */
+
+/* Ombre plus prononcée sur les panneaux de sélection */
+.selection-area {
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.32),
+    0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+[data-theme="kabylie"] .selection-area {
+  box-shadow:
+    0 24px 64px rgba(31,26,18,0.16),
+    0 0 0 1px rgba(255,255,255,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+
+/* Bordure top lumineuse sur les cartes */
+.version-card,
+.mode-card,
+.difficulty-card {
+  position: relative;
+}
+.version-card::before,
+.mode-card::before,
+.difficulty-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Highlight lumieux au survol des cartes */
+.version-card:hover,
+.mode-card:hover,
+.difficulty-card:hover {
+  box-shadow:
+    0 22px 55px rgba(0,0,0,0.38),
+    0 0 30px rgba(240,200,80,0.20),
+    inset 0 0 0 1px rgba(240,200,80,0.30) !important;
+}
+
+/* Séparateur horizontal renforcé dans le header */
+header::before {
+  opacity: 0.7 !important;
+}
+
+/* Pion fantôme plus visible */
+#drag-ghost {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+/* Zone de jeu : meilleure ombre portée */
+.game-board-container {
+  box-shadow:
+    0 20px 55px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 0 25px rgba(0,0,0,0.45) !important;
+}
+
+/* Scrollbar plus fine et cohérente */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(240,200,80,0.4) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(240,200,80,0.35);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Séparateur entre les champs info de jeu */
+.game-info-display span + span {
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(255,255,255,0.12);
+}
+[data-theme="kabylie"] .game-info-display span + span {
+  border-left-color: rgba(31,26,18,0.12);
+}
+
+/* Meilleure transition des panels joueurs */
+.player-info {
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Overlay de victoire : titre encore plus imposant */
+.winner-overlay .winner-name {
+  font-size: clamp(2.5rem, 10vw, 5rem) !important;
+  font-weight: 900 !important;
+  text-shadow:
+    0 0 20px rgba(240,200,80,0.9),
+    0 0 50px rgba(240,200,80,0.5),
+    0 8px 16px rgba(0,0,0,0.8) !important;
+}
+
+.winner-overlay .winner-message {
+  font-size: clamp(1rem, 3vw, 1.4rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em;
+}
+
+/* Bouton replay ── */
+.winner-overlay .replay-button {
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem) !important;
+  font-weight: 800 !important;
+  padding: 1.1rem 3rem !important;
+  min-height: 50px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PATCH FINAL — v10
+   1. Suppression historique des coups
+   2. Correction bouton Paramètres petits écrans
+   3. Hiérarchie visuelle des cartes (premium ergonomie)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. SUPPRESSION HISTORIQUE DES COUPS ── */
+.move-history-panel {
+  display: none !important;
+}
+
+/* ── 2. BOUTON PARAMÈTRES — PETITS ÉCRANS ── */
+/* Le bouton est width:auto avec padding à partir de 640px,
+   mais à <640px il doit rester un FAB circulaire sans label */
+@media (max-width: 639px) {
+  #settings-fab {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+  #settings-fab .settings-label {
+    display: none !important;
+  }
+  /* Le tray s'ouvre quand même normalement */
+  .settings-tray.open {
+    max-height: min(380px, calc(100dvh - 5rem)) !important;
+  }
+}
+
+@media (min-width: 640px) {
+  #settings-fab {
+    width: auto !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    padding: 0.65rem 1.15rem !important;
+    border-radius: 999px !important;
+    gap: 0.5rem !important;
+  }
+  .settings-label {
+    display: inline !important;
+  }
+}
+
+/* ── 3. HIÉRARCHIE VISUELLE CARTES — DESIGN TOKENS ── */
+
+/* Bordures ultra-légères (1px translucide) */
+.version-card,
+.mode-card,
+.difficulty-card {
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+[data-theme="kabylie"] .version-card,
+[data-theme="kabylie"] .mode-card,
+[data-theme="kabylie"] .difficulty-card,
+[data-theme="desert"] .version-card,
+[data-theme="desert"] .mode-card,
+[data-theme="desert"] .difficulty-card {
+  border: 1px solid rgba(31,26,18,0.12) !important;
+}
+
+/* ── 3a. OPTION-BTN : hiérarchie icône / titre / sous-titre ── */
+.option-btn {
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 1.6rem 1.2rem !important;
+  gap: 0 !important; /* géré par les enfants */
+  min-height: 48px !important;
+  position: relative !important;
+}
+
+/* Icône : grande, dominante */
+.option-btn > .icon:first-child,
+.option-btn > span[aria-hidden="true"]:first-child {
+  font-size: 2.2rem !important;
+  line-height: 1 !important;
+  margin-bottom: 0.55rem !important;
+  display: block !important;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.30));
+}
+
+/* Titre principal (2e enfant = span texte principal) */
+.option-btn > span:nth-child(2) {
+  font-size: clamp(1.05rem, 3.2vw, 1.2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.25 !important;
+  margin-bottom: 0.35rem !important;
+  color: var(--text-main) !important;
+  display: block !important;
+}
+
+/* Sous-titre (3e enfant = description) */
+.option-btn > span:nth-child(3) {
+  font-size: clamp(0.78rem, 2vw, 0.9rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  opacity: 0.68 !important;
+  color: var(--text-muted, var(--text-main)) !important;
+  display: block !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Accentuation : option principale active (hover) */
+.option-btn:hover > span:nth-child(2) {
+  color: var(--text-gold, var(--text-main)) !important;
+  opacity: 1 !important;
+}
+
+/* ── 3b. VERSION-CARD : hiérarchie titre / description ── */
+.version-card {
+  padding: 1.4rem 1.2rem 1.2rem !important;
+  gap: 0 !important;
+}
+
+/* Accroche colorée en haut de carte */
+.version-card::before {
+  content: '';
+  position: absolute !important;
+  top: 0 !important; left: 0 !important; right: 0 !important;
+  height: 3px !important;
+  border-radius: 10px 10px 0 0 !important;
+  background: linear-gradient(90deg, transparent, var(--text-gold, #f0c850), transparent) !important;
+  opacity: 0.55 !important;
+  pointer-events: none !important;
+}
+
+/* Titre carte : dominant */
+.version-card h3 {
+  font-size: clamp(1.15rem, 3.5vw, 1.45rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.2 !important;
+}
+
+/* Description carte : secondaire, lisible */
+.version-card p {
+  font-size: clamp(0.82rem, 2.2vw, 0.95rem) !important;
+  font-weight: 450 !important;
+  line-height: 1.6 !important;
+  opacity: 0.80 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Carte active : ôter l'opacité sur le texte */
+.version-card.active p,
+.version-card.active h3 {
+  opacity: 1 !important;
+}
+
+/* ── 3c. DIFFICULTY-CARD & MODE-CARD : même traitement ── */
+.difficulty-card,
+.mode-card {
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  padding: 1.3rem 1rem !important;
+}
+.difficulty-card h3,
+.mode-card h3 {
+  font-size: clamp(1.1rem, 3.2vw, 1.35rem) !important;
+  font-weight: 800 !important;
+  margin-bottom: 0.4rem !important;
+}
+.difficulty-card p,
+.mode-card p {
+  font-size: clamp(0.8rem, 2vw, 0.92rem) !important;
+  font-weight: 450 !important;
+  opacity: 0.75 !important;
+}
+
+/* ── 3d. CTA PRINCIPAL vs SECONDAIRES ── */
+
+/* Bouton "Jouer" = CTA principal : déjà imposant, on renforce */
+.start-game-btn {
+  box-shadow:
+    0 12px 36px rgba(0,0,0,0.38),
+    0 0 0 0 rgba(240,200,80,0.5),
+    0 4px 0 rgba(0,0,0,0.25) !important;
+  min-height: 60px !important;
+  letter-spacing: 0.2em !important;
+}
+
+/* Boutons secondaires (Retour, Règles) : outline style */
+.back-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: none !important;
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
+  opacity: 0.85 !important;
+}
+.back-btn:hover {
+  background: rgba(255,255,255,0.06) !important;
+  opacity: 1 !important;
+  border-color: rgba(255,255,255,0.38) !important;
+}
+[data-theme="kabylie"] .back-btn,
+[data-theme="desert"] .back-btn {
+  border-color: rgba(31,26,18,0.20) !important;
+  color: var(--text-main) !important;
+}
+
+.rules-btn {
+  background: transparent !important;
+  border: 1px solid var(--panel-border, rgba(240,200,80,0.35)) !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+  opacity: 0.88 !important;
+  min-height: 48px !important;
+}
+.rules-btn:hover {
+  opacity: 1 !important;
+  background: rgba(240,200,80,0.08) !important;
+}
+
+/* ── 3e. ZONES TACTILES GARANTIES 48px ── */
+.controls button,
+.option-btn,
+.back-btn,
+.rules-btn,
+.toolbar-btn,
+.modal-actions button,
+.start-game-btn,
+#settings-fab {
+  min-height: 48px !important;
+}
+
+/* ── 3f. FEEDBACK IMMÉDIAT (active state) ── */
+.option-btn:active,
+.version-card:active,
+.difficulty-card:active,
+.mode-card:active {
+  transform: scale(0.975) !important;
+  transition: transform 0.08s ease !important;
+}
+
+.controls button:active:not(:disabled) {
+  transform: translateY(2px) scale(0.97) !important;
+  transition: transform 0.08s ease !important;
+}
+
+/* Flash de sélection rapide sur tap */
+@keyframes tapFlash {
+  0%   { background-color: rgba(240,200,80,0.0); }
+  30%  { background-color: rgba(240,200,80,0.18); }
+  100% { background-color: rgba(240,200,80,0.0); }
+}
+.version-card:active::after,
+.option-btn:active::after {
+  animation: tapFlash 0.25s ease forwards !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+/* ── 3g. SELECTION-AREA header/subtitle ── */
+.selection-area > h2 {
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  margin-bottom: 0.2rem !important;
+  line-height: 1.2 !important;
+}
+
+/* Sous-titre optionnel si présent */
+.selection-area > p {
+  font-size: clamp(0.88rem, 2.4vw, 1rem) !important;
+  font-weight: 500 !important;
+  opacity: 0.72 !important;
+  margin-top: -0.5rem !important;
+  max-width: 55ch !important;
+  text-align: center !important;
+  line-height: 1.5 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PATCH v11 — Settings panel + Game Controls
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── SETTINGS TRAY: Panel flottant sans défilement ── */
+.settings-tray {
+  overflow: hidden !important;
+  overflow-y: visible !important;
+}
+.settings-tray.open {
+  overflow: visible !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+/* Masquer la scrollbar quoi qu'il arrive */
+.settings-tray::-webkit-scrollbar { display: none !important; }
+.settings-tray { scrollbar-width: none !important; }
+
+/* Panel conteneur principal */
+.stray-panel {
+  background: rgba(14, 10, 8, 0.92);
+  border: 1px solid rgba(240, 200, 80, 0.22);
+  border-radius: 18px;
+  padding: 0;
+  min-width: 240px;
+  max-width: 280px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  animation: strayIn 0.22s cubic-bezier(0.2,0.9,0.2,1) both;
+}
+@keyframes strayIn {
+  from { opacity:0; transform: translateY(10px) scale(0.96); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+[data-theme="kabylie"] .stray-panel,
+[data-theme="desert"] .stray-panel {
+  background: rgba(255, 253, 248, 0.95);
+  border-color: rgba(31,26,18,0.14);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04);
+}
+[data-theme="nuit"] .stray-panel,
+[data-theme="glass"] .stray-panel,
+[data-theme="modern-dark"] .stray-panel {
+  background: rgba(8, 6, 20, 0.94);
+}
+
+/* Header du panel */
+.stray-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem 0.7rem;
+  border-bottom: 1px solid rgba(240,200,80,0.14);
+}
+[data-theme="kabylie"] .stray-header,
+[data-theme="desert"] .stray-header {
+  border-bottom-color: rgba(31,26,18,0.10);
+}
+
+.stray-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-gold, #f0c850);
+  opacity: 0.9;
+}
+[data-theme="kabylie"] .stray-title { color: var(--kab-blue); }
+
+.stray-close-btn {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--text-muted) !important;
+  font-size: 0.95rem !important;
+  padding: 0.15rem 0.4rem !important;
+  min-height: unset !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s, background 0.15s;
+}
+.stray-close-btn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* Sections */
+.stray-section {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(240,200,80,0.08);
+}
+.stray-section:last-child { border-bottom: none; }
+[data-theme="kabylie"] .stray-section,
+[data-theme="desert"] .stray-section {
+  border-bottom-color: rgba(31,26,18,0.07);
+}
+
+.stray-section-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  opacity: 0.55;
+  margin-bottom: 0.5rem;
+}
+
+/* Grille de boutons dans le tray */
+.stray-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+/* Boutons items */
+.stray-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.3rem !important;
+  padding: 0.7rem 0.4rem !important;
+  border-radius: 12px !important;
+  min-height: 64px !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.04) !important;
+  color: var(--text-main) !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  white-space: nowrap;
+  font-family: var(--font-body);
+}
+.stray-item:hover {
+  background: rgba(240,200,80,0.12) !important;
+  border-color: rgba(240,200,80,0.30) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.20) !important;
+}
+.stray-item:active {
+  transform: scale(0.95) !important;
+}
+.stray-item.active {
+  background: rgba(240,200,80,0.18) !important;
+  border-color: rgba(240,200,80,0.45) !important;
+}
+
+[data-theme="kabylie"] .stray-item,
+[data-theme="desert"] .stray-item {
+  border-color: rgba(31,26,18,0.09) !important;
+  background: rgba(31,26,18,0.03) !important;
+  color: var(--text-main) !important;
+}
+[data-theme="kabylie"] .stray-item:hover,
+[data-theme="desert"] .stray-item:hover {
+  background: rgba(30,136,229,0.08) !important;
+  border-color: rgba(30,136,229,0.22) !important;
+}
+
+.stray-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+  display: block;
+}
+.stray-item-label {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  color: inherit;
+  display: block;
+}
+/* Override global toolbar-btn styles for stray items */
+.stray-item.toolbar-btn span { display: block !important; font-size: inherit !important; }
+
+/* Language selector inside stray */
+.stray-section .language-selector {
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 0.5rem 0.85rem;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: none !important;
+  width: 100%;
+  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.stray-section .language-selector select {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: var(--text-main) !important;
+}
+[data-theme="kabylie"] .stray-section .language-selector,
+[data-theme="desert"] .stray-section .language-selector {
+  background: rgba(31,26,18,0.04) !important;
+  border-color: rgba(31,26,18,0.10) !important;
+}
+
+/* Disabled stray item */
+.stray-item:disabled,
+.stray-item[disabled] {
+  opacity: 0.38 !important;
+  pointer-events: none !important;
+}
+
+/* ── GAME CONTROLS MODERNISÉS ── */
+
+/* Conteneur : centré, pas de flex-wrap forcé */
+.controls {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  gap: 0.55rem !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  padding: 0.2rem 0 !important;
+}
+
+/* Bouton de contrôle : design SVG moderne */
+.ctrl-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.32rem !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  max-width: 110px !important;
+  min-height: 60px !important;
+  padding: 0.6rem 0.5rem !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.05) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease, border-color 0.16s ease !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+/* Shine on hover */
+.ctrl-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+.ctrl-btn:hover::before { opacity: 1; }
+
+.ctrl-btn:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.20) !important;
+}
+.ctrl-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.96) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.20) !important;
+}
+.ctrl-btn:disabled {
+  opacity: 0.38 !important;
+  cursor: not-allowed !important;
+  filter: none !important;
+}
+
+/* Icône SVG */
+.ctrl-icon {
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  display: block;
+}
+
+/* Label */
+.ctrl-label {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  display: block !important;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+/* Bouton Home : neutre */
+.ctrl-home {
+  color: rgba(200,200,200,0.95) !important;
+}
+.ctrl-home:hover:not(:disabled) {
+  background: rgba(255,255,255,0.10) !important;
+  color: #fff !important;
+}
+
+/* Bouton Undo : bleu */
+.ctrl-undo {
+  color: rgba(100, 180, 255, 0.95) !important;
+  border-color: rgba(100,180,255,0.18) !important;
+}
+.ctrl-undo:hover:not(:disabled) {
+  background: rgba(100,180,255,0.12) !important;
+  border-color: rgba(100,180,255,0.35) !important;
+  color: #7dd3fa !important;
+}
+
+/* Bouton Restart : vert/ambre */
+.ctrl-restart {
+  color: rgba(240,200,80,0.95) !important;
+  border-color: rgba(240,200,80,0.18) !important;
+}
+.ctrl-restart:hover:not(:disabled) {
+  background: rgba(240,200,80,0.10) !important;
+  border-color: rgba(240,200,80,0.35) !important;
+}
+
+/* Bouton Surrender : rouge */
+.ctrl-surrender {
+  color: rgba(255,100,100,0.92) !important;
+  border-color: rgba(255,100,100,0.16) !important;
+}
+.ctrl-surrender:hover:not(:disabled) {
+  background: rgba(255,100,100,0.10) !important;
+  border-color: rgba(255,100,100,0.32) !important;
+  color: #ff8080 !important;
+}
+
+/* Thèmes clairs (kabylie, desert, modern) */
+[data-theme="kabylie"] .ctrl-btn,
+[data-theme="desert"] .ctrl-btn,
+[data-theme="modern"] .ctrl-btn {
+  background: rgba(255,255,255,0.82) !important;
+  border-color: rgba(31,26,18,0.10) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+}
+[data-theme="kabylie"] .ctrl-home,
+[data-theme="desert"] .ctrl-home,
+[data-theme="modern"] .ctrl-home { color: #555 !important; }
+[data-theme="kabylie"] .ctrl-undo,
+[data-theme="desert"] .ctrl-undo,
+[data-theme="modern"] .ctrl-undo { color: #1565c0 !important; }
+[data-theme="kabylie"] .ctrl-restart,
+[data-theme="desert"] .ctrl-restart,
+[data-theme="modern"] .ctrl-restart { color: #2e7d32 !important; }
+[data-theme="kabylie"] .ctrl-surrender,
+[data-theme="desert"] .ctrl-surrender,
+[data-theme="modern"] .ctrl-surrender { color: #c62828 !important; }
+[data-theme="kabylie"] .ctrl-btn:hover:not(:disabled),
+[data-theme="desert"] .ctrl-btn:hover:not(:disabled),
+[data-theme="modern"] .ctrl-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.96) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+}
+
+/* Mobile compact */
+@media (max-width: 480px) {
+  .controls {
+    gap: 0.4rem !important;
+  }
+  .ctrl-btn {
+    min-height: 54px !important;
+    border-radius: 12px !important;
+    padding: 0.5rem 0.35rem !important;
+  }
+  .ctrl-icon { width: 18px !important; height: 18px !important; }
+  .ctrl-label { font-size: 0.62rem !important; }
+}
+
+/* Close btn wiring (JS) */
+
+/* ═══════════════════════════════════════════════════════════
+   PATCH v12 — Player Setup Area — Full Redesign
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Reset old player-setup styles ── */
+.player-setup-area {
+  gap: 1.6rem !important;
+  padding: clamp(1.6rem, 5vw, 2.8rem) clamp(1.4rem, 4vw, 2.4rem) !important;
+  background: var(--panel-bg, rgba(0,0,0,0.42)) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  border-radius: 24px !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  max-width: 700px !important;
+  align-items: stretch !important;
+}
+[data-theme="kabylie"] .player-setup-area,
+[data-theme="desert"] .player-setup-area,
+[data-theme="modern"] .player-setup-area {
+  border-color: rgba(31,26,18,0.10) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.55), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+
+/* ── Header ── */
+.psu-header {
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+[data-theme="kabylie"] .psu-header,
+[data-theme="desert"] .psu-header,
+[data-theme="modern"] .psu-header {
+  border-bottom-color: rgba(31,26,18,0.08);
+}
+
+.psu-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-gold);
+  opacity: 0.65;
+  margin-bottom: 0.3rem;
+}
+
+.psu-title {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  color: var(--text-main) !important;
+  text-shadow: none !important;
+  margin-bottom: 0.2rem !important;
+  line-height: 1.15 !important;
+}
+
+.psu-subtitle {
+  font-size: clamp(0.82rem, 2.2vw, 0.95rem) !important;
+  font-weight: 500 !important;
+  opacity: 0.55 !important;
+  margin: 0 !important;
+  color: var(--text-muted) !important;
+}
+
+/* ── Players row ── */
+.psu-players-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* ── Player card ── */
+.psu-player-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem 1rem 1.2rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.psu-player-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 18px 18px 0 0;
+  opacity: 0.55;
+}
+.psu-p1::before { background: linear-gradient(90deg, transparent, #555, transparent); }
+.psu-p2::before { background: linear-gradient(90deg, transparent, #e0e0e0, transparent); }
+
+[data-theme="kabylie"] .psu-player-card,
+[data-theme="desert"] .psu-player-card,
+[data-theme="modern"] .psu-player-card {
+  border-color: rgba(31,26,18,0.09);
+  background: rgba(255,255,255,0.55);
+}
+
+/* ── Stone visuals ── */
+.psu-stone-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+}
+
+.psu-stone {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 -6px 14px rgba(0,0,0,0.4), inset 0 6px 10px rgba(255,255,255,0.35) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.psu-stone::after { display: none !important; }
+
+.psu-stone-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.psu-p1:focus-within .psu-stone-ring-p1,
+.psu-p1:hover .psu-stone-ring-p1 {
+  border-color: rgba(150,150,150,0.45);
+  box-shadow: 0 0 18px rgba(100,100,100,0.25);
+}
+.psu-p2:focus-within .psu-stone-ring-p2,
+.psu-p2:hover .psu-stone-ring-p2 {
+  border-color: rgba(240,200,80,0.45);
+  box-shadow: 0 0 18px rgba(240,200,80,0.20);
+}
+
+/* ── Player info block ── */
+.psu-player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.psu-player-tag {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.12em !important;
+  color: var(--text-muted) !important;
+  opacity: 0.7 !important;
+  cursor: default;
+}
+
+.psu-input-wrap {
+  width: 100%;
+  max-width: 100%;
+}
+
+.psu-name-input {
+  width: 100% !important;
+  padding: 0.65rem 0.9rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  font-family: var(--font-body) !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: rgba(255,255,255,0.06) !important;
+  color: var(--text-main) !important;
+  outline: none !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.18) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+  text-align: center !important;
+  min-height: 48px !important;
+}
+.psu-name-input::placeholder {
+  color: var(--text-muted, rgba(255,255,255,0.38)) !important;
+  font-weight: 500 !important;
+  opacity: 0.55 !important;
+}
+.psu-name-input:focus {
+  border-color: var(--text-gold, rgba(240,200,80,0.7)) !important;
+  background: rgba(255,255,255,0.09) !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.12), 0 0 0 3px rgba(240,200,80,0.18) !important;
+}
+
+[data-theme="kabylie"] .psu-name-input,
+[data-theme="desert"] .psu-name-input,
+[data-theme="modern"] .psu-name-input {
+  background: rgba(255,255,255,0.85) !important;
+  border-color: rgba(31,26,18,0.16) !important;
+  color: var(--text-main) !important;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.07) !important;
+}
+[data-theme="kabylie"] .psu-name-input::placeholder,
+[data-theme="desert"] .psu-name-input::placeholder,
+[data-theme="modern"] .psu-name-input::placeholder {
+  color: rgba(31,26,18,0.35) !important;
+  opacity: 1 !important;
+}
+[data-theme="kabylie"] .psu-name-input:focus,
+[data-theme="desert"] .psu-name-input:focus {
+  border-color: var(--kab-blue, var(--text-gold)) !important;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(30,136,229,0.16) !important;
+}
+
+/* ── VS divider ── */
+.psu-vs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0;
+}
+.psu-vs-text {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--text-gold);
+  opacity: 0.45;
+  line-height: 1;
+}
+
+/* ── Color section ── */
+.psu-color-section {
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.025) !important;
+  border-radius: 16px !important;
+  padding: 1.1rem 1.2rem !important;
+  gap: 0.8rem !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+[data-theme="kabylie"] .psu-color-section,
+[data-theme="desert"] .psu-color-section,
+[data-theme="modern"] .psu-color-section {
+  border-color: rgba(31,26,18,0.08) !important;
+  background: rgba(31,26,18,0.025) !important;
+}
+
+.psu-color-label {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.14em !important;
+  color: var(--text-muted) !important;
+  opacity: 0.65 !important;
+  margin: 0 !important;
+  display: block;
+}
+
+.psu-color-group {
+  display: flex !important;
+  gap: 0.7rem !important;
+  margin: 0 !important;
+  flex-wrap: nowrap !important;
+}
+
+/* ── Color option cards ── */
+.psu-color-opt {
+  flex: 1 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1.5px solid rgba(255,255,255,0.10) !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+.psu-color-opt:hover {
+  transform: none !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+}
+.psu-color-opt.selected,
+.psu-color-opt:has(input:checked) {
+  background: rgba(240,200,80,0.10) !important;
+  border-color: var(--text-gold, rgba(240,200,80,0.7)) !important;
+  box-shadow: 0 0 0 3px rgba(240,200,80,0.18), 0 6px 20px rgba(0,0,0,0.18) !important;
+  transform: none !important;
+}
+
+[data-theme="kabylie"] .psu-color-opt,
+[data-theme="desert"] .psu-color-opt,
+[data-theme="modern"] .psu-color-opt {
+  background: rgba(255,255,255,0.75) !important;
+  border-color: rgba(31,26,18,0.10) !important;
+}
+[data-theme="kabylie"] .psu-color-opt.selected,
+[data-theme="kabylie"] .psu-color-opt:has(input:checked),
+[data-theme="desert"] .psu-color-opt.selected,
+[data-theme="desert"] .psu-color-opt:has(input:checked) {
+  background: rgba(30,136,229,0.07) !important;
+  border-color: rgba(30,136,229,0.55) !important;
+  box-shadow: 0 0 0 3px rgba(30,136,229,0.14), 0 4px 16px rgba(0,0,0,0.10) !important;
+}
+
+/* Inner layout */
+.psu-opt-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 0.9rem;
+  width: 100%;
+}
+
+.psu-opt-stone {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35), inset 0 -4px 8px rgba(0,0,0,0.3), inset 0 3px 6px rgba(255,255,255,0.3) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.psu-opt-stone::after { display: none !important; }
+.psu-color-opt.selected .psu-opt-stone,
+.psu-color-opt:has(input:checked) .psu-opt-stone {
+  transform: scale(1.12) !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45), inset 0 -4px 8px rgba(0,0,0,0.3), inset 0 4px 8px rgba(255,255,255,0.35) !important;
+}
+
+.psu-opt-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.psu-opt-name {
+  font-size: clamp(0.82rem, 2.5vw, 0.95rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--text-main) !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+.psu-opt-desc {
+  font-size: 0.68rem !important;
+  font-weight: 500 !important;
+  opacity: 0.52 !important;
+  color: var(--text-muted) !important;
+  display: block !important;
+  line-height: 1.3 !important;
+}
+
+/* Checkmark SVG */
+.psu-opt-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  color: transparent;
+}
+.psu-color-opt.selected .psu-opt-check,
+.psu-color-opt:has(input:checked) .psu-opt-check {
+  background: var(--text-gold, #f0c850);
+  border-color: var(--text-gold, #f0c850);
+  color: #1a1206;
+}
+[data-theme="kabylie"] .psu-opt-check,
+[data-theme="desert"] .psu-opt-check,
+[data-theme="modern"] .psu-opt-check {
+  border-color: rgba(31,26,18,0.18);
+}
+[data-theme="kabylie"] .psu-color-opt.selected .psu-opt-check,
+[data-theme="kabylie"] .psu-color-opt:has(input:checked) .psu-opt-check {
+  background: var(--kab-blue, #1e88e5);
+  border-color: var(--kab-blue, #1e88e5);
+  color: #fff;
+}
+.psu-opt-check svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  display: block;
+}
+
+/* Hide the old emoji checkmark (JS uses .selected class) */
+.psu-color-opt .checkmark { display: none !important; }
+
+/* ── start-game-btn tweaks for this screen ── */
+.player-setup-area .start-game-btn {
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0.2rem auto 0 !important;
+  align-self: center !important;
+  justify-content: center !important;
+  gap: 0.7rem !important;
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem) !important;
+  letter-spacing: 0.08em !important;
+  padding: 1.05rem 2rem !important;
+}
+.player-setup-area .start-game-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+/* Remove emoji icon inside btn (replaced by SVG) */
+.player-setup-area .start-game-btn .icon { display: none !important; }
+
+/* ── back-btn centré ── */
+.player-setup-area .back-btn {
+  align-self: center !important;
+  margin-top: 0 !important;
+  position: static !important;
+}
+
+/* ── Mobile stacking ── */
+@media (max-width: 500px) {
+  .psu-players-row {
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+  }
+  .psu-vs { flex-direction: row !important; }
+  .psu-vs-text { font-size: 1rem !important; opacity: 0.35 !important; }
+  .psu-player-card {
+    flex-direction: row !important;
+    padding: 0.9rem 1rem !important;
+    gap: 0.9rem !important;
+    align-items: center !important;
+  }
+  .psu-stone-wrap { width: 52px; height: 52px; }
+  .psu-stone { width: 44px !important; height: 44px !important; }
+  .psu-player-info { align-items: flex-start !important; }
+  .psu-name-input { text-align: left !important; }
+  .psu-color-group {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ── CSP-safe utility classes (replaces inline style="…" attrs) ── */
+.stat-mt       { margin-top: 10px; }
+.stat-detail   { margin-top: 4px;  font-size: 0.95rem; }
+.stat-detail-b { margin-top: 8px;  font-size: 0.95rem; }
+.xp-sub        { font-size: 0.85rem; opacity: 0.9; display: inline; }
+.xp-footer     { margin-top: 6px;  font-size: 0.86rem; opacity: 0.9; }
+.btn-label     { font-size: 0.92rem; font-weight: 600; }
+.guided-btn-hidden { display: none !important; position: absolute; pointer-events: none; }
+.checkmark-hidden  { display: none; }
+
 </style>
 </head>
 <body>
@@ -4244,31 +5840,59 @@ body.replay-active .winner-overlay.active {
 <p class="splash-footer">Patrimoine Amazigh • Adles Amaziɣ</p>
 </div>
 <div class="toolbar-buttons" id="toolbar-buttons">
+<!-- Hidden guided btn (JS refs preserved) -->
+<button aria-label="Mode guidé" aria-pressed="true" id="guided-btn" class="guided-btn-hidden" title="Mode guidé"></button>
 <div class="settings-tray" id="settings-tray">
-<button aria-label="Thème" class="toolbar-btn" id="theme-btn" title="Changer de thème">🎨 <span data-i18n="btnTheme" style="font-size:0.78rem;">Thème</span></button>
-<button aria-label="Son" class="toolbar-btn" id="sound-btn" title="Son On/Off">🔊 <span data-i18n="btnSound" style="font-size:0.78rem;">Son</span></button>
-<button aria-label="Installer" class="toolbar-btn" id="install-btn" title="Installer l'application">
-                ⬇️ <span data-i18n="installApp" style="font-size:0.78rem;">Installer</span>
-</button>
-<button aria-label="Stats" class="toolbar-btn" id="stats-btn" title="Statistiques">
-                📈 <span data-i18n="stats" style="font-size:0.78rem;">Stats</span>
-</button>
-<button aria-label="Mode guidé" aria-pressed="true" class="toolbar-btn" id="guided-btn" title="Mode guidé">
-                🧭 <span data-i18n="guidedMode" style="font-size:0.78rem;">Guidé</span>
-</button>
-<button aria-label="Glisser" aria-pressed="false" class="toolbar-btn" id="drag-btn" title="Déplacer les pions par glissement">
-                🤚 <span data-i18n="btnDragMode" style="font-size:0.78rem;">Glisser</span>
-</button>
-<button aria-label="Replay" class="toolbar-btn" disabled="" id="replay-btn" title="Revoir la dernière partie">
-                ⏯️ <span data-i18n="replayLast" style="font-size:0.78rem;">Replay</span>
-</button>
-<div class="language-selector">
-<span aria-hidden="true" class="icon">🗣️</span>
-<select aria-label="Langue / Tutlayt" id="language-select">
-<option value="fr">Français</option>
-<option value="kab">ⵣ Taqbaylit</option>
-</select>
-</div>
+  <div class="stray-panel">
+    <div class="stray-header">
+      <span class="stray-title">⚙️ Paramètres</span>
+      <button aria-label="Fermer" class="stray-close-btn" id="stray-close-btn" type="button">✕</button>
+    </div>
+    <div class="stray-section">
+      <span class="stray-section-label">Apparence</span>
+      <div class="stray-grid">
+        <button aria-label="Thème" class="toolbar-btn stray-item" id="theme-btn" title="Changer de thème">
+          <span class="stray-icon">🎨</span>
+          <span class="stray-item-label" data-i18n="btnTheme">Thème</span>
+        </button>
+        <button aria-label="Son" class="toolbar-btn stray-item" id="sound-btn" title="Son On/Off">
+          <span class="stray-icon">🔊</span>
+          <span class="stray-item-label" data-i18n="btnSound">Son</span>
+        </button>
+      </div>
+    </div>
+    <div class="stray-section">
+      <span class="stray-section-label">Langue</span>
+      <div class="language-selector">
+        <span aria-hidden="true" class="icon">🗣️</span>
+        <select aria-label="Langue / Tutlayt" id="language-select">
+          <option value="fr">Français</option>
+          <option value="kab">ⵣ Taqbaylit</option>
+        </select>
+      </div>
+    </div>
+    <div class="stray-section">
+      <span class="stray-section-label">Jeu</span>
+      <div class="stray-grid">
+        <button aria-label="Glisser" aria-pressed="false" class="toolbar-btn stray-item" id="drag-btn" title="Déplacer les pions par glissement">
+          <span class="stray-icon">🤚</span>
+          <span class="stray-item-label" data-i18n="btnDragMode">Glisser</span>
+        </button>
+        <button aria-label="Replay" class="toolbar-btn stray-item" disabled="" id="replay-btn" title="Revoir la dernière partie">
+          <span class="stray-icon">⏯️</span>
+          <span class="stray-item-label" data-i18n="replayLast">Replay</span>
+        </button>
+        <button aria-label="Stats" class="toolbar-btn stray-item" id="stats-btn" title="Statistiques">
+          <span class="stray-icon">📈</span>
+          <span class="stray-item-label" data-i18n="stats">Stats</span>
+        </button>
+        <button aria-label="Installer" class="toolbar-btn stray-item" id="install-btn" title="Installer l'application">
+          <span class="stray-icon">⬇️</span>
+          <span class="stray-item-label" data-i18n="installApp">Installer</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 <button aria-label="Paramètres" id="settings-fab" title="Paramètres"><span aria-hidden="true" class="settings-icon">⚙️</span><span class="settings-label" data-i18n="btnSettings">Paramètres</span></button>
 </div>
@@ -4350,40 +5974,94 @@ body.replay-active .winner-overlay.active {
 <button class="back-btn" data-i18n="backToModes" id="back-to-modes-btn">Retour aux modes</button>
 </div>
 <div class="selection-area player-setup-area" id="player-setup-area">
-<h2 data-i18n="playerSetup">Configuration des joueurs</h2>
-<div class="setup-section" id="player-naming-section">
-<h3 data-i18n="playerNamesTitle">Noms des joueurs</h3>
-<div class="input-group">
-<label data-i18n="player1NameLabel" for="player1-name-input" id="player1-name-label">Nom du Joueur 1 (Noir) :</label>
-<input data-i18n-placeholder="yourNamePlaceholder" id="player1-name-input" placeholder="Votre Nom" type="text"/>
-</div>
-<div class="input-group" id="player2-name-group">
-<label data-i18n="player2NameLabel" for="player2-name-input">Nom du Joueur 2 (Blanc) :</label>
-<input data-i18n-placeholder="player2Placeholder" id="player2-name-input" placeholder="Joueur 2" type="text"/>
-</div>
-</div>
-<div class="setup-section" id="color-choice-section">
-<h3 data-i18n="chooseYourColorTitle">Choisir votre couleur</h3>
-<div class="color-choice-group">
-<label class="color-option" data-player="1">
-<input checked="" name="human-color" type="radio" value="1"/>
-<div class="stone-preview player1"></div>
-<span data-i18n="player1Color" id="color-option-1-text">Noir (Joueur 1)</span>
-<div class="checkmark"><span aria-hidden="true" class="icon">✅</span></div>
-</label>
-<label class="color-option" data-player="2">
-<input name="human-color" type="radio" value="2"/>
-<div class="stone-preview player2"></div>
-<span data-i18n="player2Color" id="color-option-2-text">Blanc (Joueur 2)</span>
-<div class="checkmark"><span aria-hidden="true" class="icon">✅</span></div>
-</label>
-</div>
-</div>
-<button class="start-game-btn" id="start-game-from-setup">
-<span aria-hidden="true" class="icon">▶️</span>
-<span data-i18n="playButton">Jouer</span>
-</button>
-<button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-setup-btn">Retour aux modes</button>
+
+  <!-- En-tête -->
+  <div class="psu-header">
+    <p class="psu-eyebrow">ⵜⵉⴷⴷⴰⵙ</p>
+    <h2 class="psu-title" data-i18n="playerSetup">Configuration</h2>
+    <p class="psu-subtitle">Renseignez vos noms et choisissez votre camp</p>
+  </div>
+
+  <!-- Section noms (conservée pour le JS) -->
+  <div class="psu-players-row" id="player-naming-section">
+
+    <!-- Joueur 1 -->
+    <div class="psu-player-card psu-p1" id="player2-name-group-wrapper">
+      <div class="psu-stone-wrap">
+        <div class="stone-preview player1 psu-stone"></div>
+        <div class="psu-stone-ring psu-stone-ring-p1"></div>
+      </div>
+      <div class="psu-player-info">
+        <label class="psu-player-tag" data-i18n="player1NameLabel" for="player1-name-input" id="player1-name-label">Joueur 1 · Noir</label>
+        <div class="input-group psu-input-wrap">
+          <input class="psu-name-input" data-i18n-placeholder="yourNamePlaceholder" id="player1-name-input" maxlength="20" placeholder="Votre nom" type="text"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- VS divider -->
+    <div class="psu-vs" aria-hidden="true">
+      <span class="psu-vs-text">VS</span>
+    </div>
+
+    <!-- Joueur 2 -->
+    <div class="psu-player-card psu-p2" id="player2-name-group">
+      <div class="psu-stone-wrap">
+        <div class="stone-preview player2 psu-stone"></div>
+        <div class="psu-stone-ring psu-stone-ring-p2"></div>
+      </div>
+      <div class="psu-player-info">
+        <label class="psu-player-tag" data-i18n="player2NameLabel" for="player2-name-input">Joueur 2 · Blanc</label>
+        <div class="input-group psu-input-wrap">
+          <input class="psu-name-input" data-i18n-placeholder="player2Placeholder" id="player2-name-input" maxlength="20" placeholder="Joueur 2" type="text"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section couleur (conservée pour le JS) -->
+  <div class="setup-section psu-color-section" id="color-choice-section">
+    <p class="psu-color-label" data-i18n="chooseYourColorTitle">Vous jouez avec les&nbsp;:</p>
+    <div class="color-choice-group psu-color-group">
+      <label class="color-option psu-color-opt" data-player="1">
+        <input checked="" name="human-color" type="radio" value="1"/>
+        <div class="psu-opt-inner">
+          <div class="stone-preview player1 psu-opt-stone"></div>
+          <div class="psu-opt-text">
+            <span class="psu-opt-name" data-i18n="player1Color" id="color-option-1-text">Pions Noirs</span>
+            <span class="psu-opt-desc">Commence en premier</span>
+          </div>
+          <div class="psu-opt-check" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 6.5 12 13 4"/></svg>
+          </div>
+        </div>
+        <div class="checkmark checkmark-hidden"><span aria-hidden="true" class="icon">✅</span></div>
+      </label>
+      <label class="color-option psu-color-opt" data-player="2">
+        <input name="human-color" type="radio" value="2"/>
+        <div class="psu-opt-inner">
+          <div class="stone-preview player2 psu-opt-stone"></div>
+          <div class="psu-opt-text">
+            <span class="psu-opt-name" data-i18n="player2Color" id="color-option-2-text">Pions Blancs</span>
+            <span class="psu-opt-desc">Répond au premier coup</span>
+          </div>
+          <div class="psu-opt-check" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 6.5 12 13 4"/></svg>
+          </div>
+        </div>
+        <div class="checkmark checkmark-hidden"><span aria-hidden="true" class="icon">✅</span></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <button class="start-game-btn" id="start-game-from-setup">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    <span data-i18n="playButton">Lancer la partie</span>
+  </button>
+
+  <button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-setup-btn">Retour</button>
+
 </div>
 <div class="game-play-area" id="game-play-area">
 <div class="player-panel-container player-panel-left">
@@ -4414,10 +6092,22 @@ body.replay-active .winner-overlay.active {
 <div class="ephemeral-message-bubble" id="ephemeral-message-bubble"></div>
 </div>
 <div class="controls">
-<button id="new-game"><span aria-hidden="true" class="icon">🏠</span> <span data-i18n="newGame">Accueil</span></button>
-<button id="undo-btn"><span aria-hidden="true" class="icon">↩️</span> <span data-i18n="undoMove">Annuler</span></button>
-<button id="restart"><span aria-hidden="true" class="icon">↪️</span> <span data-i18n="restartGame">Recommencer</span></button>
-<button class="surrender-btn" id="surrender"><span aria-hidden="true" class="icon">🏳️</span> <span data-i18n="surrender">Abandonner</span></button>
+<button class="ctrl-btn ctrl-home" id="new-game" title="Retour à l'accueil">
+  <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  <span class="ctrl-label" data-i18n="newGame">Accueil</span>
+</button>
+<button class="ctrl-btn ctrl-undo" id="undo-btn" title="Annuler le dernier coup">
+  <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+  <span class="ctrl-label" data-i18n="undoMove">Annuler</span>
+</button>
+<button class="ctrl-btn ctrl-restart" id="restart" title="Recommencer la partie">
+  <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+  <span class="ctrl-label" data-i18n="restartGame">Rejouer</span>
+</button>
+<button class="ctrl-btn ctrl-surrender surrender-btn" id="surrender" title="Abandonner la partie">
+  <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+  <span class="ctrl-label" data-i18n="surrender">Rendre</span>
+</button>
 </div>
 <div class="spectator-controls" id="spectator-controls">
 <span aria-hidden="true" class="icon">👁️</span>
@@ -4619,17 +6309,6 @@ body.replay-active .winner-overlay.active {
 <button id="install-help-close-btn" type="button"><span data-i18n="close">Fermer</span></button>
 </div>
 </div>
-</div>
-<div aria-atomic="false" aria-live="polite" class="debug-overlay" id="debug-overlay" role="status">
-<header>
-<div class="title">Tiddas • Diagnostic</div>
-<div class="actions">
-<button aria-label="Effacer les logs" id="debug-clear-btn" type="button">Clear</button>
-<button aria-label="Lancer les tests" id="debug-tests-btn" type="button">Tests</button>
-<button aria-label="Fermer" id="debug-close-btn" type="button">Close</button>
-</div>
-</header>
-<div class="log" id="debug-log"></div>
 </div>
 <script nonce="tiddas">
 /* ===== TIDDAS - Script consolidé (refactorisé) ===== */
@@ -5058,8 +6737,6 @@ body.replay-active .winner-overlay.active {
       levelLabel: "Niveau",
       xpLabel: "XP",
       lastGameLabel: "Dernière partie",
-      debugTestsRunning: "Tests en cours…",
-      debugTestsDone: "Tests terminés",
       btnTheme: "Thème",
       btnSound: "Son",
       btnSettings: "Paramètres",
@@ -5267,8 +6944,6 @@ body.replay-active .winner-overlay.active {
       levelLabel: "Aswir",
       xpLabel: "XP",
       lastGameLabel: "Urar aneggaru",
-      debugTestsRunning: "Ikayaden…",
-      debugTestsDone: "Ikayaden fukken",
       btnTheme: "Asentel",
       btnSound: "Ṣṣut",
       btnSettings: "Aseggem",
@@ -7285,7 +8960,13 @@ body.replay-active .winner-overlay.active {
             const btn = document.getElementById('theme-btn');
             if (btn) {
                 const thLabel = (typeof translations !== 'undefined' && translations[currentLanguage] && translations[currentLanguage].btnTheme) || 'Thème';
-                btn.innerHTML = (THEME_ICONS[themeIndex] || 'ⵣ') + ' <span style="font-size:0.78rem;" data-i18n="btnTheme">' + thLabel + '</span>';
+                btn.textContent = '';
+                btn.appendChild(document.createTextNode((THEME_ICONS[themeIndex] || 'ⵣ') + ' '));
+                const span = document.createElement('span');
+                span.className = 'btn-label';
+                span.setAttribute('data-i18n', 'btnTheme');
+                span.textContent = thLabel;
+                btn.appendChild(span);
             }
             try { localStorage.setItem('tiddas_theme', String(themeIndex)); } catch(e){}
         }
@@ -7300,7 +8981,13 @@ body.replay-active .winner-overlay.active {
             const btn = document.getElementById('sound-btn');
             if (btn) {
                 const sndLabel = (typeof translations !== 'undefined' && translations[currentLanguage] && translations[currentLanguage].btnSound) || 'Son';
-                btn.innerHTML = (soundEnabled ? '🔊 ' : '🔇 ') + '<span style="font-size:0.78rem;" data-i18n="btnSound">' + sndLabel + '</span>';
+                btn.textContent = '';
+                btn.appendChild(document.createTextNode(soundEnabled ? '🔊 ' : '🔇 '));
+                const span = document.createElement('span');
+                span.className = 'btn-label';
+                span.setAttribute('data-i18n', 'btnSound');
+                span.textContent = sndLabel;
+                btn.appendChild(span);
                 btn.classList.toggle('sound-off', !soundEnabled);
             }
             try { localStorage.setItem('tiddas_sound', soundEnabled ? '1' : '0'); } catch(e){}
@@ -8405,19 +10092,19 @@ body.replay-active .winner-overlay.active {
         <div class="stat-card"><div class="k">${t('bestStreakLabel','Meilleure série')}</div><div class="v">${stats.bestStreak || 0}</div></div>
       </div>
 
-      <div class="stat-card" style="margin-top:10px;">
+      <div class="stat-card stat-mt">
         <div class="k">${t('levelLabel','Niveau')} • ${t('xpLabel','XP')}</div>
-        <div class="v">${lp.level} <span style="font-size:0.85rem; opacity:0.9;">(${stats.xp || 0} XP)</span></div>
-        <div class="progress-bar" aria-label="XP progress"><div style="width:${lp.pct.toFixed(0)}%"></div></div>
-        <div style="margin-top:6px; font-size:0.86rem; opacity:0.9;">${lp.into.toFixed(0)} / 100 XP</div>
+        <div class="v">${lp.level} <span class="xp-sub">(${stats.xp || 0} XP)</span></div>
+        <div class="progress-bar" aria-label="XP progress"><div id="xp-progress-bar"></div></div>
+        <div class="xp-footer">${lp.into.toFixed(0)} / 100 XP</div>
       </div>
 
-      <div class="stat-card" style="margin-top:10px;">
+      <div class="stat-card stat-mt">
         <div class="k">${t('lastGameLabel','Dernière partie')}</div>
-        <div style="margin-top:4px; font-size:0.95rem;">
+        <div class="stat-detail">
           ${lastAt ? lastAt.toLocaleString() : '—'}
         </div>
-        <div style="margin-top:8px; font-size:0.95rem;">
+        <div class="stat-detail-b">
           <strong>🏆</strong> ${t('streakLabel','Série')} : ${stats.streak || 0}
           &nbsp;•&nbsp;
           <strong>🎖️</strong> ${achievements.length ? achievements.join('  ') : '—'}
@@ -8425,9 +10112,9 @@ body.replay-active .winner-overlay.active {
       </div>
 
       ${gameMode === 'ai' ? `
-      <div class="stat-card" style="margin-top:10px;">
+      <div class="stat-card stat-mt">
         <div class="k">AI</div>
-        <div style="margin-top:4px; font-size:0.95rem;">
+        <div class="stat-detail">
           ${t('winsLabel','Victoires')} (Vous) : ${stats.winsHuman || 0}
           &nbsp;•&nbsp;
           ${t('lossesLabel','Défaites')} : ${stats.lossesHuman || 0}
@@ -8435,13 +10122,16 @@ body.replay-active .winner-overlay.active {
       </div>` : ''}
 
       ${((stats.p1Wins || 0) + (stats.p2Wins || 0) > 0) ? `
-      <div class="stat-card" style="margin-top:10px;">
+      <div class="stat-card stat-mt">
         <div class="k">Local</div>
-        <div style="margin-top:4px; font-size:0.95rem;">
+        <div class="stat-detail">
           J1 : ${stats.p1Wins || 0} &nbsp;•&nbsp; J2 : ${stats.p2Wins || 0}
         </div>
       </div>` : ''}
     `;
+    /* Dynamic progress bar width — JS DOM property, not a style="" attr → CSP-safe */
+    const pbInner = statsContent.querySelector('#xp-progress-bar');
+    if (pbInner) pbInner.style.width = lp.pct.toFixed(0) + '%';
   }
 
   function openStats() {
@@ -8911,72 +10601,8 @@ body.replay-active .winner-overlay.active {
   // Best-effort SW registration (enables offline + install eligibility when supported)
   try { registerServiceWorker(); } catch(_) {}
 
-
   // ---------------------------------------------------------
-  // 12) Internal tests (debug overlay)
-  // ---------------------------------------------------------
-  const debugTestsBtn = document.getElementById('debug-tests-btn');
 
-  function runInternalTests() {
-    const results = [];
-    const assert = (name, cond) => results.push({ name, ok: !!cond });
-
-    const oldVariant = variant;
-    try {
-      // Adjacency sanity
-      assert('Adjacency: 0↔1', isAdjacent?.(0, 1) === true);
-      assert('Adjacency: 0↮6', isAdjacent?.(0, 6) === false);
-
-      // Mill detection (horizontal)
-      const b = Array(25).fill(null);
-      b[0] = 1; b[1] = 1; b[2] = 1;
-      assert('Mill (0,1,2) detected', (getFormedMills?.(0, 1, b) || []).length > 0);
-
-      // Winner logic (normal): opponent <3 => current player wins
-      variant = 'TIDDEST-no-diag';
-      const bn = Array(25).fill(null);
-      bn[0] = 1; bn[1] = 1; bn[2] = 1;
-      bn[10] = 2; bn[11] = 2; // only 2 pieces for player 2
-      const wn = getWinnerInState?.(bn, 'move'); // Need explicit 'move' phase (board has <20 pieces, can't auto-detect)
-      assert('Winner normal when P2<3 => P1', wn === 1);
-
-      // Winner logic (inverse): player with <3 wins
-      variant = 'bessif-TIDDEST';
-      const bi = Array(25).fill(null);
-      // Player 1 only 2 pieces -> should be winner in inverse
-      bi[0] = 1; bi[1] = 1;
-      bi[10] = 2; bi[11] = 2; bi[12] = 2;
-      const wi = getWinnerInState?.(bi, 'move'); // Need explicit 'move' phase (board has <20 pieces, can't auto-detect)
-      assert('Winner inverse when P1<3 => P1', wi === 1);
-
-      // Move generation placement: should have moves on empty board
-      const bp = Array(25).fill(null);
-      variant = 'TIDDEST-no-diag';
-      const moves = generateAllPossibleMoves?.(1, bp, 'placement') || [];
-      assert('Placement generates moves', Array.isArray(moves) && moves.length > 0);
-    } catch (e) {
-      console.warn(e);
-      assert('Exception-free', false);
-    } finally {
-      variant = oldVariant;
-    }
-
-    const okCount = results.filter(r => r.ok).length;
-    const total = results.length;
-
-    console.groupCollapsed(`[Tiddas] Internal tests: ${okCount}/${total}`);
-    results.forEach(r => console.log(`${r.ok ? '✅' : '❌'} ${r.name}`));
-    console.groupEnd();
-
-    showToast(`<span class="toast-strong">${okCount}/${total}</span> ${t('debugTestsDone','Tests terminés')}`, 2200);
-  }
-
-  if (debugTestsBtn) {
-    debugTestsBtn.addEventListener('click', () => {
-      showToast(t('debugTestsRunning','Tests en cours…'), 900);
-      setTimeout(runInternalTests, 50);
-    });
-  }
 
   // ---------------------------------------------------------
   // 0) Language Splash Screen
@@ -9129,7 +10755,13 @@ body.replay-active .winner-overlay.active {
             const soundBtn = document.getElementById('sound-btn');
             if (soundBtn) {
                 const sndLabel = (typeof translations !== 'undefined' && translations[currentLanguage] && translations[currentLanguage].btnSound) || 'Son';
-                soundBtn.innerHTML = (soundEnabled ? '🔊 ' : '🔇 ') + '<span style="font-size:0.78rem;" data-i18n="btnSound">' + sndLabel + '</span>';
+                soundBtn.textContent = '';
+                soundBtn.appendChild(document.createTextNode(soundEnabled ? '🔊 ' : '🔇 '));
+                const span = document.createElement('span');
+                span.className = 'btn-label';
+                span.setAttribute('data-i18n', 'btnSound');
+                span.textContent = sndLabel;
+                soundBtn.appendChild(span);
                 soundBtn.classList.toggle('sound-off', !soundEnabled);
                 soundBtn.addEventListener('click', toggleSound);
             }
@@ -9139,16 +10771,22 @@ body.replay-active .winner-overlay.active {
             // Settings FAB toggle
             const settingsFab = document.getElementById('settings-fab');
             const settingsTray = document.getElementById('settings-tray');
+            const strayCloseBtn = document.getElementById('stray-close-btn');
+            const closeSettingsTray = () => {
+                settingsTray.classList.remove('open');
+                settingsFab.classList.remove('open');
+                settingsFab.setAttribute('aria-expanded', 'false');
+            };
             if (settingsFab && settingsTray) {
                 settingsFab.addEventListener('click', () => {
                     const isOpen = settingsTray.classList.toggle('open');
                     settingsFab.classList.toggle('open', isOpen);
                     settingsFab.setAttribute('aria-expanded', isOpen);
                 });
+                if (strayCloseBtn) strayCloseBtn.addEventListener('click', (e) => { e.stopPropagation(); closeSettingsTray(); });
                 document.addEventListener('click', (e) => {
                     if (!settingsFab.contains(e.target) && !settingsTray.contains(e.target)) {
-                        settingsTray.classList.remove('open');
-                        settingsFab.classList.remove('open');
+                        closeSettingsTray();
                     }
                 });
             }
