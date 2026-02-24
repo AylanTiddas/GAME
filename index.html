@@ -267,7 +267,7 @@ justify-content: center;
 .version-card {
 background: var(--panel-bg, rgba(0,0,0,0.3));
 border: 1px solid var(--panel-border, rgba(240, 200, 80, 0.4));
-border-radius: 10px;
+border-radius: 9px;
 padding: 1.2rem;
 display: flex;
 flex-direction: column;
@@ -700,7 +700,7 @@ transition: transform 0.5s ease;
 .game-board {
 background: var(--board-surface-light);
 border: 4px solid var(--stone-dark);
-border-radius: 10px;
+border-radius: 9px;
 box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
 width: 100%;
 height: 100%;
@@ -984,7 +984,7 @@ display: flex;
 background: var(--parchment-bg);
 color: var(--wood-dark);
 border: clamp(5px, 2vw, 15px) solid var(--wood-dark);
-border-radius: 10px;
+border-radius: 9px;
 padding: clamp(0.8rem, 3vw, 2rem) clamp(0.8rem, 4vw, 2.5rem);
 max-width: 800px;
 width: 100%;
@@ -3115,7 +3115,7 @@ max-height: 160px;
 overflow: hidden;
 background: rgba(0,0,0,0.5);
 border: 1.5px solid rgba(240,200,80,0.4);
-border-radius: 10px;
+border-radius: 9px;
 padding: 0.6rem 0.85rem;
 transition: max-height 0.3s ease;
 }
@@ -3141,7 +3141,7 @@ scrollbar-width: thin;
 scrollbar-color: rgba(240,200,80,0.3) transparent;
 }
 .move-log-entry {
-font-size: 0.82rem;
+font-size: 0.78rem;
 color: var(--text-main);
 opacity: 1;
 padding: 2px 6px;
@@ -3294,7 +3294,7 @@ animation: mill-pulse 1.5s infinite, millFlash 0.6s ease-out !important;
 .controls button {
 flex-basis: 70px;
 padding: 0.6rem 0.6rem;
-font-size: 0.72rem;
+font-size: 0.66rem;
 max-width: none;
 }
 .controls button span {
@@ -4107,7 +4107,7 @@ transform: translateY(0px) scale(0.99);
 [data-theme="modern-dark"] :focus-visible {
 outline: 3px solid rgba(37,99,235,0.35);
 outline-offset: 2px;
-border-radius: 10px;
+border-radius: 9px;
 }
 
 /* Board: cleaner grid, less inset “carving” */
@@ -4318,7 +4318,7 @@ height: 48px;
 padding: 0.65rem 0.9rem;
 border-radius: 999px;
 gap: 0.55rem;
-font-size: 1.05rem;
+font-size: 0.98rem;
 background: rgba(30, 22, 14, 0.82);
 border: 1.5px solid rgba(240,200,80,0.40);
 box-shadow: 0 4px 18px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06);
@@ -4451,7 +4451,7 @@ display: inline !important;
 display: inline !important;
 }
 .controls button i {
-font-size: 1.05rem;
+font-size: 0.98rem;
 }
 }
 @media (max-width: 360px) {
@@ -4606,6 +4606,245 @@ padding-bottom: 4.5rem;
 button, .toolbar-btn, .back-btn {
 line-height: 1.15;
 }
+
+
+/* ============================================================
+   REPLAY Dock (modern + subtle)
+   ============================================================ */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+#replay-modal.modal-overlay.app-modal {
+  /* ultra léger, pas de gros voile */
+  background: rgba(0,0,0,0.18) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 12px 10px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+#replay-modal .replay-modal-content {
+  max-width: none !important;
+  width: min(680px, 96vw) !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  padding: 10px 12px 12px !important;
+  background: rgba(18,14,12,0.72) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 0 18px 55px rgba(0,0,0,0.55) !important;
+}
+
+.replay-dock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replay-dock-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.replay-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(240,200,80,0.22);
+  font-weight: 850;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  max-width: 78%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.replay-pill-ico {
+  opacity: 0.92;
+}
+
+.replay-dock-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.replay-ghost-btn {
+  all: unset;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--text-main);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 900;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+.replay-ghost-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(240,200,80,0.12);
+}
+
+
+#replay-exit-btn.replay-ghost-btn,
+#replay-info-btn.replay-ghost-btn {
+  all: unset !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  color: var(--text-main) !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  font-weight: 900 !important;
+  transition: transform 0.12s ease, background 0.15s ease !important;
+}
+#replay-exit-btn.replay-ghost-btn:hover,
+#replay-info-btn.replay-ghost-btn:hover {
+  transform: translateY(-1px) !important;
+  background: rgba(240,200,80,0.12) !important;
+}
+.replay-meta {
+  font-size: 0.85rem;
+  color: var(--modal-subtext, rgba(255,255,255,0.75)) !important;
+  line-height: 1.25;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.replay-range-dock {
+  width: 100%;
+  margin: 0 !important;
+  accent-color: color-mix(in srgb, var(--text-gold) 70%, #fff);
+}
+
+.replay-controls-dock {
+  margin: 0 !important;
+  gap: 8px !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+}
+
+.replay-controls-dock button {
+  padding: 0 !important;
+  width: 42px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+.replay-controls-dock button:hover {
+  transform: translateY(-1px);
+  background: rgba(240,200,80,0.12) !important;
+}
+
+.replay-speed-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.replay-speed-pill select {
+  height: 30px !important;
+  padding: 0 28px 0 10px !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: var(--text-main) !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+}
+
+
+#replay-step-indicator {
+  margin: 0 !important;
+  font-size: 0.86rem !important;
+  color: var(--text-main) !important;
+}
+body.replay-active .replay-board-indicator,
+body.replay-active .replay-badge {
+  display: none !important;
+}
+
+/* Stats: version simplifiée */
+.stats-simple-note {
+  font-size: 0.9rem;
+  color: var(--modal-subtext) !important;
+  margin: 4px 0 10px;
+}
+.stats-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 6px 0 12px;
+}
+.stats-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.26);
+  border: 1px solid rgba(240,200,80,0.18);
+  font-weight: 800;
+  font-size: 0.9rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stats-chip .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.25) inset;
+}
+.stats-rowline {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.stats-mini {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+.stats-mini .label { color: var(--modal-subtext) !important; font-weight: 650; }
+.stats-mini .value { color: var(--modal-text) !important; font-weight: 900; font-variant-numeric: tabular-nums; }
 
 </style>
 <style nonce="tiddas">
@@ -4826,6 +5065,98 @@ color: var(--text-gold);
 margin-top: 4px;
 }
 
+/* Sections + historique (STATS v2) */
+.stats-section-title {
+  margin: 14px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 850;
+  color: var(--modal-heading) !important;
+  font-size: 0.92rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.stats-section-title:after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--stat-border-c), transparent);
+}
+.stats-rows {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.92rem;
+}
+.stats-row .label {
+  color: var(--modal-subtext) !important;
+  font-weight: 650;
+}
+.stats-row .value {
+  color: var(--modal-text) !important;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+.history-list {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--stat-border-c);
+  background: var(--stat-surface) !important;
+}
+.history-item .h-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.history-item .h-title {
+  font-weight: 850;
+  font-size: 0.94rem;
+  color: var(--modal-text) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-item .h-sub {
+  font-size: 0.78rem;
+  color: var(--modal-subtext) !important;
+  font-weight: 650;
+  line-height: 1.25;
+}
+.history-item .h-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.history-item .h-dur {
+  font-weight: 850;
+  font-size: 0.9rem;
+  color: var(--modal-text) !important;
+}
+.history-item .h-mode {
+  font-size: 0.76rem;
+  color: var(--modal-subtext) !important;
+  font-weight: 700;
+}
+
+
 .progress-bar {
 height: 10px;
 border-radius: 999px;
@@ -4864,19 +5195,20 @@ width: 100%;
 margin: 8px 0 6px;
 }
 .replay-meta {
-font-size: 0.88rem;
-opacity: 0.9;
-text-align: center;
-margin-top: -6px;
+  display: none !important;
 }
 .replay-footer {
-display: flex;
-gap: 10px;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-margin-top: 10px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+  padding-top: 0.2rem !important;
+  border-top: none !important;
 }
+.replay-footer label span { display: none !important; }
+
 .replay-footer label {
 font-size: 0.9rem;
 opacity: 0.95;
@@ -4885,7 +5217,7 @@ opacity: 0.95;
 background: rgba(0,0,0,0.35);
 border: 1px solid rgba(240,200,80,0.25);
 color: var(--text-main);
-border-radius: 10px;
+border-radius: 9px;
 padding: 6px 10px;
 }
 
@@ -4993,7 +5325,7 @@ gap: clamp(.8rem, 3vw, 2rem);
 flex-wrap: wrap;
 justify-content: center;
 width: 100%;
-max-width: 580px;
+max-width: 520px;
 }
 .splash-lang-btn {
 flex: 1;
@@ -5303,13 +5635,13 @@ pointer-events: auto;
 /* Le panneau lui-même */
 .replay-modal-content {
 width: 100%;
-max-width: 580px;
+max-width: 520px;
 /* Fond opaque avec backdrop blur fort pour lisibilité */
 background: var(--modal-surface) !important;
 color: var(--modal-text) !important;
 border: 1.5px solid var(--modal-border) !important;
-border-radius: 20px 20px 14px 14px !important;
-padding: 1rem 1.2rem 0.9rem !important;
+border-radius: 18px 18px 14px 14px !important;
+padding: 0.72rem 0.9rem 0.65rem !important;
 box-shadow:
 0 -6px 40px rgba(0,0,0,0.38),
 0 -1px 12px rgba(0,0,0,0.20),
@@ -5320,22 +5652,12 @@ backdrop-filter: blur(22px) saturate(1.4) !important;
 
 /* Titre du panneau replay */
 .replay-modal-content h3 {
-font-size: 0.95rem !important;
-font-weight: 700 !important;
-color: var(--modal-heading) !important;
-text-align: center;
-margin-bottom: 0.5rem !important;
-letter-spacing: 0.3px;
+  display: none !important;
 }
 
 /* Méta (variante · mode · joueurs) */
 .replay-meta {
-font-size: 0.78rem !important;
-text-align: center;
-color: var(--modal-subtext) !important;
-margin: 0 0 0.55rem !important;
-line-height: 1.4;
-font-weight: 500;
+  display: none !important;
 }
 
 /* Slider de timeline */
@@ -5343,18 +5665,18 @@ font-weight: 500;
 -webkit-appearance: none;
 appearance: none;
 width: 100%;
-height: 5px;
+height: 4px;
 border-radius: 999px;
 background: var(--stat-border-c) !important;
 outline: none;
-margin: 0 0 0.45rem !important;
+margin: 0 0 0.30rem !important;
 cursor: pointer;
 accent-color: var(--modal-heading);
 }
 .replay-range::-webkit-slider-thumb {
 -webkit-appearance: none;
-width: 16px;
-height: 16px;
+width: 14px;
+height: 14px;
 border-radius: 50%;
 background: var(--modal-heading);
 border: 2px solid rgba(255,255,255,0.65);
@@ -5366,8 +5688,8 @@ transition: transform 0.14s;
 transform: scale(1.25);
 }
 .replay-range::-moz-range-thumb {
-width: 16px;
-height: 16px;
+width: 14px;
+height: 14px;
 border-radius: 50%;
 background: var(--modal-heading);
 border: 2px solid rgba(255,255,255,0.65);
@@ -5377,10 +5699,10 @@ box-shadow: 0 1px 6px rgba(0,0,0,0.28);
 /* Indicateur tour courant */
 .replay-step-indicator {
 text-align: center;
-font-size: 0.72rem;
+font-size: 0.66rem;
 font-weight: 600;
 color: var(--modal-subtext) !important;
-margin: -2px 0 0.5rem;
+margin: -1px 0 0.35rem;
 font-variant-numeric: tabular-nums;
 }
 
@@ -5391,19 +5713,19 @@ gap: 5px !important;
 justify-content: center !important;
 align-items: stretch !important;
 flex-wrap: nowrap !important;
-margin: 0 0 0.6rem !important;
+margin: 0 0 0.35rem !important;
 }
 .replay-controls button {
 all: unset;
 flex: 1;
-min-width: 38px;
-max-width: 58px;
-padding: 0.55rem 0.4rem;
-border-radius: 10px;
+min-width: 34px;
+max-width: 54px;
+padding: 0.46rem 0.32rem;
+border-radius: 9px;
 border: 1.5px solid var(--modal-border) !important;
 background: var(--stat-surface) !important;
 color: var(--modal-text) !important;
-font-size: 1.05rem;
+font-size: 0.98rem;
 line-height: 1;
 cursor: pointer;
 display: flex;
@@ -5427,8 +5749,8 @@ transform: translateY(0);
 background: color-mix(in srgb, var(--modal-heading) 20%, transparent) !important;
 border-color: color-mix(in srgb, var(--modal-heading) 55%, transparent) !important;
 flex: 1.5 !important;
-max-width: 70px !important;
-font-size: 1.15rem !important;
+max-width: 64px !important;
+font-size: 1.05rem !important;
 }
 #replay-play-btn:hover {
 background: color-mix(in srgb, var(--modal-heading) 35%, transparent) !important;
@@ -5444,15 +5766,17 @@ border-color: var(--modal-heading) !important;
 
 /* Footer : vitesse + fermer */
 .replay-footer {
-display: flex !important;
-align-items: center !important;
-justify-content: space-between !important;
-gap: 8px !important;
-flex-wrap: wrap !important;
-margin: 0 !important;
-padding-top: 0.55rem !important;
-border-top: 1px solid var(--modal-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+  padding-top: 0.2rem !important;
+  border-top: none !important;
 }
+.replay-footer label span { display: none !important; }
+
 .replay-footer label {
 display: flex;
 align-items: center;
@@ -5468,8 +5792,8 @@ background: var(--stat-surface) !important;
 border: 1.5px solid var(--modal-border) !important;
 color: var(--modal-text) !important;
 border-radius: 9px;
-padding: 5px 28px 5px 9px;
-font-size: 0.82rem;
+padding: 4px 24px 4px 8px;
+font-size: 0.78rem;
 font-weight: 600;
 cursor: pointer;
 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -5489,17 +5813,25 @@ border-color: var(--modal-heading) !important;
 
 /* Bouton Fermer du replay */
 #replay-exit-btn {
-all: unset;
-padding: 0.45rem 1rem !important;
-border-radius: 9px !important;
-border: 1.5px solid var(--modal-border) !important;
-background: var(--stat-surface) !important;
-color: var(--modal-text) !important;
-font-size: 0.82rem !important;
-font-weight: 600 !important;
-cursor: pointer !important;
-transition: background 0.15s, transform 0.12s !important;
+  all: unset;
+  width: 34px !important;
+  height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 1.5px solid var(--modal-border) !important;
+  background: transparent !important;
+  color: var(--modal-text) !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  transition: background 0.15s, transform 0.12s !important;
 }
+#replay-exit-btn:hover {
+  background: color-mix(in srgb, var(--stat-surface) 85%, transparent) !important;
+  transform: translateY(-1px);
+}
+
 #replay-exit-btn:hover {
 background: var(--stat-border-c) !important;
 transform: translateY(-1px);
@@ -8254,34 +8586,45 @@ The basic rules apply, but each variant introduces important specifics:
 </div>
 </div>
 <div aria-hidden="true" class="modal-overlay app-modal" id="replay-modal">
-<div aria-labelledby="replay-modal-title" aria-modal="true" class="modal-content replay-modal-content" role="dialog">
-<h3 data-i18n="replayTitle" id="replay-modal-title">⏯ Replay</h3>
-<div class="replay-meta" id="replay-meta"></div>
-<input aria-label="Timeline" class="replay-range" id="replay-range" max="0" min="0" step="1" type="range" value="0" />
-<div class="replay-step-indicator" id="replay-step-indicator">
-— / —
-</div>
-<div aria-label="Contrôles replay" class="replay-controls">
-<button aria-label="Début" id="replay-first-btn" title="Début" type="button">⏮</button>
-<button aria-label="Précédent" id="replay-prev-btn" title="Coup précédent" type="button">⏪</button>
-<button aria-label="Lecture/Pause" id="replay-play-btn" title="Lecture/Pause" type="button">▶️</button>
-<button aria-label="Suivant" id="replay-next-btn" title="Coup suivant" type="button">⏩</button>
-<button aria-label="Fin" id="replay-last-btn" title="Fin" type="button">⏭</button>
-</div>
-<div class="replay-footer">
-<label>
-<span data-i18n="speed">Vitesse</span>
-<select id="replay-speed">
-<option value="0.5">0.5×</option>
-<option selected value="1">1×</option>
-<option value="1.5">1.5×</option>
-<option value="2">2×</option>
-<option value="3">3×</option>
-</select>
-</label>
-<button id="replay-exit-btn" type="button"><span data-i18n="close">✕ Fermer</span></button>
-</div>
-</div>
+  <div aria-labelledby="replay-modal-title" aria-modal="true" class="modal-content replay-modal-content" role="dialog">
+    <h3 data-i18n="replayTitle" id="replay-modal-title" class="sr-only">Replay</h3>
+
+    <div class="replay-dock">
+      <div class="replay-dock-top">
+        <div class="replay-pill" aria-live="polite">
+          <span class="replay-pill-ico" aria-hidden="true">⏯</span>
+          <span class="replay-pill-step" id="replay-step-indicator">— / —</span>
+        </div>
+        <div class="replay-dock-actions">
+          <button class="replay-ghost-btn" id="replay-info-btn" type="button" aria-label="Info" title="Info">i</button>
+          <button class="replay-ghost-btn" id="replay-exit-btn" type="button" aria-label="Fermer" title="Fermer">✕</button>
+        </div>
+      </div>
+
+      <div class="replay-meta" id="replay-meta" hidden></div>
+
+      <input aria-label="Timeline" class="replay-range replay-range-dock" id="replay-range" max="0" min="0" step="1" type="range" value="0" />
+
+      <div aria-label="Replay controls" class="replay-controls replay-controls-dock">
+        <button id="replay-first-btn" type="button" title="Start">⏮</button>
+        <button id="replay-prev-btn" type="button" title="Previous">⏪</button>
+        <button id="replay-play-btn" type="button" title="Play/Pause">▶️</button>
+        <button id="replay-next-btn" type="button" title="Next">⏩</button>
+        <button id="replay-last-btn" type="button" title="End">⏭</button>
+
+        <label class="replay-speed-pill">
+          <span class="sr-only" data-i18n="speed">Vitesse</span>
+          <select id="replay-speed" aria-label="Speed">
+            <option value="0.5">0.5×</option>
+            <option selected value="1">1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+            <option value="3">3×</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Badge REPLAY sur le plateau -->
 <div class="replay-badge" id="replay-badge">
@@ -8526,6 +8869,60 @@ let aiPlayerId = null;
 let currentLanguage = 'fr';
 let onConfirmCallback = null;
 
+// ============================================================
+// === PLAYER NAMES (setup) — persistent save on each edit ===
+// ============================================================
+const NAMES_KEY = 'tiddas_names_v1';
+let __nameSaveT = 0;
+
+function loadNamePrefs() {
+  try {
+    const raw = localStorage.getItem(NAMES_KEY);
+    const parsed = raw ? safeJSONParse(raw, null) : null;
+    if (parsed && typeof parsed === 'object' && parsed.v === 1) {
+      return {
+        v: 1,
+        p1: String(parsed.p1 || ''),
+        p2: String(parsed.p2 || ''),
+        updatedAt: Number(parsed.updatedAt || 0)
+      };
+    }
+  } catch (_) {}
+  return { v: 1, p1: '', p2: '', updatedAt: 0 };
+}
+
+function saveNamePrefs(p1Field, p2Field) {
+  const data = {
+    v: 1,
+    p1: String(p1Field || ''),
+    p2: String(p2Field || ''),
+    updatedAt: nowMs()
+  };
+  try {
+    localStorage.setItem(NAMES_KEY, JSON.stringify(data));
+  } catch (_) {}
+}
+
+function applySavedSetupNames(isAiMode) {
+  const pref = loadNamePrefs();
+  if (player1NameInput) player1NameInput.value = pref.p1 || '';
+  if (player2NameInput) player2NameInput.value = isAiMode ? '' : (pref.p2 || '');
+}
+
+function scheduleSaveNamePrefs() {
+  if (__nameSaveT) window.clearTimeout(__nameSaveT);
+  __nameSaveT = window.setTimeout(() => {
+    const p1 = normalizeName(player1NameInput?.value || '', '');
+    const p2 = normalizeName(player2NameInput?.value || '', '');
+    saveNamePrefs(p1, p2);
+    // Keep stats UI up-to-date if the modal is open
+    try {
+      if (typeof renderStats === 'function') renderStats();
+    } catch (_) {}
+  }, 120);
+}
+
+
 // --- DOM ELEMENTS CACHE ---
 const boardDiv = document.getElementById("board");
 const statusDiv = document.getElementById("status");
@@ -8544,7 +8941,7 @@ const p2DisplayName = document.getElementById('p2-display-name');
 const languageSelect = document.getElementById('language-select');
 const ephemeralMessageBubble = document.getElementById('ephemeral-message-bubble');
 const winnerOverlay = document.getElementById('winner-overlay');
-const winnerNameElement = winnerOverlay.querySelector('.winner-name');
+const winnerNameElement = winnerOverlay ? winnerOverlay.querySelector('.winner-name') : null;
 const winnerReplayButton = document.getElementById('winner-replay-button');
 const mainHeader = document.getElementById('main-header');
 const player1NameLabel = document.getElementById('player1-name-label');
@@ -8737,7 +9134,7 @@ surrenderConfirm: "Êtes-vous sûr de vouloir abandonner ?",
 surrenderMessage: "a abandonné !",
 
 stats: "Stats",
-statsTitle: "Stats & progression",
+statsTitle: "Statistiques",
 resetStats: "Réinitialiser",
 exportStats: "Exporter",
 close: "Fermer",
@@ -8802,7 +9199,20 @@ aboutVariantClassic: "La version classique.",
 aboutVariantBessif: "Perdre tous ses pions devient… la clé de la victoire.",
 aboutP4: "À travers cette application, nous souhaitons permettre à chacun de redécouvrir ce jeu ancestral, de le transmettre aux nouvelles générations et de perpétuer cet héritage stratégique.",
 aboutQuoteTrans: "La vie est comme Tiddest\u00a0: si tu es pigé, lève-toi.",
-aboutBtnLabel: "À propos"
+aboutBtnLabel: "À propos",
+avgDuration: "Durée moyenne",
+winnerLabel: "Vainqueur",
+actionsPerGameLabel: "Coups / partie",
+modeAI: "IA",
+modeLocal: "Local",
+modeSpectator: "Spectateur",
+modeLabel: "Mode",
+noStatsYet: "Aucune statistique pour l'instant. Lance une partie !",
+replayMoveLabel: "Coup",
+ariaReplayExit: "Fermer",
+ariaReplayInfo: "Infos",
+woSubDefeat: "— Fin de partie —",
+woSubVictory: "— Victoire —",
 },
 kab: {
 surrender: "Mayna",
@@ -8958,7 +9368,7 @@ aiWinsMessage: "yerbeḥ !",
 surrenderConfirm: "Tebɣiḍ ad tefkeḍ Mayna?",
 surrenderMessage: "yefka Mayna !",
 stats: "Igemmaḍ",
-statsTitle: "Igemmaḍ & usemmed",
+statsTitle: "Igemmaḍ",
 resetStats: "Sfeḍ",
 exportStats: "Ssufeɣ-d",
 close: "Mdel",
@@ -9022,7 +9432,20 @@ aboutVariantClassic: "Tawsit tamagnut neɣ taqbuṛt.",
 aboutVariantBessif: "D win i wumi kkfan ileqqafen-is, i yrebḥen.",
 aboutP4: "S leqdic-a, nessaram d akken tisutiwin d-iteddun ad urarent Tiddas, w ad zuxxent yes d akken d urar n lejdud nsen.",
 aboutQuoteTrans: "Di ddunit ma yella tettuneḥca-y-ak , xas beddel abrid.",
-aboutBtnLabel: "Awal fell-as"
+aboutBtnLabel: "Awal fell-as",
+avgDuration: "Akud alemmas",
+winnerLabel: "Win irebḥen",
+actionsPerGameLabel: "Tikkal mbawelen ileqqafen i temlilit",
+modeAI: "IA",
+modeLocal: "Ameddakel",
+modeSpectator: "Anezzeh",
+modeLabel: "Mgal",
+noStatsYet: "Ulac igemmaḍ tura. Urar tamlilit !",
+replayMoveLabel: "Tikkelt",
+ariaReplayExit: "Mdel",
+ariaReplayInfo: "Talɣut",
+woSubDefeat: "— Taggara n wurar —",
+woSubVictory: "— Rbeḥ —",
 },
 en: {
 playSpectator: "Spectator Mode",
@@ -9174,7 +9597,7 @@ aiWinsMessage: "wins!",
 surrenderConfirm: "Are you sure you want to surrender?",
 surrenderMessage: "has surrendered!",
 stats: "Stats",
-statsTitle: "Stats & Progress",
+statsTitle: "Statistics",
 resetStats: "Reset",
 exportStats: "Export",
 close: "Close",
@@ -9233,7 +9656,20 @@ aboutVariantClassic: "The classic version.",
 aboutVariantBessif: "Losing all your pieces becomes… the key to victory.",
 aboutP4: "Through this app, we hope to allow everyone to rediscover this ancient game, pass it on to new generations, and perpetuate this strategic heritage.",
 aboutQuoteTrans: "Life is like Tiddest\u00a0: if you're cornered, get up.",
-aboutBtnLabel: "About"
+aboutBtnLabel: "About",
+avgDuration: "Average duration",
+winnerLabel: "Winner",
+actionsPerGameLabel: "Moves / game",
+modeAI: "AI",
+modeLocal: "Local",
+modeSpectator: "Spectator",
+modeLabel: "Mode",
+noStatsYet: "No stats yet. Play a game!",
+replayMoveLabel: "Move",
+ariaReplayExit: "Close",
+ariaReplayInfo: "Info",
+woSubDefeat: "— Game over —",
+woSubVictory: "— Victory —",
 }
 };
 // --- DEEP COPY HELPER ---
@@ -9330,6 +9766,17 @@ showRulesModal();
 }
 // Update hardcoded UI elements not covered by data-i18n
 _applyHardcodedI18n(lang);
+
+// Refresh dynamic modals if open (language switch)
+try {
+  const sm = document.getElementById('stats-modal');
+  if (sm && sm.classList.contains('active') && typeof renderStats === 'function') renderStats();
+} catch(_) {}
+try {
+  const rm = document.getElementById('replay-modal');
+  if (rm && rm.classList.contains('active') && typeof updateReplayMeta === 'function') updateReplayMeta();
+} catch(_) {}
+
 }
 
 function _applyHardcodedI18n(lang) {
@@ -9358,7 +9805,21 @@ const replayMap = {
 };
 for (const [id, label] of Object.entries(replayMap)) {
 const el = document.getElementById(id);
-if (el) el.setAttribute('aria-label', label);
+if (el) { el.setAttribute('aria-label', label); el.title = label; }
+}
+
+// Replay dock extra buttons
+const rExit = document.getElementById('replay-exit-btn');
+if (rExit) {
+  const lbl = tr.ariaReplayExit || 'Fermer';
+  rExit.setAttribute('aria-label', lbl);
+  rExit.title = lbl;
+}
+const rInfo = document.getElementById('replay-info-btn');
+if (rInfo) {
+  const lbl = tr.ariaReplayInfo || 'Infos';
+  rInfo.setAttribute('aria-label', lbl);
+  rInfo.title = lbl;
 }
 // Settings FAB title/aria
 const sfab = document.getElementById('settings-fab');
@@ -9424,8 +9885,8 @@ colorSectionLabel.dataset.i18n = labelKey;
 
 player1NameLabel.textContent = translations[currentLanguage][isAiMode ? 'playerHumanName': 'player1NameLabel'];
 
-player1NameInput.value = '';
-player2NameInput.value = '';
+// Restore last typed names (saved on each edit)
+applySavedSetupNames(isAiMode);
 
 if (isAiMode) {
 humanPlayerId = 1; // Default human to player 1
@@ -9544,27 +10005,37 @@ runConfetti(5000);
 }
 
 function showWinnerAnimation(message, name, isDefeat) {
-playSound('victory');
-clearSave();
-// Label principal (Félicitations ! / Vous avez perdu)
-winnerOverlay.querySelector('.winner-message').textContent = message;
-// Sous-titre contextuel
-const sub = document.getElementById('wo-result-sub');
-if (sub) sub.textContent = isDefeat ? '— Fin de partie —': '— Victoire —';
-// Icône trophée / cœur brisé
-const trophy = document.getElementById('wo-trophy');
-if (trophy) trophy.textContent = isDefeat ? '💔': '🏆';
-// Nom
-winnerNameElement.textContent = name;
-// Classe défaite
-winnerOverlay.classList.toggle('wo-defeat', !!isDefeat);
-// Particules de fond
-_spawnWoParticles(isDefeat);
-winnerOverlay.classList.add('active');
-triggerConfetti();
-finalizeSessionAndStats();
-pushReplayFrame();
-persistLastReplay();
+  playSound('victory');
+  clearSave();
+
+  if (!winnerOverlay) return;
+
+  // Label principal (Félicitations ! / Vous avez perdu)
+  const msgEl = winnerOverlay.querySelector('.winner-message');
+  if (msgEl) msgEl.textContent = message;
+
+  // Sous-titre contextuel
+  const sub = document.getElementById('wo-result-sub');
+  if (sub) sub.textContent = isDefeat ? t('woSubDefeat','— Fin de partie —') : t('woSubVictory','— Victoire —');
+
+  // Icône trophée / cœur brisé
+  const trophy = document.getElementById('wo-trophy');
+  if (trophy) trophy.textContent = isDefeat ? '💔' : '🏆';
+
+  // Nom
+  if (winnerNameElement) winnerNameElement.textContent = name;
+
+  // Classe défaite
+  winnerOverlay.classList.toggle('wo-defeat', !!isDefeat);
+
+  // Particules de fond
+  _spawnWoParticles(isDefeat);
+
+  winnerOverlay.classList.add('active');
+  triggerConfetti();
+  finalizeSessionAndStats();
+  pushReplayFrame();
+  persistLastReplay();
 }
 
 function _spawnWoParticles(isDefeat) {
@@ -9797,8 +10268,10 @@ moveHistory = [];
 boardPositionHistory = new Map();
 forbiddenBoardPositions = new Set();
 
-const p1Input = player1NameInput.value.trim();
-const p2Input = player2NameInput.value.trim();
+const p1Input = normalizeName(player1NameInput.value, '');
+const p2Input = normalizeName(player2NameInput.value, '');
+// Persist the setup fields immediately (also saved on each edit)
+saveNamePrefs(p1Input, p2Input);
 
 if (gameMode === 'ai') {
 aiPlayerId = (humanPlayerId === 1) ? 2: 1;
@@ -12174,46 +12647,156 @@ toastTimer = window.setTimeout(() => toastEl.classList.remove('show'), ms);
 // ---------------------------------------------------------
 // 3) Pack Produit – Stats
 // ---------------------------------------------------------
-const STATS_KEY = 'tiddas_stats_v1';
+const STATS_KEY_V2 = 'tiddas_stats_v2';
+const STATS_KEY_V1 = 'tiddas_stats_v1';
+const STATS_KEY = STATS_KEY_V2;
 const REPLAY_KEY = 'tiddas_last_replay_v1';
 
 function defaultStats() {
 return {
-v: 1,
+v: 2,
 createdAt: nowMs(),
 updatedAt: nowMs(),
+totals: {
+games: 0,
+timeMs: 0,
+actions: 0,       // placements + moves (all turns)
+placements: 0,
+moves: 0,         // move phase only
+captures: 0,
+mills: 0
+},
+modes: {
+ai: {
 games: 0,
 wins: 0,
 losses: 0,
-winsHuman: 0,
-lossesHuman: 0,
-p1Wins: 0,
-p2Wins: 0,
+streak: 0,
+bestStreak: 0,
+timeMs: 0,
+actions: 0,
+placements: 0,
 moves: 0,
 captures: 0,
 mills: 0,
-streak: 0,
-bestStreak: 0,
+byDifficulty: {
+1: { games: 0, wins: 0, losses: 0 },
+2: { games: 0, wins: 0, losses: 0 },
+3: { games: 0, wins: 0, losses: 0 },
+4: { games: 0, wins: 0, losses: 0 }
+}
+},
+local: {
+games: 0,
+p1Wins: 0,
+p2Wins: 0,
+timeMs: 0,
+actions: 0,
+placements: 0,
+moves: 0,
+captures: 0,
+mills: 0
+}
+},
+variants: {},     // { [variant]: games }
+history: [],      // latest first (max 25)
+lastGame: null,   // { at, mode, variant, difficulty, durationMs, winnerId, humanId, p1Name, p2Name, actions, placements, moves, captures, mills }
 xp: 0,
 level: 1,
 achievements: {}
 };
 }
 
+function _migrateStatsV1ToV2(v1) {
+const base = defaultStats();
+try {
+if (!v1 || typeof v1 !== 'object') return base;
+
+base.createdAt = Number(v1.createdAt || base.createdAt);
+base.updatedAt = Number(v1.updatedAt || base.updatedAt);
+
+base.totals.games = Number(v1.games || 0);
+base.totals.actions = Number(v1.moves || 0);
+base.totals.placements = Number(v1.placements || 0);
+base.totals.moves = Number(v1.movesPhase || 0);
+base.totals.captures = Number(v1.captures || 0);
+base.totals.mills = Number(v1.mills || 0);
+base.totals.timeMs = Number(v1.timePlayedMs || 0);
+
+const aiGames = Number((v1.winsHuman || 0) + (v1.lossesHuman || 0));
+base.modes.ai.games = aiGames;
+base.modes.ai.wins = Number(v1.winsHuman || 0);
+base.modes.ai.losses = Number(v1.lossesHuman || 0);
+base.modes.ai.streak = Number(v1.streak || 0);
+base.modes.ai.bestStreak = Number(v1.bestStreak || 0);
+
+const localGames = Number((v1.p1Wins || 0) + (v1.p2Wins || 0));
+base.modes.local.games = localGames;
+base.modes.local.p1Wins = Number(v1.p1Wins || 0);
+base.modes.local.p2Wins = Number(v1.p2Wins || 0);
+
+base.xp = Number(v1.xp || 0);
+base.level = computeLevel(base.xp);
+base.achievements = (v1.achievements && typeof v1.achievements === 'object') ? v1.achievements : {};
+
+const lastMs = Number(v1.lastGameMs || 0);
+if (lastMs > 0) {
+base.lastGame = {
+at: base.updatedAt || nowMs(),
+mode: null,
+variant: null,
+difficulty: null,
+durationMs: lastMs,
+winnerId: null,
+humanId: null,
+p1Name: null,
+p2Name: null,
+actions: 0,
+placements: 0,
+moves: 0,
+captures: 0,
+mills: 0
+};
+}
+} catch(_) {
+return base;
+}
+return base;
+}
+
 let stats = defaultStats();
 
 function loadStats() {
 try {
-const raw = localStorage.getItem(STATS_KEY);
-const parsed = raw ? safeJSONParse(raw, null): null;
-if (parsed && typeof parsed === 'object' && parsed.v === 1) {
-stats = Object.assign(defaultStats(), parsed);
+// Prefer v2
+const raw2 = localStorage.getItem(STATS_KEY);
+const parsed2 = raw2 ? safeJSONParse(raw2, null) : null;
+if (parsed2 && typeof parsed2 === 'object' && parsed2.v === 2) {
+stats = Object.assign(defaultStats(), parsed2);
+} else {
+// Try v1 and migrate
+const raw1 = localStorage.getItem(STATS_KEY_V1);
+const parsed1 = raw1 ? safeJSONParse(raw1, null) : null;
+if (parsed1 && typeof parsed1 === 'object' && parsed1.v === 1) {
+stats = _migrateStatsV1ToV2(parsed1);
+// Persist migrated copy
+try { saveStats(); } catch(_) {}
 } else {
 stats = defaultStats();
+}
 }
 } catch(_) {
 stats = defaultStats();
 }
+
+// Normalize missing fields
+stats.totals = stats.totals || defaultStats().totals;
+stats.modes = stats.modes || defaultStats().modes;
+stats.variants = stats.variants || {};
+stats.history = Array.isArray(stats.history) ? stats.history : [];
+stats.lastGame = stats.lastGame || null;
+stats.achievements = stats.achievements || {};
+
 stats.level = computeLevel(stats.xp);
 }
 
@@ -12248,6 +12831,8 @@ let session = {
 active: false,
 startAt: 0,
 moves: 0,
+placements: 0,
+movesPhase: 0,
 captures: 0,
 mills: 0,
 mode: null,
@@ -12261,6 +12846,8 @@ session = {
 active: true,
 startAt: nowMs(),
 moves: 0,
+placements: 0,
+movesPhase: 0,
 captures: 0,
 mills: 0,
 mode: gameMode || null,
@@ -12550,7 +13137,12 @@ if (prevBoardForDelta) {
 lastDelta = computeDelta(prevBoardForDelta, newB);
 
 if (session.active) {
-if (lastDelta.from != null || lastDelta.to != null) session.moves += 1;
+const moved = (lastDelta.from != null || lastDelta.to != null);
+if (moved) {
+session.moves += 1; // total actions (placements + moves)
+if (state.phase === 'placement') session.placements += 1;
+else session.movesPhase += 1;
+}
 if (lastDelta.capture != null) session.captures += 1;
 }
 }
@@ -12695,44 +13287,116 @@ if (!state.winner) return;
 session.active = false;
 session.winner = state.winner;
 
-// Aggregate totals
-stats.games += 1;
-stats.moves += session.moves;
-stats.captures += session.captures;
-stats.mills += session.mills;
+// Duration
+let dur = 0;
+try {
+dur = Math.max(0, nowMs() - (session.startAt || 0));
+} catch(_) { dur = 0; }
 
-// Determine win/loss (AI mode only)
+// Names (saved in-game variables)
+const p1N = (typeof player1Name !== 'undefined' && player1Name) ? String(player1Name) : null;
+const p2N = (typeof player2Name !== 'undefined' && player2Name) ? String(player2Name) : null;
+
+const record = {
+at: nowMs(),
+mode: gameMode || null,
+variant: variant || null,
+difficulty: (gameMode === 'ai') ? (aiDifficulty || null) : null,
+durationMs: dur,
+winnerId: session.winner,
+humanId: (gameMode === 'ai') ? (humanPlayerId || null) : null,
+p1Name: p1N,
+p2Name: p2N,
+actions: Number(session.moves || 0),
+placements: Number(session.placements || 0),
+moves: Number(session.movesPhase || 0),
+captures: Number(session.captures || 0),
+mills: Number(session.mills || 0)
+};
+
+// Aggregate totals
+stats.totals = stats.totals || defaultStats().totals;
+stats.totals.games += 1;
+stats.totals.timeMs = (stats.totals.timeMs || 0) + dur;
+stats.totals.actions = (stats.totals.actions || 0) + record.actions;
+stats.totals.placements = (stats.totals.placements || 0) + record.placements;
+stats.totals.moves = (stats.totals.moves || 0) + record.moves;
+stats.totals.captures = (stats.totals.captures || 0) + record.captures;
+stats.totals.mills = (stats.totals.mills || 0) + record.mills;
+
+// Variants
+try {
+const key = record.variant || 'unknown';
+stats.variants = stats.variants || {};
+stats.variants[key] = Number(stats.variants[key] || 0) + 1;
+} catch(_) {}
+
+// Mode buckets
+stats.modes = stats.modes || defaultStats().modes;
 if (gameMode === 'ai') {
+const ai = stats.modes.ai;
+ai.games += 1;
+ai.timeMs = (ai.timeMs || 0) + dur;
+ai.actions = (ai.actions || 0) + record.actions;
+ai.placements = (ai.placements || 0) + record.placements;
+ai.moves = (ai.moves || 0) + record.moves;
+ai.captures = (ai.captures || 0) + record.captures;
+ai.mills = (ai.mills || 0) + record.mills;
+
 const human = humanPlayerId;
-if (session.winner === human) {
-stats.wins += 1;
-stats.winsHuman += 1;
-stats.streak += 1;
-stats.bestStreak = Math.max(stats.bestStreak, stats.streak);
-stats.xp += 25 + Math.min(40, session.moves);
+const isWin = (record.winnerId === human);
+if (isWin) {
+ai.wins += 1;
+ai.streak = (ai.streak || 0) + 1;
+ai.bestStreak = Math.max(ai.bestStreak || 0, ai.streak || 0);
+stats.xp += 25 + Math.min(40, record.actions);
 if (aiDifficulty === 4) stats.achievements.beatExpert = true;
 } else {
-stats.losses += 1;
-stats.lossesHuman += 1;
-stats.streak = 0;
-stats.xp += 10 + Math.min(25, session.moves);
+ai.losses += 1;
+ai.streak = 0;
+stats.xp += 10 + Math.min(25, record.actions);
 }
+
+// Difficulty breakdown
+try {
+const d = String(aiDifficulty || '');
+if (ai.byDifficulty && ai.byDifficulty[d]) {
+ai.byDifficulty[d].games += 1;
+if (isWin) ai.byDifficulty[d].wins += 1;
+else ai.byDifficulty[d].losses += 1;
+}
+} catch(_) {}
 } else if (gameMode === 'local') {
-// Two-player local: only track per-player wins, not global wins/losses
-// (wins/losses are AI-mode concepts; for local, see p1Wins/p2Wins)
-if (session.winner === 1) stats.p1Wins += 1;
-if (session.winner === 2) stats.p2Wins += 1;
-stats.xp += 12 + Math.min(30, session.moves);
+const lo = stats.modes.local;
+lo.games += 1;
+lo.timeMs = (lo.timeMs || 0) + dur;
+lo.actions = (lo.actions || 0) + record.actions;
+lo.placements = (lo.placements || 0) + record.placements;
+lo.moves = (lo.moves || 0) + record.moves;
+lo.captures = (lo.captures || 0) + record.captures;
+lo.mills = (lo.mills || 0) + record.mills;
+
+if (record.winnerId === 1) lo.p1Wins += 1;
+if (record.winnerId === 2) lo.p2Wins += 1;
+
+stats.xp += 12 + Math.min(30, record.actions);
 } else {
-// Other modes: count as games only
-stats.xp += 8 + Math.min(20, session.moves);
+stats.xp += 8 + Math.min(20, record.actions);
 }
 
 // Achievements (simple)
-if (stats.games >= 1) stats.achievements.firstGame = true;
-if (stats.winsHuman >= 1) stats.achievements.firstWin = true;
-if (stats.games >= 10) stats.achievements.tenGames = true;
-if (stats.bestStreak >= 5) stats.achievements.streak5 = true;
+try {
+if ((stats.totals.games || 0) >= 1) stats.achievements.firstGame = true;
+if ((stats.modes?.ai?.wins || 0) >= 1) stats.achievements.firstWin = true;
+if ((stats.totals.games || 0) >= 10) stats.achievements.tenGames = true;
+if ((stats.modes?.ai?.bestStreak || 0) >= 5) stats.achievements.streak5 = true;
+} catch(_) {}
+
+// Last game + history
+stats.lastGame = record;
+stats.history = Array.isArray(stats.history) ? stats.history : [];
+stats.history.unshift(record);
+stats.history = stats.history.slice(0, 25);
 
 stats.level = computeLevel(stats.xp);
 saveStats();
@@ -12786,86 +13450,138 @@ const statsExportBtn = $('#stats-export-btn');
 const statsContent = $('#stats-content');
 
 function formatDuration(ms) {
-const s = Math.max(0, Math.floor(ms / 1000));
-const m = Math.floor(s / 60);
+const s = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+const h = Math.floor(s / 3600);
+const m = Math.floor((s % 3600) / 60);
 const r = s % 60;
-if (m <= 0) return `${r}s`;
-return `${m}m ${r}s`;
+if (h > 0) return `${h}h ${m}m`;
+if (m > 0) return `${m}m ${r}s`;
+return `${r}s`;
 }
 
+function _escText(v) {
+const s = String(v ?? '');
+return s.replace(/[&<>"']/g, (c) => ( {
+'&': '&amp;',
+'<': '&lt;',
+'>': '&gt;',
+'"': '&quot;',
+"'": '&#39;'
+}[c] ));
+}
+
+function _modeLabel(mode) {
+  if (mode === 'ai') return t('modeAI', 'IA');
+  if (mode === 'local') return t('modeLocal', 'Local');
+  if (mode === 'spectator') return t('modeSpectator', 'Spectateur');
+  return '—';
+}
+function _difficultyLabel(d) {
+  const n = Number(d);
+  if (n === 1) return t('difficultyEasy', 'Débutant');
+  if (n === 2) return t('difficultyMedium', 'Intermédiaire');
+  if (n === 3) return t('difficultyHard', 'Difficile');
+  if (n === 4) return t('difficultyImpossible', 'Expert');
+  return '—';
+}
 function renderStats() {
-if (!statsContent) return;
-const games = stats.games || 0;
-const wins = stats.wins || 0;
-const losses = stats.losses || 0;
-// Win rate is only meaningful for AI-mode games (wins/losses are only tracked in AI mode)
-const aiGames = (stats.winsHuman || 0) + (stats.lossesHuman || 0);
-const winRate = aiGames > 0 ? Math.round(((stats.winsHuman || 0) / aiGames) * 100): (games > 0 ? null: 0);
-const winRateStr = winRate !== null ? `${winRate}%`: '—';
+  if (!statsContent) return;
 
-const lp = levelProgress(stats.xp);
-const lastReplay = loadLastReplay();
-const lastAt = lastReplay?.createdAt ? new Date(lastReplay.createdAt): null;
+  const num = (x) => Number(x || 0);
 
-const achievements = [];
-if (stats.achievements?.firstGame) achievements.push('🎮 1');
-if (stats.achievements?.firstWin) achievements.push('🏆 1');
-if (stats.achievements?.tenGames) achievements.push('🔟');
-if (stats.achievements?.streak5) achievements.push('🔥 5');
-if (stats.achievements?.beatExpert) achievements.push('☠️ Expert');
+  const totals = stats.totals || defaultStats().totals;
+  const ai = (stats.modes && stats.modes.ai) ? stats.modes.ai : defaultStats().modes.ai;
+  const local = (stats.modes && stats.modes.local) ? stats.modes.local : defaultStats().modes.local;
 
-statsContent.innerHTML = `
-<div class="stats-grid">
-<div class="stat-card"><div class="k">${t('gamesPlayedLabel', 'Parties')}</div><div class="v">${games}</div></div>
-<div class="stat-card"><div class="k">${t('winRateLabel', 'Taux de victoire')}</div><div class="v">${winRateStr}</div></div>
-<div class="stat-card"><div class="k">${t('winsLabel', 'Victoires')}</div><div class="v">${wins}</div></div>
-<div class="stat-card"><div class="k">${t('lossesLabel', 'Défaites')}</div><div class="v">${losses}</div></div>
-<div class="stat-card"><div class="k">${t('movesLabel', 'Coups')}</div><div class="v">${stats.moves || 0}</div></div>
-<div class="stat-card"><div class="k">${t('capturesLabel', 'Captures')}</div><div class="v">${stats.captures || 0}</div></div>
-<div class="stat-card"><div class="k">${t('millsLabel', 'Moulins')}</div><div class="v">${stats.mills || 0}</div></div>
-<div class="stat-card"><div class="k">${t('bestStreakLabel', 'Meilleure série')}</div><div class="v">${stats.bestStreak || 0}</div></div>
-</div>
+  const games = num(totals.games);
+  const actions = num(totals.actions);
+  const captures = num(totals.captures);
+  const mills = num(totals.mills);
+  const timeMs = num(totals.timeMs);
 
-<div class="stat-card stat-mt">
-<div class="k">${t('levelLabel', 'Niveau')} • ${t('xpLabel', 'XP')}</div>
-<div class="v">${lp.level} <span class="xp-sub">(${stats.xp || 0} XP)</span></div>
-<div class="progress-bar" aria-label="XP progress"><div id="xp-progress-bar"></div></div>
-<div class="xp-footer">${lp.into.toFixed(0)} / 100 XP</div>
-</div>
+  const totalTimeStr = timeMs > 0 ? formatDuration(timeMs) : '—';
+  const avgTimeStr = (games > 0 && timeMs > 0) ? formatDuration(timeMs / games) : '—';
+  const actionsPerGame = games > 0 ? (actions / games) : 0;
 
-<div class="stat-card stat-mt">
-<div class="k">${t('lastGameLabel', 'Dernière partie')}</div>
-<div class="stat-detail">
-${lastAt ? lastAt.toLocaleString(): '—'}
-</div>
-<div class="stat-detail-b">
-<strong>🏆</strong> ${t('streakLabel', 'Série')} : ${stats.streak || 0}
-&nbsp;•&nbsp;
-<strong>🎖️</strong> ${achievements.length ? achievements.join('  '): '—'}
-</div>
-</div>
+  const pref = loadNamePrefs();
+  const p1ColorName = ((translations[currentLanguage]?.player1Color) || t('player1Color', 'Noir')).split(' ')[0];
+  const p2ColorName = ((translations[currentLanguage]?.player2Color) || t('player2Color', 'Blanc')).split(' ')[0];
+  const savedJ1 = pref.p1 ? _escText(pref.p1) : '—';
+  const savedJ2 = pref.p2 ? _escText(pref.p2) : '—';
 
-${gameMode === 'ai' ? `
-<div class="stat-card stat-mt">
-<div class="k">AI</div>
-<div class="stat-detail">
-${t('winsLabel', 'Victoires')} (Vous) : ${stats.winsHuman || 0}
-&nbsp;•&nbsp;
-${t('lossesLabel', 'Défaites')} : ${stats.lossesHuman || 0}
-</div>
-</div>`: ''}
+  const aiGames = num(ai.games);
+  const aiWins = num(ai.wins);
+  const aiLosses = num(ai.losses);
+  const aiWinRate = aiGames > 0 ? Math.round((aiWins / aiGames) * 100) : null;
 
-${((stats.p1Wins || 0) + (stats.p2Wins || 0) > 0) ? `
-<div class="stat-card stat-mt">
-<div class="k">Local</div>
-<div class="stat-detail">
-J1 : ${stats.p1Wins || 0} &nbsp;•&nbsp; J2 : ${stats.p2Wins || 0}
-</div>
-</div>`: ''}
-`;
-/* Dynamic progress bar width — JS DOM property, not a style="" attr → CSP-safe */
-const pbInner = statsContent.querySelector('#xp-progress-bar');
-if (pbInner) pbInner.style.width = lp.pct.toFixed(0) + '%';
+  const localGames = num(local.games);
+  const p1Wins = num(local.p1Wins);
+  const p2Wins = num(local.p2Wins);
+  const p1Rate = localGames > 0 ? Math.round((p1Wins / localGames) * 100) : null;
+  const p2Rate = localGames > 0 ? Math.round((p2Wins / localGames) * 100) : null;
+
+  // Last game (prefer stats.lastGame; fallback to replay metadata)
+  const last = stats.lastGame || null;
+  const lastReplay = loadLastReplay();
+  const lastMeta = lastReplay?.meta || {};
+  const lastAt = last?.at ? new Date(last.at) : (lastReplay?.createdAt ? new Date(lastReplay.createdAt) : null);
+  const lastMode = last?.mode || (lastMeta.gameMode || null);
+  const lastModeLabel = lastMode ? _modeLabel(lastMode) : '—';
+  const lastDur = (last && num(last.durationMs) > 0) ? num(last.durationMs) : 0;
+  const lastDurStr = lastDur > 0 ? formatDuration(lastDur) : '—';
+  const lastP1 = _escText(last?.p1Name || lastMeta.player1Name || pref.p1 || 'J1');
+  const lastP2 = _escText(last?.p2Name || lastMeta.player2Name || pref.p2 || 'J2');
+  const lastWinnerId = num(last?.winnerId);
+  const lastWinnerName = (lastWinnerId === 1) ? lastP1 : (lastWinnerId === 2) ? lastP2 : '—';
+
+  const note = games > 0 ? '' : `<div class="stats-simple-note">${t('noStatsYet','Aucune statistique pour l\'instant. Lance une partie !')}</div>`;
+
+  statsContent.innerHTML = `
+    <div class="stats-chips">
+      <div class="stats-chip"><span class="dot" style="background: rgba(20,20,20,0.9)"></span><span><strong>${_escText(p1ColorName)}</strong> — ${savedJ1}</span></div>
+      <div class="stats-chip"><span class="dot" style="background: rgba(235,235,235,0.95)"></span><span><strong>${_escText(p2ColorName)}</strong> — ${savedJ2}</span></div>
+    </div>
+
+    ${note}
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="k">${t('gamesPlayedLabel','Parties')}</div><div class="v">${games}</div></div>
+      <div class="stat-card"><div class="k">${t('durationLabel','Temps total')}</div><div class="v">${totalTimeStr}</div></div>
+      <div class="stat-card"><div class="k">${t('avgDuration','Durée moyenne')}</div><div class="v">${avgTimeStr}</div></div>
+      <div class="stat-card"><div class="k">${t('actionsPerGameLabel','Coups / partie')}</div><div class="v">${actionsPerGame.toFixed(1)}</div></div>
+    </div>
+
+    <div class="stats-rowline">
+      ${aiGames > 0 ? `
+        <div class="stat-card">
+          <div class="k">${t('modeAI','IA')}</div>
+          <div class="stats-mini"><span class="label">${t('winRateLabel','Taux de victoire')}</span><span class="value">${aiWinRate === null ? '—' : aiWinRate + '%'}</span></div>
+          <div class="stats-mini"><span class="label">${t('gamesPlayedLabel','Parties')}</span><span class="value">${aiGames}</span></div>
+          <div class="stats-mini"><span class="label">${t('winsLabel','Victoires')}</span><span class="value">${aiWins}</span></div>
+          <div class="stats-mini"><span class="label">${t('lossesLabel','Défaites')}</span><span class="value">${aiLosses}</span></div>
+        </div>
+      ` : ''}
+
+      ${localGames > 0 ? `
+        <div class="stat-card">
+          <div class="k">${t('modeLocal','Local')}</div>
+          <div class="stats-mini"><span class="label">${t('gamesPlayedLabel','Parties')}</span><span class="value">${localGames}</span></div>
+          <div class="stats-mini"><span class="label">${_escText(p1ColorName)}</span><span class="value">${p1Wins} ${p1Rate === null ? '' : ('(' + p1Rate + '%)')}</span></div>
+          <div class="stats-mini"><span class="label">${_escText(p2ColorName)}</span><span class="value">${p2Wins} ${p2Rate === null ? '' : ('(' + p2Rate + '%)')}</span></div>
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="stat-card stat-mt">
+      <div class="k">${t('lastGameLabel','Dernière partie')}</div>
+      <div class="stats-mini"><span class="label">${t('modeLabel','Mode')}</span><span class="value">${lastModeLabel}</span></div>
+      <div class="stats-mini"><span class="label">${t('winnerLabel','Vainqueur')}</span><span class="value">${lastWinnerName}</span></div>
+      <div class="stats-mini"><span class="label">${t('durationLabel','Durée')}</span><span class="value">${lastDurStr}</span></div>
+      <div class="stat-detail">${lastAt ? lastAt.toLocaleString() : '—'} • ${lastP1} vs ${lastP2}</div>
+      <div class="stats-mini"><span class="label">${t('capturesLabel','Captures')}</span><span class="value">${captures}</span></div>
+      <div class="stats-mini"><span class="label">${t('millsLabel','Moulins')}</span><span class="value">${mills}</span></div>
+    </div>
+  `;
 }
 
 function openStats() {
@@ -12902,9 +13618,7 @@ if (statsExportBtn) {
 statsExportBtn.addEventListener('click', () => {
 try {
 const payload = JSON.stringify(stats, null, 2);
-const blob = new Blob([payload], {
-type: 'application/json'
-});
+const blob = new Blob([payload], { type: 'application/json' });
 const url = URL.createObjectURL(blob);
 const a = document.createElement('a');
 a.href = url;
@@ -12917,6 +13631,7 @@ showToast(t('toastExported', 'Export généré.'), 1600);
 } catch(_) {}
 });
 }
+
 
 // ---------------------------------------------------------
 // 10) Replay UI modal
@@ -12934,6 +13649,7 @@ const replayNextBtn = $('#replay-next-btn');
 const replayFirstBtn = $('#replay-first-btn');
 const replayLastBtn = $('#replay-last-btn');
 const replayExitBtn = $('#replay-exit-btn');
+const replayInfoBtn = $('#replay-info-btn');
 
 function refreshReplayButtons() {
 const last = loadLastReplay();
@@ -12944,22 +13660,41 @@ if (winnerReplayLastBtn) winnerReplayLastBtn.disabled = !has;
 
 const replayStepEl = $('#replay-step-indicator');
 
-function updateReplayMeta() {
-if (!replayMetaEl) return;
-if (!replay.data) {
-replayMetaEl.textContent = '';
-if (replayStepEl) replayStepEl.textContent = '— / —';
-return;
+let replayMetaOpen = false;
+function toggleReplayMeta(force) {
+  if (typeof force === 'boolean') replayMetaOpen = force;
+  else replayMetaOpen = !replayMetaOpen;
+  if (replayMetaEl) replayMetaEl.hidden = !replayMetaOpen;
+  if (replayInfoBtn) replayInfoBtn.classList.toggle('active', replayMetaOpen);
 }
-const meta = replay.data.meta || {};
-const vName = (variantConfig && meta.variant && variantConfig[meta.variant]?.name)
-? variantConfig[meta.variant].name: (meta.variant || '—');
-const mode = meta.gameMode || '—';
-const diff = meta.aiDifficulty ? ` · AI ${meta.aiDifficulty}`: '';
-const p1 = meta.player1Name || 'J1';
-const p2 = meta.player2Name || 'J2';
-replayMetaEl.textContent = `${vName} · ${mode}${diff} · ${p1} vs ${p2}`;
-if (replayStepEl) replayStepEl.textContent = `Coup ${replay.idx + 1} / ${replay.frames.length}`;
+
+
+function updateReplayMeta() {
+  if (!replayMetaEl) return;
+  if (!replay.data) {
+    replayMetaEl.textContent = '';
+    replayMetaEl.hidden = true;
+    if (replayStepEl) replayStepEl.textContent = '— / —';
+    return;
+  }
+
+  const meta = replay.data.meta || {};
+  const vName = (variantConfig && meta.variant && variantConfig[meta.variant]?.name)
+    ? variantConfig[meta.variant].name
+    : (meta.variant || '—');
+
+  const mode = _modeLabel(meta.gameMode || '');
+  const diff = meta.aiDifficulty ? (' · ' + _difficultyLabel(meta.aiDifficulty)) : '';
+  const p1 = meta.player1Name || 'J1';
+  const p2 = meta.player2Name || 'J2';
+
+  // Meta text (shown when the user toggles info)
+  replayMetaEl.textContent = `${vName} · ${mode}${diff} · ${p1} vs ${p2}`;
+
+  // Step indicator (always visible)
+  if (replayStepEl) {
+    replayStepEl.textContent = `${t('replayMoveLabel','Coup')} ${replay.idx + 1}/${replay.frames.length}`;
+  }
 }
 
 function setReplayIndex(i) {
@@ -13093,6 +13828,9 @@ if (data.meta.player2Name) player2Name = data.meta.player2Name;
 replay.active = true;
 disableGameControls(true);
 stopReplayTimer();
+// Start dock compact (meta hidden)
+replayMetaOpen = false;
+try { if (replayMetaEl) replayMetaEl.hidden = true; if (replayInfoBtn) replayInfoBtn.classList.remove('active'); } catch(_) {}
 
 // S'assurer que le plateau de jeu est visible (masquer winner overlay)
 try {
@@ -13175,6 +13913,7 @@ if (replayBtn) replayBtn.addEventListener('click', openReplay);
 if (winnerReplayLastBtn) winnerReplayLastBtn.addEventListener('click', openReplay);
 
 if (replayExitBtn) replayExitBtn.addEventListener('click', closeReplay);
+if (replayInfoBtn) replayInfoBtn.addEventListener('click', () => toggleReplayMeta());
 if (replayModal) replayModal.addEventListener('click', (e) => {
 if (e.target === replayModal) closeReplay();
 });
@@ -13699,6 +14438,17 @@ humanPlayerId = parseInt(option.dataset.player);
 updateColorOptionSelection(humanPlayerId);
 }));
 
+// --- Player names: auto-save on each edit ---
+applySavedSetupNames(false);
+if (player1NameInput) {
+  player1NameInput.addEventListener('input', scheduleSaveNamePrefs);
+  player1NameInput.addEventListener('change', scheduleSaveNamePrefs);
+}
+if (player2NameInput) {
+  player2NameInput.addEventListener('input', scheduleSaveNamePrefs);
+  player2NameInput.addEventListener('change', scheduleSaveNamePrefs);
+}
+
 document.getElementById('new-game').addEventListener('click',
 () => {
 hideWinnerAnimation(); showScreen('version-selection-area');
@@ -13777,5 +14527,9 @@ setTimeout(registerServiceWorker, 1200);
 
 })(); // fin IIFE principale
 </script>
+
+  <!-- Added for robustness (referenced by JS/CSS) -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <div id="ephemeral-message-bubble" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>
