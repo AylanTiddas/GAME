@@ -4846,6 +4846,44 @@ body.replay-active .replay-badge {
 .stats-mini .label { color: var(--modal-subtext) !important; font-weight: 650; }
 .stats-mini .value { color: var(--modal-text) !important; font-weight: 900; font-variant-numeric: tabular-nums; }
 
+
+
+/* ==================== CAPTURE HIGHLIGHT (ROBUST ACROSS THEMES) ====================
+   Some themes (ex: Kabylie) apply cell background styles (e.g., .cell.dark-cell) that
+   can override the capturable background when a cell has both classes.
+   We force the red emphasis via a pseudo-element overlay + stronger glow/outline.
+*/
+.cell.capturable{
+  background: transparent !important;
+  outline: min(0.6vw, 3px) dashed var(--danger-red) !important;
+  animation: capturable-pulse 1.6s infinite;
+}
+.cell.capturable::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  background: rgba(255, 0, 0, 0.18);
+  border-radius: 6px;
+  pointer-events:none;
+  z-index: 1; /* behind the stone (z-index:2) */
+  animation: capturable-fill 1.6s infinite;
+}
+@keyframes capturable-fill{
+  0%,100%{ opacity: 0.18; }
+  50%{ opacity: 0.42; }
+}
+/* Override earlier definition to also pulse glow so it's visible on any cell background */
+@keyframes capturable-pulse{
+  0%,100%{
+    outline-color: var(--danger-red);
+    box-shadow: 0 0 0 0 rgba(255,0,0,0), inset 0 0 0 0 rgba(255,0,0,0);
+  }
+  50%{
+    outline-color: rgba(255,0,0,0.55);
+    box-shadow: 0 0 min(3vw, 14px) rgba(255,0,0,0.55),
+                inset 0 0 min(2vw, 10px) rgba(255,0,0,0.25);
+  }
+}
 </style>
 <style nonce="tiddas">
 /* =========================================================
@@ -9434,13 +9472,13 @@ aboutP4: "S leqdic-a, nessaram d akken tisutiwin d-iteddun ad urarent Tiddas, w 
 aboutQuoteTrans: "Di ddunit ma yella tettuneḥca-y-ak , xas beddel abrid.",
 aboutBtnLabel: "Awal fell-as",
 avgDuration: "Akud alemmas",
-winnerLabel: "Win irebḥen",
+winnerLabel: "Win irbeḥen",
 actionsPerGameLabel: "Tikkal mbawelen ileqqafen i temlilit",
 modeAI: "IA",
 modeLocal: "Ameddakel",
 modeSpectator: "Anezzeh",
 modeLabel: "Mgal",
-noStatsYet: "Ulac igemmaḍ tura. Urar tamlilit !",
+noStatsYet: "Ulac igemmaḍ tura. Urar timlilit !",
 replayMoveLabel: "Tikkelt",
 ariaReplayExit: "Mdel",
 ariaReplayInfo: "Talɣut",
