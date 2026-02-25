@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <!-- Security hardening -->
-<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'nonce-tiddas'; script-src 'self' 'nonce-tiddas'; connect-src 'self'; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
+<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'nonce-tiddas'; script-src 'self' 'nonce-tiddas' https://unpkg.com; connect-src 'self' https://parseapi.back4app.com https://*.b4a.io wss://*.b4a.io; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
 <meta content="no-referrer" name="referrer" />
 <meta content="camera=(), microphone=(), geolocation=(), payment=(), usb=()" http-equiv="Permissions-Policy" />
 <meta content="dark light" name="color-scheme" />
@@ -4884,6 +4884,198 @@ body.replay-active .replay-badge {
                 inset 0 0 min(2vw, 10px) rgba(255,0,0,0.25);
   }
 }
+
+
+/* ============================================================
+   Online lobby (Multijoueur) — UI refresh
+   ============================================================ */
+.online-lobby .online-subtitle{
+  margin-top:-0.4rem;
+  opacity:0.86;
+  max-width: 60ch;
+  text-align:center;
+}
+.online-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 10px;
+}
+@media (min-width: 820px){
+  .online-grid{ grid-template-columns: 1fr 1fr; }
+}
+.online-card{
+  width:100%;
+  background: rgba(0,0,0,0.38);
+  border: 1.5px solid rgba(240,200,80,0.35);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.35), 0 10px 24px rgba(0,0,0,0.25);
+  backdrop-filter: blur(3px);
+}
+.online-card-header{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-bottom: 10px;
+}
+.online-card-title{
+  font-family: var(--font-title);
+  color: var(--text-gold);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+.online-card-desc{
+  opacity: 0.78;
+  font-size: 0.95rem;
+}
+.online-label{
+  display:block;
+  font-weight: 800;
+  margin: 8px 0 6px;
+}
+.online-input{
+  width:100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(240,200,80,0.35);
+  background: rgba(0,0,0,0.35);
+  color: var(--text-main);
+  outline: none;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+}
+.online-input:focus{
+  border-color: rgba(0,255,255,0.7);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.35), 0 0 0 3px rgba(0,255,255,0.18);
+}
+.online-hint{
+  margin-top: 8px;
+  opacity: 0.75;
+  font-size: 0.92rem;
+}
+.online-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap: wrap;
+  justify-content:center;
+}
+.online-action.option-btn{
+  min-width: min(220px, 90vw);
+  max-width: 320px;
+}
+.online-join{
+  margin-top: 10px;
+}
+.online-status{
+  margin-top: 14px;
+  text-align:left;
+}
+.online-status-head{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.online-status-title{
+  font-weight: 900;
+}
+.online-status-text{
+  opacity: 0.86;
+}
+.online-players{
+  display:flex;
+  gap:10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.online-player-slot{
+  flex:1;
+  min-width: min(210px, 100%);
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px dashed rgba(240,200,80,0.35);
+  background: rgba(0,0,0,0.22);
+}
+.online-player-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--stone-dark);
+  background: rgba(240,200,80,0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+.online-player-name{
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.online-roomcode-row{
+  margin-top: 12px;
+}
+.online-roomcode{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top: 8px;
+}
+.online-roomcode-code{
+  font-weight: 1000;
+  letter-spacing: 0.20em;
+  font-size: 1.15rem;
+}
+.online-copy{
+  border: 1px solid rgba(240,200,80,0.45);
+  background: rgba(0,0,0,0.25);
+}
+.online-copy:hover{
+  background: rgba(240,200,80,0.12);
+}
+.online-start.option-btn{
+  width:100%;
+  margin-top: 12px;
+}
+
+/* Recent rooms chips */
+.online-recent{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,0.14);
+}
+.online-recent-title{
+  font-weight: 900;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+.online-recent-list{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.online-room-chip{
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(240,200,80,0.35);
+  background: rgba(0,0,0,0.18);
+  color: var(--text-light);
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.online-room-chip:hover{
+  background: rgba(240,200,80,0.12);
+}
+.online-rejoin.option-btn{
+  width: 100%;
+  margin-top: 10px;
+}
+
 </style>
 <style nonce="tiddas">
 /* =========================================================
@@ -7904,6 +8096,9 @@ body:has(.game-play-area.active) footer {
 #settings-fab::before { content: none !important; animation: none !important; }
 
 </style>
+
+    <!-- Parse JS SDK (Back4App) -->
+    <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 </head>
 <body>
 <!-- ===== LANGUAGE SPLASH SCREEN ===== -->
@@ -8045,10 +8240,10 @@ Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions
 <div class="selection-area" id="mode-selection-area">
 <h2 data-i18n="howToPlay">Comment souhaitez-vous jouer ?</h2>
 <div class="options-group">
-<button class="option-btn" disabled="" id="play-online-btn">
+<button class="option-btn" id="play-online-btn">
 <span aria-hidden="true" class="icon">🌐</span>
 <span data-i18n="playOnline">Jouer en ligne</span>
-<span data-i18n="playOnlineDesc">Bientôt disponible</span>
+<span data-i18n="playOnlineDesc">Créer ou rejoindre une partie</span>
 </button>
 <button class="option-btn" id="play-ai-btn">
 <span aria-hidden="true" class="icon">🤖</span>
@@ -8067,6 +8262,100 @@ Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions
 </button>
 </div>
 <button class="back-btn" data-i18n="backToVersions" id="back-to-versions-btn">Retour aux versions</button>
+</div>
+<div class="selection-area online-lobby" id="online-lobby-area">
+  <h2 data-i18n="onlineTitle">Multijoueur en ligne</h2>
+  <p class="online-subtitle" data-i18n="onlineSubtitle">Créez un salon et partagez le code, ou rejoignez un salon existant.</p>
+
+  <div class="online-grid">
+    <div class="online-card online-card-profile">
+      <div class="online-card-header">
+        <div class="online-card-title" data-i18n="onlineProfileTitle">Profil</div>
+        <div class="online-card-desc" data-i18n="onlineProfileDesc">Ton pseudo sera affiché à l’adversaire</div>
+      </div>
+      <label class="online-label" for="online-your-name" data-i18n="onlineYourNameLabel">Ton nom</label>
+      <input class="online-input" id="online-your-name" maxlength="24" autocomplete="nickname" inputmode="text" data-i18n-placeholder="onlineNamePlaceholder" placeholder="Ex: Boussad" />
+      <div class="online-hint" data-i18n="onlineNameHint">Ce nom est mémorisé sur ton appareil.</div>
+    </div>
+
+    <div class="online-card online-card-room">
+      <div class="online-card-header">
+        <div class="online-card-title" data-i18n="onlineRoomTitle">Salon</div>
+        <div class="online-card-desc" data-i18n="onlineRoomDesc">Crée un code ou rejoins un code existant</div>
+      </div>
+
+      <div class="online-actions">
+        <button class="option-btn online-action" id="online-create-room" type="button">
+          <span aria-hidden="true" class="icon">➕</span>
+          <span data-i18n="onlineCreate">Créer un salon</span>
+          <span data-i18n="onlineCreateDesc">Génère un code</span>
+        </button>
+
+        <button class="option-btn online-action" id="online-join-room" type="button">
+          <span aria-hidden="true" class="icon">🔑</span>
+          <span data-i18n="onlineJoin">Rejoindre</span>
+          <span data-i18n="onlineJoinDesc">Entrer un code</span>
+        </button>
+      </div>
+
+      <div id="online-join-panel" class="online-join" style="display:none;">
+        <label class="online-label" for="online-room-code" data-i18n="onlineRoomCode">Code du salon</label>
+        <input class="online-input" id="online-room-code" inputmode="latin" autocomplete="off" spellcheck="false"
+               placeholder="ABC123" style="text-transform:uppercase" />
+        <button class="option-btn online-action online-connect" id="online-connect" type="button">
+          <span aria-hidden="true" class="icon">🔌</span>
+          <span data-i18n="onlineConnect">Connexion</span>
+          <span data-i18n="onlineConnectDesc">Se connecter au salon</span>
+        </button>
+      </div>
+
+      <div class="online-recent" id="online-recent-wrap" style="display:none;">
+        <div class="online-recent-title" data-i18n="onlineRecentRooms">Salons récents</div>
+        <div class="online-recent-list" id="online-recent-list"></div>
+      </div>
+
+      <button class="option-btn online-action online-rejoin" id="online-rejoin-last" style="display:none;" type="button">
+        <span aria-hidden="true" class="icon">↩️</span>
+        <span data-i18n="onlineRejoinLast">Reprendre le dernier salon</span>
+        <span data-i18n="onlineRejoinLastDesc">Reconnexion rapide</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div id="online-status" class="online-card online-status">
+    <div class="online-status-head">
+      <div class="online-status-title" data-i18n="onlineStatusTitle">Statut</div>
+      <div id="online-status-text" class="online-status-text">—</div>
+    </div>
+
+    <div class="online-players">
+      <div class="online-player-slot">
+        <span class="online-player-badge">J1</span>
+        <span id="online-p1-name" class="online-player-name">—</span>
+      </div>
+      <div class="online-player-slot">
+        <span class="online-player-badge">J2</span>
+        <span id="online-p2-name" class="online-player-name">—</span>
+      </div>
+    </div>
+
+    <div id="online-roomcode-row" class="online-roomcode-row" style="display:none;">
+      <div class="online-roomcode-label" data-i18n="onlineShare">Partagez ce code :</div>
+      <div class="online-roomcode">
+        <div id="online-roomcode" class="online-roomcode-code">—</div>
+        <button class="toolbar-btn online-copy" id="online-copy-code" type="button" aria-label="Copier le code" data-i18n-aria-label="onlineCopyCodeAria">📋</button>
+      </div>
+    </div>
+
+    <button class="option-btn online-action online-start" id="online-start" style="display:none;" type="button">
+      <span aria-hidden="true" class="icon">▶️</span>
+      <span data-i18n="onlineStart">Lancer la partie</span>
+      <span data-i18n="onlineStartDesc">Quand 2 joueurs sont connectés</span>
+    </button>
+  </div>
+
+  <button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-online-btn" type="button">Retour aux modes</button>
 </div>
 <div class="selection-area" id="ai-difficulty-selection-area">
 <h2 data-i18n="chooseAIDifficulty">Choisir la difficulté de l'ordinateur</h2>
@@ -8751,6 +9040,508 @@ i.replaceWith(s);
 (function() {
 'use strict';
 
+// ============================================================
+// ============================================================
+// === ONLINE MULTIPLAYER (Back4App) — NO LiveQuery (polling) ===
+// ============================================================
+// Back4App keys (App Settings -> Security & Keys)
+// IMPORTANT: Do NOT put Master Key in the browser.
+const BACK4APP_APP_ID = "mLDVvlPNA6LyRawtxNvVztC4ch3l5V5ePjQP8SLM";        // <-- set me
+const BACK4APP_JS_KEY = "Um86a8uC2OLlD13dh5V8ijiscAXvOHHydjO4ZQot";        // <-- set me (JavaScript Key)
+const BACK4APP_SERVER_URL = "https://parseapi.back4app.com"; // default API URL
+const BACK4APP_CLASS = "GameMatch"; // class/table name in Back4App
+
+// Client identity (per device) to assign roles in a 1v1 room
+const ONLINE_PLAYER_ID_KEY = "tiddas_online_player_id_v1";
+function _getOrCreatePlayerId() {
+  try {
+    const existing = localStorage.getItem(ONLINE_PLAYER_ID_KEY);
+    if (existing) return existing;
+    const id = (window.crypto && typeof window.crypto.randomUUID === 'function')
+      ? window.crypto.randomUUID()
+      : ("p_" + Math.random().toString(36).slice(2) + Date.now().toString(36));
+    localStorage.setItem(ONLINE_PLAYER_ID_KEY, id);
+    return id;
+  } catch (_) {
+    return "p_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+}
+const onlinePlayerId = _getOrCreatePlayerId();
+
+// Persist last used room code / match id (lets users rejoin after leaving)
+const ONLINE_LAST_ROOM_KEY = "tiddas_online_last_room_v1";
+function saveLastOnlineRoom(info) {
+  try {
+    const payload = {
+      v: 1,
+      code: String(info?.code || ''),
+      matchId: String(info?.matchId || ''),
+      at: Date.now()
+    };
+    if (!payload.code && !payload.matchId) return;
+    localStorage.setItem(ONLINE_LAST_ROOM_KEY, JSON.stringify(payload));
+  } catch (_) {}
+}
+function loadLastOnlineRoom() {
+  try {
+    const raw = localStorage.getItem(ONLINE_LAST_ROOM_KEY);
+    const parsed = raw ? safeJSONParse(raw, null) : null;
+    if (!parsed || parsed.v !== 1) return null;
+    return { code: String(parsed.code || ''), matchId: String(parsed.matchId || ''), at: Number(parsed.at || 0) };
+  } catch (_) { return null; }
+}
+function clearLastOnlineRoom() {
+  try { localStorage.removeItem(ONLINE_LAST_ROOM_KEY); } catch(_) {}
+}
+
+
+// Persist a small list of recent room codes (lets users save/reuse keys)
+const ONLINE_ROOMS_KEY = "tiddas_online_rooms_v1";
+function loadRecentOnlineRooms() {
+  try {
+    const raw = localStorage.getItem(ONLINE_ROOMS_KEY);
+    const parsed = raw ? safeJSONParse(raw, null) : null;
+    if (!parsed || parsed.v !== 1 || !Array.isArray(parsed.rooms)) return [];
+    return parsed.rooms
+      .map(r => ({ code: String(r.code || '').toUpperCase(), at: Number(r.at || 0) }))
+      .filter(r => !!r.code)
+      .sort((a, b) => (b.at || 0) - (a.at || 0))
+      .slice(0, 8);
+  } catch (_) { return []; }
+}
+function addRecentOnlineRoom(code) {
+  try {
+    const c = String(code || '').trim().toUpperCase();
+    if (!c) return;
+    const rooms = loadRecentOnlineRooms().filter(r => r.code !== c);
+    rooms.unshift({ code: c, at: Date.now() });
+    const payload = { v: 1, rooms: rooms.slice(0, 8) };
+    localStorage.setItem(ONLINE_ROOMS_KEY, JSON.stringify(payload));
+  } catch (_) {}
+}
+function renderRecentOnlineRooms() {
+  try {
+    if (!onlineEls.recentWrap || !onlineEls.recentList) return;
+    const rooms = loadRecentOnlineRooms();
+    onlineEls.recentList.innerHTML = '';
+    if (!rooms.length) { _show(onlineEls.recentWrap, false); return; }
+    _show(onlineEls.recentWrap, true);
+    rooms.forEach(r => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'online-room-chip';
+      btn.textContent = r.code;
+      btn.onclick = () => {
+        if (onlineEls.inputCode) onlineEls.inputCode.value = r.code;
+        _show(onlineEls.joinPanel, true);
+        onlineEls.inputCode?.focus();
+      };
+      onlineEls.recentList.appendChild(btn);
+    });
+  } catch (_) {}
+}
+const ONLINE_NAME_KEY = "tiddas_online_name_v1";
+function _getOnlineNameRaw() {
+  try { return (onlineEls.inputName?.value || localStorage.getItem(ONLINE_NAME_KEY) || "").trim(); } catch(_) { return ""; }
+}
+function _getOnlineNameSafe(fallback) {
+  const raw = _getOnlineNameRaw();
+  const n = normalizeName(raw, "");
+  if (!n) return fallback || "";
+  try { localStorage.setItem(ONLINE_NAME_KEY, n); } catch(_) {}
+  if (onlineEls.inputName && onlineEls.inputName.value !== n) onlineEls.inputName.value = n;
+  return n;
+}
+
+let online = {
+  matchId: null,
+  room: null,
+  role: null, // 1 or 2
+  isHost: false,
+  connected: false,
+  ready: false,
+  suppressSend: false,
+  pollTimer: 0,
+  lastSeenRev: -1,
+  parseReady: false
+};
+
+const onlineEls = {
+  area: null, statusText: null, roomCodeRow: null, roomCode: null,
+  btnCreate: null, btnJoin: null, joinPanel: null, inputCode: null,
+  btnConnect: null, btnStart: null, btnCopy: null, btnBack: null,
+  inputName: null, p1Name: null, p2Name: null,
+  recentWrap: null, recentList: null, btnRejoinLast: null
+};
+
+function _isBack4AppConfigured() {
+  const a = (BACK4APP_APP_ID || '').trim();
+  const k = (BACK4APP_JS_KEY || '').trim();
+  return !!a && !!k && !/set me/i.test(a) && !/set me/i.test(k);
+}
+
+function _ensureParseReady() {
+  if (online.parseReady) return true;
+  if (!_isBack4AppConfigured()) return false;
+  if (!window.Parse) return false;
+  try {
+    // Normalize URL (no trailing slash)
+    const url = (BACK4APP_SERVER_URL || 'https://parseapi.back4app.com').trim().replace(/\/$/, '');
+    Parse.initialize(BACK4APP_APP_ID.trim(), BACK4APP_JS_KEY.trim());
+    Parse.serverURL = url;
+    online.parseReady = true;
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function _setOnlineStatus(msg) {
+  if (onlineEls.statusText) onlineEls.statusText.textContent = msg || '—';
+}
+function _show(el, yes) { if (!el) return; el.style.display = yes ? '' : 'none'; }
+function _randCode(len=6) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for (let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+
+function onlineDisconnect() {
+  if (online.pollTimer) { clearInterval(online.pollTimer); online.pollTimer = 0; }
+  online.matchId = null;
+  online.room = null;
+  online.role = null;
+  online.isHost = false;
+  online.connected = false;
+  online.ready = false;
+  online.suppressSend = false;
+  online.lastSeenRev = -1;
+}
+
+async function _fetchMatchByCode(code) {
+  const q = new Parse.Query(BACK4APP_CLASS);
+  q.equalTo('code', code);
+  q.descending('createdAt');
+  return await q.first();
+}
+
+async function _fetchMatchById(id) {
+  const q = new Parse.Query(BACK4APP_CLASS);
+  return await q.get(id);
+}
+
+function _applyLobbyStateFromMatch(match) {
+  const status = match.get('status') || 'waiting';
+  const p1 = match.get('p1Id') || null;
+  const p2 = match.get('p2Id') || null;
+
+  const p1Name = match.get('p1Name') || null;
+  const p2Name = match.get('p2Name') || null;
+  if (onlineEls.p1Name) onlineEls.p1Name.textContent = p1Name || '—';
+  if (onlineEls.p2Name) onlineEls.p2Name.textContent = p2Name || '—';
+
+  // Determine role if not already set
+  if (!online.role) {
+    if (p1 === onlinePlayerId) { online.role = 1; online.isHost = true; }
+    else if (p2 === onlinePlayerId) { online.role = 2; online.isHost = false; }
+  }
+
+  online.ready = !!(p1 && p2);
+
+  if (online.ready) {
+    _setOnlineStatus(online.isHost ? t('onlineStatusTwoPlayersHost', '2 joueurs connectés. Tu peux lancer la partie.') : t('onlineStatusTwoPlayersGuest', '2 joueurs connectés. En attente du lancement…'));
+    _show(onlineEls.btnStart, !!online.isHost && status !== 'playing' && status !== 'finished');
+  } else {
+    _setOnlineStatus(online.isHost ? t('onlineStatusCreatedHost', 'Salon créé. Partage le code et attends un adversaire…') : t('onlineStatusConnecting', 'Connexion…'));
+    _show(onlineEls.btnStart, false);
+  }
+}
+
+function _startPolling() {
+  if (online.pollTimer) return;
+  online.pollTimer = setInterval(async () => {
+    if (!online.connected || !online.matchId) return;
+    try {
+      const match = await _fetchMatchById(online.matchId);
+      _applyLobbyStateFromMatch(match);
+
+      const rev = Number(match.get('rev') || 0);
+      if (rev !== online.lastSeenRev) {
+        online.lastSeenRev = rev;
+        const payload = match.get('payload') || null;
+
+        if (payload && payload.state) {
+          onlineApplyState(payload);
+          // If we received game state, jump into the game UI
+          if (typeof showScreen === 'function') showScreen('game-play-area');
+        }
+      }
+    } catch (e) {
+      // network / permission errors
+      _setOnlineStatus(t('onlineNetworkError', "Erreur réseau Back4App. Vérifie les permissions (CLP) et ta connexion."));
+    }
+  }, 800);
+}
+
+async function onlineConnectToRoom_Back4App(code, creating) {
+  code = String(code || '').trim().toUpperCase();
+  if (!code) return;
+
+  if (!_ensureParseReady()) {
+    _setOnlineStatus(t('onlineParseNotReady', "Back4App n'est pas configuré ou Parse SDK non chargé."));
+    return;
+  }
+
+  onlineDisconnect();
+  online.room = code;
+  _show(onlineEls.roomCodeRow, true);
+  if (onlineEls.roomCode) onlineEls.roomCode.textContent = code;
+  _show(onlineEls.btnStart, false);
+
+  try {
+    if (creating) {
+      _setOnlineStatus(t('onlineCreatingRoom', 'Création du salon {code}…').replace('{code}', code));
+      const existing = await _fetchMatchByCode(code);
+      if (existing) throw new Error(t('onlineCodeAlreadyUsed', 'Code déjà utilisé. Réessaie avec un autre code.'));
+
+      const match = new Parse.Object(BACK4APP_CLASS);
+      match.set('code', code);
+      match.set('status', 'waiting');
+      match.set('p1Id', onlinePlayerId);
+      match.set('p1Name', _getOnlineNameSafe('Joueur 1'));
+      match.set('p2Id', null);
+      match.set('p2Name', null);
+      match.set('variant', variant || 'TIDDEST-no-diag');
+      match.set('rev', 0);
+      match.set('payload', null);
+
+      await match.save();
+
+      online.matchId = match.id;
+      try { saveLastOnlineRoom({ code, matchId: match.id }); addRecentOnlineRoom(code); renderRecentOnlineRooms(); } catch(_) {}
+      online.role = 1;
+      online.isHost = true;
+      online.connected = true;
+      online.ready = false;
+
+      _setOnlineStatus(t('onlineCreatedShare', 'Salon créé. Partage le code : {code}').replace('{code}', code));
+    } else {
+      _setOnlineStatus(t('onlineConnectingRoom', 'Connexion au salon {code}…').replace('{code}', code));
+      const match = await _fetchMatchByCode(code);
+      if (!match) throw new Error(t('onlineRoomNotFound', 'Salon introuvable. Vérifie le code.'));
+
+      const status = match.get('status') || 'waiting';
+      const p1 = match.get('p1Id') || null;
+      const p2 = match.get('p2Id') || null;
+
+      if (status === 'finished') throw new Error(t('onlineGameFinished', 'Cette partie est terminée.'));
+
+      // If same device rejoining
+      if (p1 === onlinePlayerId) {
+        online.role = 1; online.isHost = true;
+        // best-effort: store name if missing
+        if (!match.get('p1Name')) { match.set('p1Name', _getOnlineNameSafe('Joueur 1')); await match.save(); }
+      } else if (p2 === onlinePlayerId) {
+        online.role = 2; online.isHost = false;
+        if (!match.get('p2Name')) { match.set('p2Name', _getOnlineNameSafe('Joueur 2')); await match.save(); }
+      } else if (!p2) {
+        match.set('p2Id', onlinePlayerId);
+        match.set('p2Name', _getOnlineNameSafe('Joueur 2'));
+        if (status === 'waiting') match.set('status', 'ready');
+        await match.save();
+        online.role = 2; online.isHost = false;
+      } else {
+        throw new Error(t('onlineRoomFull', 'Salon complet (2 joueurs).'));
+      }
+
+      online.matchId = match.id;
+      try { saveLastOnlineRoom({ code, matchId: match.id }); addRecentOnlineRoom(code); renderRecentOnlineRooms(); } catch(_) {}
+      online.connected = true;
+      online.ready = !!(match.get('p1Id') && match.get('p2Id'));
+
+      _applyLobbyStateFromMatch(match);
+
+      // If a game already started, apply latest state immediately
+      const payload = match.get('payload') || null;
+      if (payload && payload.state) {
+        online.lastSeenRev = Number(match.get('rev') || 0);
+        onlineApplyState(payload);
+        if (typeof showScreen === 'function') showScreen('game-play-area');
+      }
+    }
+
+    online.lastSeenRev = -1;
+    _startPolling();
+  } catch (e) {
+    onlineDisconnect();
+    _setOnlineStatus(t('onlineErrorPrefix', 'Erreur : {msg}').replace('{msg}', (e && e.message ? e.message : String(e))));
+  }
+}
+
+function onlineSendState(reason='sync') {
+  if (gameMode !== 'online') return;
+  if (!online.connected || online.suppressSend) return;
+  if (!_ensureParseReady()) return;
+  if (!online.matchId) return;
+
+  // build payload snapshot
+  const payload = {
+    reason,
+    room: online.room,
+    variant,
+    state,
+    meta: { player1Name, player2Name, turn: state?.turn ?? null, at: Date.now() }
+  };
+
+  // Fire-and-forget: update room payload + increment revision
+  (async () => {
+    try {
+      const match = new Parse.Object(BACK4APP_CLASS);
+      match.id = online.matchId;
+
+      match.set('payload', JSON.parse(JSON.stringify(payload)));
+      match.increment('rev', 1);
+
+      // Keep room status in sync (start -> playing, winner -> finished)
+      if (reason === 'start') match.set('status', 'playing');
+      if (state && state.winner) match.set('status', 'finished');
+
+      await match.save();
+    } catch (e) {
+      // don't crash the game UI
+      if (onlineEls.statusText) _setOnlineStatus(t('onlineSendError', "Erreur d'envoi. Vérifie ta connexion Back4App."));
+    }
+  })();
+}
+
+async function onlineStartMatch_Back4App() {
+  if (gameMode !== 'online') gameMode = 'online';
+  if (!online.connected || !online.matchId) { _setOnlineStatus(t('onlineNoRoomActive', "Pas de salon actif.")); return; }
+  if (!online.isHost) { _setOnlineStatus(t('onlineOnlyHostStart', "Seul l’hôte peut lancer la partie.")); return; }
+  if (!_ensureParseReady()) { _setOnlineStatus(t('onlineBack4AppNotReady', "Back4App n'est pas prêt.")); return; }
+
+  try {
+    const match = await _fetchMatchById(online.matchId);
+
+    const p1 = match.get('p1Id') || null;
+    const p2 = match.get('p2Id') || null;
+    if (!(p1 && p2)) { _setOnlineStatus(t('onlineWaitTwoPlayers', "Attends que 2 joueurs soient connectés.")); return; }
+
+    // Sync names from DB (or fallback)
+    const p1Name = match.get('p1Name') || translations[currentLanguage]?.defaultPlayer1 || 'Joueur 1';
+    const p2Name = match.get('p2Name') || translations[currentLanguage]?.defaultPlayer2 || 'Joueur 2';
+
+    // Variant from DB if present
+    const v = match.get('variant') || variant || 'TIDDEST-no-diag';
+    if (v && variantConfig[v]) variant = v;
+
+    // Init a fresh game state (no setup screen for online)
+    clearSave();
+    hideSaveNotification?.();
+
+    state = initState();
+    moveHistory = [];
+    boardPositionHistory = new Map();
+    forbiddenBoardPositions = new Set();
+
+    aiPlayerId = null;
+    humanPlayerId = online.role || 1;
+
+    player1Name = p1Name;
+    player2Name = p2Name;
+
+    updateGameInfoDisplay?.();
+    showScreen('game-play-area');
+    renderAll?.();
+    triggerNextAction?.();
+
+    // Persist room status + initial payload
+    onlineSendState('start');
+    _setOnlineStatus(t('onlineStartOK', "Partie lancée ✅"));
+  } catch (e) {
+    console.error(e);
+    _setOnlineStatus(t('onlineStartErrorPrefix', 'Erreur lancement : {msg}').replace('{msg}', (e?.message || String(e))));
+  }
+}
+
+function onlineApplyState(msg) {
+  if (!msg || !msg.state) return;
+
+  // Prevent echo (apply -> saveGame -> onlineSendState)
+  online.suppressSend = true;
+
+  try {
+    if (msg.variant && variantConfig[msg.variant]) variant = msg.variant;
+    gameMode = 'online';
+
+    if (msg.meta) {
+      if (msg.meta.player1Name) player1Name = msg.meta.player1Name;
+      if (msg.meta.player2Name) player2Name = msg.meta.player2Name;
+    }
+
+    // Forward-compatible merge (prevents missing fields when saves/payloads evolve)
+    const defaults = initState();
+    const s = msg.state || {};
+    const merged = {
+      ...defaults,
+      ...s,
+      counts: { ...defaults.counts, ...(s.counts || {}) },
+      captured: { ...defaults.captured, ...(s.captured || {}) }
+    };
+
+    // Normalize a few fields that sometimes arrive as undefined
+    if (!Array.isArray(merged.board)) merged.board = defaults.board.slice();
+    if (!Array.isArray(merged.highlightedMills)) merged.highlightedMills = [];
+    if (!Array.isArray(merged.lastMove)) merged.lastMove = [];
+
+    state = JSON.parse(JSON.stringify(merged));
+
+    aiPlayerId = null;
+    humanPlayerId = online.role || humanPlayerId;
+
+    // Full UI refresh (board + counts + badges + history, etc.)
+    if (typeof updateGameInfoDisplay === 'function') updateGameInfoDisplay();
+    if (typeof renderAll === 'function') renderAll();
+    else { renderBoard(); updateStatus(); }
+
+    // Ephemeral UI: auto-clear mill highlights locally (do not affect game logic)
+    try {
+      if (state && Array.isArray(state.highlightedMills) && state.highlightedMills.length > 0) {
+        if (online._millHiTimer) clearTimeout(online._millHiTimer);
+        online._millHiTimer = setTimeout(() => {
+          try {
+            if (gameMode !== 'online') return;
+            state.highlightedMills = [];
+            if (typeof renderBoard === 'function') renderBoard();
+          } catch(_) {}
+        }, 1500);
+      }
+    } catch(_) {}
+
+    // If remote state ends the game, show correct local end-screen (victory/defeat)
+
+    try {
+      const wo = document.getElementById('winner-overlay');
+      const alreadyShown = wo && wo.classList.contains('active');
+      if (state && state.winner && typeof endGame === 'function' && !alreadyShown) endGame();
+    } catch (_) {}
+
+    // Persist locally (but do not re-broadcast)
+    saveGame();
+  } catch (e) {
+    console.warn(e);
+  } finally {
+    online.suppressSend = false;
+  }
+}
+
+function isMyTurnOnline() {
+  if (gameMode !== 'online') return true;
+  const actor = (state && state.captureMode) ? state.turnForCapture : state?.turn;
+  return (online.role && actor) ? (online.role === actor) : true;
+}
+
 // Helpers DOM rapides
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -9059,7 +9850,7 @@ bessifTitle: "Učči Bessif",
 bessifDesc: "Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions. Quand vous formez un moulin, votre adversaire choisit un de ses pions à capturer.",
 howToPlay: "Comment souhaitez-vous jouer ?",
 playOnline: "Jouer en ligne",
-playOnlineDesc: "Bientôt disponible",
+playOnlineDesc: "Créer ou rejoindre une partie",
 playAI: "Jouer contre l'ordinateur",
 playAIDesc: "Affrontez une intelligence artificielle",
 playOffline: "Jouer hors-ligne",
@@ -9251,7 +10042,56 @@ ariaReplayExit: "Fermer",
 ariaReplayInfo: "Infos",
 woSubDefeat: "— Fin de partie —",
 woSubVictory: "— Victoire —",
-},
+
+onlineTitle: "Multijoueur en ligne",
+onlineProfileTitle: "Profil",
+onlineProfileDesc: "Ton pseudo sera affiché à l’adversaire",
+onlineYourNameLabel: "Ton nom",
+onlineNameHint: "Ce nom est mémorisé sur ton appareil.",
+onlineRoomTitle: "Salon",
+onlineRoomDesc: "Crée un code ou rejoins un code existant",
+onlineSubtitle: "Créez un salon et partagez le code, ou rejoignez un salon existant.",
+onlineCreate: "Créer un salon",
+onlineCreateDesc: "Génère un code",
+onlineJoin: "Rejoindre",
+onlineJoinDesc: "Entrer un code",
+onlineRoomCode: "Code du salon",
+onlineConnect: "Connexion",
+onlineConnectDesc: "Se connecter au salon",
+onlineStatusTitle: "Statut",
+onlineShare: "Partagez ce code :",
+onlineStart: "Lancer la partie",
+onlineStartDesc: "Quand 2 joueurs sont connectés",
+onlineNotConfigured: "Le serveur en ligne n'est pas configuré. Consultez le README pour renseigner l'URL.",
+onlineNamePlaceholder: "Ex: Boussad",
+onlineCopyCodeAria: "Copier le code",
+onlineChooseAction: "Choisis : créer ou rejoindre un salon.",
+onlineCodeCopied: "Code copié ✅",
+onlineStatusTwoPlayersHost: "2 joueurs connectés. Tu peux lancer la partie.",
+onlineStatusTwoPlayersGuest: "2 joueurs connectés. En attente du lancement…",
+onlineStatusCreatedHost: "Salon créé. Partage le code et attends un adversaire…",
+onlineStatusConnecting: "Connexion…",
+onlineCreatingRoom: "Création du salon {code}…",
+onlineCodeAlreadyUsed: "Code déjà utilisé. Réessaie avec un autre code.",
+onlineCreatedShare: "Salon créé. Partage le code : {code}",
+onlineConnectingRoom: "Connexion au salon {code}…",
+onlineRoomNotFound: "Salon introuvable. Vérifie le code.",
+onlineGameFinished: "Cette partie est terminée.",
+onlineRoomFull: "Salon complet (2 joueurs).",
+onlineNetworkError: "Erreur réseau Back4App. Vérifie les permissions (CLP) et ta connexion.",
+onlineParseNotReady: "Back4App n'est pas configuré ou Parse SDK non chargé.",
+onlineSendError: "Erreur d'envoi. Vérifie ta connexion Back4App.",
+onlineNoRoomActive: "Pas de salon actif.",
+onlineOnlyHostStart: "Seul l’hôte peut lancer la partie.",
+onlineBack4AppNotReady: "Back4App n'est pas prêt.",
+onlineWaitTwoPlayers: "Attends que 2 joueurs soient connectés.",
+onlineStartOK: "Partie lancée ✅",
+onlineStartErrorPrefix: "Erreur lancement : {msg}",
+onlineErrorPrefix: "Erreur : {msg}",
+onlineRecentRooms: "Salons récents",
+onlineRejoinLast: "Reprendre le dernier salon",
+onlineRejoinLastDesc: "Reconnexion rapide",
+notYourTurn: "Ce n'est pas ton tour.",},
 kab: {
 surrender: "Mayna",
 installApp: "Areṣṣi",
@@ -9294,7 +10134,7 @@ bessifTitle: "Učči Bessif",
 bessifDesc: "Am ilugan n TIDDEST, maca yerbeḥ win i wummi mmeččen ileqqafen.",
 howToPlay: "Amek tebɣiḍ ad turareḍ ?",
 playOnline: "Urar s internet",
-playOnlineDesc: "Ussan-a",
+playOnlineDesc: "Qqim ɣer teslaḍt d umeddakel ibaɛden ",
 playAI: "Urar mgal aselkim",
 playAIDesc: "Urar i yiman-ik",
 playOffline: "Urar war internet",
@@ -9381,7 +10221,7 @@ rulesBessifForcedMove: "Ur d ak d-iṣaḥ ara ad tneqleḍ aleqqaf ɣer wanda u
 footerHeritage: "Idles n yimaziɣen • Urar Aqbuṛ n Yeqbayliyen",
 footerCreator: "Iga-t",
 congratulations: "Ayuuuuz!",
-winnerMessage: "yerbeḥ !",
+winnerMessage: "i yerbeḥen!",
 replay: "Ɛiwed urar",
 statusPlayerTurn: "D nnuba n",
 statusChooseCapture: "fren aleqqaf n",
@@ -9402,7 +10242,7 @@ statusChooseOpponentPieceToCapture: "Ilaq-ak ad teferneḍ aleqqaf n WEXṢIM-IK
 aiCannotMove: "Aselkim yeḥbes, yexṣer !",
 statusConsecutiveBlocked: "Aleqqaf-a inaqel 3 tikkal tin ɣef tin! urar wayed.",
 youLost: "Txesreḍ 😭",
-aiWinsMessage: "yerbeḥ !",
+aiWinsMessage: "i yerbeḥen !",
 surrenderConfirm: "Tebɣiḍ ad tefkeḍ Mayna?",
 surrenderMessage: "yefka Mayna !",
 stats: "Igemmaḍ",
@@ -9461,7 +10301,7 @@ ariaReplayLast: "taggara",
 ariaSettingsFab: "Aseggem",
 ariaInstallBtn: "Areṣṣi n wurar",
 ariaModeGuide: "Awelleh",
-aboutTitle: "Fell-as n wurar",
+aboutTitle: "Ɣef wurar-a",
 aboutIntro: "Leqdic-ayi ɣef wurar-ayi, illa-d i wakken ad nesseḥbiber ɣef yiwen ugerruj d-ǧǧan lejdud i yidles n yiqbayliyen.",
 aboutP1: "<em>Tiddas</em>, asget n <em>Tiddest</em>, mačči d urar kan. D taẓuri n tmusni, d akayad n tiḥḥerci, yal aqeddim s wazal-is. Zik yal taslaḍt n tɛessast neɣ n tejmaɛt di tudrin n yiqbaliyen, ad tafeḍ tettwajerred tfelwit n Tiddest n 25 texxamin, zzin-d fell-as Qeccic Meccuc, ttemqabalen fel-as sin, tturaren s <em>ileqqafen</em>.",
 aboutP2: "Tasuta-w ahat ad tili gar tneggura i yesnen urar-a s wudem-is aqbuṛ : ɣef teslaḍt n taddert. Ass-a, tasnasit-a tefka-yas tudert tamaynut,  s rriḥa n wurar-nni n zik.",
@@ -9484,7 +10324,55 @@ ariaReplayExit: "Mdel",
 ariaReplayInfo: "Talɣut",
 woSubDefeat: "— Taggara n wurar —",
 woSubVictory: "— Rbeḥ —",
-},
+
+onlineTitle: "Urar d umeddakul s lebɛid",
+onlineProfileTitle: "Amaɣnu",
+onlineProfileDesc: "Isem-ik ad d-iban i umeddakul-ik",
+onlineYourNameLabel: "Isem-ik",
+onlineNameHint: "Isem-a yettwaḥraz .",
+onlineRoomTitle: "Taslaḍt",
+onlineRoomDesc: "Rnu tasarut neɣ kecem s yiwet yellan yakan",
+onlineSubtitle: "Bnu taslaḍt, teceyyeɛeḍ-as tasarut, neɣ rnu ɣer tin umeddakul-ik.",
+onlineCreate: "bnu taslaḍt",
+onlineCreateDesc: "Ceyyeɛ tasarut",
+onlineJoin: "Kcem",
+onlineJoinDesc: "Sekcem tasarut",
+onlineRoomCode: "Tasarut ",
+onlineConnect: "Tuqqna",
+onlineConnectDesc: "qqim ɣer teslaḍt",
+onlineStatusTitle: "Addad",
+onlineShare: "awi tasarut-a :",
+onlineStart: "Bdu urar",
+onlineStartDesc: "Qqimen-d i 2 yimyurar",
+onlineNamePlaceholder: "Amedya: Akli",
+onlineCopyCodeAria: "Glu tasarut",
+onlineChooseAction: "Fren: bnu neɣ qqim ɣer teslaḍt.",
+onlineCodeCopied: "Tasarut tettwanqal ✅",
+onlineStatusTwoPlayersHost: "2 yimyuraren qqimen-d. Tzemreḍ ad tebduḍ urar.",
+onlineStatusTwoPlayersGuest: "2 yimyuraren qqimen-d, arǧu ad ibdu urar…",
+onlineStatusCreatedHost: "taslaḍt tettwabna. Ceyyeɛ tasarut, rǧu ameddakul-ik…",
+onlineStatusConnecting: "Tuqqna…",
+onlineCreatingRoom: "Asnulfu n teslaḍt {tasarut}…",
+onlineCodeAlreadyUsed: "Tasarut tettwaseqdec yakan. Ԑreḍ tayeḍ.",
+onlineCreatedShare: "taslaḍt yettwabna. Ceyyeɛ tasarut : {code}",
+onlineConnectingRoom: "Tuqqna ɣer teslaḍt {tasarut}…",
+onlineRoomNotFound: "Ulac taslaḍt-ayi. senqed tasarut-ik.",
+onlineGameFinished: "Yekkfa Wurar.",
+onlineRoomFull: "Asalon yeččur (2 yimyuraren).",
+onlineNetworkError: "Tuccḍa n uzeṭṭa Back4App. Selken izerfan (CLP) akked tuqqna-inek.",
+onlineParseNotReady: "Back4App ur yettuseɣwer ara neɣ Parse ur yuli ara.",
+onlineSendError: "Tuccḍa deg tuznit. Senqed tuqqna Back4App.",
+onlineNoRoomActive: "Ulac taslaḍt iheyyan.",
+onlineOnlyHostStart: "Ala win yebnan taslaḍt (host) i yezmeren ad yebdu urar.",
+onlineBack4AppNotReady: "Back4App ur yewjid ara.",
+onlineWaitTwoPlayers: "Rǧu alamma qqnen-d i 2 yimyuraren.",
+onlineStartOK: "yebda wurar ✅",
+onlineStartErrorPrefix: "Tuccḍa n beddu : {msg}",
+onlineErrorPrefix: "Tuccḍa : {msg}",
+onlineRecentRooms: "tislaḍin n yakan",
+onlineRejoinLast: "Uɣal ɣer teslaḍ-t taneggarut",
+onlineRejoinLastDesc: "Tuqqna s tazzla",
+notYourTurn: "Mačči d nnuba-k.",},
 en: {
 playSpectator: "Spectator Mode",
 installApp: "Install",
@@ -9523,7 +10411,7 @@ bessifTitle: "Učči Bessif",
 bessifDesc: "Same rules as TIDDEST. Reversed victory: win by losing all your pieces. When you form a mill, your opponent chooses one of their pieces to be captured.",
 howToPlay: "How would you like to play?",
 playOnline: "Play Online",
-playOnlineDesc: "Coming soon",
+playOnlineDesc: "Create or join a match",
 playAI: "Play vs Computer",
 playAIDesc: "Challenge an artificial intelligence",
 playOffline: "Play Offline",
@@ -9708,7 +10596,56 @@ ariaReplayExit: "Close",
 ariaReplayInfo: "Info",
 woSubDefeat: "— Game over —",
 woSubVictory: "— Victory —",
-}
+
+onlineTitle: "Online multiplayer",
+onlineProfileTitle: "Profile",
+onlineProfileDesc: "Your nickname will be shown to your opponent",
+onlineYourNameLabel: "Your name",
+onlineNameHint: "This name is saved on your device.",
+onlineRoomTitle: "Room",
+onlineRoomDesc: "Create a code or join an existing one",
+onlineSubtitle: "Create a room and share the code, or join an existing one.",
+onlineCreate: "Create room",
+onlineCreateDesc: "Generates a code",
+onlineJoin: "Join",
+onlineJoinDesc: "Enter a code",
+onlineRoomCode: "Room code",
+onlineConnect: "Connect",
+onlineConnectDesc: "Connect to room",
+onlineStatusTitle: "Status",
+onlineShare: "Share this code:",
+onlineStart: "Start match",
+onlineStartDesc: "When 2 players are connected",
+onlineNotConfigured: "Online server is not configured. See README to set the URL.",
+onlineNamePlaceholder: "e.g., Boussad",
+onlineCopyCodeAria: "Copy the code",
+onlineChooseAction: "Choose: create or join a room.",
+onlineCodeCopied: "Code copied ✅",
+onlineStatusTwoPlayersHost: "2 players connected. You can start the game.",
+onlineStatusTwoPlayersGuest: "2 players connected. Waiting for the host to start…",
+onlineStatusCreatedHost: "Room created. Share the code and wait for an opponent…",
+onlineStatusConnecting: "Connecting…",
+onlineCreatingRoom: "Creating room {code}…",
+onlineCodeAlreadyUsed: "Code already used. Try another code.",
+onlineCreatedShare: "Room created. Share the code: {code}",
+onlineConnectingRoom: "Connecting to room {code}…",
+onlineRoomNotFound: "Room not found. Check the code.",
+onlineGameFinished: "This game is finished.",
+onlineRoomFull: "Room is full (2 players).",
+onlineNetworkError: "Back4App network error. Check permissions (CLP) and your connection.",
+onlineParseNotReady: "Back4App isn't configured or Parse SDK isn't loaded.",
+onlineSendError: "Send error. Check your Back4App connection.",
+onlineNoRoomActive: "No active room.",
+onlineOnlyHostStart: "Only the host can start the game.",
+onlineBack4AppNotReady: "Back4App isn't ready.",
+onlineWaitTwoPlayers: "Wait until 2 players are connected.",
+onlineStartOK: "Game started ✅",
+onlineStartErrorPrefix: "Start error: {msg}",
+onlineErrorPrefix: "Error: {msg}",
+onlineRecentRooms: "Recent rooms",
+onlineRejoinLast: "Rejoin last room",
+onlineRejoinLastDesc: "Quick reconnect",
+notYourTurn: "Not your turn.",}
 };
 // --- DEEP COPY HELPER ---
 function deepCopy(obj) {
@@ -9876,6 +10813,13 @@ const guidedBtn = document.getElementById('guided-btn');
 if (guidedBtn) {
 guidedBtn.setAttribute('aria-label', tr.ariaModeGuide || 'Mode guidé');
 guidedBtn.title = tr.ariaModeGuide || 'Mode guidé';
+}
+// Online copy code aria/title
+const oCopy = document.getElementById('online-copy-code');
+if (oCopy) {
+  const lbl = tr.onlineCopyCodeAria || 'Copier le code';
+  oCopy.setAttribute('aria-label', lbl);
+  oCopy.title = lbl;
 }
 // ── Color section label (mode-aware) ────────────────────────────
 const colorSectionLabel = document.getElementById('color-section-label');
@@ -10514,11 +11458,16 @@ if (state.selected !== null && state.selected !== prevSelected) {
 playSound('select');
 }
 }
-saveGame();
 }
 
 
 function handleUndo() {
+// Online multiplayer: only act on your turn
+if (gameMode === 'online' && !isMyTurnOnline()) {
+  if (typeof showStatusError === 'function') showStatusError('notYourTurn');
+  return;
+}
+
 if (undoBtn.disabled) return;
 if (moveHistory.length === 0) return;
 
@@ -10539,6 +11488,7 @@ if (moveLog.length > 0) {
 moveLog.pop(); renderMoveLog();
 }
 renderAll();
+saveGame();
 if (!state.winner) triggerNextAction();
 }
 
@@ -10562,28 +11512,69 @@ handleCapture(i);
 }
 
 function handlePlacement(i) {
-if (state.board[i] !== null) {
-showStatusError('statusAlreadyOccupied'); moveHistory.pop(); return;
-}
-if (state.counts[state.turn] <= 0) {
-showStatusError('statusNoPiecesToPlace'); moveHistory.pop(); return;
-}
+  // Online multiplayer: only act on your turn
+  if (gameMode === 'online' && !isMyTurnOnline()) {
+    if (typeof showStatusError === 'function') showStatusError('notYourTurn');
+    return;
+  }
 
-const tempBoard = [...state.board];
-tempBoard[i] = state.turn;
-if (formsForbiddenPlacementAlignment(i, state.turn, tempBoard)) {
-showStatusError('statusPlacementAlignForbidden');
-moveHistory.pop();
-return;
-}
+  if (state.board[i] !== null) {
+    showStatusError('statusAlreadyOccupied'); moveHistory.pop(); return;
+  }
+  if (state.counts[state.turn] <= 0) {
+    showStatusError('statusNoPiecesToPlace'); moveHistory.pop(); return;
+  }
 
-state.board[i] = state.turn;
-state.counts[state.turn]--;
-animateStonePlacement(i, state.turn);
-endTurn();
+  const originalBoard = [...state.board];
+
+  const tempBoard = [...state.board];
+  tempBoard[i] = state.turn;
+  if (formsForbiddenPlacementAlignment(i, state.turn, tempBoard)) {
+    showStatusError('statusPlacementAlignForbidden');
+    moveHistory.pop();
+    return;
+  }
+
+  state.board[i] = state.turn;
+  state.counts[state.turn]--;
+  animateStonePlacement(i, state.turn);
+
+  // Detect mills formed during PLACEMENT as well (important for online sync)
+  const formedMills = findAllMills(originalBoard, state.board, i, i, state.turn);
+
+  if (formedMills.length > 0) {
+    const placer = state.turn;
+
+    state.captureMode = true;
+    state.pendingCaptures = formedMills.length;
+    state.turnForCapture = cfg().isInverseWin ? (3 - placer) : placer;
+    state.highlightedMills = formedMills.flat();
+
+    const emoji = cfg().isInverseWin ? '😋' : 'far fa-grin-beam';
+    showEphemeralBubbleMessage('ephemeralMill', emoji, state.turnForCapture);
+
+    renderBoard();
+    updateUndoButtonState();
+    setTimeout(() => {
+      state.highlightedMills = [];
+      renderBoard();
+    }, 1500);
+
+    updateStatus();
+    saveGame(); // <-- crucial for online sync
+    triggerNextAction();
+  } else {
+    endTurn();
+  }
 }
 
 function handleMove(i) {
+// Online multiplayer: only act on your turn
+if (gameMode === 'online' && !isMyTurnOnline()) {
+  if (typeof showStatusError === 'function') showStatusError('notYourTurn');
+  return;
+}
+
 if (state.selected === null) {
 if (state.board[i] === state.turn) {
 // ── Règle : pion joué 3× de suite interdit ──
@@ -10673,6 +11664,7 @@ state.highlightedMills = []; renderBoard();
 }, 1500);
 
 updateStatus();
+saveGame();
 triggerNextAction();
 } else {
 endTurn();
@@ -10690,6 +11682,12 @@ updateStatus();
 }
 
 function handleCapture(idxToCapture) {
+// Online multiplayer: only act on your turn
+if (gameMode === 'online' && !isMyTurnOnline()) {
+  if (typeof showStatusError === 'function') showStatusError('notYourTurn');
+  return;
+}
+
 const capturerTurn = state.turnForCapture;
 // Undo behavior: a capture is part of the same "turn transaction" as the move/placement that created it.
 // We deliberately DO NOT push a new snapshot here, otherwise undo can revert to a captureMode state and lock the player.
@@ -10719,6 +11717,7 @@ state.pendingCaptures--;
 
 if (state.pendingCaptures > 0) {
 renderAll();
+saveGame();
 triggerNextAction();
 } else {
 state.captureMode = false;
@@ -10732,18 +11731,30 @@ endTurn();
 }
 
 function handleSurrender() {
-if (state.winner) return;
-const winnerId = 3 - state.turn;
-state.winner = winnerId;
-const p1NameForStatus = p1DisplayName.textContent.split(' (')[0];
-const p2NameForStatus = p2DisplayName.textContent.split(' (')[0];
+  // Online multiplayer: only act on your turn
+  if (gameMode === 'online' && !isMyTurnOnline()) {
+    if (typeof showStatusError === 'function') showStatusError('notYourTurn');
+    return;
+  }
 
-const winnerName = (winnerId === 1) ? p1NameForStatus: p2NameForStatus;
-const winMessage = `${winnerName} ${translations[currentLanguage].winnerMessage}`;
-const surrendererName = state.turn === 1 ? p1NameForStatus: p2NameForStatus;
-statusDiv.textContent = `${surrendererName} ${translations[currentLanguage].surrenderMessage}`;
-showWinnerAnimation(translations[currentLanguage].congratulations, winMessage, false);
-updateUndoButtonState();
+  if (state.winner) return;
+
+  const surrenderer = state.turn;
+  const winnerId = 3 - surrenderer;
+  state.winner = winnerId;
+
+  const p1NameForStatus = p1DisplayName.textContent.split(' (')[0];
+  const p2NameForStatus = p2DisplayName.textContent.split(' (')[0];
+  const surrendererName = surrenderer === 1 ? p1NameForStatus : p2NameForStatus;
+
+  statusDiv.textContent = `${surrendererName} ${translations[currentLanguage].surrenderMessage}`;
+
+  // Use unified end-game UI so each device sees Victory/Defeat correctly in online mode.
+  if (typeof endGame === 'function') endGame();
+
+  updateUndoButtonState();
+  saveGame();
+  if (gameMode === 'online') { try { onlineSendState('surrender'); } catch(_) {} }
 }
 
 function endTurn() {
@@ -10766,22 +11777,32 @@ triggerNextAction();
 }
 
 function endGame() {
-let finalMessage = "";
-let finalWinnerName = "";
-let isDefeat = false;
-const winnerName = (state.winner === 1) ? p1DisplayName.textContent.split(' (')[0]: p2DisplayName.textContent.split(' (')[0];
+  let finalMessage = "";
+  let finalWinnerName = "";
+  let isDefeat = false;
 
-if (gameMode === 'ai' && state.winner === aiPlayerId) {
-isDefeat = true;
-finalMessage = translations[currentLanguage].youLost;
-finalWinnerName = `${winnerName} ${translations[currentLanguage].aiWinsMessage}`;
-} else {
-finalMessage = translations[currentLanguage].congratulations;
-finalWinnerName = `${winnerName} ${translations[currentLanguage].winnerMessage}`;
-}
-showWinnerAnimation(finalMessage, finalWinnerName, isDefeat);
-updateStatus();
-updateUndoButtonState();
+  const winnerName = (state.winner === 1)
+    ? p1DisplayName.textContent.split(' (')[0]
+    : p2DisplayName.textContent.split(' (')[0];
+
+  if (gameMode === 'online') {
+    // In online mode, each device must see Victory or Defeat depending on its role.
+    const myRole = online?.role || humanPlayerId || 1;
+    isDefeat = (state.winner !== myRole);
+    finalMessage = isDefeat ? translations[currentLanguage].youLost : translations[currentLanguage].congratulations;
+    finalWinnerName = `${winnerName} ${translations[currentLanguage].winnerMessage}`;
+  } else if (gameMode === 'ai' && state.winner === aiPlayerId) {
+    isDefeat = true;
+    finalMessage = translations[currentLanguage].youLost;
+    finalWinnerName = `${winnerName} ${translations[currentLanguage].aiWinsMessage}`;
+  } else {
+    finalMessage = translations[currentLanguage].congratulations;
+    finalWinnerName = `${winnerName} ${translations[currentLanguage].winnerMessage}`;
+  }
+
+  showWinnerAnimation(finalMessage, finalWinnerName, isDefeat);
+  updateStatus();
+  updateUndoButtonState();
 }
 
 function triggerNextAction() {
@@ -12380,7 +13401,6 @@ if (toIdx !== null && fromIdx !== null) {
 // Utilise la logique existante (mill obligatoire, etc.)
 moveHistory.push(deepCopy(state));
 handleMove(toIdx);
-saveGame();
 } else {
 // Dépôt invalide : garder la sélection (plus agréable)
 state.selected = fromIdx;
@@ -12411,7 +13431,8 @@ updateStatus();
 // --- SAVE / LOAD GAME (localStorage) ---
 const SAVE_KEY = 'tiddas_save_v2';
 function saveGame() {
-if (!state || state.winner || gameMode === 'spectator') return;
+  // Online: broadcast snapshot after each local change
+if (!state || gameMode === 'spectator') return;
 try {
 const save = {
 state,
@@ -12424,6 +13445,8 @@ player2Name,
 moveLog: moveLog.slice(-20)
 };
 localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+  // Sync online snapshot (polling mode)
+  if (gameMode === 'online') { try { onlineSendState('autosave'); } catch(_) {} }
 } catch (e) {}
 }
 function clearSave() {
@@ -14396,10 +15419,18 @@ spectatorDelay = parseInt(e.target.value);
 // Save/Resume notification
 const btnResume = document.getElementById('btn-resume');
 const btnDiscard = document.getElementById('btn-discard');
-if (btnResume) btnResume.addEventListener('click', loadAndResume);
-if (btnDiscard) btnDiscard.addEventListener('click', () => {
-clearSave(); hideSaveNotification();
-});
+if (btnResume) {
+  const _resume = (e) => { try { e.preventDefault(); } catch(_) {} loadAndResume(); };
+  btnResume.addEventListener('click', _resume);
+  btnResume.addEventListener('pointerup', _resume, { passive: false });
+  btnResume.addEventListener('touchend', _resume, { passive: false });
+}
+if (btnDiscard) {
+  const _discard = (e) => { try { e.preventDefault(); } catch(_) {} clearSave(); hideSaveNotification(); };
+  btnDiscard.addEventListener('click', _discard);
+  btnDiscard.addEventListener('pointerup', _discard, { passive: false });
+  btnDiscard.addEventListener('touchend', _discard, { passive: false });
+}
 
 // Check for saved game on startup
 setTimeout(checkForSavedGame, 800);
@@ -14450,6 +15481,110 @@ gameMode = 'local';
 showScreen('player-setup-area');
 });
 
+
+
+const onlineBtn = document.getElementById('play-online-btn');
+if (onlineBtn) {
+  onlineBtn.addEventListener('click', () => {
+    gameMode = 'online';
+    showScreen('online-lobby-area');
+
+    // Bind elements (lazy)
+    onlineEls.area = document.getElementById('online-lobby-area');
+    onlineEls.statusText = document.getElementById('online-status-text');
+    onlineEls.roomCodeRow = document.getElementById('online-roomcode-row');
+    onlineEls.roomCode = document.getElementById('online-roomcode');
+    onlineEls.btnCreate = document.getElementById('online-create-room');
+    onlineEls.btnJoin = document.getElementById('online-join-room');
+    onlineEls.joinPanel = document.getElementById('online-join-panel');
+    onlineEls.inputCode = document.getElementById('online-room-code');
+    onlineEls.btnConnect = document.getElementById('online-connect');
+    onlineEls.btnStart = document.getElementById('online-start');
+    onlineEls.btnCopy = document.getElementById('online-copy-code');
+    onlineEls.btnBack = document.getElementById('back-to-modes-from-online-btn');
+    onlineEls.inputName = document.getElementById('online-your-name');
+    onlineEls.p1Name = document.getElementById('online-p1-name');
+    onlineEls.p2Name = document.getElementById('online-p2-name');
+
+    onlineEls.recentWrap = document.getElementById('online-recent-wrap');
+    onlineEls.recentList = document.getElementById('online-recent-list');
+    onlineEls.btnRejoinLast = document.getElementById('online-rejoin-last');
+
+    _setOnlineStatus(_isBack4AppConfigured() ? t('onlineChooseAction', "Choisis : créer ou rejoindre un salon.") : t('onlineNotConfigured', "Back4App n'est pas configuré (clés manquantes)."));
+
+    // Prefill last used room code to make rejoin/resume easier (especially on mobile)
+    try {
+      const last = loadLastOnlineRoom();
+      if (last && last.code && onlineEls.inputCode && !onlineEls.inputCode.value) {
+        onlineEls.inputCode.value = String(last.code).toUpperCase();
+        _show(onlineEls.joinPanel, true);
+      }
+    } catch(_) {}
+
+
+
+    // Recent rooms / quick rejoin
+    try { renderRecentOnlineRooms(); } catch(_) {}
+    try {
+      const lastRoom = loadLastOnlineRoom();
+      if (onlineEls.btnRejoinLast) {
+        _show(onlineEls.btnRejoinLast, !!(lastRoom && lastRoom.code));
+        onlineEls.btnRejoinLast.onclick = () => {
+          const c = String(lastRoom?.code || '').trim().toUpperCase();
+          if (!c) return;
+          if (onlineEls.inputCode) onlineEls.inputCode.value = c;
+          _show(onlineEls.joinPanel, false);
+          onlineConnectToRoom(c, false);
+        };
+      }
+    } catch(_) {}
+
+    // Disable online actions if not configured
+    const __onlineOk = _isBack4AppConfigured();
+    if (onlineEls.btnCreate) onlineEls.btnCreate.disabled = !__onlineOk;
+    if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = !__onlineOk;
+
+
+    if (onlineEls.btnBack) onlineEls.btnBack.onclick = () => { onlineDisconnect(); showScreen('mode-selection-area'); };
+    if (onlineEls.btnJoin) onlineEls.btnJoin.onclick = () => { _show(onlineEls.joinPanel, true); onlineEls.inputCode?.focus(); };
+
+    if (onlineEls.btnCreate) onlineEls.btnCreate.onclick = () => {
+      const code = _randCode(6);
+      if (onlineEls.inputCode) onlineEls.inputCode.value = code;
+      _show(onlineEls.joinPanel, false);
+      onlineConnectToRoom(code, true);
+    };
+
+    if (onlineEls.btnConnect) onlineEls.btnConnect.onclick = () => {
+      const code = (onlineEls.inputCode?.value || '').trim().toUpperCase();
+      if (!code) return;
+      onlineConnectToRoom(code, false);
+    };
+
+    if (onlineEls.btnCopy) onlineEls.btnCopy.onclick = async () => {
+      const c = online.room || onlineEls.roomCode?.textContent || '';
+      try { await navigator.clipboard.writeText(c); _setOnlineStatus(t('onlineCodeCopied', 'Code copié ✅')); } catch(_) {}
+    };
+
+    // Load & persist the local nickname (stored locally)
+    try {
+      const savedName = localStorage.getItem(ONLINE_NAME_KEY) || '';
+      if (onlineEls.inputName && !onlineEls.inputName.value) onlineEls.inputName.value = savedName;
+      if (onlineEls.inputName) {
+        onlineEls.inputName.addEventListener('input', () => {
+          try { localStorage.setItem(ONLINE_NAME_KEY, normalizeName(onlineEls.inputName.value, '')); } catch(_) {}
+        });
+      }
+    } catch(_) {}
+
+    if (onlineEls.btnStart) onlineEls.btnStart.onclick = () => { onlineStartMatch_Back4App(); };
+  });
+}
+
+function onlineConnectToRoom(code, creating) {
+  // Back4App (no LiveQuery) implementation — defined above
+  return onlineConnectToRoom_Back4App(code, creating);
+}
 document.querySelectorAll('.difficulty-btn').forEach(btn => btn.addEventListener('click', () => {
 aiDifficulty = parseInt(btn.dataset.level);
 if (gameMode === 'spectator') {
