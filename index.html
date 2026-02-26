@@ -1918,7 +1918,8 @@ opacity: 0;
 animation: woActionsIn .55s ease-out 2.1s forwards;
 }
 .wo-row {
-display: flex;
+  display: flex;
+  flex-wrap: wrap;
 gap: 8px;
 width: 100%;
 justify-content: center;
@@ -2097,6 +2098,11 @@ color: #b8860b; border-color: rgba(184,134,11,0.4);
 color: #c0392b; border-color: rgba(192,57,43,0.4);
 }
 
+
+
+/* ============================================================
+   Online lobby — CSS fusionné (voir bloc principal ci-dessous)
+   ============================================================ */
 
 /* ==================== ACCESSIBILITY TWEAKS ==================== */
 @media (prefers-reduced-motion: reduce) {
@@ -4886,195 +4892,819 @@ body.replay-active .replay-badge {
 }
 
 
+
 /* ============================================================
-   Online lobby (Multijoueur) — UI refresh
+   Online lobby — Design épuré v3
+   Mobile-first · 2-col desktop · Premium graphisme
    ============================================================ */
-.online-lobby .online-subtitle{
-  margin-top:-0.4rem;
-  opacity:0.86;
-  max-width: 60ch;
-  text-align:center;
+
+/* ── Variables locales ────────────────────────────────────── */
+.online-lobby {
+  --ol-gold:      #f0c850;
+  --ol-gold-dim:  rgba(240,200,80,0.18);
+  --ol-gold-line: rgba(240,200,80,0.22);
+  --ol-cyan:      #00e5ff;
+  --ol-cyan-dim:  rgba(0,229,255,0.10);
+  --ol-green:     #4cde80;
+  --ol-surface:   rgba(255,255,255,0.035);
+  --ol-surface2:  rgba(255,255,255,0.055);
+  --ol-border:    rgba(255,255,255,0.09);
+  --ol-border2:   rgba(255,255,255,0.06);
+  --ol-radius:    20px;
+  --ol-radius-sm: 13px;
+  --ol-radius-xs: 9px;
+  --ol-trans:     0.2s ease;
+  --ol-text-dim:  rgba(245,245,245,0.50);
+  --ol-num-color: rgba(240,200,80,0.38);
+  padding: clamp(12px, 4vw, 28px) clamp(10px, 4vw, 24px);
+  gap: 0;
 }
-.online-grid{
-  width:100%;
-  display:grid;
+/* Ne pas écraser display:none — flex uniquement quand la section est active */
+.selection-area.active.online-lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── En-tête ──────────────────────────────────────────────── */
+.ol-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.ol-header-icon {
+  width: 48px; height: 48px;
+  color: var(--ol-gold);
+  opacity: 0.7;
+  margin-bottom: 4px;
+  animation: ol-pulse 3s ease-in-out infinite;
+}
+@keyframes ol-pulse {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 0.85; transform: scale(1.06); }
+}
+.ol-title {
+  font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+  margin: 0;
+}
+.ol-subtitle {
+  font-size: clamp(0.82rem, 2.5vw, 0.92rem);
+  color: var(--ol-text-dim);
+  max-width: 38ch;
+  line-height: 1.5;
+  margin: 0;
+}
+.ol-global-msg {
+  font-size: 0.85rem;
+  color: var(--ol-cyan);
+  min-height: 1.2em;
+  margin: 2px 0 0;
+  transition: opacity var(--ol-trans);
+}
+.ol-global-msg:empty { opacity: 0; }
+
+/* ── Layout corps ─────────────────────────────────────────── */
+.ol-body {
+  width: 100%;
+  max-width: 860px;
+  display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
-  margin-top: 10px;
 }
-@media (min-width: 820px){
-  .online-grid{ grid-template-columns: 1fr 1fr; }
+@media (min-width: 860px) {
+  .ol-body {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 18px;
+  }
 }
-.online-card{
-  width:100%;
-  background: rgba(0,0,0,0.38);
-  border: 1.5px solid rgba(240,200,80,0.35);
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: inset 0 0 14px rgba(0,0,0,0.35), 0 10px 24px rgba(0,0,0,0.25);
-  backdrop-filter: blur(3px);
+
+/* ── Sections ─────────────────────────────────────────────── */
+.ol-col-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.online-card-header{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  margin-bottom: 10px;
+.ol-section {
+  background: var(--ol-surface);
+  border: 1px solid var(--ol-border);
+  border-radius: var(--ol-radius);
+  padding: clamp(16px, 4vw, 22px);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--ol-trans);
 }
-.online-card-title{
-  font-family: var(--font-title);
-  color: var(--text-gold);
-  font-size: 1.1rem;
-  letter-spacing: 1px;
+.ol-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ol-gold-line), transparent);
+  pointer-events: none;
 }
-.online-card-desc{
-  opacity: 0.78;
-  font-size: 0.95rem;
+.ol-section:focus-within { border-color: rgba(240,200,80,0.32); }
+
+/* ── Labels de section ────────────────────────────────────── */
+.ol-section-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ol-text-dim);
+  margin-bottom: 14px;
 }
-.online-label{
-  display:block;
-  font-weight: 800;
-  margin: 8px 0 6px;
+.ol-section-num {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--ol-num-color);
+  font-variant-numeric: tabular-nums;
 }
-.online-input{
-  width:100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(240,200,80,0.35);
-  background: rgba(0,0,0,0.35);
+
+/* ── Input pseudo ─────────────────────────────────────────── */
+.ol-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ol-input-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px; height: 18px;
+  color: var(--ol-text-dim);
+  pointer-events: none;
+  transition: color var(--ol-trans);
+}
+.ol-input-icon svg { width: 100%; height: 100%; display: block; }
+.ol-input {
+  width: 100%;
+  padding: 14px 14px 14px 44px;
+  border-radius: var(--ol-radius-sm);
+  border: 1.5px solid var(--ol-border);
+  background: rgba(0,0,0,0.28);
   color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 600;
   outline: none;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+  transition: border-color var(--ol-trans), box-shadow var(--ol-trans);
+  -webkit-appearance: none;
+  min-width: 0;
 }
-.online-input:focus{
-  border-color: rgba(0,255,255,0.7);
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.35), 0 0 0 3px rgba(0,255,255,0.18);
+.ol-input::placeholder { color: var(--ol-text-dim); }
+.ol-input:focus {
+  border-color: rgba(240,200,80,0.55);
+  box-shadow: 0 0 0 3px rgba(240,200,80,0.08);
 }
-.online-hint{
+.ol-input-wrap:focus-within .ol-input-icon { color: var(--ol-gold); }
+.ol-hint {
   margin-top: 8px;
-  opacity: 0.75;
-  font-size: 0.92rem;
+  font-size: 0.78rem;
+  color: var(--ol-text-dim);
 }
-.online-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap: wrap;
-  justify-content:center;
+
+/* ── Boutons d'action Créer / Rejoindre / Récents ─────────── */
+.ol-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
-.online-action.option-btn{
-  min-width: min(220px, 90vw);
-  max-width: 320px;
+.ol-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 10px;
+  min-height: 90px;
+  border-radius: var(--ol-radius-sm);
+  border: 1.5px solid var(--ol-border);
+  background: var(--ol-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: center;
+  transition: background var(--ol-trans), border-color var(--ol-trans), transform 0.15s;
+  touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
 }
-.online-join{
-  margin-top: 10px;
+.ol-action-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--ol-trans);
+  pointer-events: none;
 }
-.online-status{
-  margin-top: 14px;
-  text-align:left;
+.ol-action-create::after { background: radial-gradient(ellipse at center, rgba(240,200,80,0.12), transparent 70%); }
+.ol-action-join::after   { background: radial-gradient(ellipse at center, rgba(0,229,255,0.10), transparent 70%); }
+.ol-action-recent::after { background: radial-gradient(ellipse at center, rgba(76,222,128,0.10), transparent 70%); }
+.ol-action-rejoin::after { background: radial-gradient(ellipse at center, rgba(255,140,0,0.12), transparent 70%); }
+.ol-action-btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.18); }
+.ol-action-btn:hover::after { opacity: 1; }
+.ol-action-btn:active { transform: translateY(0); }
+.ol-action-btn.active {
+  border-color: rgba(240,200,80,0.5);
+  background: rgba(240,200,80,0.07);
 }
-.online-status-head{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+.ol-action-icon {
+  width: 26px; height: 26px;
+  color: var(--ol-text-dim);
 }
-.online-status-title{
-  font-weight: 900;
-}
-.online-status-text{
-  opacity: 0.86;
-}
-.online-players{
-  display:flex;
-  gap:10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-.online-player-slot{
-  flex:1;
-  min-width: min(210px, 100%);
-  display:flex;
-  gap:10px;
-  align-items:center;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px dashed rgba(240,200,80,0.35);
-  background: rgba(0,0,0,0.22);
-}
-.online-player-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  color: var(--stone-dark);
-  background: rgba(240,200,80,0.95);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-}
-.online-player-name{
+.ol-action-icon svg { width: 100%; height: 100%; display: block; }
+.ol-action-create .ol-action-icon { color: var(--ol-gold); }
+.ol-action-join   .ol-action-icon { color: var(--ol-cyan); }
+.ol-action-recent .ol-action-icon { color: var(--ol-green); }
+.ol-action-rejoin .ol-action-icon { color: #ff8c00; }
+.ol-action-main {
+  font-size: 0.88rem;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
-.online-roomcode-row{
-  margin-top: 12px;
+.ol-action-sub {
+  font-size: 0.72rem;
+  color: var(--ol-text-dim);
+  line-height: 1.2;
 }
-.online-roomcode{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top: 8px;
+@media (max-width: 380px) { .ol-action-sub { display: none; } }
+
+/* ── Panneaux accordéon ───────────────────────────────────── */
+.ol-panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s cubic-bezier(.4,0,.2,1), opacity 0.28s;
+  opacity: 0;
+  margin-top: 0;
 }
-.online-roomcode-code{
-  font-weight: 1000;
-  letter-spacing: 0.20em;
-  font-size: 1.15rem;
-}
-.online-copy{
-  border: 1px solid rgba(240,200,80,0.45);
-  background: rgba(0,0,0,0.25);
-}
-.online-copy:hover{
-  background: rgba(240,200,80,0.12);
-}
-.online-start.option-btn{
-  width:100%;
+.ol-panel.open {
+  max-height: 600px;
+  opacity: 1;
   margin-top: 12px;
 }
 
-/* Recent rooms chips */
-.online-recent{
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px dashed rgba(255,255,255,0.14);
+/* ── Panneau Créer ────────────────────────────────────────── */
+.ol-preview-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--ol-radius-sm);
+  background: rgba(240,200,80,0.05);
+  border: 1px solid rgba(240,200,80,0.28);
 }
-.online-recent-title{
-  font-weight: 900;
-  opacity: 0.9;
-  margin-bottom: 6px;
+.ol-preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ol-text-dim);
 }
-.online-recent-list{
-  display:flex;
-  flex-wrap: wrap;
+.ol-preview-code-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
-.online-room-chip{
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(240,200,80,0.35);
-  background: rgba(0,0,0,0.18);
-  color: var(--text-light);
-  cursor: pointer;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+.ol-preview-code {
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--ol-gold);
+  text-shadow: 0 0 32px rgba(240,200,80,0.45);
+  font-variant-numeric: tabular-nums;
 }
-.online-room-chip:hover{
+.ol-preview-dots { display: flex; gap: 6px; }
+.ol-preview-dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ol-gold);
+  opacity: 0.4;
+  animation: ol-dot-blink 1.4s ease-in-out infinite;
+}
+.ol-preview-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ol-preview-dots span:nth-child(3) { animation-delay: 0.4s; }
+.ol-preview-dots span:nth-child(4) { animation-delay: 0.6s; }
+@keyframes ol-dot-blink {
+  0%,80%,100% { opacity: 0.25; }
+  40%          { opacity: 0.9; }
+}
+.ol-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--ol-radius-sm);
+  border: 1.5px solid rgba(240,200,80,0.55);
   background: rgba(240,200,80,0.12);
-}
-.online-rejoin.option-btn{
+  color: var(--ol-gold);
+  font-weight: 900;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background var(--ol-trans), transform 0.15s;
+  touch-action: manipulation;
   width: 100%;
-  margin-top: 10px;
+  justify-content: center;
 }
+.ol-confirm-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.ol-confirm-btn:hover { background: rgba(240,200,80,0.22); transform: translateY(-1px); }
+
+/* ── Panneau Rejoindre ────────────────────────────────────── */
+.ol-join-wrap { padding: 4px 0; }
+.ol-join-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ol-text-dim);
+  margin-bottom: 10px;
+}
+.ol-code-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.ol-code-input,
+.online-code-input.ol-code-input {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 12px;
+  border-radius: var(--ol-radius-sm);
+  border: 1.5px solid var(--ol-border);
+  background: rgba(0,0,0,0.30);
+  color: var(--text-main);
+  outline: none;
+  font-size: clamp(1.4rem, 5vw, 1.75rem);
+  font-weight: 900;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  text-align: center;
+  transition: border-color var(--ol-trans), box-shadow var(--ol-trans);
+  -webkit-appearance: none;
+  caret-color: var(--ol-gold);
+}
+.ol-code-input::placeholder { color: rgba(255,255,255,0.18); letter-spacing: 0.18em; }
+.ol-code-input:focus {
+  border-color: rgba(240,200,80,0.55);
+  box-shadow: 0 0 0 3px rgba(240,200,80,0.08);
+}
+.ol-code-input.input-valid { border-color: rgba(76,222,128,0.65); }
+.ol-code-input.input-error {
+  border-color: rgba(255,80,80,0.75);
+  animation: ol-shake .3s ease;
+}
+@keyframes ol-shake {
+  0%,100% { transform: translateX(0) }
+  25%     { transform: translateX(-4px) }
+  75%     { transform: translateX(4px) }
+}
+.ol-connect-btn {
+  flex-shrink: 0;
+  width: 52px;
+  border-radius: var(--ol-radius-sm);
+  border: none;
+  background: linear-gradient(135deg, #f0c850, #c89628);
+  color: #1a0e04;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, filter 0.15s, opacity var(--ol-trans);
+  touch-action: manipulation;
+}
+.ol-connect-btn svg { width: 20px; height: 20px; }
+.ol-connect-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.ol-connect-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* ── Panneau Récents ──────────────────────────────────────── */
+.ol-recent-header {
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ol-text-dim);
+  margin-bottom: 10px;
+}
+.online-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.online-room-chip {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--ol-radius-sm);
+  border: 1px solid var(--ol-border);
+  background: var(--ol-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--ol-trans), border-color var(--ol-trans);
+  width: 100%;
+  min-height: 48px;
+  touch-action: manipulation;
+}
+.online-room-chip:hover { background: var(--ol-surface2); border-color: rgba(240,200,80,0.35); }
+.online-room-chip .chip-code { font-weight: 900; letter-spacing: 0.18em; color: var(--ol-gold); font-size: 0.9rem; }
+.online-room-chip .chip-vs { font-size: 0.82rem; font-weight: 700; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.online-room-chip .chip-vs em { font-style: normal; opacity: 0.55; }
+.online-room-chip .chip-result { font-size: 1rem; }
+.online-room-chip .chip-date { font-size: 0.7rem; opacity: 0.5; white-space: nowrap; font-weight: 700; }
+
+/* ── Colonne statut ───────────────────────────────────────── */
+.ol-col-status {
+  background: var(--ol-surface);
+  border: 1px solid var(--ol-border);
+  border-radius: var(--ol-radius);
+  padding: clamp(16px, 4vw, 22px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.ol-col-status::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ol-gold-line), transparent);
+  pointer-events: none;
+}
+
+/* ── Bannière de statut ─────────────────────────────────── */
+.ol-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ol-border2);
+  margin-bottom: 16px;
+}
+.ol-status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--ol-text-dim);
+  flex-shrink: 0;
+  transition: background var(--ol-trans), box-shadow var(--ol-trans);
+}
+.ol-status-dot.connecting {
+  background: var(--ol-gold);
+  animation: ol-blink-dot 1s ease-in-out infinite;
+}
+.ol-status-dot.connected {
+  background: var(--ol-green);
+  box-shadow: 0 0 8px rgba(76,222,128,0.6);
+  animation: none;
+}
+@keyframes ol-blink-dot {
+  0%,100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+.ol-status-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+/* ── Slots joueurs ────────────────────────────────────────── */
+.ol-players {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.ol-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px;
+  border-radius: var(--ol-radius-sm);
+  border: 1px dashed rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.15);
+  text-align: center;
+  position: relative;
+  transition: border-color var(--ol-trans), background var(--ol-trans);
+}
+.ol-player.online-connected {
+  border-style: solid;
+  border-color: rgba(76,222,128,0.4);
+  background: rgba(76,222,128,0.05);
+}
+.ol-player-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--ol-gold-dim);
+  border: 1.5px solid rgba(240,200,80,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ol-gold);
+}
+.ol-player-avatar svg { width: 20px; height: 20px; display: block; }
+.ol-player-tag {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ol-text-dim);
+}
+.ol-player-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-main);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.ol-player-status-dot {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  transition: background var(--ol-trans);
+}
+.ol-player.online-connected .ol-player-status-dot {
+  background: var(--ol-green);
+  box-shadow: 0 0 6px rgba(76,222,128,0.7);
+}
+.ol-versus {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--ol-text-dim);
+  text-align: center;
+}
+
+/* ── Bloc partage ─────────────────────────────────────────── */
+.ol-share-block {
+  border-top: 1px solid var(--ol-border2);
+  padding-top: 14px;
+  margin-bottom: 14px;
+}
+.ol-share-label {
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ol-text-dim);
+  margin-bottom: 10px;
+}
+.ol-share-code-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ol-share-code {
+  font-size: clamp(1.6rem, 5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  color: var(--ol-gold);
+  text-shadow: 0 0 28px rgba(240,200,80,0.38);
+  flex: 1;
+}
+.ol-icon-btn {
+  width: 38px; height: 38px;
+  border-radius: var(--ol-radius-xs);
+  border: 1px solid var(--ol-border);
+  background: var(--ol-surface);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--ol-trans), border-color var(--ol-trans);
+  touch-action: manipulation;
+}
+.ol-icon-btn svg { width: 16px; height: 16px; display: block; }
+.ol-icon-btn:hover { background: var(--ol-surface2); border-color: rgba(255,255,255,0.18); }
+
+.ol-invite-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: var(--ol-radius-sm);
+  border: 1px solid var(--ol-border);
+  background: var(--ol-surface);
+  color: var(--ol-cyan);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background var(--ol-trans), border-color var(--ol-trans);
+  touch-action: manipulation;
+}
+.ol-invite-toggle svg:first-child { width: 16px; height: 16px; flex-shrink: 0; }
+.ol-invite-toggle span { flex: 1; text-align: left; }
+.ol-chevron { width: 12px; height: 12px; flex-shrink: 0; transition: transform var(--ol-trans); }
+.ol-invite-toggle[aria-expanded="true"] .ol-chevron { transform: rotate(180deg); }
+.ol-invite-toggle:hover { background: var(--ol-cyan-dim); border-color: rgba(0,229,255,0.3); }
+
+.ol-invite-panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s;
+}
+.ol-invite-panel.open { max-height: 300px; opacity: 1; margin-top: 8px; }
+.ol-invite-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--ol-border2);
+}
+.ol-invite-row:last-child { border-bottom: none; }
+.ol-inv-label {
+  font-size: 0.78rem;
+  color: var(--ol-text-dim);
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 40px;
+}
+.ol-inv-value {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ol-gold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  padding: 0 4px;
+}
+.ol-inv-btn {
+  padding: 5px 12px;
+  border-radius: var(--ol-radius-xs);
+  border: 1px solid var(--ol-gold-line);
+  background: var(--ol-gold-dim);
+  color: var(--ol-gold);
+  font-weight: 800;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: background var(--ol-trans);
+}
+.ol-inv-btn:hover { background: rgba(240,200,80,0.28); }
+.ol-inv-btn.copied { background: rgba(76,222,128,0.16); border-color: rgba(76,222,128,0.5); color: var(--ol-green); }
+
+/* ── Revanche ─────────────────────────────────────────────── */
+.ol-rematch {
+  border: 1px solid var(--ol-border);
+  border-radius: var(--ol-radius-sm);
+  padding: 14px;
+  background: rgba(0,0,0,0.15);
+  margin-bottom: 14px;
+}
+.ol-rematch-title {
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ol-text-dim);
+  margin-bottom: 10px;
+}
+.ol-rematch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ol-rematch-chip {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: var(--ol-radius-xs);
+  border: 1px solid var(--ol-border);
+  background: var(--ol-surface);
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  text-align: center;
+  transition: all var(--ol-trans);
+}
+.ol-rematch-chip.ready {
+  border-color: rgba(76,222,128,0.5);
+  background: rgba(76,222,128,0.10);
+  color: var(--ol-green);
+}
+.ol-rematch-divider { color: var(--ol-text-dim); font-size: 1.2rem; }
+.ol-rematch-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--ol-radius-sm);
+  border: 1.5px solid rgba(240,200,80,0.35);
+  background: var(--ol-gold-dim);
+  color: var(--ol-gold);
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background var(--ol-trans), transform 0.15s;
+}
+.ol-rematch-btn:hover { background: rgba(240,200,80,0.28); transform: translateY(-1px); }
+.ol-rematch-btn.active {
+  border-color: rgba(76,222,128,0.55);
+  background: rgba(76,222,128,0.12);
+  color: var(--ol-green);
+}
+.ol-rematch-note {
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: var(--ol-text-dim);
+  text-align: center;
+}
+
+/* ── Bouton Lancer ────────────────────────────────────────── */
+.ol-start-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 20px;
+  border-radius: var(--ol-radius-sm);
+  border: none;
+  background: linear-gradient(135deg, #f0c850, #c89628);
+  color: #1a0e04;
+  font-weight: 900;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s, filter 0.15s, opacity var(--ol-trans);
+  box-shadow: 0 6px 24px rgba(240,200,80,0.28);
+  position: relative;
+  overflow: hidden;
+  margin-top: auto;
+}
+.ol-start-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
+}
+.ol-start-btn:hover { transform: translateY(-2px); filter: brightness(1.07); }
+.ol-start-btn:active { transform: translateY(0); }
+.ol-start-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.ol-start-icon {
+  width: 22px; height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ol-start-icon svg { width: 100%; height: 100%; display: block; }
+.ol-start-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.ol-start-sub {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+/* ── Thèmes clairs ────────────────────────────────────────── */
+[data-theme="kabylie"] .online-lobby,
+[data-theme="desert"]  .online-lobby {
+  --ol-surface:  rgba(0,0,0,0.04);
+  --ol-surface2: rgba(0,0,0,0.08);
+  --ol-border:   rgba(0,0,0,0.10);
+  --ol-border2:  rgba(0,0,0,0.07);
+  --ol-text-dim: rgba(30,22,10,0.48);
+}
+[data-theme="kabylie"] .ol-input,
+[data-theme="desert"]  .ol-input,
+[data-theme="kabylie"] .ol-code-input,
+[data-theme="desert"]  .ol-code-input { background: rgba(255,255,255,0.65); color: #1a1208; }
+[data-theme="kabylie"] .ol-player,
+[data-theme="desert"]  .ol-player { background: rgba(0,0,0,0.04); }
+[data-theme="kabylie"] .ol-rematch,
+[data-theme="desert"]  .ol-rematch { background: rgba(0,0,0,0.03); }
 
 </style>
 <style nonce="tiddas">
@@ -8102,7 +8732,7 @@ body:has(.game-play-area.active) footer {
 </head>
 <body>
 <!-- ===== LANGUAGE SPLASH SCREEN ===== -->
-<div aria-label="Choix de la langue / Tifert n tutlayt" aria-modal="true" id="lang-splash" role="dialog">
+<div aria-label="Choix de la langue / Afran n tutlayt" aria-modal="true" id="lang-splash" role="dialog">
 <div class="splash-logo">
 TIDDAS
 </div>
@@ -8140,11 +8770,11 @@ Patrimoine Amazigh • Idles Amaziɣ
 <div class="settings-tray" id="settings-tray">
 <div class="stray-panel">
 <div class="stray-header">
-<span class="stray-title">⚙️ Paramètres</span>
+<span class="stray-title">⚙️ </span><span class="settings-label" data-i18n="btnSettings">Paramètres</span>
 <button aria-label="Fermer" class="stray-close-btn" id="stray-close-btn" type="button">✕</button>
 </div>
 <div class="stray-section">
-<span class="stray-section-label">Apparence</span>
+<span class="stray-section-label"><span class="Appearance-label" data-i18n="Appearancelabel">Apparence</span>
 <div class="stray-grid">
 <button aria-label="Thème" class="toolbar-btn stray-item" id="theme-btn" title="Changer de thème">
 <span class="stray-icon">🎨</span>
@@ -8157,7 +8787,7 @@ Patrimoine Amazigh • Idles Amaziɣ
 </div>
 </div>
 <div class="stray-section">
-<span class="stray-section-label">Langue</span>
+<span class="stray-section-label"><span class="Language-label" data-i18n="Languagelabel">Langue</span></span>
 <div class="language-selector">
 <span aria-hidden="true" class="icon">🗣️</span>
 <select aria-label="Langue / Tutlayt" id="language-select">
@@ -8168,7 +8798,7 @@ Patrimoine Amazigh • Idles Amaziɣ
 </div>
 </div>
 <div class="stray-section">
-<span class="stray-section-label">Jeu</span>
+<span class="stray-section-label"><span class="Game-label" data-i18n="Gamelabel">Jeu</span></span>
 <div class="stray-grid">
 <button aria-label="Glisser" aria-pressed="false" class="toolbar-btn stray-item" id="drag-btn" title="Déplacer les pions par glissement">
 <span class="stray-icon">🤚</span>
@@ -8264,96 +8894,252 @@ Mêmes règles que TIDDEST. Victoire inversée: gagnez en perdant tous vos pions
 <button class="back-btn" data-i18n="backToVersions" id="back-to-versions-btn">Retour aux versions</button>
 </div>
 <div class="selection-area online-lobby" id="online-lobby-area">
-  <h2 data-i18n="onlineTitle">Multijoueur en ligne</h2>
-  <p class="online-subtitle" data-i18n="onlineSubtitle">Créez un salon et partagez le code, ou rejoignez un salon existant.</p>
 
-  <div class="online-grid">
-    <div class="online-card online-card-profile">
-      <div class="online-card-header">
-        <div class="online-card-title" data-i18n="onlineProfileTitle">Profil</div>
-        <div class="online-card-desc" data-i18n="onlineProfileDesc">Ton pseudo sera affiché à l’adversaire</div>
-      </div>
-      <label class="online-label" for="online-your-name" data-i18n="onlineYourNameLabel">Ton nom</label>
-      <input class="online-input" id="online-your-name" maxlength="24" autocomplete="nickname" inputmode="text" data-i18n-placeholder="onlineNamePlaceholder" placeholder="Ex: Yani" />
-      <div class="online-hint" data-i18n="onlineNameHint">Ce nom est mémorisé sur ton appareil.</div>
+  <!-- En-tête -->
+  <div class="ol-header">
+    <div class="ol-header-icon" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="1.5" opacity=".35"/>
+        <circle cx="20" cy="20" r="13" stroke="currentColor" stroke-width="1.5" opacity=".55"/>
+        <circle cx="20" cy="20" r="3.5" fill="currentColor"/>
+        <line x1="20" y1="1" x2="20" y2="8"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="20" y1="32" x2="20" y2="39" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1"  y1="20" x2="8"  y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="32" y1="20" x2="39" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     </div>
+    <h2 class="ol-title" data-i18n="onlineTitle">Multijoueur en ligne</h2>
+    <p class="ol-subtitle" data-i18n="onlineSubtitle">Jouez avec n'importe qui, partout dans le monde</p>
+    <p id="online-status-global" class="ol-global-msg" aria-live="polite"></p>
+  </div>
 
-    <div class="online-card online-card-room">
-      <div class="online-card-header">
-        <div class="online-card-title" data-i18n="onlineRoomTitle">Salon</div>
-        <div class="online-card-desc" data-i18n="onlineRoomDesc">Crée un code ou rejoins un code existant</div>
+  <div class="ol-body">
+
+    <!-- ─── Colonne gauche : configuration ─────────────────── -->
+    <div class="ol-col-setup">
+
+      <!-- Bloc Pseudo -->
+      <section class="ol-section" aria-label="Votre pseudo">
+        <label class="ol-section-label" for="online-your-name">
+          <span class="ol-section-num">01</span><span data-i18n="onlineProfileLabel">Votre pseudo</span>
+        </label>
+        <div class="ol-input-wrap">
+          <span class="ol-input-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="7" r="3.5"/><path d="M2.5 17c0-3.314 3.358-6 7.5-6s7.5 2.686 7.5 6"/>
+            </svg>
+          </span>
+          <input class="ol-input" id="online-your-name" maxlength="24"
+                 autocomplete="nickname" inputmode="text"
+                 data-i18n-placeholder="onlineNamePlaceholder" placeholder="Ex: Yani" />
+        </div>
+        <p class="ol-hint" data-i18n="onlineNameHint">Mémorisé localement sur cet appareil</p>
+      </section>
+
+      <!-- Bloc Salon -->
+      <section class="ol-section" aria-label="Rejoindre ou créer un salon">
+        <div class="ol-section-label">
+          <span class="ol-section-num">02</span><span data-i18n="onlineSalonLabel">Salon de jeu</span>
+        </div>
+
+        <div class="ol-actions">
+          <button class="ol-action-btn ol-action-create" id="online-create-room" type="button">
+            <span class="ol-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="16" height="16" rx="4"/>
+                <line x1="11" y1="7.5" x2="11" y2="14.5"/>
+                <line x1="7.5" y1="11" x2="14.5" y2="11"/>
+              </svg>
+            </span>
+            <span class="ol-action-main" data-i18n="onlineCreate">Créer un salon</span>
+            <span class="ol-action-sub" data-i18n="onlineCreateDesc">Générer un code unique</span>
+          </button>
+
+          <button class="ol-action-btn ol-action-join" id="online-join-room" type="button">
+            <span class="ol-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 3h5v5"/><path d="M19 3l-8 8"/><path d="M9 5H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4"/>
+              </svg>
+            </span>
+            <span class="ol-action-main" data-i18n="onlineJoin">Rejoindre</span>
+            <span class="ol-action-sub" data-i18n="onlineJoinDesc">Entrer un code ami</span>
+          </button>
+
+          <button class="ol-action-btn ol-action-recent" id="online-recent-toggle" type="button" style="display:none;">
+            <span class="ol-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><polyline points="11 7 11 11 14 13"/>
+              </svg>
+            </span>
+            <span class="ol-action-main" data-i18n="onlineRecentRooms">Récents</span>
+            <span class="ol-action-sub" data-i18n="onlineRejoin3LastDesc">Reprendre une partie</span>
+          </button>
+
+          <button class="ol-action-btn ol-action-rejoin" id="online-rejoin-last" style="display:none;" type="button">
+            <span class="ol-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-6.51"/>
+              </svg>
+            </span>
+            <span class="ol-action-main" data-i18n="onlineRejoinLast">Reprendre le dernier salon</span>
+            <span class="ol-action-sub" data-i18n="onlineRejoinLastDesc">Reconnexion rapide</span>
+          </button>
+        </div>
+
+        <!-- Panneau accordéon : Créer -->
+        <div class="ol-panel" id="online-create-panel">
+          <div class="ol-preview-box" id="online-code-preview-box" style="display:none;">
+            <div class="ol-preview-label" data-i18n="onlineCodePreview">Votre code de salon</div>
+            <div class="ol-preview-code-wrap">
+              <strong class="ol-preview-code" id="online-preview-code">——</strong>
+              <div class="ol-preview-dots">
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <button class="ol-confirm-btn" id="online-preview-confirm" type="button">
+              <span data-i18n="onlineCodeConfirm">Créer ce salon</span>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 8 7 12 13 4"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Panneau accordéon : Rejoindre -->
+        <div class="ol-panel" id="online-join-panel">
+          <div class="ol-join-wrap">
+            <div class="ol-join-label" data-i18n="onlineJoin">Code du salon</div>
+            <div class="ol-code-row">
+              <input class="online-code-input ol-code-input" id="online-room-code"
+                     inputmode="latin" autocomplete="off" spellcheck="false"
+                     maxlength="6" placeholder="· · · ·"
+                     style="text-transform:uppercase" aria-label="Code du salon" />
+              <button class="ol-connect-btn" id="online-connect" type="button" disabled>
+                <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="4 9 14 9"/><polyline points="9 4 14 9 9 14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panneau accordéon : Salons récents -->
+        <div class="ol-panel" id="online-recent-wrap">
+          <div class="ol-recent-header" data-i18n="onlineRecentRooms">Parties récentes</div>
+          <div class="online-recent-list" id="online-recent-list"></div>
+        </div>
+
+      </section>
+    </div><!-- /ol-col-setup -->
+
+    <!-- ─── Colonne droite : statut (hidden until connected) ── -->
+    <div class="ol-col-status" id="online-status" style="display:none;">
+
+      <!-- Statut texte -->
+      <div class="ol-status-banner">
+        <span class="ol-status-dot" id="ol-status-dot" aria-hidden="true"></span>
+        <span id="online-status-text" class="ol-status-text">—</span>
       </div>
 
-      <div class="online-actions">
-        <button class="option-btn online-action" id="online-create-room" type="button">
-          <span aria-hidden="true" class="icon">➕</span>
-          <span data-i18n="onlineCreate">Créer un salon</span>
-          <span data-i18n="onlineCreateDesc">Génère un code</span>
+      <!-- Joueurs -->
+      <div class="ol-players">
+        <div class="ol-player" id="ol-p1-slot">
+          <div class="ol-player-avatar">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="7" r="3"/><path d="M3 17c0-3 3.134-5 7-5s7 2 7 5"/>
+            </svg>
+          </div>
+          <div class="ol-player-info">
+            <span class="ol-player-tag">J1</span>
+            <span class="ol-player-name" id="online-p1-name" data-i18n="onlineChipPending">En attente…</span>
+          </div>
+          <span class="ol-player-status-dot"></span>
+        </div>
+        <div class="ol-versus" aria-hidden="true">VS</div>
+        <div class="ol-player" id="ol-p2-slot">
+          <div class="ol-player-avatar">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="7" r="3"/><path d="M3 17c0-3 3.134-5 7-5s7 2 7 5"/>
+            </svg>
+          </div>
+          <div class="ol-player-info">
+            <span class="ol-player-tag">J2</span>
+            <span class="ol-player-name" id="online-p2-name" data-i18n="onlineChipPending">En attente…</span>
+          </div>
+          <span class="ol-player-status-dot"></span>
+        </div>
+      </div>
+
+      <!-- Code de room + partage -->
+      <div class="ol-share-block" id="online-roomcode-row" style="display:none;">
+        <div class="ol-share-label" data-i18n="onlineShare">Invitez un ami</div>
+        <div class="ol-share-code-row">
+          <span class="ol-share-code" id="online-roomcode">—</span>
+          <button class="ol-icon-btn" id="online-copy-code" type="button"
+                  aria-label="Copier le code" data-i18n-aria-label="onlineCopyCodeAria" title="Copier le code">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="6" width="9" height="9" rx="2"/><path d="M3 12V3h9"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Panneau inviter -->
+        <button class="ol-invite-toggle" id="online-invite-toggle" type="button" aria-expanded="false">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 12.5c0 .83-.18 1.62-.5 2.33L12 12.5l-.5-4.5 4.5-.5c.32.71.5 1.5.5 2.5z" opacity=".0"/>
+            <path d="M2 9l7-7 2 2-5 5 3 3-2 2-5-5z"/><path d="M12 2l4 4-6 6"/>
+          </svg>
+          <span data-i18n="onlineInviteBtn">Partager l'invitation</span>
+          <svg class="ol-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polyline points="2 4 6 8 10 4"/>
+          </svg>
         </button>
 
-        <button class="option-btn online-action" id="online-join-room" type="button">
-          <span aria-hidden="true" class="icon">🔑</span>
-          <span data-i18n="onlineJoin">Rejoindre</span>
-          <span data-i18n="onlineJoinDesc">Entrer un code</span>
-        </button>
+        <div class="ol-invite-panel" id="online-invite-panel" role="region">
+          <div class="ol-invite-row">
+            <span class="ol-inv-label" data-i18n="onlinePanelCode">Code</span>
+            <span class="ol-inv-value" id="inv-code-val">—</span>
+            <button class="ol-inv-btn" id="inv-copy-code-btn" type="button">Copier</button>
+          </div>
+          <div class="ol-invite-row">
+            <span class="ol-inv-label" data-i18n="onlinePanelLink">Lien</span>
+            <span class="ol-inv-value" id="inv-link-val">…</span>
+            <button class="ol-inv-btn" id="inv-copy-link-btn" type="button">Copier</button>
+          </div>
+          <div class="ol-invite-row" id="inv-share-row" style="display:none;">
+            <span class="ol-inv-label" data-i18n="onlinePanelShare">Partager</span>
+            <span class="ol-inv-value"></span>
+            <button class="ol-inv-btn" id="inv-share-btn" type="button" data-i18n="onlinePanelShare">Partager</button>
+          </div>
+        </div>
       </div>
 
-      <div id="online-join-panel" class="online-join" style="display:none;">
-        <label class="online-label" for="online-room-code" data-i18n="onlineRoomCode">Code du salon</label>
-        <input class="online-input" id="online-room-code" inputmode="latin" autocomplete="off" spellcheck="false"
-               placeholder="ABC123" style="text-transform:uppercase" />
-        <button class="option-btn online-action online-connect" id="online-connect" type="button">
-          <span aria-hidden="true" class="icon">🔌</span>
-          <span data-i18n="onlineConnect">Connexion</span>
-          <span data-i18n="onlineConnectDesc">Se connecter au salon</span>
-        </button>
+      <!-- Revanche -->
+      <div class="ol-rematch" id="online-rematch" style="display:none;">
+        <div class="ol-rematch-title" data-i18n="onlineRematchHint">Proposer une revanche</div>
+        <div class="ol-rematch-row" aria-label="Rematch readiness">
+          <span class="ol-rematch-chip" id="online-rm1-chip">J1</span>
+          <span class="ol-rematch-divider" aria-hidden="true">·</span>
+          <span class="ol-rematch-chip" id="online-rm2-chip">J2</span>
+        </div>
+        <button class="ol-rematch-btn" id="online-rematch-ready-btn" type="button" data-i18n="onlineReadyRematch">Je suis prêt</button>
+        <p class="ol-rematch-note" data-i18n="onlineRematchNote">Les couleurs alternent à chaque revanche.</p>
       </div>
 
-      <div class="online-recent" id="online-recent-wrap" style="display:none;">
-        <div class="online-recent-title" data-i18n="onlineRecentRooms">Salons récents</div>
-        <div class="online-recent-list" id="online-recent-list"></div>
-      </div>
-
-      <button class="option-btn online-action online-rejoin" id="online-rejoin-last" style="display:none;" type="button">
-        <span aria-hidden="true" class="icon">↩️</span>
-        <span data-i18n="onlineRejoinLast">Reprendre le dernier salon</span>
-        <span data-i18n="onlineRejoinLastDesc">Reconnexion rapide</span>
+      <!-- Lancer -->
+      <button class="ol-start-btn" id="online-start" style="display:flex;" type="button">
+        <span class="ol-start-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4l12 6-12 6V4z"/></svg>
+        </span>
+        <span class="ol-start-text">
+          <span id="online-start-label" data-i18n="onlineStart">Lancer la partie</span>
+          <span class="ol-start-sub" id="online-start-desc" data-i18n="onlineStartDesc">Quand 2 joueurs sont connectés</span>
+        </span>
       </button>
 
-    </div>
-  </div>
+    </div><!-- /ol-col-status -->
 
-  <div id="online-status" class="online-card online-status">
-    <div class="online-status-head">
-      <div class="online-status-title" data-i18n="onlineStatusTitle">Statut</div>
-      <div id="online-status-text" class="online-status-text">—</div>
-    </div>
-
-    <div class="online-players">
-      <div class="online-player-slot">
-        <span class="online-player-badge">J1</span>
-        <span id="online-p1-name" class="online-player-name">—</span>
-      </div>
-      <div class="online-player-slot">
-        <span class="online-player-badge">J2</span>
-        <span id="online-p2-name" class="online-player-name">—</span>
-      </div>
-    </div>
-
-    <div id="online-roomcode-row" class="online-roomcode-row" style="display:none;">
-      <div class="online-roomcode-label" data-i18n="onlineShare">Partagez ce code :</div>
-      <div class="online-roomcode">
-        <div id="online-roomcode" class="online-roomcode-code">—</div>
-        <button class="toolbar-btn online-copy" id="online-copy-code" type="button" aria-label="Copier le code" data-i18n-aria-label="onlineCopyCodeAria">📋</button>
-      </div>
-    </div>
-
-    <button class="option-btn online-action online-start" id="online-start" style="display:none;" type="button">
-      <span aria-hidden="true" class="icon">▶️</span>
-      <span data-i18n="onlineStart">Lancer la partie</span>
-      <span data-i18n="onlineStartDesc">Quand 2 joueurs sont connectés</span>
-    </button>
-  </div>
+  </div><!-- /ol-body -->
 
   <button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-online-btn" type="button">Retour aux modes</button>
 </div>
@@ -8598,6 +9384,7 @@ Félicitations !
 <div class="wo-row">
 <button class="replay-button secondary" disabled="" id="winner-replay-last-btn">⏯️ <span data-i18n="replayLast">Replay</span></button>
 <button class="replay-button secondary" id="winner-stats-btn">📈 <span data-i18n="stats">Stats</span></button>
+<button class="replay-button secondary" id="winner-menu-btn">🏠 <span data-i18n="backToMenu">Menu</span></button>
 </div>
 </div>
 </div>
@@ -9095,48 +9882,136 @@ function clearLastOnlineRoom() {
 }
 
 
-// Persist a small list of recent room codes (lets users save/reuse keys)
-const ONLINE_ROOMS_KEY = "tiddas_online_rooms_v1";
+// Persist a small list of recent room codes — v2 (enriched, max 3)
+const ONLINE_ROOMS_KEY = "tiddas_online_rooms_v2";
+const ONLINE_ROOMS_MAX = 3;
+
 function loadRecentOnlineRooms() {
   try {
     const raw = localStorage.getItem(ONLINE_ROOMS_KEY);
     const parsed = raw ? safeJSONParse(raw, null) : null;
-    if (!parsed || parsed.v !== 1 || !Array.isArray(parsed.rooms)) return [];
-    return parsed.rooms
-      .map(r => ({ code: String(r.code || '').toUpperCase(), at: Number(r.at || 0) }))
-      .filter(r => !!r.code)
-      .sort((a, b) => (b.at || 0) - (a.at || 0))
-      .slice(0, 8);
+    // Support v2 structure
+    if (parsed && parsed.v === 2 && Array.isArray(parsed.rooms)) {
+      return parsed.rooms
+        .map(r => ({
+          code:         String(r.code || '').toUpperCase(),
+          at:           Number(r.at || 0),
+          opponentName: r.opponentName || null,
+          myName:       r.myName || null,
+          variant:      r.variant || null,
+          winnerId:     r.winnerId != null ? Number(r.winnerId) : null,
+          didWin:       r.didWin != null ? !!r.didWin : null
+        }))
+        .filter(r => !!r.code)
+        .sort((a, b) => (b.at || 0) - (a.at || 0))
+        .slice(0, ONLINE_ROOMS_MAX);
+    }
+    // Migrate from v1
+    if (parsed && parsed.v === 1 && Array.isArray(parsed.rooms)) {
+      return parsed.rooms
+        .map(r => ({ code: String(r.code || '').toUpperCase(), at: Number(r.at || 0), opponentName: null, myName: null, variant: null, winnerId: null, didWin: null }))
+        .filter(r => !!r.code)
+        .sort((a, b) => (b.at || 0) - (a.at || 0))
+        .slice(0, ONLINE_ROOMS_MAX);
+    }
+    // Legacy flat key
+    const rawOld = localStorage.getItem("tiddas_online_rooms_v1");
+    if (rawOld) {
+      const parsedOld = safeJSONParse(rawOld, null);
+      if (parsedOld && Array.isArray(parsedOld.rooms)) {
+        return parsedOld.rooms
+          .map(r => ({ code: String(r.code || '').toUpperCase(), at: Number(r.at || 0), opponentName: null, myName: null, variant: null, winnerId: null, didWin: null }))
+          .filter(r => !!r.code).sort((a,b) => (b.at||0)-(a.at||0)).slice(0, ONLINE_ROOMS_MAX);
+      }
+    }
+    return [];
   } catch (_) { return []; }
 }
-function addRecentOnlineRoom(code) {
+
+/**
+ * @param {string|object} codeOrObj  — string (legacy) OR {code, opponentName, myName, variant, winnerId, didWin}
+ */
+function addRecentOnlineRoom(codeOrObj) {
   try {
-    const c = String(code || '').trim().toUpperCase();
-    if (!c) return;
-    const rooms = loadRecentOnlineRooms().filter(r => r.code !== c);
-    rooms.unshift({ code: c, at: Date.now() });
-    const payload = { v: 1, rooms: rooms.slice(0, 8) };
+    let entry;
+    if (typeof codeOrObj === 'string') {
+      entry = { code: codeOrObj.trim().toUpperCase(), at: Date.now(), opponentName: null, myName: null, variant: null, winnerId: null, didWin: null };
+    } else {
+      entry = {
+        code:         String(codeOrObj.code || '').trim().toUpperCase(),
+        at:           Date.now(),
+        opponentName: codeOrObj.opponentName || null,
+        myName:       codeOrObj.myName || null,
+        variant:      codeOrObj.variant || null,
+        winnerId:     codeOrObj.winnerId != null ? Number(codeOrObj.winnerId) : null,
+        didWin:       codeOrObj.didWin != null ? !!codeOrObj.didWin : null
+      };
+    }
+    if (!entry.code) return;
+    const rooms = loadRecentOnlineRooms().filter(r => r.code !== entry.code);
+    rooms.unshift(entry);
+    const payload = { v: 2, rooms: rooms.slice(0, ONLINE_ROOMS_MAX) };
     localStorage.setItem(ONLINE_ROOMS_KEY, JSON.stringify(payload));
   } catch (_) {}
 }
+
+function _fmtRelativeDate(ms) {
+  try {
+    if (!ms) return '';
+    const diff = Date.now() - ms;
+    const min = Math.floor(diff / 60000);
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (d >= 1) return `${d}j`;
+    if (h >= 1) return `${h}h`;
+    if (min >= 1) return `${min}min`;
+    return '<1min';
+  } catch(_) { return ''; }
+}
+
 function renderRecentOnlineRooms() {
   try {
-    if (!onlineEls.recentWrap || !onlineEls.recentList) return;
+    const wrap = document.getElementById('online-recent-wrap');
+    const list = document.getElementById('online-recent-list');
+    if (!wrap || !list) return;
     const rooms = loadRecentOnlineRooms();
-    onlineEls.recentList.innerHTML = '';
-    if (!rooms.length) { _show(onlineEls.recentWrap, false); return; }
-    _show(onlineEls.recentWrap, true);
+    list.innerHTML = '';
+    if (!rooms.length) {
+      wrap.classList.remove('open');
+      return;
+    }
     rooms.forEach(r => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'online-room-chip';
-      btn.textContent = r.code;
+      btn.setAttribute('aria-label', `${t('onlineJoin','Rejoindre')} ${r.code}`);
+
+      const vsLabel = r.opponentName
+        ? `<em>${t('onlineChipVs','vs')}</em> ${r.opponentName}`
+        : `<em>${t('onlineChipPending','En attente')}</em>`;
+      const resultIcon = r.didWin === true ? '🏆' : r.didWin === false ? '💀' : '•';
+      const dateStr = _fmtRelativeDate(r.at);
+
+      btn.innerHTML = `<span class="chip-code">${r.code}</span>`
+        + `<span class="chip-vs">${vsLabel}</span>`
+        + `<span class="chip-result">${resultIcon}</span>`
+        + `<span class="chip-date">${dateStr}</span>`;
+
       btn.onclick = () => {
-        if (onlineEls.inputCode) onlineEls.inputCode.value = r.code;
-        _show(onlineEls.joinPanel, true);
-        onlineEls.inputCode?.focus();
+        const inputCode = document.getElementById('online-room-code');
+        if (inputCode) {
+          inputCode.value = r.code;
+          inputCode.dispatchEvent(new Event('input'));
+        }
+        // Close recent panel, open join panel, then auto-connect
+        const joinPanel = document.getElementById('online-join-panel');
+        const recentPanel = document.getElementById('online-recent-wrap');
+        if (joinPanel) joinPanel.classList.add('open');
+        if (recentPanel) recentPanel.classList.remove('open');
+        // Trigger connection after short delay
+        setTimeout(() => { try { onlineConnectToRoom(r.code, false); } catch(_) {} }, 200);
       };
-      onlineEls.recentList.appendChild(btn);
+      list.appendChild(btn);
     });
   } catch (_) {}
 }
@@ -9156,7 +10031,10 @@ function _getOnlineNameSafe(fallback) {
 let online = {
   matchId: null,
   room: null,
-  role: null, // 1 or 2
+  role: null,      // Slot (p1=1 / p2=2) — stable for the room
+  playerId: null,  // In-game Player ID (1=Noir / 2=Blanc) — can swap between games
+  swapColors: false,
+  gameId: 0,       // Incremented per "start" to support rematch + color alternation
   isHost: false,
   connected: false,
   ready: false,
@@ -9169,7 +10047,7 @@ let online = {
 const onlineEls = {
   area: null, statusText: null, roomCodeRow: null, roomCode: null,
   btnCreate: null, btnJoin: null, joinPanel: null, inputCode: null,
-  btnConnect: null, btnStart: null, btnCopy: null, btnBack: null,
+  btnConnect: null, btnStart: null, btnCopy: null, btnCopyLink: null, btnShareLink: null, btnBack: null,
   inputName: null, p1Name: null, p2Name: null,
   recentWrap: null, recentList: null, btnRejoinLast: null
 };
@@ -9198,9 +10076,15 @@ function _ensureParseReady() {
 
 function _setOnlineStatus(msg) {
   if (onlineEls.statusText) onlineEls.statusText.textContent = msg || '—';
+  // Also update global status text
+  const glob = document.getElementById('online-status-global');
+  if (glob) glob.textContent = msg || '';
+  // Show status card when we have a real message
+  const statusCard = document.getElementById('online-status');
+  if (statusCard && msg && msg !== '—') statusCard.style.display = '';
 }
 function _show(el, yes) { if (!el) return; el.style.display = yes ? '' : 'none'; }
-function _randCode(len=6) {
+function _randCode(len=4) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let out = '';
   for (let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
@@ -9212,6 +10096,9 @@ function onlineDisconnect() {
   online.matchId = null;
   online.room = null;
   online.role = null;
+  online.playerId = null;
+  online.swapColors = false;
+  online.gameId = 0;
   online.isHost = false;
   online.connected = false;
   online.ready = false;
@@ -9241,7 +10128,7 @@ function _applyLobbyStateFromMatch(match) {
   if (onlineEls.p1Name) onlineEls.p1Name.textContent = p1Name || '—';
   if (onlineEls.p2Name) onlineEls.p2Name.textContent = p2Name || '—';
 
-  // Determine role if not already set
+  // Determine role if not already set (slot in DB)
   if (!online.role) {
     if (p1 === onlinePlayerId) { online.role = 1; online.isHost = true; }
     else if (p2 === onlinePlayerId) { online.role = 2; online.isHost = false; }
@@ -9249,14 +10136,80 @@ function _applyLobbyStateFromMatch(match) {
 
   online.ready = !!(p1 && p2);
 
-  if (online.ready) {
-    _setOnlineStatus(online.isHost ? t('onlineStatusTwoPlayersHost', '2 joueurs connectés. Tu peux lancer la partie.') : t('onlineStatusTwoPlayersGuest', '2 joueurs connectés. En attente du lancement…'));
-    _show(onlineEls.btnStart, !!online.isHost && status !== 'playing' && status !== 'finished');
-  } else {
-    _setOnlineStatus(online.isHost ? t('onlineStatusCreatedHost', 'Salon créé. Partage le code et attends un adversaire…') : t('onlineStatusConnecting', 'Connexion…'));
-    _show(onlineEls.btnStart, false);
+  // Rematch readiness flags (persisted in room)
+  const rm1 = !!match.get('rm1');
+  const rm2 = !!match.get('rm2');
+
+  // Rematch UI
+  const rmWrap = document.getElementById('online-rematch');
+  const rmChip1 = document.getElementById('online-rm1-chip');
+  const rmChip2 = document.getElementById('online-rm2-chip');
+  const rmBtn = document.getElementById('online-rematch-ready-btn');
+
+  const setChip = (chip, ready) => {
+    if (!chip) return;
+    chip.classList.toggle('ready', !!ready);
+  };
+  setChip(rmChip1, rm1);
+  setChip(rmChip2, rm2);
+
+  // Default: hide rematch section
+  if (rmWrap) rmWrap.style.display = 'none';
+  if (rmBtn) rmBtn.style.display = 'none';
+
+  const startBtn = onlineEls.btnStart;
+  const startLabel = document.getElementById('online-start-label');
+  const startDesc  = document.getElementById('online-start-desc');
+
+  const setStartBtnText = (labelKey, descKey) => {
+    if (startLabel) { startLabel.dataset.i18n = labelKey; startLabel.textContent = t(labelKey); }
+    if (startDesc)  { startDesc.dataset.i18n  = descKey;  startDesc.textContent  = t(descKey); }
+  };
+
+  if (!online.ready) {
+    _setOnlineStatus(online.isHost ? t('onlineStatusCreatedHost') : t('onlineStatusConnecting'));
+    _show(startBtn, false);
+    return;
   }
+
+  // Ready: 2 players
+  if (status === 'playing') {
+    _setOnlineStatus(online.isHost ? t('onlineStatusPlayingHost') : t('onlineStatusPlayingGuest'));
+    _show(startBtn, false);
+    return;
+  }
+
+  if (status === 'finished') {
+    // Finished → rematch flow (stay in same room)
+    if (rmWrap) rmWrap.style.display = '';
+    if (online.isHost) {
+      setStartBtnText('onlineRematchStart', 'onlineRematchStartDesc');
+      // Host can start only when both are ready
+      if (startBtn) startBtn.disabled = !(rm1 && rm2);
+      _show(startBtn, true);
+      _setOnlineStatus((rm1 && rm2) ? t('onlineRematchCanStart') : t('onlineRematchWaitReady'));
+    } else {
+      // Guest: mark ready button
+      if (rmBtn) {
+        rmBtn.style.display = '';
+        rmBtn.classList.toggle('active', (online.role === 1 ? rm1 : rm2));
+        rmBtn.textContent = (online.role === 1 ? rm1 : rm2) ? t('onlineReadyRematchOn') : t('onlineReadyRematch');
+        rmBtn.dataset.i18n = (online.role === 1 ? rm1 : rm2) ? 'onlineReadyRematchOn' : 'onlineReadyRematch';
+      }
+      _show(startBtn, false);
+      _setOnlineStatus(t('onlineRematchGuestInfo'));
+    }
+    return;
+  }
+
+  // Waiting/Ready → normal start
+  setStartBtnText('onlineStart', 'onlineStartDesc');
+  if (startBtn) startBtn.disabled = false;
+  _setOnlineStatus(online.isHost ? t('onlineStatusTwoPlayersHost') : t('onlineStatusTwoPlayersGuest'));
+  _show(startBtn, !!online.isHost);
 }
+
+
 
 function _startPolling() {
   if (online.pollTimer) return;
@@ -9335,7 +10288,8 @@ async function onlineConnectToRoom_Back4App(code, creating) {
       const p1 = match.get('p1Id') || null;
       const p2 = match.get('p2Id') || null;
 
-      if (status === 'finished') throw new Error(t('onlineGameFinished', 'Cette partie est terminée.'));
+      const isKnownPlayer = (p1 === onlinePlayerId) || (p2 === onlinePlayerId);
+      if (status === 'finished' && !isKnownPlayer) throw new Error(t('onlineGameFinished'));
 
       // If same device rejoining
       if (p1 === onlinePlayerId) {
@@ -9391,7 +10345,7 @@ function onlineSendState(reason='sync') {
     room: online.room,
     variant,
     state,
-    meta: { player1Name, player2Name, turn: state?.turn ?? null, at: Date.now() }
+    meta: { player1Name, player2Name, turn: state?.turn ?? null, at: Date.now(), gameId: online.gameId || 0, swapColors: !!online.swapColors }
   };
 
   // Fire-and-forget: update room payload + increment revision
@@ -9403,9 +10357,19 @@ function onlineSendState(reason='sync') {
       match.set('payload', JSON.parse(JSON.stringify(payload)));
       match.increment('rev', 1);
 
+      // Persist room-level rematch metadata
+      try { match.set('gameId', online.gameId || 0); } catch(_) {}
+      try { match.set('swapColors', !!online.swapColors); } catch(_) {}
+
       // Keep room status in sync (start -> playing, winner -> finished)
-      if (reason === 'start') match.set('status', 'playing');
-      if (state && state.winner) match.set('status', 'finished');
+      if (reason === 'start') {
+        match.set('status', 'playing');
+        try { match.set('rm1', false); match.set('rm2', false); } catch(_) {}
+      }
+      if (state && state.winner) {
+        match.set('status', 'finished');
+        try { match.set('rm1', false); match.set('rm2', false); } catch(_) {}
+      }
 
       await match.save();
     } catch (e) {
@@ -9438,6 +10402,8 @@ async function onlineStartMatch_Back4App() {
 
     // Init a fresh game state (no setup screen for online)
     clearSave();
+    try { hideWinnerAnimation?.(); } catch(_) {}
+
     hideSaveNotification?.();
 
     state = initState();
@@ -9445,11 +10411,28 @@ async function onlineStartMatch_Back4App() {
     boardPositionHistory = new Map();
     forbiddenBoardPositions = new Set();
 
-    aiPlayerId = null;
-    humanPlayerId = online.role || 1;
+    // Rematch support + alternance des couleurs :
+    // - gameId est incrémenté à chaque lancement
+    // - swapColors alterne à chaque nouvelle partie (pair/impair)
+    const currentGameId = Number(match.get('gameId') || 0);
+    const nextGameId = currentGameId + 1;
+    online.gameId = nextGameId;
+    online.swapColors = (nextGameId % 2 === 0);
 
-    player1Name = p1Name;
-    player2Name = p2Name;
+    // Player ID (couleur) pour CE match, basé sur le slot (p1/p2) + swapColors
+    online.playerId = online.swapColors ? (3 - (online.role || 1)) : (online.role || 1);
+
+    aiPlayerId = null;
+    humanPlayerId = online.playerId || (online.role || 1);
+
+    // player1Name = Noir (ID 1), player2Name = Blanc (ID 2)
+    if (online.swapColors) {
+      player1Name = p2Name;
+      player2Name = p1Name;
+    } else {
+      player1Name = p1Name;
+      player2Name = p2Name;
+    }
 
     updateGameInfoDisplay?.();
     showScreen('game-play-area');
@@ -9460,8 +10443,7 @@ async function onlineStartMatch_Back4App() {
     onlineSendState('start');
     _setOnlineStatus(t('onlineStartOK', "Partie lancée ✅"));
   } catch (e) {
-    console.error(e);
-    _setOnlineStatus(t('onlineStartErrorPrefix', 'Erreur lancement : {msg}').replace('{msg}', (e?.message || String(e))));
+_setOnlineStatus(t('onlineStartErrorPrefix', 'Erreur lancement : {msg}').replace('{msg}', (e?.message || String(e))));
   }
 }
 
@@ -9498,7 +10480,33 @@ function onlineApplyState(msg) {
     state = JSON.parse(JSON.stringify(merged));
 
     aiPlayerId = null;
-    humanPlayerId = online.role || humanPlayerId;
+
+    // Rematch metadata (optional but used for replay + alternance couleurs)
+    try {
+      const incomingGameId = (msg.meta && msg.meta.gameId != null) ? Number(msg.meta.gameId) : null;
+      const incomingSwap = (msg.meta && typeof msg.meta.swapColors !== 'undefined') ? !!msg.meta.swapColors : null;
+
+      const prevGameId = online.gameId || 0;
+      if (incomingGameId != null && !Number.isNaN(incomingGameId)) {
+        const isNewGame = incomingGameId !== prevGameId;
+        online.gameId = incomingGameId;
+
+        if (isNewGame) {
+          // Reset local-only histories so replay doesn't keep previous game undo/history
+          try { moveHistory = []; } catch(_) {}
+          try { boardPositionHistory = new Map(); } catch(_) {}
+          try { forbiddenBoardPositions = new Set(); } catch(_) {}
+          try { hideWinnerAnimation?.(); } catch(_) {}
+          try { clearSave?.(); hideSaveNotification?.(); } catch(_) {}
+        }
+      }
+
+      if (incomingSwap != null) online.swapColors = incomingSwap;
+
+      online.playerId = online.swapColors ? (3 - (online.role || 1)) : (online.role || 1);
+    } catch(_) {}
+
+    humanPlayerId = online.playerId || online.role || humanPlayerId;
 
     // Full UI refresh (board + counts + badges + history, etc.)
     if (typeof updateGameInfoDisplay === 'function') updateGameInfoDisplay();
@@ -9530,8 +10538,7 @@ function onlineApplyState(msg) {
     // Persist locally (but do not re-broadcast)
     saveGame();
   } catch (e) {
-    console.warn(e);
-  } finally {
+} finally {
     online.suppressSend = false;
   }
 }
@@ -9539,7 +10546,8 @@ function onlineApplyState(msg) {
 function isMyTurnOnline() {
   if (gameMode !== 'online') return true;
   const actor = (state && state.captureMode) ? state.turnForCapture : state?.turn;
-  return (online.role && actor) ? (online.role === actor) : true;
+  const me = online.playerId || online.role;
+  return (me && actor) ? (me === actor) : true;
 }
 
 // Helpers DOM rapides
@@ -9772,6 +10780,7 @@ const ephemeralMessageBubble = document.getElementById('ephemeral-message-bubble
 const winnerOverlay = document.getElementById('winner-overlay');
 const winnerNameElement = winnerOverlay ? winnerOverlay.querySelector('.winner-name') : null;
 const winnerReplayButton = document.getElementById('winner-replay-button');
+const winnerMenuBtn = document.getElementById('winner-menu-btn');
 const mainHeader = document.getElementById('main-header');
 const player1NameLabel = document.getElementById('player1-name-label');
 const player2NameGroup = document.getElementById('player2-name-group');
@@ -9818,6 +10827,69 @@ const aiDifficultyNames = {
 // --- TRANSLATIONS ---
 const translations = {
 fr: {
+backToMenu: "Menu",
+onlineRematchHint: "Revanche",
+onlineReadyRematch: "Je suis prêt",
+onlineReadyRematchOn: "Prêt ✅",
+onlineRematchNote: "Les couleurs alternent à chaque revanche.",
+onlineRematchReadyToast: "Revanche: prêt. Attendez l'autre joueur…",
+onlineRematchGuestInfo: "Partie terminée. Clique « Je suis prêt » pour la revanche.",
+onlineRematchWaitReady: "En attente des joueurs prêts…",
+onlineRematchCanStart: "Tout le monde est prêt ✅",
+onlineRematchStart: "Lancer la revanche",
+onlineRematchStartDesc: "Quand les 2 joueurs sont prêts",
+onlineStatusPlayingHost: "Partie en cours. Bon jeu !",
+onlineStatusPlayingGuest: "Partie en cours. Bon jeu !",
+onlineGameFinished: "Cette partie est terminée.",
+statsSectionActivity: "Activité",
+statsPlacementsPerGame: "Placements / partie",
+statsMovesPerGame: "Déplacements / partie",
+statsActionsPerGame: "Coups / partie",
+statsOnlineTopOpponent: "Adversaire favori",
+statsActionsCount: "Coups",
+statsPlacementsCount: "Placements",
+statsMovesCount: "Déplacements",
+resetStatsConfirm: "Réinitialiser les statistiques ?",
+toastStatsReset: "Stats réinitialisées.",
+toastExported: "Export généré.",
+noStatsYet: "Aucune statistique pour l'instant. Lance une partie !",
+statsSectionGlobal: "Vue globale",
+gamesPlayedLabel: "Parties",
+durationLabel: "Temps total",
+avgDuration: "Durée moy. / partie",
+statsBestWinTime: "Meilleure victoire",
+actionsPerGameLabel: "Coups / partie",
+statsCaptPerGame: "Captures / partie",
+statsMillsPerGame: "Moulins / partie",
+levelLabel: "Niveau",
+statsLevelProgress: "Prochain niveau",
+statsSectionByMode: "Par mode",
+modeAI: "IA",
+modeLocal: "Local",
+statsOnlineMode: "En ligne",
+modeSpectator: "Spectateur",
+winRateLabel: "Taux de victoire",
+winsLabel: "Victoires",
+lossesLabel: "Défaites",
+drawsLabel: "Nuls",
+statsStreakCurrent: "Série actuelle",
+statsStreakBest: "Meilleure série",
+statsAvgDurPerMode: "Durée moy.",
+statsByDifficulty: "Par difficulté",
+statsSectionLastGame: "Dernière partie",
+modeLabel: "Mode",
+statsVariantLabel: "Variante",
+winnerLabel: "Vainqueur",
+capturesLabel: "Captures",
+millsLabel: "Moulins",
+player1ColorShort: "Noir",
+player2ColorShort: "Blanc",
+onlineStatusCreatedHost: "Salon créé. Partage le code et attends un adversaire…",
+onlineStatusConnecting: "Connexion…",
+onlineStatusTwoPlayersHost: "2 joueurs connectés. Tu peux lancer la partie.",
+onlineStatusTwoPlayersGuest: "2 joueurs connectés. En attente du lancement…",
+onlineChooseAction: "Choisis : créer ou rejoindre un salon.",
+
 playSpectator: "Mode Spectateur",
 installApp: "Installer",
 playSpectatorDesc: "Regardez deux IA s'affronter",
@@ -10000,6 +11072,9 @@ lastGameLabel: "Dernière partie",
 btnTheme: "Thème",
 btnSound: "Son",
 btnSettings: "Paramètres",
+Appearancelabel: "Apparence",
+Gamelabel: "Jeu",
+Languagelabel: "Langue",
 btnDragMode: "Glisser",
 themeGlass: "Verre",
 themeContrast: "Contraste",
@@ -10044,6 +11119,8 @@ woSubDefeat: "— Fin de partie —",
 woSubVictory: "— Victoire —",
 
 onlineTitle: "Multijoueur en ligne",
+onlineProfileLabel: "Votre pseudo",
+onlineSalonLabel: "Salon de jeu",
 onlineProfileTitle: "Profil",
 onlineProfileDesc: "Ton pseudo sera affiché à l’adversaire",
 onlineYourNameLabel: "Ton nom",
@@ -10063,7 +11140,7 @@ onlineShare: "Partagez ce code :",
 onlineStart: "Lancer la partie",
 onlineStartDesc: "Quand 2 joueurs sont connectés",
 onlineNotConfigured: "Le serveur en ligne n'est pas configuré. Consultez le README pour renseigner l'URL.",
-onlineNamePlaceholder: "Ex: Boussad",
+onlineNamePlaceholder: "Ex: Lyne",
 onlineCopyCodeAria: "Copier le code",
 onlineChooseAction: "Choisis : créer ou rejoindre un salon.",
 onlineCodeCopied: "Code copié ✅",
@@ -10091,8 +11168,106 @@ onlineErrorPrefix: "Erreur : {msg}",
 onlineRecentRooms: "Salons récents",
 onlineRejoinLast: "Reprendre le dernier salon",
 onlineRejoinLastDesc: "Reconnexion rapide",
-notYourTurn: "Ce n'est pas ton tour.",},
+onlineRejoin3LastDesc: " 3 derniers salons",
+notYourTurn: "Ce n'est pas ton tour.",
+onlineInviteBtn: "Inviter un ami",
+onlinePanelCode: "Code seul",
+onlinePanelLink: "Lien de partie",
+onlinePanelShare: "Partager",
+onlineAutoJoinDetected: "Salon détecté : {code}",
+onlineAutoJoinWaiting: "Entrez votre nom pour rejoindre",
+onlineJoinParam: "Connexion automatique à {code}…",
+onlineRecentEmpty: "Aucun salon récent",
+onlineChipVs: "vs",
+onlineChipPending: "En attente",
+onlineCodePreview: "Votre code :",
+onlineCodeConfirm: "Créer ce salon ?",
+onlineLinkCopied: "Lien copié ✅",
+onlineCopyLinkAria: "Copier le lien",
+onlineShareLinkAria: "Partager",
+onlineShareText: "Rejoins mon salon Tiddas :",
+statsSectionGlobal: "Vue globale",
+statsSectionEfficiency: "Efficacité",
+statsSectionByMode: "Par mode",
+statsSectionLastGame: "Dernière partie",
+statsBestWinTime: "Meilleure victoire",
+statsCaptPerGame: "Captures / partie",
+statsMillsPerGame: "Moulins / partie",
+statsAvgDurPerMode: "Durée moy.",
+statsStreakCurrent: "Série actuelle",
+statsStreakBest: "Meilleure série",
+statsByDifficulty: "Par difficulté",
+statsOnlineOpponents: "Adversaires",
+statsVariantLabel: "Variante",
+statsActionsCount: "Coups",
+statsLevelProgress: "Prochain niveau",
+statsOnlineMode: "En ligne",
+statsDraws: "Nuls",
+},
 kab: {
+backToMenu: "Umuɣ",
+onlineRematchHint: "Ttaṛ",
+onlineReadyRematch: "Beggseɣ",
+onlineReadyRematchOn: "Iyyan ✅",
+onlineRematchNote: "Initen ttbeddilen deg yal ttaṛ.",
+onlineRematchReadyToast: "Ttaṛ: iheyya. Ṛǧu axṣim-ik…",
+onlineRematchGuestInfo: "Timlilit tekkfa. Sit ɣef « Wejdeɣ» i Ttaṛ.",
+onlineRematchWaitReady: "Ṛǧu ameddakkul ad iwjed…",
+onlineRematchCanStart: "Wejden yakk ✅",
+onlineRematchStart: "Bdu timlit n ttaṛ",
+onlineRematchStartDesc: "Mi wejden i sin",
+onlineStatusPlayingHost: "Ala tetturarem. Afud iggerzen!",
+onlineStatusPlayingGuest: "Ala tetturarem. Afud iggerzen !",
+onlineGameFinished: "Urar-ayi yefra.",
+statsSectionActivity: "Armud",
+statsPlacementsPerGame: "Aseɣẓan / urar",
+statsMovesPerGame: "Usrusuy / temlilit",
+statsActionsPerGame: "Unaqel / temlilit",
+statsOnlineTopOpponent: "axṣim ameqqran",
+statsActionsCount: "Tirawin",
+statsPlacementsCount: "Aseɣẓan",
+statsMovesCount: "Tirawin",
+resetStatsConfirm: "Sfeḍ tistatistik?",
+toastStatsReset: "Tistatistik ttwafeḍ.",
+toastExported: "Asuffeɣ yettwaǧǧa.",
+noStatsYet: "Ulac tistatistik tura. Bdu urar!",
+statsSectionGlobal: "Amezwaru",
+gamesPlayedLabel: "Iurar",
+durationLabel: "Akud amatu",
+avgDuration: "Akud alemmas / urar",
+statsBestWinTime: "Arraz yelhan",
+actionsPerGameLabel: "Tir / urar",
+statsCaptPerGame: "Ttekki / urar",
+statsMillsPerGame: "Aline / urar",
+levelLabel: "Aswir",
+statsLevelProgress: "Aswir i d-iteddun",
+statsSectionByMode: "S tarrayt",
+modeAI: "IA",
+modeLocal: "Ader",
+statsOnlineMode: "Deg uẓeṭṭa",
+modeSpectator: "Ameskan",
+winRateLabel: "Afellay n rrbaḥ",
+winsLabel: "Rbaḥ",
+lossesLabel: "Ttfa",
+drawsLabel: "Isemmaḍ",
+statsStreakCurrent: "Aseḍḍad amiran",
+statsStreakBest: "Aseḍḍad yelhan",
+statsAvgDurPerMode: "Akud alemmas",
+statsByDifficulty: "S uswir",
+statsSectionLastGame: "Urar aneggaru",
+modeLabel: "Tarrayt",
+statsVariantLabel: "Tameslayt",
+winnerLabel: "Aɣellif",
+capturesLabel: "Ttekki",
+millsLabel: "Aline",
+player1ColorShort: "Aberkan",
+player2ColorShort: "Amlal",
+onlineStatusCreatedHost: "Tessut tura. Bḍu asaru n wakuḍ u ṛǧu amgraw…",
+onlineStatusConnecting: "Ittwaqqen…",
+onlineStatusTwoPlayersHost: "Sin imdanen qqnen. Tzemreḍ ad tebduḍ.",
+onlineStatusTwoPlayersGuest: "Sin imdanen qqnen. Ṛǧu i usdukel ad yebdu…",
+onlineChooseAction: "Fren: Bnu taslaḍt neɣ qqim ɣer yiwet.",
+
 surrender: "Mayna",
 installApp: "Areṣṣi",
 playSpectator: "Anezzeh",
@@ -10119,6 +11294,9 @@ themeKabylie: "Taqbaylit",
 btnTheme: "Asentel",
 btnSound: "Ṣṣut",
 btnSettings: "Aseggem",
+Appearancelabel: "Udem",
+Languagelabel: "Tutlayt",
+Gamelabel: "Urar",
 btnDragMode: "Asezger",
 confirm: "Yahwa-yi",
 cancel: "ALA",
@@ -10173,7 +11351,7 @@ ephemeralMill: "Tlata S Ya !",
 ephemeralCaptureNormal: "Awi-d Wa !",
 ephemeralCaptureBessif: "Ddem wa !",
 ephemeralMovePhase: "Tallit n unaqel !",
-newGame: "Aɣaram",
+newGame: "Afrag",
 restartGame: "Ɛiwed",
 undoMove: "Uɣal",
 gameRulesTitle: "Ilugan n wurar",
@@ -10282,7 +11460,6 @@ xpLabel: "XP",
 lastGameLabel: "Urar aneggaru",
 btnTheme: "Asentel",
 btnSound: "Ṣṣut",
-btnSettings: "Aseggem",
 btnDragMode: "Ajuṛṛu",
 themeContrast: "Amgired",
 themeModern: "Amaynut",
@@ -10326,16 +11503,18 @@ woSubDefeat: "— Taggara n wurar —",
 woSubVictory: "— Rbeḥ —",
 
 onlineTitle: "Urar d umeddakul s lebɛid",
-onlineProfileTitle: "Nnekkwa",
-onlineProfileDesc: "Isem ad d-ibanen i umeddakul-ik",
+onlineProfileLabel: "Nekkwa",
+onlineSalonLabel: "Taslaḍt n wurar",
+onlineProfileTitle: "Amaɣnu",
+onlineProfileDesc: "Isem-ik ad d-iban i umeddakul-ik",
 onlineYourNameLabel: "Isem-ik",
-onlineNameHint: "Isem-a yettwaḥrez .",
+onlineNameHint: "Isem-a yettwaḥraz .",
 onlineRoomTitle: "Taslaḍt",
 onlineRoomDesc: "Rnu tasarut neɣ kecem s yiwet yellan yakan",
 onlineSubtitle: "Bnu taslaḍt, teceyyeɛeḍ-as tasarut, neɣ rnu ɣer tin umeddakul-ik.",
-onlineCreate: "bnu taslaḍt",
+onlineCreate: "Bnu taslaḍt",
 onlineCreateDesc: "Ceyyeɛ tasarut",
-onlineJoin: "Kcem",
+onlineJoin: "Qqim ɣer taslaḍt",
 onlineJoinDesc: "Sekcem tasarut",
 onlineRoomCode: "Tasarut ",
 onlineConnect: "Tuqqna",
@@ -10349,7 +11528,7 @@ onlineCopyCodeAria: "Glu tasarut",
 onlineChooseAction: "Fren: bnu neɣ qqim ɣer teslaḍt.",
 onlineCodeCopied: "Tasarut tettwanqal ✅",
 onlineStatusTwoPlayersHost: "2 yimyuraren qqimen-d. Tzemreḍ ad tebduḍ urar.",
-onlineStatusTwoPlayersGuest: "2 yimyuraren qqimen-d, arǧu ad ibdu wurar…",
+onlineStatusTwoPlayersGuest: "2 yimyuraren qqimen-d, arǧu ad ibdu urar…",
 onlineStatusCreatedHost: "taslaḍt tettwabna. Ceyyeɛ tasarut, rǧu ameddakul-ik…",
 onlineStatusConnecting: "Tuqqna…",
 onlineCreatingRoom: "Asnulfu n teslaḍt {tasarut}…",
@@ -10358,22 +11537,121 @@ onlineCreatedShare: "taslaḍt yettwabna. Ceyyeɛ tasarut : {code}",
 onlineConnectingRoom: "Tuqqna ɣer teslaḍt {tasarut}…",
 onlineRoomNotFound: "Ulac taslaḍt-ayi. senqed tasarut-ik.",
 onlineGameFinished: "Yekkfa Wurar.",
-onlineRoomFull: "Taslaḍt teččur (2 yimyuraren).",
-onlineNetworkError: "Tuccḍa n uzeṭṭa Back4App. Senqed izerfan (CLP) akked tuqqna-inek.",
+onlineRoomFull: "Asalon yeččur (2 yimyuraren).",
+onlineNetworkError: "Tuccḍa n uzeṭṭa Back4App. Selken izerfan (CLP) akked tuqqna-inek.",
 onlineParseNotReady: "Back4App ur yettuseɣwer ara neɣ Parse ur yuli ara.",
 onlineSendError: "Tuccḍa deg tuznit. Senqed tuqqna Back4App.",
 onlineNoRoomActive: "Ulac taslaḍt iheyyan.",
 onlineOnlyHostStart: "Ala win yebnan taslaḍt (host) i yezmeren ad yebdu urar.",
 onlineBack4AppNotReady: "Back4App ur yewjid ara.",
+onlineNotConfigured: "Aseṛgas s internet ur yettuseɣwer ara. Wali README i wakken ad tseɣwreḍ URL.",
 onlineWaitTwoPlayers: "Rǧu alamma qqnen-d i 2 yimyuraren.",
 onlineStartOK: "yebda wurar ✅",
 onlineStartErrorPrefix: "Tuccḍa n beddu : {msg}",
 onlineErrorPrefix: "Tuccḍa : {msg}",
-onlineRecentRooms: "tislaḍin n yakan",
-onlineRejoinLast: "Uɣal ɣer teslaḍt taneggarut",
+onlineRecentRooms: "Tislaḍin n yakan",
+onlineRejoinLast: "Uɣal ɣer teslaḍ-t taneggarut",
 onlineRejoinLastDesc: "Tuqqna s tazzla",
-notYourTurn: "Mačči d nnuba-k.",},
+onlineRejoin3LastDesc: " 3 temliliyin tineggura",
+notYourTurn: "Mačči d nnuba-k.",
+onlineInviteBtn: "📤 Ɛreḍ-d ameddakul",
+onlinePanelCode: "Tasarut kan",
+onlinePanelLink: "Aseɣwen n wurar",
+onlinePanelShare: "Azen Tinnubgga",
+onlineAutoJoinDetected: "Taslaḍt theyya : {code}",
+onlineAutoJoinWaiting: "sekcem isem-ik i wakken ad d-qqimeḍ ɣer wurar",
+onlineJoinParam: "Tuqqna ɣer {code}…",
+onlineRecentEmpty: "Ulac tislaḍin",
+onlineChipVs: "mgal",
+onlineChipPending: "Yettṛaǧu",
+onlineCodePreview: "Tasarut-ik :",
+onlineCodeConfirm: "Asnulfu n teslaḍt ?",
+onlineLinkCopied: "Aseɣwen yettwanqal ✅",
+onlineCopyLinkAria: "Nqel aseɣwen",
+onlineShareLinkAria: "azen i weḥbib",
+onlineShareText: "Qqim ɣer teslaḍt n Tiddas:",
+statsSectionGlobal: "Agemmuḍ s umata",
+statsSectionEfficiency: "Tawuri",
+statsSectionByMode: "S urar",
+statsSectionLastGame: "Timlilit taneggarut",
+statsBestWinTime: "Rrebḥ ameqqran",
+statsCaptPerGame: "Učči / timlilit",
+statsMillsPerGame: "Atellet / timlilit",
+statsAvgDurPerMode: "Akud alemmas",
+statsStreakCurrent: "Agraw n tura",
+statsStreakBest: "Agraw ameqqran",
+statsByDifficulty: "S uswir",
+statsOnlineOpponents: "Ixṣimen",
+statsVariantLabel: "Tawsit",
+statsActionsCount: "Tikkal",
+statsLevelProgress: "Aswir d-iteddun",
+statsOnlineMode: "S Internet",
+statsDraws: "Imsegginen",
+},
 en: {
+backToMenu: "Menu",
+onlineRematchHint: "Rematch",
+onlineReadyRematch: "I'm ready",
+onlineReadyRematchOn: "Ready ✅",
+onlineRematchNote: "Colors alternate every rematch.",
+onlineRematchReadyToast: "Rematch: ready. Waiting for the other player…",
+onlineRematchGuestInfo: "Game finished. Tap “I'm ready” for a rematch.",
+onlineRematchWaitReady: "Waiting for players to be ready…",
+onlineRematchCanStart: "Everyone is ready ✅",
+onlineRematchStart: "Start rematch",
+onlineRematchStartDesc: "When both players are ready",
+onlineStatusPlayingHost: "Game in progress. Good luck!",
+onlineStatusPlayingGuest: "Game in progress. Good luck!",
+onlineGameFinished: "This game is finished.",
+statsSectionActivity: "Activity",
+statsPlacementsPerGame: "Placements / game",
+statsMovesPerGame: "Moves / game",
+statsActionsPerGame: "Turns / game",
+statsOnlineTopOpponent: "Top opponent",
+statsActionsCount: "Turns",
+statsPlacementsCount: "Placements",
+statsMovesCount: "Moves",
+resetStatsConfirm: "Reset statistics?",
+toastStatsReset: "Stats reset.",
+toastExported: "Export created.",
+noStatsYet: "No stats yet. Start a game!",
+statsSectionGlobal: "Overview",
+gamesPlayedLabel: "Games",
+durationLabel: "Total time",
+avgDuration: "Avg. time / game",
+statsBestWinTime: "Best win",
+actionsPerGameLabel: "Turns / game",
+statsCaptPerGame: "Captures / game",
+statsMillsPerGame: "Mills / game",
+levelLabel: "Level",
+statsLevelProgress: "Next level",
+statsSectionByMode: "By mode",
+modeAI: "AI",
+modeLocal: "Local",
+statsOnlineMode: "Online",
+modeSpectator: "Spectator",
+winRateLabel: "Win rate",
+winsLabel: "Wins",
+lossesLabel: "Losses",
+drawsLabel: "Draws",
+statsStreakCurrent: "Current streak",
+statsStreakBest: "Best streak",
+statsAvgDurPerMode: "Avg. time",
+statsByDifficulty: "By difficulty",
+statsSectionLastGame: "Last game",
+modeLabel: "Mode",
+statsVariantLabel: "Variant",
+winnerLabel: "Winner",
+capturesLabel: "Captures",
+millsLabel: "Mills",
+player1ColorShort: "Black",
+player2ColorShort: "White",
+onlineStatusCreatedHost: "Room created. Share the code and wait for an opponent…",
+onlineStatusConnecting: "Connecting…",
+onlineStatusTwoPlayersHost: "2 players connected. You can start the game.",
+onlineStatusTwoPlayersGuest: "2 players connected. Waiting for the host to start…",
+onlineChooseAction: "Choose: create or join a room.",
+
 playSpectator: "Spectator Mode",
 installApp: "Install",
 playSpectatorDesc: "Watch two AIs face off",
@@ -10560,6 +11838,9 @@ lastGameLabel: "Last game",
 btnTheme: "Theme",
 btnSound: "Sound",
 btnSettings: "Settings",
+Appearancelabel: "Appearance",
+Gamelabel: "Game",
+Languagelabel: "Language",
 btnDragMode: "Drag",
 spectatorBadgeTxt: "👁 Spectator",
 btnResume: "Resume",
@@ -10598,6 +11879,8 @@ woSubDefeat: "— Game over —",
 woSubVictory: "— Victory —",
 
 onlineTitle: "Online multiplayer",
+onlineProfileLabel: "Your nickname",
+onlineSalonLabel: "Game room",
 onlineProfileTitle: "Profile",
 onlineProfileDesc: "Your nickname will be shown to your opponent",
 onlineYourNameLabel: "Your name",
@@ -10617,7 +11900,7 @@ onlineShare: "Share this code:",
 onlineStart: "Start match",
 onlineStartDesc: "When 2 players are connected",
 onlineNotConfigured: "Online server is not configured. See README to set the URL.",
-onlineNamePlaceholder: "e.g., Lyne",
+onlineNamePlaceholder: "e.g., Boussad",
 onlineCopyCodeAria: "Copy the code",
 onlineChooseAction: "Choose: create or join a room.",
 onlineCodeCopied: "Code copied ✅",
@@ -10645,7 +11928,42 @@ onlineErrorPrefix: "Error: {msg}",
 onlineRecentRooms: "Recent rooms",
 onlineRejoinLast: "Rejoin last room",
 onlineRejoinLastDesc: "Quick reconnect",
-notYourTurn: "Not your turn.",}
+onlineRejoin3LastDesc: " 3 last room",
+notYourTurn: "Not your turn.",
+onlineInviteBtn: "📤 Invite a friend",
+onlinePanelCode: "Code only",
+onlinePanelLink: "Game link",
+onlinePanelShare: "Share",
+onlineAutoJoinDetected: "Room detected: {code}",
+onlineAutoJoinWaiting: "Enter your name to join",
+onlineJoinParam: "Auto-connecting to {code}…",
+onlineRecentEmpty: "No recent rooms",
+onlineChipVs: "vs",
+onlineChipPending: "Waiting",
+onlineCodePreview: "Your code:",
+onlineCodeConfirm: "Create this room?",
+onlineLinkCopied: "Link copied ✅",
+onlineCopyLinkAria: "Copy link",
+onlineShareLinkAria: "Share",
+onlineShareText: "Join my Tiddas room:",
+statsSectionGlobal: "Overview",
+statsSectionEfficiency: "Efficiency",
+statsSectionByMode: "By mode",
+statsSectionLastGame: "Last game",
+statsBestWinTime: "Best win",
+statsCaptPerGame: "Captures / game",
+statsMillsPerGame: "Mills / game",
+statsAvgDurPerMode: "Avg duration",
+statsStreakCurrent: "Current streak",
+statsStreakBest: "Best streak",
+statsByDifficulty: "By difficulty",
+statsOnlineOpponents: "Opponents",
+statsVariantLabel: "Variant",
+statsActionsCount: "Moves",
+statsLevelProgress: "Next level",
+statsOnlineMode: "Online",
+statsDraws: "Draws",
+}
 };
 // --- DEEP COPY HELPER ---
 function deepCopy(obj) {
@@ -10820,6 +12138,12 @@ if (oCopy) {
   const lbl = tr.onlineCopyCodeAria || 'Copier le code';
   oCopy.setAttribute('aria-label', lbl);
   oCopy.title = lbl;
+}
+// online-invite-toggle aria-label
+const oInvite = document.getElementById('online-invite-toggle');
+if (oInvite) {
+  const lbl = tr.onlineInviteBtn || '📤 Inviter un ami';
+  oInvite.setAttribute('aria-label', lbl);
 }
 // ── Color section label (mode-aware) ────────────────────────────
 const colorSectionLabel = document.getElementById('color-section-label');
@@ -11286,6 +12610,69 @@ updateGameInfoDisplay();
 showScreen('game-play-area');
 renderAll();
 triggerNextAction();
+}
+
+
+// ---------------------------------------------------------
+// Rematch / Replay (same room, alternating colors each round)
+// ---------------------------------------------------------
+function toggleLocalColorForNextRound() {
+  // In AI and Local modes, humanPlayerId determines which side starts (White=2 starts)
+  // We alternate each new game start.
+  if (gameMode === 'ai' || gameMode === 'local') {
+    humanPlayerId = (humanPlayerId === 1) ? 2 : 1;
+    try { updateColorOptionSelection?.(humanPlayerId); } catch(_) {}
+  }
+}
+
+async function onlineSetRematchReady(isReady) {
+  if (gameMode !== 'online') return;
+  if (!online || !online.connected || !online.matchId) return;
+  if (!_ensureParseReady()) return;
+  try {
+    const match = new Parse.Object(BACK4APP_CLASS);
+    match.id = online.matchId;
+    if (online.role === 1) match.set('rm1', !!isReady);
+    if (online.role === 2) match.set('rm2', !!isReady);
+    match.increment('rev', 1);
+    await match.save();
+  } catch(_) {}
+}
+
+function handleReplayClick() {
+  hideWinnerAnimation();
+
+  // Online: stay in the same room
+  if (gameMode === 'online' && online && online.connected) {
+    // Mark ready for rematch; host will start when both are ready.
+    onlineSetRematchReady(true);
+    // Go back to online lobby UI (without leaving the room)
+    try { showScreen('online-lobby-area'); } catch(_) {}
+    _setOnlineStatus(t('onlineRematchReadyToast'));
+    // If host, try auto-start when both players are ready (will be checked by lobby polling)
+    if (online.isHost) {
+      // Attempt immediate start if already both ready (best-effort; polling also handles it)
+      (async () => {
+        try {
+          const match = await _fetchMatchById(online.matchId);
+          const rm1 = !!match.get('rm1');
+          const rm2 = !!match.get('rm2');
+          if (rm1 && rm2) onlineStartMatch_Back4App();
+        } catch(_) {}
+      })();
+    }
+    return;
+  }
+
+  // Spectator: restart the AI-vs-AI match
+  if (gameMode === 'spectator') {
+    startSpectatorGame();
+    return;
+  }
+
+  // Offline / AI / Local
+  toggleLocalColorForNextRound();
+  startGame();
 }
 
 function renderAll() {
@@ -13757,6 +15144,19 @@ placements: 0,
 moves: 0,
 captures: 0,
 mills: 0
+},
+online: {
+games: 0,
+wins: 0,
+losses: 0,
+draws: 0,
+streak: 0,
+bestStreak: 0,
+timeMs: 0,
+actions: 0,
+captures: 0,
+mills: 0,
+opponentNames: []
 }
 },
 variants: {},     // { [variant]: games }
@@ -13853,6 +15253,8 @@ stats = defaultStats();
 // Normalize missing fields
 stats.totals = stats.totals || defaultStats().totals;
 stats.modes = stats.modes || defaultStats().modes;
+// Migrate: add online bucket if missing (existing v2 data without it)
+if (!stats.modes.online) stats.modes.online = defaultStats().modes.online;
 stats.variants = stats.variants || {};
 stats.history = Array.isArray(stats.history) ? stats.history : [];
 stats.lastGame = stats.lastGame || null;
@@ -13863,8 +15265,9 @@ stats.level = computeLevel(stats.xp);
 
 function saveStats() {
 try {
-stats.updatedAt = nowMs();
-localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  stats.updatedAt = nowMs();
+  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  try { markStatsDirty?.(); } catch(_) {}
 } catch(_) {}
 }
 
@@ -14314,7 +15717,6 @@ finalizeSessionAndStats();
 persistLastReplay();
 refreshReplayButtons();
 } catch(e) {
-console.warn(e);
 }
 return __origEndGame.apply(this, args);
 };
@@ -14441,6 +15843,51 @@ if (record.winnerId === 1) lo.p1Wins += 1;
 if (record.winnerId === 2) lo.p2Wins += 1;
 
 stats.xp += 12 + Math.min(30, record.actions);
+} else if (gameMode === 'online') {
+const onl = stats.modes.online || defaultStats().modes.online;
+stats.modes.online = onl;
+onl.games += 1;
+onl.timeMs = (onl.timeMs || 0) + dur;
+onl.actions = (onl.actions || 0) + record.actions;
+onl.captures = (onl.captures || 0) + record.captures;
+onl.mills = (onl.mills || 0) + record.mills;
+
+// Determine win/loss from online.role vs winnerId
+// online.role: slot (1 or 2), online.playerId: in-game player id (may differ after color swap)
+const myPlayerId = (typeof online !== 'undefined' && online.playerId) ? online.playerId : null;
+const isWin = myPlayerId ? (record.winnerId === myPlayerId) : false;
+if (isWin) {
+  onl.wins += 1;
+  onl.streak = (onl.streak || 0) + 1;
+  onl.bestStreak = Math.max(onl.bestStreak || 0, onl.streak);
+  stats.xp += 30 + Math.min(40, record.actions);
+} else {
+  onl.losses += 1;
+  onl.streak = 0;
+  stats.xp += 15 + Math.min(20, record.actions);
+}
+
+// Record opponent name
+try {
+  const myRole = (typeof online !== 'undefined' && online.role) ? online.role : null;
+  const oppName = myRole === 1 ? (record.p2Name || null) : (record.p1Name || null);
+  if (oppName) {
+    if (!Array.isArray(onl.opponentNames)) onl.opponentNames = [];
+    onl.opponentNames = [oppName, ...onl.opponentNames.filter(n => n !== oppName)].slice(0, 10);
+  }
+  // Enrich recent room entry with result
+  const roomCode = (typeof online !== 'undefined' && online.room) ? online.room : null;
+  if (roomCode) {
+    addRecentOnlineRoom({
+      code: roomCode,
+      opponentName: oppName,
+      myName: record.p1Name || record.p2Name || null,
+      variant: record.variant,
+      winnerId: record.winnerId,
+      didWin: isWin
+    });
+  }
+} catch(_) {}
 } else {
 stats.xp += 8 + Math.min(20, record.actions);
 }
@@ -14532,122 +15979,416 @@ return s.replace(/[&<>"']/g, (c) => ( {
 }
 
 function _modeLabel(mode) {
-  if (mode === 'ai') return t('modeAI', 'IA');
-  if (mode === 'local') return t('modeLocal', 'Local');
-  if (mode === 'spectator') return t('modeSpectator', 'Spectateur');
+  if (mode === 'ai') return t('modeAI');
+  if (mode === 'local') return t('modeLocal');
+  if (mode === 'online') return t('statsOnlineMode');
+  if (mode === 'spectator') return t('modeSpectator');
   return '—';
 }
 function _difficultyLabel(d) {
   const n = Number(d);
-  if (n === 1) return t('difficultyEasy', 'Débutant');
-  if (n === 2) return t('difficultyMedium', 'Intermédiaire');
-  if (n === 3) return t('difficultyHard', 'Difficile');
-  if (n === 4) return t('difficultyImpossible', 'Expert');
+  if (n === 1) return t('difficultyEasy');
+  if (n === 2) return t('difficultyMedium');
+  if (n === 3) return t('difficultyHard');
+  if (n === 4) return t('difficultyImpossible');
   return '—';
 }
-function renderStats() {
-  if (!statsContent) return;
 
-  const num = (x) => Number(x || 0);
+// ───────────────────────────────────────────────────────────────
+// Stats: compute once, render once (no heavy recalculations in render)
+// ───────────────────────────────────────────────────────────────
+let _statsRevision = 0;
+let _statsCache = null;
+let _statsCacheRev = -1;
 
-  const totals = stats.totals || defaultStats().totals;
-  const ai = (stats.modes && stats.modes.ai) ? stats.modes.ai : defaultStats().modes.ai;
-  const local = (stats.modes && stats.modes.local) ? stats.modes.local : defaultStats().modes.local;
-
-  const games = num(totals.games);
-  const actions = num(totals.actions);
-  const captures = num(totals.captures);
-  const mills = num(totals.mills);
-  const timeMs = num(totals.timeMs);
-
-  const totalTimeStr = timeMs > 0 ? formatDuration(timeMs) : '—';
-  const avgTimeStr = (games > 0 && timeMs > 0) ? formatDuration(timeMs / games) : '—';
-  const actionsPerGame = games > 0 ? (actions / games) : 0;
-
-  const pref = loadNamePrefs();
-  const p1ColorName = ((translations[currentLanguage]?.player1Color) || t('player1Color', 'Noir')).split(' ')[0];
-  const p2ColorName = ((translations[currentLanguage]?.player2Color) || t('player2Color', 'Blanc')).split(' ')[0];
-  const savedJ1 = pref.p1 ? _escText(pref.p1) : '—';
-  const savedJ2 = pref.p2 ? _escText(pref.p2) : '—';
-
-  const aiGames = num(ai.games);
-  const aiWins = num(ai.wins);
-  const aiLosses = num(ai.losses);
-  const aiWinRate = aiGames > 0 ? Math.round((aiWins / aiGames) * 100) : null;
-
-  const localGames = num(local.games);
-  const p1Wins = num(local.p1Wins);
-  const p2Wins = num(local.p2Wins);
-  const p1Rate = localGames > 0 ? Math.round((p1Wins / localGames) * 100) : null;
-  const p2Rate = localGames > 0 ? Math.round((p2Wins / localGames) * 100) : null;
-
-  // Last game (prefer stats.lastGame; fallback to replay metadata)
-  const last = stats.lastGame || null;
-  const lastReplay = loadLastReplay();
-  const lastMeta = lastReplay?.meta || {};
-  const lastAt = last?.at ? new Date(last.at) : (lastReplay?.createdAt ? new Date(lastReplay.createdAt) : null);
-  const lastMode = last?.mode || (lastMeta.gameMode || null);
-  const lastModeLabel = lastMode ? _modeLabel(lastMode) : '—';
-  const lastDur = (last && num(last.durationMs) > 0) ? num(last.durationMs) : 0;
-  const lastDurStr = lastDur > 0 ? formatDuration(lastDur) : '—';
-  const lastP1 = _escText(last?.p1Name || lastMeta.player1Name || pref.p1 || 'J1');
-  const lastP2 = _escText(last?.p2Name || lastMeta.player2Name || pref.p2 || 'J2');
-  const lastWinnerId = num(last?.winnerId);
-  const lastWinnerName = (lastWinnerId === 1) ? lastP1 : (lastWinnerId === 2) ? lastP2 : '—';
-
-  const note = games > 0 ? '' : `<div class="stats-simple-note">${t('noStatsYet','Aucune statistique pour l\'instant. Lance une partie !')}</div>`;
-
-  statsContent.innerHTML = `
-    <div class="stats-chips">
-      <div class="stats-chip"><span class="dot" style="background: rgba(20,20,20,0.9)"></span><span><strong>${_escText(p1ColorName)}</strong> — ${savedJ1}</span></div>
-      <div class="stats-chip"><span class="dot" style="background: rgba(235,235,235,0.95)"></span><span><strong>${_escText(p2ColorName)}</strong> — ${savedJ2}</span></div>
-    </div>
-
-    ${note}
-
-    <div class="stats-grid">
-      <div class="stat-card"><div class="k">${t('gamesPlayedLabel','Parties')}</div><div class="v">${games}</div></div>
-      <div class="stat-card"><div class="k">${t('durationLabel','Temps total')}</div><div class="v">${totalTimeStr}</div></div>
-      <div class="stat-card"><div class="k">${t('avgDuration','Durée moyenne')}</div><div class="v">${avgTimeStr}</div></div>
-      <div class="stat-card"><div class="k">${t('actionsPerGameLabel','Coups / partie')}</div><div class="v">${actionsPerGame.toFixed(1)}</div></div>
-    </div>
-
-    <div class="stats-rowline">
-      ${aiGames > 0 ? `
-        <div class="stat-card">
-          <div class="k">${t('modeAI','IA')}</div>
-          <div class="stats-mini"><span class="label">${t('winRateLabel','Taux de victoire')}</span><span class="value">${aiWinRate === null ? '—' : aiWinRate + '%'}</span></div>
-          <div class="stats-mini"><span class="label">${t('gamesPlayedLabel','Parties')}</span><span class="value">${aiGames}</span></div>
-          <div class="stats-mini"><span class="label">${t('winsLabel','Victoires')}</span><span class="value">${aiWins}</span></div>
-          <div class="stats-mini"><span class="label">${t('lossesLabel','Défaites')}</span><span class="value">${aiLosses}</span></div>
-        </div>
-      ` : ''}
-
-      ${localGames > 0 ? `
-        <div class="stat-card">
-          <div class="k">${t('modeLocal','Local')}</div>
-          <div class="stats-mini"><span class="label">${t('gamesPlayedLabel','Parties')}</span><span class="value">${localGames}</span></div>
-          <div class="stats-mini"><span class="label">${_escText(p1ColorName)}</span><span class="value">${p1Wins} ${p1Rate === null ? '' : ('(' + p1Rate + '%)')}</span></div>
-          <div class="stats-mini"><span class="label">${_escText(p2ColorName)}</span><span class="value">${p2Wins} ${p2Rate === null ? '' : ('(' + p2Rate + '%)')}</span></div>
-        </div>
-      ` : ''}
-    </div>
-
-    <div class="stat-card stat-mt">
-      <div class="k">${t('lastGameLabel','Dernière partie')}</div>
-      <div class="stats-mini"><span class="label">${t('modeLabel','Mode')}</span><span class="value">${lastModeLabel}</span></div>
-      <div class="stats-mini"><span class="label">${t('winnerLabel','Vainqueur')}</span><span class="value">${lastWinnerName}</span></div>
-      <div class="stats-mini"><span class="label">${t('durationLabel','Durée')}</span><span class="value">${lastDurStr}</span></div>
-      <div class="stat-detail">${lastAt ? lastAt.toLocaleString() : '—'} • ${lastP1} vs ${lastP2}</div>
-      <div class="stats-mini"><span class="label">${t('capturesLabel','Captures')}</span><span class="value">${captures}</span></div>
-      <div class="stats-mini"><span class="label">${t('millsLabel','Moulins')}</span><span class="value">${mills}</span></div>
-    </div>
-  `;
+function markStatsDirty() {
+  _statsRevision++;
+  _statsCache = null;
 }
 
+function computeStatsForUI(raw) {
+  const stats0 = raw || defaultStats();
+  const def = defaultStats();
+
+  const num = (x) => {
+    const n = Number(x);
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+  };
+  const pct = (a, b) => (b > 0 ? Math.round((a / b) * 100) : null);
+
+  const totals0 = stats0.totals || def.totals;
+  const ai0 = (stats0.modes && stats0.modes.ai) ? stats0.modes.ai : def.modes.ai;
+  const local0 = (stats0.modes && stats0.modes.local) ? stats0.modes.local : def.modes.local;
+  const onl0 = (stats0.modes && stats0.modes.online) ? stats0.modes.online : def.modes.online;
+
+  const hist = Array.isArray(stats0.history) ? stats0.history : [];
+  const last = stats0.lastGame || null;
+  const pref = loadNamePrefs();
+
+  // ---- Validate + reconcile per-mode counters (avoid incoherent aggregates) ----
+  const safeModeCounts = (() => {
+    // Online: infer result from stored online name if possible (more robust than relying on stale online.playerId)
+    let onlineWins = 0, onlineLosses = 0, onlineDraws = 0, onlineGames = 0;
+    let aiWins = 0, aiLosses = 0, aiGames = 0;
+
+    const myOnlineName = (() => { try { return String(localStorage.getItem('tiddas_online_name_v1') || ''); } catch(_) { return ''; } })();
+
+    for (const g of hist) {
+      if (!g || typeof g !== 'object') continue;
+
+      const mode = g.mode || null;
+      const winnerId = (g.winnerId === 1 || g.winnerId === 2) ? g.winnerId : null;
+
+      if (mode === 'ai') {
+        const humanId = (g.humanId === 1 || g.humanId === 2) ? g.humanId : null;
+        if (!humanId) continue;
+        aiGames += 1;
+        if (winnerId === null) continue;
+        if (winnerId === humanId) aiWins += 1;
+        else aiLosses += 1;
+      }
+
+      if (mode === 'online') {
+        onlineGames += 1;
+        if (winnerId === null) { onlineDraws += 1; continue; }
+
+        let myId = null;
+        if (myOnlineName) {
+          if (String(g.p1Name || '') === myOnlineName) myId = 1;
+          else if (String(g.p2Name || '') === myOnlineName) myId = 2;
+        }
+
+        // If we can’t reliably identify "me", fallback to stored aggregates for W/L.
+        if (myId === null) continue;
+
+        if (winnerId === myId) onlineWins += 1;
+        else onlineLosses += 1;
+      }
+    }
+
+    const out = {
+      ai: {
+        games: num(ai0.games),
+        wins: num(ai0.wins),
+        losses: num(ai0.losses)
+      },
+      online: {
+        games: num(onl0.games),
+        wins: num(onl0.wins),
+        losses: num(onl0.losses),
+        draws: num(onl0.draws)
+      }
+    };
+
+    // AI: if history-derived counts cover all recorded AI games (or at least are coherent), use them.
+    if (aiGames > 0 && (aiWins + aiLosses) === aiGames) {
+      out.ai.games = aiGames;
+      out.ai.wins = aiWins;
+      out.ai.losses = aiLosses;
+    } else {
+      // Ensure coherence if aggregates are off
+      const g = out.ai.games;
+      const sum = out.ai.wins + out.ai.losses;
+      if (g !== sum) out.ai.games = Math.max(g, sum);
+    }
+
+    // Online: use history-derived W/L only if we identified "me" consistently for all online games in history.
+    if (onlineGames > 0 && (onlineWins + onlineLosses + onlineDraws) === onlineGames) {
+      out.online.games = onlineGames;
+      out.online.wins = onlineWins;
+      out.online.losses = onlineLosses;
+      out.online.draws = onlineDraws;
+    } else {
+      const g = out.online.games;
+      const sum = out.online.wins + out.online.losses + out.online.draws;
+      if (g !== sum) out.online.games = Math.max(g, sum);
+    }
+
+    return out;
+  })();
+
+  const ai = safeModeCounts.ai;
+  const onl = safeModeCounts.online;
+
+  // Local: show p1/p2 wins (no "win rate" concept)
+  const local = {
+    games: num(local0.games),
+    p1Wins: num(local0.p1Wins),
+    p2Wins: num(local0.p2Wins),
+    avgDurMs: num(local0.games) > 0 ? (num(local0.timeMs) / num(local0.games)) : 0,
+    actionsPerGame: num(local0.games) > 0 ? (num(local0.actions) / num(local0.games)) : 0
+  };
+  // Ensure local coherence if needed
+  if (local.games !== (local.p1Wins + local.p2Wins) && (local.p1Wins + local.p2Wins) > 0) {
+    local.games = Math.max(local.games, local.p1Wins + local.p2Wins);
+  }
+
+  // Global derived (keep lifetime totals; reconcile games if obviously inconsistent)
+  const totals = {
+    games: num(totals0.games),
+    timeMs: num(totals0.timeMs),
+    actions: num(totals0.actions),
+    placements: num(totals0.placements),
+    moves: num(totals0.moves),
+    captures: num(totals0.captures),
+    mills: num(totals0.mills)
+  };
+
+  const sumModes = num(ai.games) + num(local.games) + num(onl.games);
+  const games = Math.max(totals.games, sumModes);
+
+  // Best win time: shortest *victory* for the user (AI + Online only, when identifiable)
+  let bestWinMs = 0;
+  let best = Infinity;
+
+  const myOnlineName = (() => { try { return String(localStorage.getItem('tiddas_online_name_v1') || ''); } catch(_) { return ''; } })();
+  for (const g of hist) {
+    if (!g || typeof g !== 'object') continue;
+    const dur = num(g.durationMs);
+    if (!(dur > 0)) continue;
+
+    const winnerId = (g.winnerId === 1 || g.winnerId === 2) ? g.winnerId : null;
+    if (!winnerId) continue;
+
+    if (g.mode === 'ai') {
+      const humanId = (g.humanId === 1 || g.humanId === 2) ? g.humanId : null;
+      if (humanId && winnerId === humanId) best = Math.min(best, dur);
+    }
+
+    if (g.mode === 'online' && myOnlineName) {
+      let myId = null;
+      if (String(g.p1Name || '') === myOnlineName) myId = 1;
+      else if (String(g.p2Name || '') === myOnlineName) myId = 2;
+      if (myId && winnerId === myId) best = Math.min(best, dur);
+    }
+  }
+  if (best < Infinity) bestWinMs = best;
+
+  // Opponent highlight (online)
+  const opponents = Array.isArray(onl0.opponentNames) ? onl0.opponentNames.filter(Boolean) : [];
+  const oppTop = (() => {
+    const map = new Map();
+    for (const n of opponents) map.set(n, (map.get(n) || 0) + 1);
+    let bestName = null;
+    let bestN = 0;
+    map.forEach((v, k) => { if (v > bestN) { bestN = v; bestName = k; } });
+    return bestName ? { name: bestName, games: bestN } : null;
+  })();
+
+  return {
+    // Global
+    games,
+    timeMs: totals.timeMs,
+    actions: totals.actions,
+    avgDurMs: games > 0 ? (totals.timeMs / games) : 0,
+    actsPerGame: games > 0 ? (totals.actions / games) : 0,
+    bestWinMs,
+
+    // Progress
+    xp: num(stats0.xp),
+    level: computeLevel(num(stats0.xp)),
+    levelPct: (() => { try { return levelProgress(num(stats0.xp)).pct || 0; } catch(_) { return 0; } })(),
+    xpToNext: (() => { try { return (levelProgress(num(stats0.xp)).nextAt || 0) - num(stats0.xp); } catch(_) { return 0; } })(),
+
+    players: {
+      p1Color: (translations[currentLanguage]?.player1Color || '').split(' ')[0] || t('player1ColorShort'),
+      p2Color: (translations[currentLanguage]?.player2Color || '').split(' ')[0] || t('player2ColorShort'),
+      p1Name: pref.p1 || t('defaultPlayer1'),
+      p2Name: pref.p2 || t('defaultPlayer2'),
+      onlineName: myOnlineName
+    },
+
+    ai: {
+      games: num(ai.games),
+      wins: num(ai.wins),
+      losses: num(ai.losses),
+      winRate: pct(num(ai.wins), num(ai.games)),
+      avgDurMs: num(ai0.games) > 0 ? (num(ai0.timeMs) / num(ai0.games)) : 0
+    },
+
+    online: {
+      games: num(onl.games),
+      wins: num(onl.wins),
+      losses: num(onl.losses),
+      draws: num(onl.draws),
+      winRate: pct(num(onl.wins), num(onl.games)),
+      avgDurMs: num(onl0.games) > 0 ? (num(onl0.timeMs) / num(onl0.games)) : 0,
+      oppTop
+    },
+
+    local,
+
+    last: last ? {
+      mode: last.mode || '—',
+      variant: last.variant || '—',
+      winnerId: last.winnerId || null,
+      p1Name: _escText(last.p1Name || '—'),
+      p2Name: _escText(last.p2Name || '—'),
+      durationMs: num(last.durationMs),
+      actions: num(last.actions),
+      at: last.at ? new Date(last.at) : null
+    } : null
+  };
+}
+
+
+
+function getComputedStats() {
+  if (_statsCache && _statsCacheRev === _statsRevision) return _statsCache;
+  _statsCache = computeStatsForUI(stats);
+  _statsCacheRev = _statsRevision;
+  return _statsCache;
+}
+
+function renderStats(cs) {
+  if (!statsContent) return;
+  // Allow calls without args (multiple places call renderStats() directly)
+  const computed = cs || (typeof getComputedStats === 'function' ? getComputedStats() : computeStatsForUI(stats));
+  const esc = (s) => _escText(s);
+  const fmtD = (ms) => (ms > 0 ? formatDuration(ms) : '—');
+  const fmtN = (v, dec=0) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return '0';
+    return dec ? n.toFixed(dec) : String(Math.round(n));
+  };
+  const fmtP = (v) => (v === null ? '—' : (v + '%'));
+
+  let html = `
+    <div class="stats-chips">
+      <div class="stats-chip"><span class="dot" style="background:rgba(20,20,20,0.9)"></span>
+        <span><strong>${esc(computed.players.p1Color)}</strong> — ${esc(computed.players.p1Name)}</span></div>
+      <div class="stats-chip"><span class="dot" style="background:rgba(235,235,235,0.95)"></span>
+        <span><strong>${esc(computed.players.p2Color)}</strong> — ${esc(computed.players.p2Name)}</span></div>
+      ${computed.players.onlineName ? `<div class="stats-chip"><span class="dot" style="background:rgba(0,200,255,0.6)"></span>
+        <span>🌐 ${esc(computed.players.onlineName)}</span></div>` : ''}
+    </div>`;
+
+  if (!computed.games) {
+    statsContent.innerHTML = html + `<div class="stats-simple-note">${t('noStatsYet')}</div>`;
+    return;
+  }
+
+  const sectionTitle = (label, icon) => `<div class="stats-section-title">${icon ? icon + ' ' : ''}${label}</div>`;
+
+  // ---- Overview (reduced, validated) ----
+  html += sectionTitle(t('statsSectionGlobal'), '📊');
+
+  html += `
+    <table style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:8px;">
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('gamesPlayedLabel')}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${computed.games}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('durationLabel')}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.timeMs)}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('avgDuration')}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.avgDurMs)}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('actionsPerGameLabel')}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtN(computed.actsPerGame, 1)}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;opacity:.85;">${t('statsBestWinTime')}</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:850;">${fmtD(computed.bestWinMs)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  // ---- By mode (single readable table) ----
+  html += sectionTitle(t('statsSectionByMode'), '🎮');
+
+  const row = (label, games, wl, winRate, avgDur) => `
+    <tr>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);font-weight:800;">${label}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${games}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${wl}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${winRate}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${avgDur}</td>
+    </tr>
+  `;
+
+  const localWL = `${esc(computed.players.p1Color)}: ${computed.local.p1Wins} • ${esc(computed.players.p2Color)}: ${computed.local.p2Wins}`;
+
+  html += `
+    <div class="stat-card" style="padding:0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;border-spacing:0;">
+        <thead>
+          <tr style="background:rgba(240,200,80,0.08);">
+            <th style="text-align:left;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('modeLabel')}</th>
+            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('gamesPlayedLabel')}</th>
+            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">W–L</th>
+            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('winRateLabel')}</th>
+            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('statsAvgDurPerMode')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${row('🤖 ' + t('modeAI'), computed.ai.games, `${computed.ai.wins}–${computed.ai.losses}`, fmtP(computed.ai.winRate), fmtD(computed.ai.avgDurMs))}
+          ${row('🌐 ' + t('statsOnlineMode'), computed.online.games, `${computed.online.wins}–${computed.online.losses}`, fmtP(computed.online.winRate), fmtD(computed.online.avgDurMs))}
+          ${row('👥 ' + t('modeLocal'), computed.local.games, localWL, '—', fmtD(computed.local.avgDurMs))}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Optional: online opponent highlight (kept, but subtle)
+  if (computed.online && computed.online.oppTop) {
+    html += `<div style="margin-top:8px;font-size:0.9rem;opacity:0.85;">
+      ${t('statsOnlineTopOpponent')}: <strong>${esc(computed.online.oppTop.name)}</strong> (${computed.online.oppTop.games})
+    </div>`;
+  }
+
+  // ---- Last game (compact) ----
+  if (computed.last) {
+    const w = computed.last.winnerId === 1 ? computed.last.p1Name : computed.last.winnerId === 2 ? computed.last.p2Name : '—';
+    html += sectionTitle(t('statsSectionLastGame'), '🕐');
+    html += `
+      <table style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:8px;">
+        <tbody>
+          <tr>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('modeLabel')}</td>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${_modeLabel(computed.last.mode)}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('statsVariantLabel')}</td>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${esc(computed.last.variant)}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('winnerLabel')}</td>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${w}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('durationLabel')}</td>
+            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.last.durationMs)}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;opacity:.85;">${t('statsActionsCount')}</td>
+            <td style="padding:8px 10px;text-align:right;font-weight:850;">${computed.last.actions}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding:8px 10px;font-size:0.78rem;opacity:0.7;text-align:right;">
+              ${computed.last.at ? computed.last.at.toLocaleString() : '—'} — ${computed.last.p1Name} vs ${computed.last.p2Name}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+  }
+
+  statsContent.innerHTML = html;
+}
+
+function refreshStatsUI() {
+  renderStats(getComputedStats());
+}
 function openStats() {
 if (!statsModal) return;
-renderStats();
+refreshStatsUI();
 statsModal.classList.add('active');
 statsModal.setAttribute('aria-hidden', 'false');
 }
@@ -14666,12 +16407,13 @@ if (e.target === statsModal) closeStats();
 
 if (statsResetBtn) {
 statsResetBtn.addEventListener('click', () => {
-const ok = window.confirm(`${t('resetStats', 'Réinitialiser')} ?`);
+const ok = window.confirm(t('resetStatsConfirm'));
 if (!ok) return;
 stats = defaultStats();
 saveStats();
-renderStats();
-showToast(t('toastStatsReset', 'Stats réinitialisées.'), 1800);
+markStatsDirty();
+refreshStatsUI();
+showToast(t('toastStatsReset'), 1800);
 });
 }
 
@@ -14688,7 +16430,7 @@ document.body.appendChild(a);
 a.click();
 a.remove();
 URL.revokeObjectURL(url);
-showToast(t('toastExported', 'Export généré.'), 1600);
+showToast(t('toastExported'), 1600);
 } catch(_) {}
 });
 }
@@ -14796,7 +16538,6 @@ if (!state.consecutiveCount) state.consecutiveCount = {
 };
 renderAll?.();
 } catch(e) {
-console.error('[Replay] renderAll error:', e);
 }
 }
 
@@ -15483,48 +17224,194 @@ showScreen('player-setup-area');
 
 
 
+// ═══════════════════════════════════════════════════════
+//  ONLINE LOBBY — wiring v2 (guided steps + invite panel)
+// ═══════════════════════════════════════════════════════
+
+// Auto-join from URL param ?room=CODE&join=1 — runs once (300ms after DOM ready)
+let _autoJoinDone = false;
+function _tryAutoJoinFromUrl() {
+  if (_autoJoinDone) return;
+  _autoJoinDone = true;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const roomParam = (params.get('room') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const joinParam  = params.get('join');
+    if (!roomParam) return;
+    // Clean URL
+    try { history.replaceState({}, '', window.location.pathname); } catch(_) {}
+    // Navigate to online lobby
+    gameMode = 'online';
+    const onlineBtn2 = document.getElementById('play-online-btn');
+    if (onlineBtn2) onlineBtn2.click();
+    else if (typeof showScreen === 'function') showScreen('online-lobby-area');
+    // Pre-fill code field
+    setTimeout(() => {
+      try {
+        const inp = document.getElementById('online-room-code');
+        if (inp) { inp.value = roomParam; inp.dispatchEvent(new Event('input')); }
+        // Open join accordion
+        const jp = document.getElementById('online-join-panel');
+        if (jp) jp.classList.add('open');
+        // Show toast
+        const msg = t('onlineAutoJoinDetected','Salon détecté : {code}').replace('{code}', roomParam);
+        if (typeof showToast === 'function') showToast(msg, 2500);
+        // If name already known → connect; else focus name input
+        const savedName = (() => { try { return localStorage.getItem('tiddas_online_name_v1') || ''; } catch(_) { return ''; } })();
+        if (savedName) {
+          setTimeout(() => { try { onlineConnectToRoom(roomParam, false); } catch(_) {} }, 400);
+        } else {
+          const glob = document.getElementById('online-status-global');
+          if (glob) glob.textContent = t('onlineAutoJoinWaiting','Entrez votre nom pour rejoindre');
+          const nameInp = document.getElementById('online-your-name');
+          if (nameInp) nameInp.focus();
+        }
+      } catch(_) {}
+    }, 350);
+  } catch(_) {}
+}
+setTimeout(_tryAutoJoinFromUrl, 100);
+
 const onlineBtn = document.getElementById('play-online-btn');
 if (onlineBtn) {
   onlineBtn.addEventListener('click', () => {
     gameMode = 'online';
     showScreen('online-lobby-area');
 
-    // Bind elements (lazy)
-    onlineEls.area = document.getElementById('online-lobby-area');
-    onlineEls.statusText = document.getElementById('online-status-text');
+    // Bind elements
+    onlineEls.area        = document.getElementById('online-lobby-area');
+    onlineEls.statusText  = document.getElementById('online-status-text');
     onlineEls.roomCodeRow = document.getElementById('online-roomcode-row');
-    onlineEls.roomCode = document.getElementById('online-roomcode');
-    onlineEls.btnCreate = document.getElementById('online-create-room');
-    onlineEls.btnJoin = document.getElementById('online-join-room');
-    onlineEls.joinPanel = document.getElementById('online-join-panel');
-    onlineEls.inputCode = document.getElementById('online-room-code');
-    onlineEls.btnConnect = document.getElementById('online-connect');
-    onlineEls.btnStart = document.getElementById('online-start');
-    onlineEls.btnCopy = document.getElementById('online-copy-code');
-    onlineEls.btnBack = document.getElementById('back-to-modes-from-online-btn');
-    onlineEls.inputName = document.getElementById('online-your-name');
-    onlineEls.p1Name = document.getElementById('online-p1-name');
-    onlineEls.p2Name = document.getElementById('online-p2-name');
-
-    onlineEls.recentWrap = document.getElementById('online-recent-wrap');
-    onlineEls.recentList = document.getElementById('online-recent-list');
+    onlineEls.roomCode    = document.getElementById('online-roomcode');
+    onlineEls.btnCreate   = document.getElementById('online-create-room');
+    onlineEls.btnJoin     = document.getElementById('online-join-room');
+    onlineEls.joinPanel   = document.getElementById('online-join-panel');
+    onlineEls.inputCode   = document.getElementById('online-room-code');
+    onlineEls.btnConnect  = document.getElementById('online-connect');
+    onlineEls.btnStart    = document.getElementById('online-start');
+    onlineEls.btnCopy     = document.getElementById('online-copy-code');
+    onlineEls.btnCopyLink = null; // replaced by invite panel
+    onlineEls.btnShareLink= null; // replaced by invite panel
+    onlineEls.btnBack     = document.getElementById('back-to-modes-from-online-btn');
+    onlineEls.inputName   = document.getElementById('online-your-name');
+    onlineEls.p1Name      = document.getElementById('online-p1-name');
+    onlineEls.p2Name      = document.getElementById('online-p2-name');
+    onlineEls.recentWrap  = document.getElementById('online-recent-wrap');
+    onlineEls.recentList  = document.getElementById('online-recent-list');
     onlineEls.btnRejoinLast = document.getElementById('online-rejoin-last');
 
-    _setOnlineStatus(_isBack4AppConfigured() ? t('onlineChooseAction', "Choisis : créer ou rejoindre un salon.") : t('onlineNotConfigured', "Back4App n'est pas configuré (clés manquantes)."));
+    const rematchReadyBtn = document.getElementById('online-rematch-ready-btn');
+    if (rematchReadyBtn) {
+      rematchReadyBtn.addEventListener('click', async () => {
+        // Toggle ready state for current slot
+        try {
+          const match = await _fetchMatchById(online.matchId);
+          const rm1 = !!match.get('rm1');
+          const rm2 = !!match.get('rm2');
+          const current = (online.role === 1) ? rm1 : rm2;
+          await onlineSetRematchReady(!current);
+        } catch(_) {}
+      });
+    }
 
-    // Prefill last used room code to make rejoin/resume easier (especially on mobile)
-    try {
-      const last = loadLastOnlineRoom();
-      if (last && last.code && onlineEls.inputCode && !onlineEls.inputCode.value) {
-        onlineEls.inputCode.value = String(last.code).toUpperCase();
-        _show(onlineEls.joinPanel, true);
+    // Status global text element
+    const statusGlobal = document.getElementById('online-status-global');
+    const _setGlobal = (msg) => { if (statusGlobal) statusGlobal.textContent = msg || ''; };
+
+    _setGlobal(_isBack4AppConfigured()
+      ? t('onlineChooseAction')
+      : t('onlineNotConfigured',"Back4App n'est pas configuré (clés manquantes)."));
+
+    // Show/hide status card
+    const statusCard = document.getElementById('online-status');
+    const _showStatusCard = (yes) => { if (statusCard) statusCard.style.display = yes ? '' : 'none'; };
+
+    // Helpers accordion
+    const _openAccordion  = (id) => { const el = document.getElementById(id); if (el) el.classList.add('open'); };
+    const _closeAccordion = (id) => { const el = document.getElementById(id); if (el) el.classList.remove('open'); };
+    const _closeAllAccordions = () => {
+      ['online-create-panel','online-join-panel','online-recent-wrap'].forEach(_closeAccordion);
+    };
+
+    // Code input validation
+    const _validateCode = () => {
+      const v = (onlineEls.inputCode?.value || '').trim();
+      if (onlineEls.inputCode) {
+        onlineEls.inputCode.classList.toggle('input-valid', v.length >= 4);
+        onlineEls.inputCode.classList.toggle('input-error', v.length > 0 && v.length < 4);
       }
-    } catch(_) {}
+      if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = v.length < 4;
+    };
+    if (onlineEls.inputCode) {
+      onlineEls.inputCode.addEventListener('input', _validateCode);
+      _validateCode();
+    }
 
+    // Back button
+    if (onlineEls.btnBack) onlineEls.btnBack.onclick = () => { onlineDisconnect(); showScreen('mode-selection-area'); };
 
+    // Disable actions if not configured
+    const __onlineOk = _isBack4AppConfigured();
+    if (onlineEls.btnCreate)  onlineEls.btnCreate.disabled  = !__onlineOk;
+    if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = true; // enabled by validation
 
-    // Recent rooms / quick rejoin
-    try { renderRecentOnlineRooms(); } catch(_) {}
+    // ── Créer un salon (avec prévisualisation code) ──────────
+    if (onlineEls.btnCreate) onlineEls.btnCreate.onclick = () => {
+      _closeAllAccordions();
+      const code = _randCode(4);
+      const previewBox = document.getElementById('online-code-preview-box');
+      const previewCode = document.getElementById('online-preview-code');
+      const confirmBtn = document.getElementById('online-preview-confirm');
+      if (previewBox && previewCode) {
+        previewCode.textContent = code;
+        previewBox.style.display = '';
+        _openAccordion('online-create-panel');
+        if (confirmBtn) {
+          confirmBtn.onclick = () => {
+            previewBox.style.display = 'none';
+            _closeAccordion('online-create-panel');
+            _showStatusCard(true);
+            onlineConnectToRoom(code, true);
+          };
+        }
+      } else {
+        _showStatusCard(true);
+        onlineConnectToRoom(code, true);
+      }
+    };
+
+    // ── Rejoindre ────────────────────────────────────────────
+    if (onlineEls.btnJoin) onlineEls.btnJoin.onclick = () => {
+      _closeAllAccordions();
+      _openAccordion('online-join-panel');
+      onlineEls.inputCode?.focus();
+    };
+
+    // ── Bouton "Salons récents" ───────────────────────────────
+    const recentToggleBtn = document.getElementById('online-recent-toggle');
+    if (recentToggleBtn) {
+      const rooms = loadRecentOnlineRooms();
+      recentToggleBtn.style.display = rooms.length > 0 ? '' : 'none';
+      recentToggleBtn.onclick = () => {
+        const alreadyOpen = document.getElementById('online-recent-wrap')?.classList.contains('open');
+        _closeAllAccordions();
+        if (!alreadyOpen) _openAccordion('online-recent-wrap');
+      };
+    }
+
+    // ── Bouton OK (connecter) ─────────────────────────────────
+    if (onlineEls.btnConnect) onlineEls.btnConnect.onclick = () => {
+      const code = (onlineEls.inputCode?.value || '').trim().toUpperCase();
+      if (code.length < 4) {
+        if (onlineEls.inputCode) onlineEls.inputCode.classList.add('input-error');
+        return;
+      }
+      _closeAccordion('online-join-panel');
+      _showStatusCard(true);
+      onlineConnectToRoom(code, false);
+    };
+
+    // ── Rejoindre dernier salon ──────────────────────────────
     try {
       const lastRoom = loadLastOnlineRoom();
       if (onlineEls.btnRejoinLast) {
@@ -15532,52 +17419,139 @@ if (onlineBtn) {
         onlineEls.btnRejoinLast.onclick = () => {
           const c = String(lastRoom?.code || '').trim().toUpperCase();
           if (!c) return;
-          if (onlineEls.inputCode) onlineEls.inputCode.value = c;
-          _show(onlineEls.joinPanel, false);
+          _closeAllAccordions();
+          _showStatusCard(true);
           onlineConnectToRoom(c, false);
         };
       }
     } catch(_) {}
 
-    // Disable online actions if not configured
-    const __onlineOk = _isBack4AppConfigured();
-    if (onlineEls.btnCreate) onlineEls.btnCreate.disabled = !__onlineOk;
-    if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = !__onlineOk;
+    // ── Salons récents (bouton dans les actions) ─────────────
+    // Triggered via a separate button that toggles the accordion
+    const recentRooms = loadRecentOnlineRooms();
+    if (recentRooms.length > 0) {
+      // Add "recent" button dynamically if needed — or trigger on open
+      _closeAllAccordions();
+    }
+    try { renderRecentOnlineRooms(); } catch(_) {}
 
-
-    if (onlineEls.btnBack) onlineEls.btnBack.onclick = () => { onlineDisconnect(); showScreen('mode-selection-area'); };
-    if (onlineEls.btnJoin) onlineEls.btnJoin.onclick = () => { _show(onlineEls.joinPanel, true); onlineEls.inputCode?.focus(); };
-
-    if (onlineEls.btnCreate) onlineEls.btnCreate.onclick = () => {
-      const code = _randCode(6);
-      if (onlineEls.inputCode) onlineEls.inputCode.value = code;
-      _show(onlineEls.joinPanel, false);
-      onlineConnectToRoom(code, true);
-    };
-
-    if (onlineEls.btnConnect) onlineEls.btnConnect.onclick = () => {
-      const code = (onlineEls.inputCode?.value || '').trim().toUpperCase();
-      if (!code) return;
-      onlineConnectToRoom(code, false);
-    };
-
+    // ── Copier code ──────────────────────────────────────────
     if (onlineEls.btnCopy) onlineEls.btnCopy.onclick = async () => {
-      const c = online.room || onlineEls.roomCode?.textContent || '';
-      try { await navigator.clipboard.writeText(c); _setOnlineStatus(t('onlineCodeCopied', 'Code copié ✅')); } catch(_) {}
+      const c = (online.room || onlineEls.roomCode?.textContent || '').trim();
+      if (!c) return;
+      try {
+        await navigator.clipboard.writeText(c);
+        if (typeof showToast === 'function') showToast(t('onlineCodeCopied','Code copié ✅'));
+      } catch(_) {}
     };
 
-    // Load & persist the local nickname (stored locally)
+    // ── Panneau Inviter un ami ───────────────────────────────
+    const inviteToggle = document.getElementById('online-invite-toggle');
+    const invitePanel  = document.getElementById('online-invite-panel');
+    const invCodeVal   = document.getElementById('inv-code-val');
+    const invLinkVal   = document.getElementById('inv-link-val');
+    const invShareRow  = document.getElementById('inv-share-row');
+    const invCopyCode  = document.getElementById('inv-copy-code-btn');
+    const invCopyLink  = document.getElementById('inv-copy-link-btn');
+    const invShareBtn  = document.getElementById('inv-share-btn');
+
+    const _inviteLink = (code) => {
+      const c = String(code||'').trim().toUpperCase();
+      return `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(c)}&join=1`;
+    };
+
+    const _updateInvitePanel = () => {
+      const c = (online.room || onlineEls.roomCode?.textContent || '').trim();
+      if (invCodeVal) invCodeVal.textContent = c || '—';
+      if (invLinkVal) {
+        const link = _inviteLink(c);
+        invLinkVal.textContent = link.replace(/^https?:\/\//, '').slice(0,28) + '…';
+        invLinkVal.title = link;
+      }
+      if (invShareRow) {
+        const canShare = !!(navigator && typeof navigator.share === 'function');
+        invShareRow.style.display = canShare ? '' : 'none';
+      }
+    };
+
+    const _makeCopyBtn = (btn, getTextFn, successKey) => {
+      if (!btn) return;
+      btn.onclick = async () => {
+        const text = getTextFn();
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          const orig = btn.textContent;
+          btn.textContent = '✅';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+          if (typeof showToast === 'function') showToast(t(successKey, 'Copié ✅'));
+        } catch(e) {
+          // Fallback: select an input
+          try {
+            const tmp = document.createElement('input');
+            tmp.value = text; tmp.style.position='fixed'; tmp.style.opacity='0';
+            document.body.appendChild(tmp); tmp.select(); document.execCommand('copy');
+            document.body.removeChild(tmp);
+            btn.textContent = '✅'; btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1500);
+          } catch(_) {}
+        }
+      };
+    };
+
+    _makeCopyBtn(invCopyCode,
+      () => (online.room || onlineEls.roomCode?.textContent || '').trim(),
+      'onlineCodeCopied');
+    _makeCopyBtn(invCopyLink,
+      () => _inviteLink((online.room || onlineEls.roomCode?.textContent || '').trim()),
+      'onlineLinkCopied');
+
+    if (invShareBtn) {
+      invShareBtn.onclick = async () => {
+        const c = (online.room || onlineEls.roomCode?.textContent || '').trim();
+        if (!c) return;
+        const link = _inviteLink(c);
+        try {
+          await navigator.share({ title: document.title || 'Tiddas', text: t('onlineShareText','Rejoins mon salon Tiddas :'), url: link });
+        } catch(_) {}
+      };
+    }
+
+    if (inviteToggle && invitePanel) {
+      inviteToggle.onclick = () => {
+        const isOpen = invitePanel.classList.contains('open');
+        if (!isOpen) _updateInvitePanel();
+        invitePanel.classList.toggle('open');
+        inviteToggle.setAttribute('aria-expanded', String(!isOpen));
+      };
+    }
+
+    // Keep invite panel values fresh when room code is set (MutationObserver)
+    if (onlineEls.roomCode) {
+      const obs = new MutationObserver(() => { _updateInvitePanel(); });
+      obs.observe(onlineEls.roomCode, { childList: true, characterData: true, subtree: true });
+    }
+
+    // ── Lancer la partie ─────────────────────────────────────
+    if (onlineEls.btnStart) onlineEls.btnStart.onclick = () => { onlineStartMatch_Back4App(); };
+
+    // ── Persist local nickname ────────────────────────────────
     try {
-      const savedName = localStorage.getItem(ONLINE_NAME_KEY) || '';
+      const savedName = localStorage.getItem('tiddas_online_name_v1') || '';
       if (onlineEls.inputName && !onlineEls.inputName.value) onlineEls.inputName.value = savedName;
       if (onlineEls.inputName) {
         onlineEls.inputName.addEventListener('input', () => {
-          try { localStorage.setItem(ONLINE_NAME_KEY, normalizeName(onlineEls.inputName.value, '')); } catch(_) {}
+          const n = (onlineEls.inputName.value || '').trim();
+          try { localStorage.setItem('tiddas_online_name_v1', n); } catch(_) {}
+          // If there's a code in the join field and user just typed their name → auto-connect
+          const code = (onlineEls.inputCode?.value || '').trim().toUpperCase();
+          if (code.length >= 4 && n && !online.connected) {
+            // Don't auto-connect on every keystroke — only if coming from URL auto-join
+          }
         });
       }
     } catch(_) {}
-
-    if (onlineEls.btnStart) onlineEls.btnStart.onclick = () => { onlineStartMatch_Back4App(); };
   });
 }
 
@@ -15626,10 +17600,17 @@ document.getElementById('new-game').addEventListener('click',
 () => {
 hideWinnerAnimation(); showScreen('version-selection-area');
 });
-document.getElementById('restart').addEventListener('click',
-startGame);
-winnerReplayButton.addEventListener('click',
-hideWinnerAnimation);
+document.getElementById('restart').addEventListener('click', handleReplayClick);
+
+winnerReplayButton.addEventListener('click', handleReplayClick);
+if (winnerMenuBtn) winnerMenuBtn.addEventListener('click', () => {
+  hideWinnerAnimation();
+  // Retour menu / modes selon le contexte
+  try {
+    if (gameMode === 'online') { onlineDisconnect?.(); }
+  } catch(_) {}
+  showScreen('mode-selection-area');
+});
 undoBtn.addEventListener('click',
 handleUndo);
 
@@ -15677,8 +17658,6 @@ showScreen('version-selection-area');
 
 // Initialize replay button states
 if (typeof refreshReplayButtons === 'function') refreshReplayButtons();
-
-// Init lang splash — already auto-executed as IIFE above
 
 // A11y board
 if (typeof attachBoardA11yOnce === 'function') attachBoardA11yOnce();
