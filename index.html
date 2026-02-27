@@ -11527,6 +11527,7 @@ statsVariantLabel: "Variante",
 winnerLabel: "Vainqueur",
 capturesLabel: "Captures",
 millsLabel: "Moulins",
+totalLabel: "Total",
 player1ColorShort: "Noir",
 player2ColorShort: "Blanc",
 onlineStatusCreatedHost: "Salon créé. Partage le code et attends un adversaire…",
@@ -11710,6 +11711,7 @@ bestStreakLabel: "Meilleure série",
 movesLabel: "Coups",
 capturesLabel: "Captures",
 millsLabel: "Moulins",
+totalLabel: "Total",
 durationLabel: "Durée",
 levelLabel: "Niveau",
 xpLabel: "XP",
@@ -11905,6 +11907,7 @@ statsVariantLabel: "Tameslayt",
 winnerLabel: "Aɣellif",
 capturesLabel: "Ttekki",
 millsLabel: "Atellet",
+totalLabel: "Taḥawact",
 player1ColorShort: "Aberkan",
 player2ColorShort: "Amlal",
 onlineStatusCreatedHost: "Tessut tura. Bḍu asaru n wakuḍ u ṛǧu amgraw…",
@@ -12099,6 +12102,7 @@ bestStreakLabel: "Agraw ifazen",
 movesLabel: "Ambiwel",
 capturesLabel: "Učči",
 millsLabel: "Atellet",
+totalLabel: "Taḥawact",
 levelLabel: "Aswir",
 xpLabel: "XP",
 lastGameLabel: "Urar aneggaru",
@@ -12256,6 +12260,7 @@ statsVariantLabel: "Tawsit",
 winnerLabel: "Win irbeḥen",
 capturesLabel: "Učči",
 millsLabel: "Atellet",
+totalLabel: "Taḥawact",
 statsOnlineOpponents: "Ixṣimen",
 statsByDifficulty: "S uswir",
 },
@@ -12315,6 +12320,7 @@ statsVariantLabel: "Variant",
 winnerLabel: "Winner",
 capturesLabel: "Captures",
 millsLabel: "Mills",
+totalLabel: "Total",
 player1ColorShort: "Black",
 player2ColorShort: "White",
 onlineStatusCreatedHost: "Room created. Share the code and wait for an opponent…",
@@ -12502,6 +12508,7 @@ bestStreakLabel: "Best streak",
 movesLabel: "Moves",
 capturesLabel: "Captures",
 millsLabel: "Mills",
+totalLabel: "Total",
 durationLabel: "Duration",
 levelLabel: "Level",
 xpLabel: "XP",
@@ -17190,11 +17197,11 @@ function renderStats(cs) {
     </div>
     <div class="sv2-kpi sv2-kpi-amber">
       <span class="sv2-kpi-val">${aseqqiTotal}</span>
-      <span class="sv2-kpi-label">Aseqqi taḥawact</span>
+      <span class="sv2-kpi-label">Aseqqi ${t('totalLabel')}</span>
     </div>
     <div class="sv2-kpi sv2-kpi-gold">
       <span class="sv2-kpi-val">${aezalTotal}</span>
-      <span class="sv2-kpi-label">Aɛzal taḥawact</span>
+      <span class="sv2-kpi-label">Aɛzal ${t('totalLabel')}</span>
     </div>
     <div class="sv2-kpi">
       <span class="sv2-kpi-val">${fmtD(computed.bestWinMs)}</span>
@@ -17269,8 +17276,8 @@ function renderStats(cs) {
           <span class="sv2-duel-name-p2">${lg.p2Name}</span>
         </div>
         ${duelBar('Atellet', lg.millsP1, lg.millsP2, p1MillBar, p2MillBar, 'sv2-duel-gold')}
-        ${duelBar('Aseqqi',  lg.aseqqiP1, lg.aseqqiP2, p1AseqqiBar, p2AseqqiBar, 'sv2-duel-amber')}
-        ${duelBar('Aɛzal',  lg.aezalP1, lg.aezalP2, p1AezalBar, p2AezalBar, 'sv2-duel-teal')}
+        ${duelBar('Aseqqi '+t('totalLabel'),  lg.aseqqiP1, lg.aseqqiP2, p1AseqqiBar, p2AseqqiBar, 'sv2-duel-amber')}
+        ${duelBar('Aɛzal '+t('totalLabel'),  lg.aezalP1, lg.aezalP2, p1AezalBar, p2AezalBar, 'sv2-duel-teal')}
       </div>
     </div>`;
   }
