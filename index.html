@@ -6981,6 +6981,67 @@ transition: width 0.4s ease;
 background: rgba(220,220,220,0.85);
 transition: width 0.4s ease;
 }
+/* ── Duel comparison block ── */
+.sv2-duel-block {
+display: flex;
+flex-direction: column;
+gap: 0.45rem;
+margin-top: 0.5rem;
+}
+.sv2-duel-header {
+display: flex;
+justify-content: space-between;
+font-size: 0.65rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+opacity: 0.7;
+padding: 0 0.1rem;
+}
+.sv2-duel-name-p1 { color: rgba(180,180,180,0.9); }
+.sv2-duel-name-p2 { color: rgba(230,230,230,0.9); }
+.sv2-duel-row {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+padding: 0.3rem 0.4rem;
+border-radius: 6px;
+background: rgba(255,255,255,0.03);
+}
+.sv2-duel-gold  { border-left: 3px solid rgba(240,200,80,0.5); }
+.sv2-duel-amber { border-left: 3px solid rgba(255,160,40,0.5); }
+.sv2-duel-teal  { border-left: 3px solid rgba(80,200,200,0.5); }
+.sv2-duel-lbl {
+font-size: 0.9rem;
+font-weight: 800;
+min-width: 1.4rem;
+text-align: center;
+}
+.sv2-duel-p1 { color: rgba(160,160,160,0.9); }
+.sv2-duel-p2 { color: rgba(230,230,230,0.9); }
+.sv2-duel-center {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.2rem;
+}
+.sv2-duel-title {
+font-size: 0.62rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: rgba(245,245,245,0.65);
+}
+.sv2-duel-gold  .sv2-duel-title { color: var(--text-gold); }
+.sv2-duel-amber .sv2-duel-title { color: #ffa028; }
+.sv2-duel-teal  .sv2-duel-title { color: rgba(80,200,200,0.9); }
+.sv2-duel-gold  .sv2-mill-fill-1 { background: rgba(200,160,30,0.8); }
+.sv2-duel-gold  .sv2-mill-fill-2 { background: rgba(240,200,80,0.8); }
+.sv2-duel-amber .sv2-mill-fill-1 { background: rgba(200,100,10,0.8); }
+.sv2-duel-amber .sv2-mill-fill-2 { background: rgba(255,160,40,0.8); }
+.sv2-duel-teal  .sv2-mill-fill-1 { background: rgba(20,140,140,0.8); }
+.sv2-duel-teal  .sv2-mill-fill-2 { background: rgba(80,210,210,0.8); }
 @media (max-width: 400px) {
   .sv2-kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .sv2-last-row { grid-template-columns: repeat(2, 1fr); }
@@ -11822,7 +11883,7 @@ avgDuration: "Akud alemmas / urar",
 statsBestWinTime: "Arraz yelhan",
 actionsPerGameLabel: "Tir / urar",
 statsCaptPerGame: "Ttekki / urar",
-statsMillsPerGame: "Aline / urar",
+statsMillsPerGame: "Atellet / temlilit",
 levelLabel: "Aswir",
 statsLevelProgress: "Aswir i d-iteddun",
 statsSectionByMode: "S tarrayt",
@@ -11830,7 +11891,7 @@ modeAI: "IA",
 modeLocal: "Ader",
 statsOnlineMode: "Deg uẓeṭṭa",
 modeSpectator: "Ameskan",
-winRateLabel: "Afellay n rrbaḥ",
+winRateLabel: "Ammud n urbaḥ",
 winsLabel: "Rbaḥ",
 lossesLabel: "Ttfa",
 drawsLabel: "Isemmaḍ",
@@ -11843,7 +11904,7 @@ modeLabel: "Tarrayt",
 statsVariantLabel: "Tameslayt",
 winnerLabel: "Aɣellif",
 capturesLabel: "Ttekki",
-millsLabel: "Aline",
+millsLabel: "Atellet",
 player1ColorShort: "Aberkan",
 player2ColorShort: "Amlal",
 onlineStatusCreatedHost: "Tessut tura. Bḍu asaru n wakuḍ u ṛǧu amgraw…",
@@ -12032,13 +12093,12 @@ cellEmpty: "texla",
 gamesPlayedLabel: "timlilit",
 winsLabel: "timliliyin yettwarebḥen",
 lossesLabel: "Timliliyin yettwaxesren",
-winRateLabel: "Agemmuḍ n rbeḥ",
+winRateLabel: "Ammud n urbaḥ",
 streakLabel: "Agraw",
 bestStreakLabel: "Agraw ifazen",
 movesLabel: "Ambiwel",
 capturesLabel: "Učči",
 millsLabel: "Atellet",
-durationLabel: "Akud",
 levelLabel: "Aswir",
 xpLabel: "XP",
 lastGameLabel: "Urar aneggaru",
@@ -12174,7 +12234,7 @@ avgDuration: "Akud alemmas / timlilit",
 statsBestWinTime: "Rrebḥ ameqqran",
 actionsPerGameLabel: "Ambiwel / Timlilit",
 statsCaptPerGame: "Učči / timlilit",
-statsMillsPerGame: "Atellet / timlilit",
+statsMillsPerGame: "Atellet / temlilit",
 levelLabel: "Aswir",
 statsLevelProgress: "Aswir d-iteddun",
 statsSectionByMode: "S urar",
@@ -12182,7 +12242,7 @@ modeAI: "IA",
 modeLocal: "Ameddakel",
 statsOnlineMode: "S Internet",
 modeSpectator: "Anezzeh",
-winRateLabel: "Tazzẓa n rrebḥ",
+winRateLabel: "Ammud n urbaḥ",
 winsLabel: "Tirbɛah",
 lossesLabel: "Taggarin",
 drawsLabel: "Imsegginen",
@@ -12196,8 +12256,6 @@ statsVariantLabel: "Tawsit",
 winnerLabel: "Win irbeḥen",
 capturesLabel: "Učči",
 millsLabel: "Atellet",
-player1ColorShort: "Aberkan",
-player2ColorShort: "Amellal",
 statsOnlineOpponents: "Ixṣimen",
 statsByDifficulty: "S uswir",
 },
@@ -13555,17 +13613,25 @@ function handlePlacement(i) {
   }
 
   // ─── Aseqqi detection ─────────────────────────────────────────────
-  // Après ce placement, vérifier si l'adversaire a au moins un "moulin ouvert"
-  // (2 de ses pions alignés + 1 case VIDE qui compléterait le moulin)
-  // mais que TOUTES ces cases de complétion vides lui sont interdites par
-  // la règle d'alignement (y placer son pion formerait un alignement ≥3).
-  // Important : la case doit être vide — si elle est occupée par l'un de nous,
-  // c'est un blocage physique ordinaire, pas un Aseqqi.
-  // Un seul aseqqi par coup, peu importe le nombre de moulins ouverts bloqués.
+  // Définition exacte :
+  // L'adversaire a un moulin ouvert (2 pions alignés + 1 case vide).
+  // Cette case vide lui est INTERDITE par la règle d'alignement après
+  // MON placement — c'est-à-dire que mes pions (dont celui que je viens
+  // de placer) créent autour de cette case une configuration telle qu'y
+  // poser un pion adverse formerait un alignement ≥3, ce qui est interdit.
+  //
+  // Test différentiel :
+  //   - AVANT mon placement : la case de complétion était-elle légale ?  OUI
+  //   - APRÈS mon placement : est-elle devenue illégale ?                OUI
+  //   → C'est un Aseqqi : mon coup a rendu la complétion interdite.
+  //
+  // La case reste VIDE — c'est la règle qui l'interdit, pas mon pion dessus.
+  // Un seul aseqqi par coup.
   try {
     if (session.active && state.phase === 'placement') {
       const opponent = 3 - state.turn;
-      const boardAfter = [...tempBoard]; // tempBoard contient déjà notre pion en i
+      const boardBefore = [...state.board]; // AVANT mon placement
+      const boardAfter  = [...tempBoard];   // APRÈS mon placement (pion en i)
 
       const lines = [];
       for (let r = 0; r < SIZE; r++) {
@@ -13579,32 +13645,40 @@ function handlePlacement(i) {
         }
       }
 
-      let hasOpenMill = false;  // l'adversaire a au moins un moulin ouvert
-      let allBlocked = true;    // toutes les cases vides de complétion sont interdites par la règle
+      let aseqqiFound = false;
 
       for (const line of lines) {
-        let oppCount = 0, emptyIdx = -1, blocked = false;
+        // Chercher un moulin ouvert adverse APRÈS mon placement :
+        // exactement 2 pions adverses + 1 case vide, sans obstruction physique
+        let oppCount = 0, emptyIdx = -1, broken = false;
         for (const idx of line) {
           if (boardAfter[idx] === opponent) oppCount++;
           else if (boardAfter[idx] === null) emptyIdx = idx;
-          else blocked = true; // case occupée physiquement → ligne brisée, pas un moulin ouvert
+          else { broken = true; break; }
         }
-        // Moulin ouvert = exactement 2 pions adverses + 1 case vide, sans obstruction physique
-        if (oppCount === 2 && emptyIdx !== -1 && !blocked) {
-          hasOpenMill = true;
-          // La case est vide. Est-elle interdite par la règle d'alignement pour l'adversaire ?
-          const tb2 = [...boardAfter];
-          tb2[emptyIdx] = opponent;
-          const forbiddenByRule = formsForbiddenPlacementAlignment(emptyIdx, opponent, tb2);
-          if (!forbiddenByRule) {
-            // Cette case est vide et légale → l'adversaire peut encore compléter → pas un aseqqi
-            allBlocked = false;
-            break;
-          }
-        }
+        if (oppCount !== 2 || emptyIdx === -1 || broken) continue;
+
+        // La case vide emptyIdx pourrait compléter le moulin.
+        // Est-elle INTERDITE après mon placement ?
+        const tb_after = [...boardAfter];
+        tb_after[emptyIdx] = opponent;
+        if (!formsForbiddenPlacementAlignment(emptyIdx, opponent, tb_after)) continue;
+
+        // Elle est interdite maintenant. L'était-elle AVANT mon placement ?
+        const tb_before = [...boardBefore];
+        tb_before[emptyIdx] = opponent;
+        if (formsForbiddenPlacementAlignment(emptyIdx, opponent, tb_before)) continue;
+
+        // Mon coup a rendu cette case illégale → Aseqqi !
+        aseqqiFound = true;
+        break;
       }
 
-      if (hasOpenMill && allBlocked) session.aseqqi += 1;
+      if (aseqqiFound) {
+        session.aseqqi += 1;
+        if (state.turn === 1) session.aseqqiP1 += 1;
+        else session.aseqqiP2 += 1;
+      }
     }
   } catch(_) {}
   // ────────────────────────────────────────────────────────────────────
@@ -13733,9 +13807,10 @@ try {
   if (session.active && !cfg().isInverseWin) {
     const opponent = 3 - movingPlayer;
     // Moulins déjà formés par ce coup (à exclure)
+    // Moulins déjà formés par ce coup — clé normalisée (triée) pour comparaison fiable
     const formedNow = new Set(
       findAllMills(originalBoard, state.board, moveFrom, moveTo, movingPlayer)
-        .map(m => m.join(','))
+        .map(m => [...m].sort((a,b)=>a-b).join(','))
     );
     const millThreatMoves = getPossibleMillMoves(movingPlayer, state.board, 'move');
     let aezalDetected = false;
@@ -13743,7 +13818,7 @@ try {
       // Simuler ce coup futur pour voir quel moulin il formerait
       const futureBoard = simulateMove(state.board, threat, movingPlayer);
       const futureMills = findAllMills(state.board, futureBoard, threat.from, threat.to, movingPlayer);
-      // Vérifier que ce n'est pas un moulin déjà compté (formé par le coup actuel)
+      // Vérifier que ce moulin futur n'est pas déjà formé par le coup actuel
       const isAlreadyFormed = futureMills.every(m => formedNow.has([...m].sort((a,b)=>a-b).join(',')));
       if (isAlreadyFormed) continue;
 
@@ -13761,7 +13836,11 @@ try {
         break; // Un seul aɛzal par coup
       }
     }
-    if (aezalDetected) session.aezal += 1;
+    if (aezalDetected) {
+      session.aezal += 1;
+      if (movingPlayer === 1) session.aezalP1 += 1;
+      else session.aezalP2 += 1;
+    }
   }
 } catch(_) {}
 // ─────────────────────────────────────────────────────────────────
@@ -16069,7 +16148,11 @@ movesPhase: 0,
 captures: 0,
 mills: 0,
 aseqqi: 0,      // adversaire piégé en placement (ne peut couvrir un moulin ouvert)
+aseqqiP1: 0,   // aseqqi réalisés par joueur 1
+aseqqiP2: 0,   // aseqqi réalisés par joueur 2
 aezal: 0,       // menace de moulin incouvrable en phase de déplacement
+aezalP1: 0,    // aɛzal réalisés par joueur 1
+aezalP2: 0,    // aɛzal réalisés par joueur 2
 millsP1: 0,     // moulins formés par joueur 1
 millsP2: 0,     // moulins formés par joueur 2
 mode: null,
@@ -16088,7 +16171,11 @@ movesPhase: 0,
 captures: 0,
 mills: 0,
 aseqqi: 0,
+aseqqiP1: 0,
+aseqqiP2: 0,
 aezal: 0,
+aezalP1: 0,
+aezalP2: 0,
 millsP1: 0,
 millsP2: 0,
 mode: gameMode || null,
@@ -16381,7 +16468,9 @@ if (session.active) {
 const moved = (lastDelta.from != null || lastDelta.to != null);
 if (moved) {
 session.moves += 1; // total actions (placements + moves)
-if (state.phase === 'placement') session.placements += 1;
+// Utiliser le delta lui-même pour distinguer placement (from=null) et déplacement (from≠null)
+// Évite le bug où state.phase a déjà changé (ex: dernier placement → transition vers 'move')
+if (lastDelta.from === null) session.placements += 1;
 else session.movesPhase += 1;
 }
 if (lastDelta.capture != null) session.captures += 1;
@@ -16407,15 +16496,19 @@ return r;
 }
 
 // Count mills via ephemeral messages
+// Note : showEphemeralBubbleMessage est appelé UNE seule fois même si pendingCaptures > 1.
+// On compte donc le vrai nombre de moulins formés (state.pendingCaptures au moment de l'appel).
 try {
 if (typeof showEphemeralBubbleMessage === 'function') {
 const __origEph = showEphemeralBubbleMessage;
 showEphemeralBubbleMessage = function(messageKey, iconClass, playerId, duration) {
 try {
 if (!replay.active && session.active && messageKey === 'ephemeralMill') {
-session.mills += 1;
-if (playerId === 1) session.millsP1 += 1;
-else if (playerId === 2) session.millsP2 += 1;
+const millCount = (typeof state !== 'undefined' && state.pendingCaptures > 0)
+  ? state.pendingCaptures : 1;
+session.mills += millCount;
+if (playerId === 1) session.millsP1 += millCount;
+else if (playerId === 2) session.millsP2 += millCount;
 }
 } catch(_) {}
 return __origEph.call(this, messageKey, iconClass, playerId, duration);
@@ -16555,7 +16648,11 @@ moves: Number(session.movesPhase || 0),
 captures: Number(session.captures || 0),
 mills: Number(session.mills || 0),
 aseqqi: Number(session.aseqqi || 0),
+aseqqiP1: Number(session.aseqqiP1 || 0),
+aseqqiP2: Number(session.aseqqiP2 || 0),
 aezal: Number(session.aezal || 0),
+aezalP1: Number(session.aezalP1 || 0),
+aezalP2: Number(session.aezalP2 || 0),
 millsP1: Number(session.millsP1 || 0),
 millsP2: Number(session.millsP2 || 0)
 };
@@ -17019,7 +17116,11 @@ function computeStatsForUI(raw) {
       millsP1: num(last.millsP1 || 0),
       millsP2: num(last.millsP2 || 0),
       aseqqi: num(last.aseqqi || 0),
+      aseqqiP1: num(last.aseqqiP1 || 0),
+      aseqqiP2: num(last.aseqqiP2 || 0),
       aezal: num(last.aezal || 0),
+      aezalP1: num(last.aezalP1 || 0),
+      aezalP2: num(last.aezalP2 || 0),
       at: last.at ? new Date(last.at) : null
     } : null
   };
@@ -17129,8 +17230,26 @@ function renderStats(cs) {
   if (computed.last) {
     const lg = computed.last;
     const w = lg.winnerId === 1 ? lg.p1Name : lg.winnerId === 2 ? lg.p2Name : '—';
-    const p1MillBar = lg.mills > 0 ? Math.round((lg.millsP1 / lg.mills) * 100) : 50;
-    const p2MillBar = 100 - p1MillBar;
+    const p1MillBar   = lg.mills  > 0 ? Math.round((lg.millsP1  / lg.mills)  * 100) : 50;
+    const p2MillBar   = 100 - p1MillBar;
+    const p1AseqqiBar = lg.aseqqi > 0 ? Math.round((lg.aseqqiP1 / lg.aseqqi) * 100) : 50;
+    const p2AseqqiBar = 100 - p1AseqqiBar;
+    const p1AezalBar  = lg.aezal  > 0 ? Math.round((lg.aezalP1  / lg.aezal)  * 100) : 50;
+    const p2AezalBar  = 100 - p1AezalBar;
+
+    const duelBar = (label, p1val, p2val, p1pct, p2pct, colorClass) => `
+      <div class="sv2-duel-row ${colorClass}">
+        <span class="sv2-duel-lbl sv2-duel-p1">${p1val}</span>
+        <div class="sv2-duel-center">
+          <span class="sv2-duel-title">${label}</span>
+          <div class="sv2-mill-bar">
+            <div class="sv2-mill-fill-1" style="width:${p1pct}%"></div>
+            <div class="sv2-mill-fill-2" style="width:${p2pct}%"></div>
+          </div>
+        </div>
+        <span class="sv2-duel-lbl sv2-duel-p2">${p2val}</span>
+      </div>`;
+
     html += `<div class="sv2-section-title">🕐 ${t('statsSectionLastGame')}</div>
     <div class="sv2-last-card">
       <div class="sv2-last-meta">
@@ -17142,20 +17261,17 @@ function renderStats(cs) {
       <div class="sv2-last-winner">🏆 ${w}</div>
       <div class="sv2-last-row">
         <div class="sv2-last-stat"><span class="sv2-ls-v">${fmtD(lg.durationMs)}</span><span class="sv2-ls-l">${t('durationLabel')}</span></div>
-        <div class="sv2-last-stat sv2-ls-gold"><span class="sv2-ls-v">${lg.mills}</span><span class="sv2-ls-l">Atellet (moulins)</span></div>
-        <div class="sv2-last-stat sv2-ls-amber"><span class="sv2-ls-v">${lg.aseqqi}</span><span class="sv2-ls-l">Aseqqi</span></div>
-        <div class="sv2-last-stat sv2-ls-gold"><span class="sv2-ls-v">${lg.aezal}</span><span class="sv2-ls-l">Aɛzal</span></div>
         <div class="sv2-last-stat"><span class="sv2-ls-v">${lg.actions}</span><span class="sv2-ls-l">${t('statsActionsCount')}</span></div>
       </div>
-      ${lg.mills > 0 ? `
-      <div class="sv2-mill-bar-wrap">
-        <span class="sv2-mill-bar-lbl" style="color:rgba(160,160,160,0.9)">${esc(computed.players.p1Color)} ${lg.millsP1}</span>
-        <div class="sv2-mill-bar">
-          <div class="sv2-mill-fill-1" style="width:${p1MillBar}%"></div>
-          <div class="sv2-mill-fill-2" style="width:${p2MillBar}%"></div>
+      <div class="sv2-duel-block">
+        <div class="sv2-duel-header">
+          <span class="sv2-duel-name-p1">${lg.p1Name}</span>
+          <span class="sv2-duel-name-p2">${lg.p2Name}</span>
         </div>
-        <span class="sv2-mill-bar-lbl" style="color:rgba(230,230,230,0.9)">${lg.millsP2} ${esc(computed.players.p2Color)}</span>
-      </div>` : ''}
+        ${duelBar('Atellet', lg.millsP1, lg.millsP2, p1MillBar, p2MillBar, 'sv2-duel-gold')}
+        ${duelBar('Aseqqi',  lg.aseqqiP1, lg.aseqqiP2, p1AseqqiBar, p2AseqqiBar, 'sv2-duel-amber')}
+        ${duelBar('Aɛzal',  lg.aezalP1, lg.aezalP2, p1AezalBar, p2AezalBar, 'sv2-duel-teal')}
+      </div>
     </div>`;
   }
 
