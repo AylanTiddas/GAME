@@ -3256,13 +3256,20 @@ gap: 0.5rem;
 flex-shrink: 0;
 }
 .save-notification button {
-padding: 0.35rem 0.9rem;
+padding: 0.55rem 1.1rem;
 border-radius: 20px;
 border: 1px solid var(--text-gold);
 cursor: pointer;
-font-size: 0.8rem;
+font-size: 0.85rem;
 font-family: var(--font-body);
-transition: all 0.2s;
+transition: all 0.15s;
+/* Zone tactile minimum 44px pour le confort mobile */
+min-height: 44px;
+min-width: 64px;
+touch-action: manipulation;
+-webkit-tap-highlight-color: transparent;
+user-select: none;
+-webkit-user-select: none;
 }
 .save-notification .btn-resume {
 background: var(--text-gold);
@@ -3272,12 +3279,20 @@ font-weight: bold;
 .save-notification .btn-resume:hover {
 filter: brightness(1.15);
 }
+.save-notification .btn-resume:active {
+filter: brightness(0.9);
+transform: scale(0.96);
+}
 .save-notification .btn-discard {
 background: transparent;
 color: var(--text-gold);
 }
 .save-notification .btn-discard:hover {
 background: rgba(240,200,80,0.1);
+}
+.save-notification .btn-discard:active {
+background: rgba(240,200,80,0.2);
+transform: scale(0.96);
 }
 
 /* ==================== MILL FLASH ANIMATION ==================== */
@@ -5690,6 +5705,24 @@ body.replay-active .replay-badge {
   font-size: 0.72rem;
   font-weight: 700;
   opacity: 0.7;
+}
+
+/* ── Bouton Retour du lobby online : zone tactile renforcée ── */
+#back-to-modes-from-online-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  min-height: 52px !important;
+  min-width: 120px;
+  padding: 0.85rem 1.6rem !important;
+  /* Agrandir la zone de clic réelle sans changer le visuel */
+  position: relative;
+}
+#back-to-modes-from-online-btn::after {
+  content: "";
+  position: absolute;
+  inset: -8px -4px;
 }
 
 /* ── Thèmes clairs ────────────────────────────────────────── */
@@ -12919,9 +12952,8 @@ function showWinnerAnimation(message, name, isDefeat) {
 
   winnerOverlay.classList.add('active');
   triggerConfetti();
-  finalizeSessionAndStats();
-  pushReplayFrame();
-  persistLastReplay();
+  // Note : finalizeSessionAndStats / pushReplayFrame / persistLastReplay
+  // sont appelés par la surcharge de endGame() ci-dessous — ne pas les rappeler ici.
 }
 
 function _spawnWoParticles(isDefeat) {
@@ -12961,16 +12993,19 @@ showScreen('version-selection-area');
 
 function showStatusError(messageKey) {
 playSound('error');
-const originalText = statusDiv.textContent;
+// Annuler l'éventuel timer précédent pour éviter les restaurations de texte erronées
+if (showStatusError._timer) {
+  clearTimeout(showStatusError._timer);
+  showStatusError._timer = null;
+}
 statusDiv.textContent = translations[currentLanguage][messageKey] || messageKey;
 statusDiv.classList.add('status-error');
-setTimeout(() => {
-statusDiv.classList.remove('status-error');
-statusDiv.textContent = originalText;
-updateStatus();
+showStatusError._timer = setTimeout(() => {
+  showStatusError._timer = null;
+  statusDiv.classList.remove('status-error');
+  updateStatus();
 }, 1500);
 }
-
 function __resolveIconEmoji(iconToken) {
 if (!iconToken) return '';
 const s = String(iconToken);
@@ -13015,7 +13050,7 @@ ephemeralCaptureNormal: 'badge-capture',
 ephemeralCaptureBessif: 'badge-sacrifice',
 ephemeralMovePhase:     'badge-phase',
 };
-const variant = variantMap[messageKey] || 'badge-capture';
+const badgeVariant = variantMap[messageKey] || 'badge-capture';
 
 // Targets: 0 = both, 1 = p1, 2 = p2
 const ids = playerId === 1 ? ['p1-badge']
@@ -13045,7 +13080,7 @@ pill.appendChild(span);
 // Reset and inject
 badge.innerHTML = '';
 badge.appendChild(pill);
-badge.className = `player-badge ${variant} active`;
+badge.className = `player-badge ${badgeVariant} active`;
 
 badge._ephTimer = setTimeout(() => {
   badge.classList.remove('active');
@@ -13132,6 +13167,18 @@ state.consecutivePiece[player] = toIdx;
 }
 
 /**
+* Réinitialise le suivi consécutif d'un joueur si le pion suivi a été capturé
+* (la case est devenue null ou appartient à l'adversaire).
+*/
+function resetConsecutiveIfCaptured(player) {
+const tracked = state.consecutivePiece[player];
+if (tracked !== null && state.board[tracked] !== player) {
+  state.consecutivePiece[player] = null;
+  state.consecutiveCount[player] = 0;
+}
+}
+
+/**
 * Filtre une liste de mouvements pour retirer le pion interdit.
 * Exception : si aucun autre mouvement nexiste, garde tout (deadlock).
 */
@@ -13149,6 +13196,8 @@ return allowed.length > 0 ? allowed: moves;
 function startGame() {
 clearSave(); // effacer toute sauvegarde précédente avant de démarrer
 hideSaveNotification();
+// Annuler tout coup IA en attente d'un éventuel setTimeout précédent
+if (typeof triggerNextAction._gen === 'number') triggerNextAction._gen++;
 state = initState();
 moveHistory = [];
 boardPositionHistory = new Map();
@@ -13438,6 +13487,9 @@ if (gameMode === 'online' && !isMyTurnOnline()) {
 if (undoBtn.disabled) return;
 if (moveHistory.length === 0) return;
 
+// Annuler tout coup IA en attente dans le setTimeout
+triggerNextAction._gen++;
+
 playSound('undo');
 if (gameMode === 'ai') {
 const isPlayableHumanTurn = (s) => s && !s.captureMode && s.turn === humanPlayerId;
@@ -13503,28 +13555,56 @@ function handlePlacement(i) {
   }
 
   // ─── Aseqqi detection ─────────────────────────────────────────────
-  // After this placement, check if the opponent has open mills
-  // (2 aligned pieces of theirs + an empty cell that would complete a mill)
-  // but ALL cells that would complete those mills are forbidden to them
-  // (would themselves form a mill for the opponent)
+  // Après ce placement, vérifier si l'adversaire a au moins un "moulin ouvert"
+  // (2 de ses pions alignés + 1 case VIDE qui compléterait le moulin)
+  // mais que TOUTES ces cases de complétion vides lui sont interdites par
+  // la règle d'alignement (y placer son pion formerait un alignement ≥3).
+  // Important : la case doit être vide — si elle est occupée par l'un de nous,
+  // c'est un blocage physique ordinaire, pas un Aseqqi.
+  // Un seul aseqqi par coup, peu importe le nombre de moulins ouverts bloqués.
   try {
     if (session.active && state.phase === 'placement') {
       const opponent = 3 - state.turn;
-      const boardAfter = [...tempBoard]; // tempBoard already has our piece at i
-      // Find all "open mills" for opponent: pairs of opponent pieces aligned with 1 empty
-      let trapped = false;
-      for (let r = 0; r < SIZE && !trapped; r++) {
-        for (let c = 0; c < SIZE && !trapped; c++) {
-          const idx = r * SIZE + c;
-          if (boardAfter[idx] !== null) continue; // need an empty cell
-          // Would placing opponent here complete a mill?
-          const tb2 = [...boardAfter]; tb2[idx] = opponent;
-          if (!formsForbiddenPlacementAlignment(idx, opponent, tb2)) continue;
-          // It WOULD form a mill but is forbidden → aseqqi!
-          trapped = true;
+      const boardAfter = [...tempBoard]; // tempBoard contient déjà notre pion en i
+
+      const lines = [];
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE - 2; c++) {
+          lines.push([r*SIZE+c, r*SIZE+c+1, r*SIZE+c+2]);
         }
       }
-      if (trapped) session.aseqqi += 1;
+      for (let c = 0; c < SIZE; c++) {
+        for (let r = 0; r < SIZE - 2; r++) {
+          lines.push([r*SIZE+c, (r+1)*SIZE+c, (r+2)*SIZE+c]);
+        }
+      }
+
+      let hasOpenMill = false;  // l'adversaire a au moins un moulin ouvert
+      let allBlocked = true;    // toutes les cases vides de complétion sont interdites par la règle
+
+      for (const line of lines) {
+        let oppCount = 0, emptyIdx = -1, blocked = false;
+        for (const idx of line) {
+          if (boardAfter[idx] === opponent) oppCount++;
+          else if (boardAfter[idx] === null) emptyIdx = idx;
+          else blocked = true; // case occupée physiquement → ligne brisée, pas un moulin ouvert
+        }
+        // Moulin ouvert = exactement 2 pions adverses + 1 case vide, sans obstruction physique
+        if (oppCount === 2 && emptyIdx !== -1 && !blocked) {
+          hasOpenMill = true;
+          // La case est vide. Est-elle interdite par la règle d'alignement pour l'adversaire ?
+          const tb2 = [...boardAfter];
+          tb2[emptyIdx] = opponent;
+          const forbiddenByRule = formsForbiddenPlacementAlignment(emptyIdx, opponent, tb2);
+          if (!forbiddenByRule) {
+            // Cette case est vide et légale → l'adversaire peut encore compléter → pas un aseqqi
+            allBlocked = false;
+            break;
+          }
+        }
+      }
+
+      if (hasOpenMill && allBlocked) session.aseqqi += 1;
     }
   } catch(_) {}
   // ────────────────────────────────────────────────────────────────────
@@ -13632,6 +13712,8 @@ const moveTo = to;
 
 animateStoneMove(from, to);
 setTimeout(() => {
+// Vérifier que la partie n'a pas été gagnée/annulée pendant l'animation
+if (state.winner) return;
 const originalBoard = [...state.board];
 state.board[moveTo] = movingPlayer;
 state.board[moveFrom] = null;
@@ -13639,6 +13721,50 @@ state.selected = null;
 
 // ── Mise à jour suivi consécutif ──
 updateConsecutiveTracking(movingPlayer, moveFrom, moveTo);
+
+// ── Aɛzal detection ──────────────────────────────────────────────
+// Après ce déplacement, vérifier si le joueur actif crée une menace
+// de moulin incouvrable : à partir de sa nouvelle position, il peut
+// atteindre une case qui compléterait un moulin EN UN COUP FUTUR,
+// ET cette case cible ne peut être atteinte par aucun pion adverse.
+// On exclut les moulins que CE coup vient déjà de former (ce sont
+// des moulins réalisés, pas des menaces).
+try {
+  if (session.active && !cfg().isInverseWin) {
+    const opponent = 3 - movingPlayer;
+    // Moulins déjà formés par ce coup (à exclure)
+    const formedNow = new Set(
+      findAllMills(originalBoard, state.board, moveFrom, moveTo, movingPlayer)
+        .map(m => m.join(','))
+    );
+    const millThreatMoves = getPossibleMillMoves(movingPlayer, state.board, 'move');
+    let aezalDetected = false;
+    for (const threat of millThreatMoves) {
+      // Simuler ce coup futur pour voir quel moulin il formerait
+      const futureBoard = simulateMove(state.board, threat, movingPlayer);
+      const futureMills = findAllMills(state.board, futureBoard, threat.from, threat.to, movingPlayer);
+      // Vérifier que ce n'est pas un moulin déjà compté (formé par le coup actuel)
+      const isAlreadyFormed = futureMills.every(m => formedNow.has([...m].sort((a,b)=>a-b).join(',')));
+      if (isAlreadyFormed) continue;
+
+      // threat.to est la case qui compléterait le moulin futur.
+      // Vérifier qu'aucun pion adverse n'est adjacent à cette case (incouvrable).
+      let opponentCanCover = false;
+      for (let oFrom = 0; oFrom < SIZE * SIZE; oFrom++) {
+        if (state.board[oFrom] === opponent && isAdjacent(oFrom, threat.to)) {
+          opponentCanCover = true;
+          break;
+        }
+      }
+      if (!opponentCanCover) {
+        aezalDetected = true;
+        break; // Un seul aɛzal par coup
+      }
+    }
+    if (aezalDetected) session.aezal += 1;
+  }
+} catch(_) {}
+// ─────────────────────────────────────────────────────────────────
 
 const formedMills = findAllMills(originalBoard, state.board, moveFrom, moveTo, movingPlayer);
 
@@ -13708,6 +13834,10 @@ setTimeout(() => {
 state.board[idxToCapture] = null;
 state.captured[playerWhoGetsPoint]++;
 state.pendingCaptures--;
+
+// Réinitialiser le suivi consécutif si le pion traqué vient d'être capturé
+resetConsecutiveIfCaptured(1);
+resetConsecutiveIfCaptured(2);
 
 if (state.pendingCaptures > 0) {
 renderAll();
@@ -13805,7 +13935,10 @@ const playerToAct = state.captureMode ? state.turnForCapture: state.turn;
 
 if (gameMode === 'spectator') {
 const spd = parseInt(document.getElementById('spectator-speed')?.value || '700');
+// Token de génération : annule automatiquement les callbacks périmés
+const token = ++triggerNextAction._gen;
 setTimeout(() => {
+if (triggerNextAction._gen !== token) return; // undo ou nouvelle partie entre-temps
 if (gameMode !== 'spectator') return;
 const currentActor = state.captureMode ? state.turnForCapture: state.turn;
 aiPlayerId = currentActor;
@@ -13817,11 +13950,14 @@ return;
 }
 if (gameMode === 'ai' && playerToAct === aiPlayerId) {
 const delay = aiDifficulty === 4 ? 800: 500;
+const token = ++triggerNextAction._gen;
 setTimeout(() => {
+if (triggerNextAction._gen !== token) return; // undo ou nouvelle partie entre-temps
 makeAiMove();
 }, delay);
 }
 }
+triggerNextAction._gen = 0;
 
 // --- GAME RULES AND CHECKS ---
 function findAllMills(originalBoard, newBoard, from, to, player) {
@@ -13953,12 +14089,29 @@ const p2Pieces = state.board.filter(p => p === 2).length;
 const p1CanMove = canPlayerMove(1, state.board);
 const p2CanMove = canPlayerMove(2, state.board);
 
+const p1Loses = p1Pieces < 3 || !p1CanMove;
+const p2Loses = p2Pieces < 3 || !p2CanMove;
+
 if (cfg().isInverseWin) {
-if (p1Pieces < 3 || !p1CanMove) state.winner = 1;
-else if (p2Pieces < 3 || !p2CanMove) state.winner = 2;
+  // En mode inversé, "perdre" (moins de 3 pions ou bloqué) = gagner.
+  // Si les deux remplissent la condition simultanément, c'est le joueur
+  // dont c'est le tour (qui vient de jouer) qui a provoqué la situation → il gagne.
+  if (p1Loses && p2Loses) {
+    state.winner = state.turn; // le joueur actif a créé la situation gagnante
+  } else if (p1Loses) {
+    state.winner = 1;
+  } else if (p2Loses) {
+    state.winner = 2;
+  }
 } else {
-if (p2Pieces < 3 || !p2CanMove) state.winner = 1;
-else if (p1Pieces < 3 || !p1CanMove) state.winner = 2;
+  // En mode normal, si les deux perdent simultanément (cas très rare), le joueur actif gagne.
+  if (p1Loses && p2Loses) {
+    state.winner = state.turn;
+  } else if (p1Loses) {
+    state.winner = 2;
+  } else if (p2Loses) {
+    state.winner = 1;
+  }
 }
 if (state.winner) endGame();
 }
@@ -14315,11 +14468,17 @@ score += (playerMoves - opponentMoves) * 60;
 
 const playerMills = getFormedMillsCount(board, playerToEvaluate);
 const opponentMills = getFormedMillsCount(board, opponent);
-score += (playerMills - opponentMills) * 150;
+// En phase de déplacement, un moulin "figé" (statique) n'a pas de valeur active :
+// l'IA ne doit pas être pénalisée pour déplacer un pion qui en fait partie.
+// On réduit fortement le poids des moulins existants en phase move pour éviter ce biais.
+const millWeight = (currentPhase === 'move') ? 30 : 150;
+score += (playerMills - opponentMills) * millWeight;
 
 const playerPotentialMills = getPotentialMillsCount(board, playerToEvaluate);
 const opponentPotentialMills = getPotentialMillsCount(board, opponent);
-score += (playerPotentialMills - opponentPotentialMills) * 75;
+// En phase move, on booste davantage les moulins potentiels pour compenser
+const potentialMillWeight = (currentPhase === 'move') ? 120 : 75;
+score += (playerPotentialMills - opponentPotentialMills) * potentialMillWeight;
 
 const playerDoubleMills = countDoubleMillSetups(board, playerToEvaluate);
 const opponentDoubleMills = countDoubleMillSetups(board, opponent);
@@ -15721,6 +15880,7 @@ moves: 0,         // move phase only
 captures: 0,
 mills: 0,
 aseqqi: 0,        // fois adversaire piégé en placement
+aezal: 0,         // menaces de moulin incouvrables (phase déplacement)
 millsPerGame: 0   // average (computed, not stored)
 },
 modes: {
@@ -15909,6 +16069,7 @@ movesPhase: 0,
 captures: 0,
 mills: 0,
 aseqqi: 0,      // adversaire piégé en placement (ne peut couvrir un moulin ouvert)
+aezal: 0,       // menace de moulin incouvrable en phase de déplacement
 millsP1: 0,     // moulins formés par joueur 1
 millsP2: 0,     // moulins formés par joueur 2
 mode: null,
@@ -15927,6 +16088,7 @@ movesPhase: 0,
 captures: 0,
 mills: 0,
 aseqqi: 0,
+aezal: 0,
 millsP1: 0,
 millsP2: 0,
 mode: gameMode || null,
@@ -16393,6 +16555,7 @@ moves: Number(session.movesPhase || 0),
 captures: Number(session.captures || 0),
 mills: Number(session.mills || 0),
 aseqqi: Number(session.aseqqi || 0),
+aezal: Number(session.aezal || 0),
 millsP1: Number(session.millsP1 || 0),
 millsP2: Number(session.millsP2 || 0)
 };
@@ -16407,6 +16570,7 @@ stats.totals.moves = (stats.totals.moves || 0) + record.moves;
 stats.totals.captures = (stats.totals.captures || 0) + record.captures;
 stats.totals.mills = (stats.totals.mills || 0) + record.mills;
 stats.totals.aseqqi = (stats.totals.aseqqi || 0) + record.aseqqi;
+stats.totals.aezal = (stats.totals.aezal || 0) + record.aezal;
 
 // Variants
 try {
@@ -16807,6 +16971,7 @@ function computeStatsForUI(raw) {
     totalMills: num(totals0.mills),
     millsPerGame: games > 0 ? (num(totals0.mills) / games) : 0,
     totalAseqqi: num(totals0.aseqqi || 0),
+    totalAezal: num(totals0.aezal || 0),
 
     // Progress
     xp: num(stats0.xp),
@@ -16854,6 +17019,7 @@ function computeStatsForUI(raw) {
       millsP1: num(last.millsP1 || 0),
       millsP2: num(last.millsP2 || 0),
       aseqqi: num(last.aseqqi || 0),
+      aezal: num(last.aezal || 0),
       at: last.at ? new Date(last.at) : null
     } : null
   };
@@ -16906,6 +17072,7 @@ function renderStats(cs) {
   // ── KPI grid ─────────────────────────────────────────────────────
   const millsPerGame = computed.millsPerGame || 0;
   const aseqqiTotal = computed.totalAseqqi || 0;
+  const aezalTotal = computed.totalAezal || 0;
   html += `
   <div class="sv2-kpi-grid">
     <div class="sv2-kpi">
@@ -16918,11 +17085,15 @@ function renderStats(cs) {
     </div>
     <div class="sv2-kpi sv2-kpi-gold">
       <span class="sv2-kpi-val">${fmtN(millsPerGame, 1)}</span>
-      <span class="sv2-kpi-label">Aɛzal / partie</span>
+      <span class="sv2-kpi-label">${t('millsLabel')} / partie</span>
     </div>
     <div class="sv2-kpi sv2-kpi-amber">
       <span class="sv2-kpi-val">${aseqqiTotal}</span>
       <span class="sv2-kpi-label">Aseqqi total</span>
+    </div>
+    <div class="sv2-kpi sv2-kpi-gold">
+      <span class="sv2-kpi-val">${aezalTotal}</span>
+      <span class="sv2-kpi-label">Aɛzal total</span>
     </div>
     <div class="sv2-kpi">
       <span class="sv2-kpi-val">${fmtD(computed.bestWinMs)}</span>
@@ -16973,6 +17144,7 @@ function renderStats(cs) {
         <div class="sv2-last-stat"><span class="sv2-ls-v">${fmtD(lg.durationMs)}</span><span class="sv2-ls-l">${t('durationLabel')}</span></div>
         <div class="sv2-last-stat sv2-ls-gold"><span class="sv2-ls-v">${lg.mills}</span><span class="sv2-ls-l">Atellet (moulins)</span></div>
         <div class="sv2-last-stat sv2-ls-amber"><span class="sv2-ls-v">${lg.aseqqi}</span><span class="sv2-ls-l">Aseqqi</span></div>
+        <div class="sv2-last-stat sv2-ls-gold"><span class="sv2-ls-v">${lg.aezal}</span><span class="sv2-ls-l">Aɛzal</span></div>
         <div class="sv2-last-stat"><span class="sv2-ls-v">${lg.actions}</span><span class="sv2-ls-l">${t('statsActionsCount')}</span></div>
       </div>
       ${lg.mills > 0 ? `
@@ -17768,16 +17940,38 @@ spectatorDelay = parseInt(e.target.value);
 const btnResume = document.getElementById('btn-resume');
 const btnDiscard = document.getElementById('btn-discard');
 if (btnResume) {
-  const _resume = (e) => { try { e.preventDefault(); } catch(_) {} loadAndResume(); };
-  btnResume.addEventListener('click', _resume);
+  let _resumeHandled = false;
+  const _resume = (e) => {
+    if (_resumeHandled) return;
+    _resumeHandled = true;
+    try { e.preventDefault(); e.stopPropagation(); } catch(_) {}
+    btnResume.style.transform = 'scale(0.94)';
+    setTimeout(() => { btnResume.style.transform = ''; }, 150);
+    setTimeout(() => { _resumeHandled = false; }, 600);
+    loadAndResume();
+  };
+  btnResume.addEventListener('pointerdown', (e) => {
+    btnResume.style.transform = 'scale(0.94)';
+  }, { passive: true });
   btnResume.addEventListener('pointerup', _resume, { passive: false });
-  btnResume.addEventListener('touchend', _resume, { passive: false });
+  btnResume.addEventListener('pointercancel', () => { _resumeHandled = false; btnResume.style.transform = ''; }, { passive: true });
 }
 if (btnDiscard) {
-  const _discard = (e) => { try { e.preventDefault(); } catch(_) {} clearSave(); hideSaveNotification(); };
-  btnDiscard.addEventListener('click', _discard);
+  let _discardHandled = false;
+  const _discard = (e) => {
+    if (_discardHandled) return;
+    _discardHandled = true;
+    try { e.preventDefault(); e.stopPropagation(); } catch(_) {}
+    btnDiscard.style.transform = 'scale(0.94)';
+    setTimeout(() => { btnDiscard.style.transform = ''; }, 150);
+    setTimeout(() => { _discardHandled = false; }, 600);
+    clearSave(); hideSaveNotification();
+  };
+  btnDiscard.addEventListener('pointerdown', () => {
+    btnDiscard.style.transform = 'scale(0.94)';
+  }, { passive: true });
   btnDiscard.addEventListener('pointerup', _discard, { passive: false });
-  btnDiscard.addEventListener('touchend', _discard, { passive: false });
+  btnDiscard.addEventListener('pointercancel', () => { _discardHandled = false; btnDiscard.style.transform = ''; }, { passive: true });
 }
 
 // Check for saved game on startup
@@ -17955,7 +18149,27 @@ if (onlineBtn) {
     }
 
     // Back button
-    if (onlineEls.btnBack) onlineEls.btnBack.onclick = () => { onlineDisconnect(); showScreen('mode-selection-area'); };
+    if (onlineEls.btnBack) {
+      let _backHandled = false;
+      const _doBack = (e) => {
+        if (_backHandled) return;
+        _backHandled = true;
+        try { e.preventDefault(); e.stopPropagation(); } catch(_) {}
+        onlineEls.btnBack.style.transform = 'scale(0.95)';
+        setTimeout(() => { if (onlineEls.btnBack) onlineEls.btnBack.style.transform = ''; }, 150);
+        setTimeout(() => { _backHandled = false; }, 600);
+        onlineDisconnect(); showScreen('mode-selection-area');
+      };
+      onlineEls.btnBack.addEventListener('pointerdown', () => {
+        onlineEls.btnBack.style.transform = 'scale(0.95)';
+      }, { passive: true });
+      onlineEls.btnBack.addEventListener('pointerup', _doBack, { passive: false });
+      onlineEls.btnBack.addEventListener('pointercancel', () => {
+        _backHandled = false;
+        if (onlineEls.btnBack) onlineEls.btnBack.style.transform = '';
+      }, { passive: true });
+      onlineEls.btnBack.style.touchAction = 'manipulation';
+    }
 
     // Disable actions if not configured
     const __onlineOk = _isBack4AppConfigured();
