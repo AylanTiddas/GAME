@@ -662,6 +662,9 @@ border: 10px solid var(--wood-light);
 display: flex;
 align-items: center;
 justify-content: center;
+box-sizing: border-box;
+overflow: hidden;
+flex-shrink: 0;
 }
 
 @media (min-width: 1200px) {
@@ -711,6 +714,7 @@ gap: 0;
 position: relative;
 overflow: hidden;
 z-index: 2;
+box-sizing: border-box;
 }
 .player-info {
 display: flex;
@@ -5836,6 +5840,221 @@ border-color: rgba(240,200,80,0.75) !important;
 color: var(--text-gold) !important;
 }
 
+/* ===== BOARD THEME – INLINE SWATCH GRID ===== */
+.btp-inline-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 5px;
+padding: 6px 2px 4px;
+}
+.btp-dot {
+appearance: none;
+background: none;
+border: 2px solid transparent;
+border-radius: 5px;
+padding: 2px;
+cursor: pointer;
+transition: border-color 0.18s, transform 0.15s;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.btp-dot:hover { transform: scale(1.12); border-color: rgba(240,200,80,0.45); }
+.btp-dot.active { border-color: rgba(240,200,80,0.9); box-shadow: 0 0 6px rgba(240,200,80,0.35); }
+.btp-dot-swatch {
+display: block;
+width: 22px;
+height: 22px;
+border-radius: 3px;
+border: 1.5px solid rgba(255,255,255,0.12);
+}
+/* Swatches — board bg sample + border accent */
+.btp-sw-default  { background: linear-gradient(135deg,#2b231d,#201b17); border-color: rgba(240,200,80,0.4); }
+.btp-sw-teal     { background: linear-gradient(135deg,#2c5f6f,#1f4a5a); border-color: #d4af8f; }
+.btp-sw-wood     { background: linear-gradient(135deg,#6b4423,#4a2f18); border-color: #8b5a2b; }
+.btp-sw-parchment{ background: linear-gradient(135deg,#f0e9d2,#e2d4b8); border-color: #b89a6a; }
+.btp-sw-obsidian { background: linear-gradient(135deg,#111,#222); border-color: #d4af8f; }
+.btp-sw-berber   { background: linear-gradient(135deg,#5a2d0c,#8c4a1a); border-color: #f0c850; }
+.btp-sw-night    { background: linear-gradient(135deg,#0d1b2a,#1a2e42); border-color: #4aa8d8; }
+.btp-sw-sand     { background: linear-gradient(135deg,#c9a96e,#a07840); border-color: #e8c882; }
+.btp-sw-jade     { background: linear-gradient(135deg,#1a3d2b,#0f2a1e); border-color: #4db87a; }
+.btp-sw-crimson  { background: linear-gradient(135deg,#3d0a0a,#5c1010); border-color: #d44; }
+
+/* ===== BOARD THEME STYLES (data-board-theme on #board) ===== */
+/* shared transition — jamais de width/height/display dans les thèmes */
+.game-board[data-board-theme] {
+  transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease, border-radius 0.4s ease;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.game-board[data-board-theme] .cell {
+  box-sizing: border-box !important;
+}
+
+/* — TEAL / Océan — */
+.game-board[data-board-theme="teal"] {
+background: linear-gradient(135deg, #2c5f6f 0%, #1f4a5a 100%) !important;
+border: 5px solid #d4af8f !important;
+border-radius: 4px !important;
+padding: 6px !important;
+box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(212,175,143,0.25) !important;
+gap: 3px !important;
+}
+.game-board[data-board-theme="teal"] .cell {
+background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04)) !important;
+border: 2px solid #d4af8f !important; border-radius: 3px !important;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+.game-board[data-board-theme="teal"] .cell:hover {
+background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)) !important;
+}
+
+/* — WOOD / Bois — */
+.game-board[data-board-theme="wood"] {
+border: 6px solid #8b5a2b !important; border-radius: 12px !important;
+padding: 8px !important;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 12px 32px rgba(0,0,0,0.8), inset 0 -2px 5px rgba(0,0,0,0.5) !important;
+background-image: repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,0.09) 2px,rgba(0,0,0,0.09) 4px), repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.09) 2px,rgba(0,0,0,0.09) 4px), linear-gradient(135deg,#6b4423 0%,#4a2f18 100%) !important;
+background-size: 100%,100%,100%;
+gap: 4px !important;
+}
+.game-board[data-board-theme="wood"] .cell {
+background: linear-gradient(135deg, #d4c5a9 0%, #c9b89f 100%) !important;
+border: 2px solid #8b5a2b !important; border-radius: 6px !important;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), inset 0 -1px 2px rgba(255,255,255,0.1) !important;
+}
+.game-board[data-board-theme="wood"] .cell:hover {
+background: linear-gradient(135deg, #dccfb3 0%, #d1c2a9 100%) !important;
+}
+
+/* — PARCHMENT / Parchemin — */
+.game-board[data-board-theme="parchment"] {
+background: linear-gradient(135deg, #f0e9d2 0%, #e2d4b8 100%) !important;
+border: 6px solid #b89a6a !important; border-radius: 8px !important;
+padding: 6px !important;
+box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.3) !important;
+gap: 2px !important;
+}
+.game-board[data-board-theme="parchment"] .cell {
+background: linear-gradient(135deg, #f5edd8 0%, #ede0c4 100%) !important;
+border: 2px solid #b89a6a !important; border-radius: 6px !important;
+box-shadow: inset 0 2px 3px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+.game-board[data-board-theme="parchment"] .cell:hover {
+background: linear-gradient(135deg, #faf4e4 0%, #f0e6cc 100%) !important;
+}
+
+/* — OBSIDIAN / Obsidienne — */
+.game-board[data-board-theme="obsidian"] {
+background: linear-gradient(135deg, #111 0%, #222 100%) !important;
+border: 5px solid #d4af8f !important; border-radius: 6px !important;
+padding: 7px !important;
+box-shadow: inset 0 0 14px rgba(212,175,143,0.18), 0 12px 32px rgba(0,0,0,0.9) !important;
+gap: 2px !important;
+}
+.game-board[data-board-theme="obsidian"] .cell {
+background: linear-gradient(135deg, #2a2a2a, #1a1a1a) !important;
+border: 2px solid #d4af8f !important; border-radius: 4px !important;
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,143,0.15) !important;
+}
+.game-board[data-board-theme="obsidian"] .cell:hover {
+background: linear-gradient(135deg, #3a3a3a, #2a2a2a) !important;
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(212,175,143,0.22) !important;
+}
+
+/* — BERBER / Berbère — */
+.game-board[data-board-theme="berber"] {
+background: linear-gradient(135deg, #5a2d0c 0%, #8c4a1a 50%, #5a2d0c 100%) !important;
+border: 5px solid #f0c850 !important; border-radius: 0px !important;
+padding: 7px !important;
+box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 0 0 2px rgba(240,200,80,0.4), 0 8px 24px rgba(0,0,0,0.7) !important;
+gap: 3px !important;
+}
+.game-board[data-board-theme="berber"] .cell {
+background: linear-gradient(135deg, rgba(240,200,80,0.12), rgba(240,200,80,0.05)) !important;
+border: 2px solid rgba(240,200,80,0.5) !important; border-radius: 0px !important;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.4) !important;
+}
+.game-board[data-board-theme="berber"] .cell:hover {
+background: linear-gradient(135deg, rgba(240,200,80,0.22), rgba(240,200,80,0.1)) !important;
+border-color: rgba(240,200,80,0.8) !important;
+}
+
+/* — NIGHT / Nuit — */
+.game-board[data-board-theme="night"] {
+background: linear-gradient(135deg, #0d1b2a 0%, #1a2e42 100%) !important;
+border: 5px solid #4aa8d8 !important; border-radius: 8px !important;
+padding: 6px !important;
+box-shadow: inset 0 0 20px rgba(74,168,216,0.12), 0 10px 30px rgba(0,0,0,0.8) !important;
+gap: 2px !important;
+}
+.game-board[data-board-theme="night"] .cell {
+background: linear-gradient(135deg, #1e3448, #142636) !important;
+border: 2px solid rgba(74,168,216,0.4) !important; border-radius: 5px !important;
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.5) !important;
+}
+.game-board[data-board-theme="night"] .cell:hover {
+background: linear-gradient(135deg, #28405a, #1e3448) !important;
+border-color: rgba(74,168,216,0.75) !important;
+box-shadow: 0 0 8px rgba(74,168,216,0.2) !important;
+}
+
+/* — SAND / Sahara — */
+.game-board[data-board-theme="sand"] {
+border: 5px solid #e8c882 !important; border-radius: 10px !important;
+padding: 7px !important;
+box-shadow: inset 0 2px 5px rgba(255,255,255,0.15), 0 8px 24px rgba(0,0,0,0.5) !important;
+background-image: repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,0.04) 3px,rgba(255,255,255,0.04) 6px), linear-gradient(135deg,#c9a96e,#a07840) !important;
+gap: 3px !important;
+}
+.game-board[data-board-theme="sand"] .cell {
+background: linear-gradient(135deg, #e8d4a8, #d4be8c) !important;
+border: 2px solid #b8903c !important; border-radius: 5px !important;
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+.game-board[data-board-theme="sand"] .cell:hover {
+background: linear-gradient(135deg, #f0ddb6, #dcc898) !important;
+}
+
+/* — JADE — */
+.game-board[data-board-theme="jade"] {
+background: linear-gradient(135deg, #1a3d2b 0%, #0f2a1e 100%) !important;
+border: 5px solid #4db87a !important; border-radius: 6px !important;
+padding: 6px !important;
+box-shadow: inset 0 0 16px rgba(77,184,122,0.1), 0 10px 28px rgba(0,0,0,0.75) !important;
+gap: 3px !important;
+}
+.game-board[data-board-theme="jade"] .cell {
+background: linear-gradient(135deg, #224835, #16301f) !important;
+border: 2px solid rgba(77,184,122,0.45) !important; border-radius: 4px !important;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.4) !important;
+}
+.game-board[data-board-theme="jade"] .cell:hover {
+background: linear-gradient(135deg, #2e6045, #224835) !important;
+border-color: rgba(77,184,122,0.8) !important;
+box-shadow: 0 0 8px rgba(77,184,122,0.2) !important;
+}
+
+/* — CRIMSON / Rubis — */
+.game-board[data-board-theme="crimson"] {
+background: linear-gradient(135deg, #3d0a0a 0%, #5c1010 100%) !important;
+border: 5px solid #cc3333 !important; border-radius: 6px !important;
+padding: 6px !important;
+box-shadow: inset 0 0 16px rgba(204,51,51,0.15), 0 10px 30px rgba(0,0,0,0.85) !important;
+gap: 2px !important;
+}
+.game-board[data-board-theme="crimson"] .cell {
+background: linear-gradient(135deg, #5a1515, #401010) !important;
+border: 2px solid rgba(204,51,51,0.45) !important; border-radius: 4px !important;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+.game-board[data-board-theme="crimson"] .cell:hover {
+background: linear-gradient(135deg, #6e1c1c, #5a1515) !important;
+border-color: rgba(220,70,70,0.8) !important;
+box-shadow: 0 0 8px rgba(204,51,51,0.25) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
 .stone.dragging {
 transition: none;
@@ -6460,6 +6679,278 @@ background: linear-gradient(90deg, var(--stat-value), var(--modal-heading)) !imp
 .stats-modal-content {
 overflow-y: auto;
 max-height: 85vh;
+}
+
+/* ── Stats v2 Modern UI ─────────────────────────────────────────── */
+.sv2-level-card {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+padding: 0.75rem 0.9rem;
+background: rgba(240,200,80,0.07);
+border: 1px solid rgba(240,200,80,0.2);
+border-radius: 10px;
+margin-bottom: 0.75rem;
+}
+.sv2-level-badge {
+flex-shrink: 0;
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background: linear-gradient(145deg, rgba(240,200,80,0.3), rgba(240,200,80,0.1));
+border: 2px solid rgba(240,200,80,0.55);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.78rem;
+font-weight: 800;
+color: var(--text-gold);
+letter-spacing: 0.02em;
+}
+.sv2-level-info { flex: 1; min-width: 0; }
+.sv2-level-bar-bg {
+height: 7px;
+border-radius: 4px;
+background: rgba(255,255,255,0.1);
+overflow: hidden;
+margin-bottom: 0.35rem;
+}
+.sv2-level-bar-fill {
+height: 100%;
+border-radius: 4px;
+background: linear-gradient(90deg, #f0c850, #e0a830);
+transition: width 0.5s ease;
+}
+.sv2-level-xp {
+font-size: 0.75rem;
+color: rgba(245,245,245,0.78);
+letter-spacing: 0.02em;
+font-weight: 500;
+}
+
+.sv2-kpi-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 0.5rem;
+margin-bottom: 0.75rem;
+}
+.sv2-kpi {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 0.6rem 0.4rem;
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.09);
+border-radius: 8px;
+text-align: center;
+gap: 0.2rem;
+}
+.sv2-kpi-gold {
+background: rgba(240,200,80,0.08);
+border-color: rgba(240,200,80,0.25);
+}
+.sv2-kpi-amber {
+background: rgba(255,160,40,0.08);
+border-color: rgba(255,160,40,0.25);
+}
+.sv2-kpi-val {
+font-size: 1.15rem;
+font-weight: 800;
+color: var(--text-main);
+line-height: 1.1;
+}
+.sv2-kpi-gold .sv2-kpi-val { color: var(--text-gold); }
+.sv2-kpi-amber .sv2-kpi-val { color: #ffa028; }
+.sv2-kpi-label {
+font-size: 0.68rem;
+color: rgba(245,245,245,0.82);
+text-transform: uppercase;
+letter-spacing: 0.065em;
+line-height: 1.2;
+font-weight: 500;
+}
+
+.sv2-section-title {
+font-size: 0.79rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.11em;
+color: var(--text-gold);
+opacity: 0.95;
+margin: 0.8rem 0 0.5rem;
+}
+
+.sv2-mode-card {
+background: rgba(255,255,255,0.03);
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: 8px;
+padding: 0.6rem 0.75rem;
+margin-bottom: 0.4rem;
+}
+.sv2-mode-header {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+margin-bottom: 0.5rem;
+}
+.sv2-mode-name {
+font-weight: 700;
+font-size: 0.9rem;
+flex: 1;
+}
+.sv2-mode-games {
+font-size: 0.75rem;
+color: rgba(245,245,245,0.74);
+font-weight: 500;
+}
+.sv2-mode-stats {
+display: flex;
+gap: 0.5rem;
+}
+.sv2-mode-stat {
+display: flex;
+flex-direction: column;
+align-items: center;
+flex: 1;
+padding: 0.35rem 0.2rem;
+background: rgba(255,255,255,0.04);
+border-radius: 5px;
+}
+.sv2-ms-val {
+font-size: 0.9rem;
+font-weight: 800;
+color: var(--text-main);
+}
+.sv2-ms-lbl {
+font-size: 0.64rem;
+color: rgba(245,245,245,0.78);
+text-transform: uppercase;
+letter-spacing: 0.045em;
+margin-top: 1px;
+font-weight: 500;
+}
+
+.sv2-note {
+font-size: 0.83rem;
+color: rgba(245,245,245,0.84);
+padding: 0.45rem 0.65rem;
+background: rgba(255,255,255,0.04);
+border-radius: 6px;
+margin-top: 0.4rem;
+font-weight: 500;
+}
+
+.sv2-last-card {
+background: rgba(240,200,80,0.05);
+border: 1px solid rgba(240,200,80,0.18);
+border-radius: 10px;
+padding: 0.75rem 0.9rem;
+}
+.sv2-last-meta {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+margin-bottom: 0.45rem;
+flex-wrap: wrap;
+}
+.sv2-last-badge {
+font-size: 0.75rem;
+font-weight: 700;
+padding: 0.2rem 0.6rem;
+border-radius: 20px;
+background: rgba(240,200,80,0.15);
+border: 1.2px solid rgba(240,200,80,0.4);
+color: var(--text-gold);
+text-transform: uppercase;
+letter-spacing: 0.065em;
+}
+.sv2-lb-variant {
+background: rgba(99,164,255,0.18);
+border-color: rgba(99,164,255,0.5);
+color: #7bb5ff;
+}
+.sv2-last-date {
+font-size: 0.71rem;
+color: rgba(245,245,245,0.68);
+margin-left: auto;
+font-weight: 500;
+}
+.sv2-last-vs {
+font-size: 0.95rem;
+font-weight: 700;
+text-align: center;
+margin-bottom: 0.25rem;
+}
+.sv2-last-vs em { color: rgba(245,245,245,0.68); font-style: normal; font-weight: 400; margin: 0 0.3em; }
+.sv2-last-winner {
+text-align: center;
+font-size: 0.82rem;
+color: var(--text-gold);
+font-weight: 600;
+margin-bottom: 0.6rem;
+}
+.sv2-last-row {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 0.4rem;
+margin-bottom: 0.5rem;
+}
+.sv2-last-stat {
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0.4rem 0.2rem;
+background: rgba(255,255,255,0.04);
+border-radius: 6px;
+}
+.sv2-ls-gold { background: rgba(240,200,80,0.08); }
+.sv2-ls-amber { background: rgba(255,160,40,0.08); }
+.sv2-ls-v {
+font-size: 1rem;
+font-weight: 800;
+}
+.sv2-ls-gold .sv2-ls-v { color: var(--text-gold); }
+.sv2-ls-amber .sv2-ls-v { color: #ffa028; }
+.sv2-ls-l {
+font-size: 0.64rem;
+color: rgba(245,245,245,0.76);
+text-transform: uppercase;
+letter-spacing: 0.045em;
+text-align: center;
+line-height: 1.2;
+font-weight: 500;
+}
+}
+.sv2-mill-bar-wrap {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+}
+.sv2-mill-bar-lbl {
+font-size: 0.72rem;
+font-weight: 700;
+white-space: nowrap;
+}
+.sv2-mill-bar {
+flex: 1;
+height: 6px;
+border-radius: 3px;
+display: flex;
+overflow: hidden;
+background: rgba(255,255,255,0.08);
+}
+.sv2-mill-fill-1 {
+background: rgba(80,80,80,0.85);
+transition: width 0.4s ease;
+}
+.sv2-mill-fill-2 {
+background: rgba(220,220,220,0.85);
+transition: width 0.4s ease;
+}
+@media (max-width: 400px) {
+  .sv2-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .sv2-last-row { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ────────────────────────────────────────────────────────────────
@@ -7537,16 +8028,29 @@ letter-spacing: 0.2em !important;
 /* Boutons secondaires (Retour, Règles) : outline style */
 .back-btn {
 background: transparent !important;
-border: 1px solid rgba(255,255,255,0.22) !important;
+border: 1.2px solid rgba(255,255,255,0.24) !important;
 box-shadow: none !important;
 color: var(--text-main) !important;
 font-weight: 600 !important;
-opacity: 0.85 !important;
+opacity: 0.88 !important;
+padding: 0.85rem 1.35rem !important;
+min-height: 52px !important;
+border-radius: 11px !important;
+transition: all 0.18s ease !important;
+-webkit-touch-callout: none;
+touch-action: manipulation;
 }
 .back-btn:hover {
-background: rgba(255,255,255,0.06) !important;
+background: rgba(255,255,255,0.08) !important;
 opacity: 1 !important;
-border-color: rgba(255,255,255,0.38) !important;
+border-color: rgba(255,255,255,0.42) !important;
+transform: translateY(-1px) !important;
+box-shadow: 0 4px 12px rgba(0,0,0,0.18) !important;
+}
+.back-btn:active:not(:disabled) {
+transform: translateY(1px) !important;
+background: rgba(255,255,255,0.06) !important;
+box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
 }
 [data-theme="kabylie"] .back-btn,
 [data-theme="desert"] .back-btn {
@@ -7556,15 +8060,28 @@ color: var(--text-main) !important;
 
 .rules-btn {
 background: transparent !important;
-border: 1px solid var(--panel-border, rgba(240,200,80,0.35)) !important;
+border: 1.2px solid var(--panel-border, rgba(240,200,80,0.38)) !important;
 box-shadow: none !important;
 font-weight: 600 !important;
-opacity: 0.88 !important;
-min-height: 48px !important;
+opacity: 0.90 !important;
+min-height: 52px !important;
+padding: 0.85rem 1.35rem !important;
+border-radius: 11px !important;
+transition: all 0.18s ease !important;
+-webkit-touch-callout: none;
+touch-action: manipulation;
 }
 .rules-btn:hover {
 opacity: 1 !important;
+background: rgba(240,200,80,0.10) !important;
+border-color: rgba(240,200,80,0.45) !important;
+transform: translateY(-1px) !important;
+box-shadow: 0 4px 12px rgba(240,200,80,0.12) !important;
+}
+.rules-btn:active:not(:disabled) {
+transform: translateY(1px) !important;
 background: rgba(240,200,80,0.08) !important;
+box-shadow: 0 2px 6px rgba(240,200,80,0.08) !important;
 }
 
 /* ── 3e. ZONES TACTILES GARANTIES 48px ── */
@@ -7892,11 +8409,11 @@ gap: 0.32rem !important;
 flex: 1 !important;
 min-width: 0 !important;
 max-width: 110px !important;
-min-height: 60px !important;
-padding: 0.6rem 0.5rem !important;
+min-height: 64px !important;
+padding: 0.75rem 0.65rem !important;
 border-radius: 14px !important;
-border: 1px solid rgba(255,255,255,0.10) !important;
-background: rgba(255,255,255,0.05) !important;
+border: 1.2px solid rgba(255,255,255,0.12) !important;
+background: rgba(255,255,255,0.06) !important;
 color: var(--text-main) !important;
 box-shadow: 0 2px 8px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.06) !important;
 cursor: pointer;
@@ -7907,6 +8424,8 @@ position: relative !important;
 overflow: hidden !important;
 backdrop-filter: blur(8px);
 -webkit-backdrop-filter: blur(8px);
+-webkit-touch-callout: none;
+touch-action: manipulation;
 }
 /* Shine on hover */
 .ctrl-btn::before {
@@ -7929,8 +8448,8 @@ box-shadow: 0 8px 22px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.10) !i
 border-color: rgba(255,255,255,0.20) !important;
 }
 .ctrl-btn:active:not(:disabled) {
-transform: translateY(0) scale(0.96) !important;
-box-shadow: 0 2px 6px rgba(0,0,0,0.20) !important;
+transform: translateY(1px) scale(0.95) !important;
+box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
 }
 .ctrl-btn:disabled {
 opacity: 0.38 !important;
@@ -8774,7 +9293,7 @@ Patrimoine Amazigh • Idles Amaziɣ
 <button aria-label="Fermer" class="stray-close-btn" id="stray-close-btn" type="button">✕</button>
 </div>
 <div class="stray-section">
-<span class="stray-section-label"><span class="Appearance-label" data-i18n="Appearancelabel">Apparence</span>
+<span class="stray-section-label"><span class="Appearance-label" data-i18n="Appearancelabel">Apparence</span></span>
 <div class="stray-grid">
 <button aria-label="Thème" class="toolbar-btn stray-item" id="theme-btn" title="Changer de thème">
 <span class="stray-icon">🎨</span>
@@ -8784,6 +9303,39 @@ Patrimoine Amazigh • Idles Amaziɣ
 <span class="stray-icon">🔊</span>
 <span class="stray-item-label" data-i18n="btnSound">Son</span>
 </button>
+</div>
+<!-- Sélecteur de thème plateau intégré dans la section Apparence -->
+<div class="btp-inline-grid" id="btp-inline-grid">
+  <button class="btp-dot active" data-btheme="default" title="Défaut" aria-label="Défaut">
+    <span class="btp-dot-swatch btp-sw-default"></span>
+  </button>
+  <button class="btp-dot" data-btheme="teal" title="Océan" aria-label="Océan">
+    <span class="btp-dot-swatch btp-sw-teal"></span>
+  </button>
+  <button class="btp-dot" data-btheme="wood" title="Bois" aria-label="Bois">
+    <span class="btp-dot-swatch btp-sw-wood"></span>
+  </button>
+  <button class="btp-dot" data-btheme="parchment" title="Parchemin" aria-label="Parchemin">
+    <span class="btp-dot-swatch btp-sw-parchment"></span>
+  </button>
+  <button class="btp-dot" data-btheme="obsidian" title="Obsidienne" aria-label="Obsidienne">
+    <span class="btp-dot-swatch btp-sw-obsidian"></span>
+  </button>
+  <button class="btp-dot" data-btheme="berber" title="Berbère" aria-label="Berbère">
+    <span class="btp-dot-swatch btp-sw-berber"></span>
+  </button>
+  <button class="btp-dot" data-btheme="night" title="Nuit" aria-label="Nuit">
+    <span class="btp-dot-swatch btp-sw-night"></span>
+  </button>
+  <button class="btp-dot" data-btheme="sand" title="Sahara" aria-label="Sahara">
+    <span class="btp-dot-swatch btp-sw-sand"></span>
+  </button>
+  <button class="btp-dot" data-btheme="jade" title="Jade" aria-label="Jade">
+    <span class="btp-dot-swatch btp-sw-jade"></span>
+  </button>
+  <button class="btp-dot" data-btheme="crimson" title="Rubis" aria-label="Rubis">
+    <span class="btp-dot-swatch btp-sw-crimson"></span>
+  </button>
 </div>
 </div>
 <div class="stray-section">
@@ -8823,8 +9375,7 @@ Patrimoine Amazigh • Idles Amaziɣ
 <button aria-label="Paramètres" id="settings-fab" title="Paramètres"><span aria-hidden="true" class="settings-icon">⚙️</span><span class="settings-label" data-i18n="btnSettings">Paramètres</span></button>
 </div>
 <div class="stone-decoration stone-1">
-ⵣ
-</div>
+ⵣ</div>
 <div class="stone-decoration stone-2">
 ⵣ
 </div>
@@ -11490,7 +12041,7 @@ aboutQuoteTrans: "Di ddunit ma yella tettuneḥca-y-ak , xas beddel abrid.",
 aboutBtnLabel: "Awal fell-as",
 avgDuration: "Akud alemmas",
 winnerLabel: "Win irbeḥen",
-actionsPerGameLabel: "Tikkal mbawelen ileqqafen i temlilit",
+actionsPerGameLabel: "Ambiwel / Timlilit",
 modeAI: "IA",
 modeLocal: "Ameddakel",
 modeSpectator: "Anezzeh",
@@ -11571,22 +12122,51 @@ onlineCopyLinkAria: "Nqel aseɣwen",
 onlineShareLinkAria: "azen i weḥbib",
 onlineShareText: "Qqim ɣer teslaḍt n Tiddas:",
 statsSectionGlobal: "Agemmuḍ s umata",
+statsSectionActivity: "Tamyanți",
+statsPlacementsPerGame: "Asnulfu / timlilit",
+statsMovesPerGame: "Anaqel / timlilit",
+statsActionsPerGame: "Ambiwel / timlilit",
+statsOnlineTopOpponent: "Umeddakul ufrin",
+statsActionsCount: "Ambiwel",
+statsPlacementsCount: "Asnulfu",
+statsMovesCount: "Anaqel",
+resetStatsConfirm: "Fren agemmuḍ?",
+toastStatsReset: "Agemmuḍ yettfren.",
+toastExported: "Alɣu yettwabna.",
+noStatsYet: "Ulac igemmaḍ tura. Urar timlilit !",
 statsSectionEfficiency: "Tawuri",
-statsSectionByMode: "S urar",
-statsSectionLastGame: "Timlilit taneggarut",
+gamesPlayedLabel: "Timliliyin",
+durationLabel: "Akud amatu",
+avgDuration: "Akud alemmas / timlilit",
 statsBestWinTime: "Rrebḥ ameqqran",
+actionsPerGameLabel: "Ambiwel / Timlilit",
 statsCaptPerGame: "Učči / timlilit",
 statsMillsPerGame: "Atellet / timlilit",
-statsAvgDurPerMode: "Akud alemmas",
+levelLabel: "Aswir",
+statsLevelProgress: "Aswir d-iteddun",
+statsSectionByMode: "S urar",
+modeAI: "IA",
+modeLocal: "Ameddakel",
+statsOnlineMode: "S Internet",
+modeSpectator: "Anezzeh",
+winRateLabel: "Tazzẓa n rrebḥ",
+winsLabel: "Tirbɛah",
+lossesLabel: "Taggarin",
+drawsLabel: "Imsegginen",
 statsStreakCurrent: "Agraw n tura",
 statsStreakBest: "Agraw ameqqran",
+statsAvgDurPerMode: "Akud alemmas",
 statsByDifficulty: "S uswir",
-statsOnlineOpponents: "Ixṣimen",
+statsSectionLastGame: "Timlilit taneggarut",
+modeLabel: "Mgal",
 statsVariantLabel: "Tawsit",
-statsActionsCount: "Tikkal",
-statsLevelProgress: "Aswir d-iteddun",
-statsOnlineMode: "S Internet",
-statsDraws: "Imsegginen",
+winnerLabel: "Win irbeḥen",
+capturesLabel: "Učči",
+millsLabel: "Atellet",
+player1ColorShort: "Aberkan",
+player2ColorShort: "Amellal",
+statsOnlineOpponents: "Ixṣimen",
+statsByDifficulty: "S uswir",
 },
 en: {
 backToMenu: "Menu",
@@ -12921,6 +13501,33 @@ function handlePlacement(i) {
     moveHistory.pop();
     return;
   }
+
+  // ─── Aseqqi detection ─────────────────────────────────────────────
+  // After this placement, check if the opponent has open mills
+  // (2 aligned pieces of theirs + an empty cell that would complete a mill)
+  // but ALL cells that would complete those mills are forbidden to them
+  // (would themselves form a mill for the opponent)
+  try {
+    if (session.active && state.phase === 'placement') {
+      const opponent = 3 - state.turn;
+      const boardAfter = [...tempBoard]; // tempBoard already has our piece at i
+      // Find all "open mills" for opponent: pairs of opponent pieces aligned with 1 empty
+      let trapped = false;
+      for (let r = 0; r < SIZE && !trapped; r++) {
+        for (let c = 0; c < SIZE && !trapped; c++) {
+          const idx = r * SIZE + c;
+          if (boardAfter[idx] !== null) continue; // need an empty cell
+          // Would placing opponent here complete a mill?
+          const tb2 = [...boardAfter]; tb2[idx] = opponent;
+          if (!formsForbiddenPlacementAlignment(idx, opponent, tb2)) continue;
+          // It WOULD form a mill but is forbidden → aseqqi!
+          trapped = true;
+        }
+      }
+      if (trapped) session.aseqqi += 1;
+    }
+  } catch(_) {}
+  // ────────────────────────────────────────────────────────────────────
 
   state.board[i] = state.turn;
   state.counts[state.turn]--;
@@ -15112,7 +15719,9 @@ actions: 0,       // placements + moves (all turns)
 placements: 0,
 moves: 0,         // move phase only
 captures: 0,
-mills: 0
+mills: 0,
+aseqqi: 0,        // fois adversaire piégé en placement
+millsPerGame: 0   // average (computed, not stored)
 },
 modes: {
 ai: {
@@ -15299,6 +15908,9 @@ placements: 0,
 movesPhase: 0,
 captures: 0,
 mills: 0,
+aseqqi: 0,      // adversaire piégé en placement (ne peut couvrir un moulin ouvert)
+millsP1: 0,     // moulins formés par joueur 1
+millsP2: 0,     // moulins formés par joueur 2
 mode: null,
 variant: null,
 difficulty: null,
@@ -15314,6 +15926,9 @@ placements: 0,
 movesPhase: 0,
 captures: 0,
 mills: 0,
+aseqqi: 0,
+millsP1: 0,
+millsP2: 0,
 mode: gameMode || null,
 variant: variant || null,
 difficulty: aiDifficulty || null,
@@ -15637,6 +16252,8 @@ showEphemeralBubbleMessage = function(messageKey, iconClass, playerId, duration)
 try {
 if (!replay.active && session.active && messageKey === 'ephemeralMill') {
 session.mills += 1;
+if (playerId === 1) session.millsP1 += 1;
+else if (playerId === 2) session.millsP2 += 1;
 }
 } catch(_) {}
 return __origEph.call(this, messageKey, iconClass, playerId, duration);
@@ -15774,7 +16391,10 @@ actions: Number(session.moves || 0),
 placements: Number(session.placements || 0),
 moves: Number(session.movesPhase || 0),
 captures: Number(session.captures || 0),
-mills: Number(session.mills || 0)
+mills: Number(session.mills || 0),
+aseqqi: Number(session.aseqqi || 0),
+millsP1: Number(session.millsP1 || 0),
+millsP2: Number(session.millsP2 || 0)
 };
 
 // Aggregate totals
@@ -15786,6 +16406,7 @@ stats.totals.placements = (stats.totals.placements || 0) + record.placements;
 stats.totals.moves = (stats.totals.moves || 0) + record.moves;
 stats.totals.captures = (stats.totals.captures || 0) + record.captures;
 stats.totals.mills = (stats.totals.mills || 0) + record.mills;
+stats.totals.aseqqi = (stats.totals.aseqqi || 0) + record.aseqqi;
 
 // Variants
 try {
@@ -16183,6 +16804,9 @@ function computeStatsForUI(raw) {
     avgDurMs: games > 0 ? (totals.timeMs / games) : 0,
     actsPerGame: games > 0 ? (totals.actions / games) : 0,
     bestWinMs,
+    totalMills: num(totals0.mills),
+    millsPerGame: games > 0 ? (num(totals0.mills) / games) : 0,
+    totalAseqqi: num(totals0.aseqqi || 0),
 
     // Progress
     xp: num(stats0.xp),
@@ -16226,6 +16850,10 @@ function computeStatsForUI(raw) {
       p2Name: _escText(last.p2Name || '—'),
       durationMs: num(last.durationMs),
       actions: num(last.actions),
+      mills: num(last.mills || 0),
+      millsP1: num(last.millsP1 || 0),
+      millsP2: num(last.millsP2 || 0),
+      aseqqi: num(last.aseqqi || 0),
       at: last.at ? new Date(last.at) : null
     } : null
   };
@@ -16242,142 +16870,121 @@ function getComputedStats() {
 
 function renderStats(cs) {
   if (!statsContent) return;
-  // Allow calls without args (multiple places call renderStats() directly)
   const computed = cs || (typeof getComputedStats === 'function' ? getComputedStats() : computeStatsForUI(stats));
   const esc = (s) => _escText(s);
   const fmtD = (ms) => (ms > 0 ? formatDuration(ms) : '—');
-  const fmtN = (v, dec=0) => {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return '0';
-    return dec ? n.toFixed(dec) : String(Math.round(n));
-  };
+  const fmtN = (v, dec=0) => { const n = Number(v); if (!Number.isFinite(n)) return '0'; return dec ? n.toFixed(dec) : String(Math.round(n)); };
   const fmtP = (v) => (v === null ? '—' : (v + '%'));
 
-  let html = `
-    <div class="stats-chips">
-      <div class="stats-chip"><span class="dot" style="background:rgba(20,20,20,0.9)"></span>
-        <span><strong>${esc(computed.players.p1Color)}</strong> — ${esc(computed.players.p1Name)}</span></div>
-      <div class="stats-chip"><span class="dot" style="background:rgba(235,235,235,0.95)"></span>
-        <span><strong>${esc(computed.players.p2Color)}</strong> — ${esc(computed.players.p2Name)}</span></div>
-      ${computed.players.onlineName ? `<div class="stats-chip"><span class="dot" style="background:rgba(0,200,255,0.6)"></span>
-        <span>🌐 ${esc(computed.players.onlineName)}</span></div>` : ''}
-    </div>`;
+  // ── Player identity chips ──────────────────────────────────────────
+  let html = `<div class="stats-chips">
+    <div class="stats-chip"><span class="dot" style="background:rgba(20,20,20,0.9)"></span>
+      <span><strong>${esc(computed.players.p1Color)}</strong> — ${esc(computed.players.p1Name)}</span></div>
+    <div class="stats-chip"><span class="dot" style="background:rgba(235,235,235,0.95)"></span>
+      <span><strong>${esc(computed.players.p2Color)}</strong> — ${esc(computed.players.p2Name)}</span></div>
+    ${computed.players.onlineName ? `<div class="stats-chip"><span class="dot" style="background:rgba(0,200,255,0.6)"></span>
+      <span>🌐 ${esc(computed.players.onlineName)}</span></div>` : ''}
+  </div>`;
 
   if (!computed.games) {
     statsContent.innerHTML = html + `<div class="stats-simple-note">${t('noStatsYet')}</div>`;
     return;
   }
 
-  const sectionTitle = (label, icon) => `<div class="stats-section-title">${icon ? icon + ' ' : ''}${label}</div>`;
-
-  // ---- Overview (reduced, validated) ----
-  html += sectionTitle(t('statsSectionGlobal'), '📊');
-
+  // ── Level & XP bar ────────────────────────────────────────────────
+  const lvl = computed.level || 1;
+  const lvlPct = Math.min(100, Math.round(computed.levelPct || 0));
   html += `
-    <table style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:8px;">
-      <tbody>
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('gamesPlayedLabel')}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${computed.games}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('durationLabel')}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.timeMs)}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('avgDuration')}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.avgDurMs)}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('actionsPerGameLabel')}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtN(computed.actsPerGame, 1)}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 10px;opacity:.85;">${t('statsBestWinTime')}</td>
-          <td style="padding:8px 10px;text-align:right;font-weight:850;">${fmtD(computed.bestWinMs)}</td>
-        </tr>
-      </tbody>
-    </table>
-  `;
-
-  // ---- By mode (single readable table) ----
-  html += sectionTitle(t('statsSectionByMode'), '🎮');
-
-  const row = (label, games, wl, winRate, avgDur) => `
-    <tr>
-      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);font-weight:800;">${label}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${games}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${wl}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${winRate}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.18);text-align:right;">${avgDur}</td>
-    </tr>
-  `;
-
-  const localWL = `${esc(computed.players.p1Color)}: ${computed.local.p1Wins} • ${esc(computed.players.p2Color)}: ${computed.local.p2Wins}`;
-
-  html += `
-    <div class="stat-card" style="padding:0;overflow:hidden;">
-      <table style="width:100%;border-collapse:collapse;border-spacing:0;">
-        <thead>
-          <tr style="background:rgba(240,200,80,0.08);">
-            <th style="text-align:left;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('modeLabel')}</th>
-            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('gamesPlayedLabel')}</th>
-            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">W–L</th>
-            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('winRateLabel')}</th>
-            <th style="text-align:right;padding:9px 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;">${t('statsAvgDurPerMode')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${row('🤖 ' + t('modeAI'), computed.ai.games, `${computed.ai.wins}–${computed.ai.losses}`, fmtP(computed.ai.winRate), fmtD(computed.ai.avgDurMs))}
-          ${row('🌐 ' + t('statsOnlineMode'), computed.online.games, `${computed.online.wins}–${computed.online.losses}`, fmtP(computed.online.winRate), fmtD(computed.online.avgDurMs))}
-          ${row('👥 ' + t('modeLocal'), computed.local.games, localWL, '—', fmtD(computed.local.avgDurMs))}
-        </tbody>
-      </table>
+  <div class="sv2-level-card">
+    <div class="sv2-level-badge">Niv.${lvl}</div>
+    <div class="sv2-level-info">
+      <div class="sv2-level-bar-bg"><div class="sv2-level-bar-fill" style="width:${lvlPct}%"></div></div>
+      <div class="sv2-level-xp">${fmtN(computed.xp)} XP · ${fmtN(computed.xpToNext)} → Niv.${lvl+1}</div>
     </div>
-  `;
+  </div>`;
 
-  // Optional: online opponent highlight (kept, but subtle)
-  if (computed.online && computed.online.oppTop) {
-    html += `<div style="margin-top:8px;font-size:0.9rem;opacity:0.85;">
-      ${t('statsOnlineTopOpponent')}: <strong>${esc(computed.online.oppTop.name)}</strong> (${computed.online.oppTop.games})
+  // ── KPI grid ─────────────────────────────────────────────────────
+  const millsPerGame = computed.millsPerGame || 0;
+  const aseqqiTotal = computed.totalAseqqi || 0;
+  html += `
+  <div class="sv2-kpi-grid">
+    <div class="sv2-kpi">
+      <span class="sv2-kpi-val">${computed.games}</span>
+      <span class="sv2-kpi-label">${t('gamesPlayedLabel')}</span>
+    </div>
+    <div class="sv2-kpi">
+      <span class="sv2-kpi-val">${fmtD(computed.timeMs)}</span>
+      <span class="sv2-kpi-label">${t('durationLabel')}</span>
+    </div>
+    <div class="sv2-kpi sv2-kpi-gold">
+      <span class="sv2-kpi-val">${fmtN(millsPerGame, 1)}</span>
+      <span class="sv2-kpi-label">Aɛzal / partie</span>
+    </div>
+    <div class="sv2-kpi sv2-kpi-amber">
+      <span class="sv2-kpi-val">${aseqqiTotal}</span>
+      <span class="sv2-kpi-label">Aseqqi total</span>
+    </div>
+    <div class="sv2-kpi">
+      <span class="sv2-kpi-val">${fmtD(computed.bestWinMs)}</span>
+      <span class="sv2-kpi-label">${t('statsBestWinTime')}</span>
+    </div>
+    <div class="sv2-kpi">
+      <span class="sv2-kpi-val">${fmtN(computed.actsPerGame, 1)}</span>
+      <span class="sv2-kpi-label">${t('actionsPerGameLabel')}</span>
+    </div>
+  </div>`;
+
+  // ── Mode cards ────────────────────────────────────────────────────
+  html += `<div class="sv2-section-title">🎮 ${t('statsSectionByMode')}</div>`;
+  const modeCard = (icon, label, games, wlHtml, winRate, avgDur) => `
+    <div class="sv2-mode-card">
+      <div class="sv2-mode-header"><span>${icon}</span><span class="sv2-mode-name">${label}</span><span class="sv2-mode-games">${games} ${t('gamesPlayedLabel')}</span></div>
+      <div class="sv2-mode-stats">
+        <span class="sv2-mode-stat"><span class="sv2-ms-val">${wlHtml}</span><span class="sv2-ms-lbl">W – L</span></span>
+        <span class="sv2-mode-stat"><span class="sv2-ms-val">${winRate}</span><span class="sv2-ms-lbl">${t('winRateLabel')}</span></span>
+        <span class="sv2-mode-stat"><span class="sv2-ms-val">${avgDur}</span><span class="sv2-ms-lbl">${t('statsAvgDurPerMode')}</span></span>
+      </div>
     </div>`;
+  const localWL = `${esc(computed.players.p1Color)}&nbsp;${computed.local.p1Wins} · ${esc(computed.players.p2Color)}&nbsp;${computed.local.p2Wins}`;
+  html += modeCard('🤖', t('modeAI'), computed.ai.games, `${computed.ai.wins}–${computed.ai.losses}`, fmtP(computed.ai.winRate), fmtD(computed.ai.avgDurMs));
+  html += modeCard('🌐', t('statsOnlineMode'), computed.online.games, `${computed.online.wins}–${computed.online.losses}`, fmtP(computed.online.winRate), fmtD(computed.online.avgDurMs));
+  html += modeCard('👥', t('modeLocal'), computed.local.games, localWL, '—', fmtD(computed.local.avgDurMs));
+
+  if (computed.online?.oppTop) {
+    html += `<div class="sv2-note">🏅 ${t('statsOnlineTopOpponent')}: <strong>${esc(computed.online.oppTop.name)}</strong> (${computed.online.oppTop.games})</div>`;
   }
 
-  // ---- Last game (compact) ----
+  // ── Dernière partie ────────────────────────────────────────────────
   if (computed.last) {
-    const w = computed.last.winnerId === 1 ? computed.last.p1Name : computed.last.winnerId === 2 ? computed.last.p2Name : '—';
-    html += sectionTitle(t('statsSectionLastGame'), '🕐');
-    html += `
-      <table style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:8px;">
-        <tbody>
-          <tr>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('modeLabel')}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${_modeLabel(computed.last.mode)}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('statsVariantLabel')}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${esc(computed.last.variant)}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('winnerLabel')}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${w}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);opacity:.85;">${t('durationLabel')}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid rgba(240,200,80,0.22);text-align:right;font-weight:850;">${fmtD(computed.last.durationMs)}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 10px;opacity:.85;">${t('statsActionsCount')}</td>
-            <td style="padding:8px 10px;text-align:right;font-weight:850;">${computed.last.actions}</td>
-          </tr>
-          <tr>
-            <td colspan="2" style="padding:8px 10px;font-size:0.78rem;opacity:0.7;text-align:right;">
-              ${computed.last.at ? computed.last.at.toLocaleString() : '—'} — ${computed.last.p1Name} vs ${computed.last.p2Name}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    `;
+    const lg = computed.last;
+    const w = lg.winnerId === 1 ? lg.p1Name : lg.winnerId === 2 ? lg.p2Name : '—';
+    const p1MillBar = lg.mills > 0 ? Math.round((lg.millsP1 / lg.mills) * 100) : 50;
+    const p2MillBar = 100 - p1MillBar;
+    html += `<div class="sv2-section-title">🕐 ${t('statsSectionLastGame')}</div>
+    <div class="sv2-last-card">
+      <div class="sv2-last-meta">
+        <span class="sv2-last-badge">${_modeLabel(lg.mode)}</span>
+        <span class="sv2-last-badge sv2-lb-variant">${esc((variantConfig[lg.variant]?.name) || lg.variant)}</span>
+        <span class="sv2-last-date">${lg.at ? lg.at.toLocaleString() : '—'}</span>
+      </div>
+      <div class="sv2-last-vs">${lg.p1Name} <em>vs</em> ${lg.p2Name}</div>
+      <div class="sv2-last-winner">🏆 ${w}</div>
+      <div class="sv2-last-row">
+        <div class="sv2-last-stat"><span class="sv2-ls-v">${fmtD(lg.durationMs)}</span><span class="sv2-ls-l">${t('durationLabel')}</span></div>
+        <div class="sv2-last-stat sv2-ls-gold"><span class="sv2-ls-v">${lg.mills}</span><span class="sv2-ls-l">Atellet (moulins)</span></div>
+        <div class="sv2-last-stat sv2-ls-amber"><span class="sv2-ls-v">${lg.aseqqi}</span><span class="sv2-ls-l">Aseqqi</span></div>
+        <div class="sv2-last-stat"><span class="sv2-ls-v">${lg.actions}</span><span class="sv2-ls-l">${t('statsActionsCount')}</span></div>
+      </div>
+      ${lg.mills > 0 ? `
+      <div class="sv2-mill-bar-wrap">
+        <span class="sv2-mill-bar-lbl" style="color:rgba(160,160,160,0.9)">${esc(computed.players.p1Color)} ${lg.millsP1}</span>
+        <div class="sv2-mill-bar">
+          <div class="sv2-mill-fill-1" style="width:${p1MillBar}%"></div>
+          <div class="sv2-mill-fill-2" style="width:${p2MillBar}%"></div>
+        </div>
+        <span class="sv2-mill-bar-lbl" style="color:rgba(230,230,230,0.9)">${lg.millsP2} ${esc(computed.players.p2Color)}</span>
+      </div>` : ''}
+    </div>`;
   }
 
   statsContent.innerHTML = html;
@@ -17670,6 +18277,39 @@ loadDragPref();
 applyDragBtn();
 const dragBtn = document.getElementById('drag-btn');
 if (dragBtn) dragBtn.addEventListener('click', toggleDragMode);
+
+// ── Sélecteur de thème plateau (grille inline) ────────────────
+(function() {
+  const STORAGE_KEY = 'tiddas_board_theme_v1';
+  const grid = document.getElementById('btp-inline-grid');
+  const board = document.getElementById('board');
+  if (!grid || !board) return;
+
+  function applyBoardTheme(theme) {
+    if (theme === 'default') {
+      board.removeAttribute('data-board-theme');
+    } else {
+      board.setAttribute('data-board-theme', theme);
+    }
+    grid.querySelectorAll('.btp-dot').forEach(b => {
+      b.classList.toggle('active', b.dataset.btheme === theme);
+    });
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(_) {}
+  }
+
+  // Load saved preference
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY) || 'default';
+    applyBoardTheme(saved);
+  } catch(_) {}
+
+  grid.querySelectorAll('.btp-dot').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyBoardTheme(btn.dataset.btheme);
+    });
+  });
+})();
 
 
 // Service worker
