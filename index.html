@@ -14064,7 +14064,15 @@ getFormedMills(i, player, newBoard).forEach(mill => millsAfter.add(mill.sort().j
 const newlyFormedMills = [];
 for (const millString of millsAfter) {
 if (!millsBefore.has(millString)) {
-newlyFormedMills.push(millString.split(',').map(Number));
+const mill = millString.split(',').map(Number);
+// En phase de déplacement, seul un moulin impliquant la case d'arrivée du pion
+// déplacé doit ouvrir un droit de capture. Cela évite le faux positif où un
+// alignement de 4 se casse et laisse derrière lui un alignement de 3 : dans ce
+// cas, le moulin ne vient pas du pion déplacé et le tour doit simplement passer.
+if (from !== null && from !== undefined && to !== null && to !== undefined && !mill.includes(to)) {
+continue;
+}
+newlyFormedMills.push(mill);
 }
 }
 
