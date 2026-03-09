@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <!-- Security hardening -->
-<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'nonce-tiddas' 'unsafe-inline'; script-src 'self' 'nonce-tiddas' https://unpkg.com; connect-src 'self' https://parseapi.back4app.com https://*.b4a.io wss://*.b4a.io; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
+<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'nonce-tiddas' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'nonce-tiddas' https://unpkg.com; connect-src 'self' https://parseapi.back4app.com https://*.b4a.io wss://*.b4a.io; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
 <meta content="no-referrer" name="referrer" />
 <meta content="camera=(), microphone=(), geolocation=(), payment=(), usb=()" http-equiv="Permissions-Policy" />
 <meta content="dark light" name="color-scheme" />
 <title data-i18n="appTitle">Tiddas - Jeu</title>
-<link id="pwa-manifest" rel="manifest" href="">
+<link id="pwa-manifest" rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABJklEQVR42s2XvQ2DMBCFzyf37JAUiaWEliYzIDFBZmMClqChDUhAATswQVJZMpYNxn/kKkD2fc93z8gmIMTjdvlChOjGmfBnjA2XWRgbLosgZ8DFQNXHdpiYb5AuJ1UOzPO+HSa2NEXvA55kFVuaom+HiT3v11VOZQt8wkURMlxZAQAADn+9P7uJ6zKFvbF1mYJuQdREPYccHWOyAPQBd5lLbZPz1elaYCoc4eSgvsprYkYnAXLJjwoL5gFXs9KQDncWIEJ8AYO3QLU9t8TTPYhucpQW6Fa8BT+6C9C2/KIg+T2KB3y1g4aG7JkQj7rdZadYV0CXyPb//1dHMtTBk6xiPuH8oGtcAZVa12O5Kuf5FxPxohg7unEmKN9WY8JXJowpQmT9ABkqrop8prLHAAAAAElFTkSuQmCC" />
 <link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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" />
 <link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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" />
@@ -57,8 +57,9 @@
 --player2-stone-color-light: #ffffff;
 
 /* Typography helpers */
---font-title: 'Space Grotesk', var(--font-ui);
---font-body: 'Inter', var(--font-ui);
+--font-title: 'Cinzel', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+--font-display: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+--font-body: 'Lora', Georgia, 'Times New Roman', serif;
 --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
 }
 
@@ -9887,11 +9888,1804 @@ body:has(.game-play-area.active) footer {
   100% { transform: scale(1); }
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   ▌ TIDDAS — REDESIGN VISUEL COMPLET
+   ▌ Direction : Artisanat de luxe · Bois wengé & or bruni · Berbère raffiné
+   ▌ Typographie : Cinzel (titres) + Lora (corps) — déjà chargées
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── 0. PALETTE & TOKENS ──────────────────────────────────────── */
+:root {
+  /* Nouveau gold : or bruni, moins jaune */
+  --text-gold: #c8841a;
+
+  /* Palette bois & ivoire */
+  --bois-profond:   #1a0f06;
+  --bois-sombre:    #2d1a0a;
+  --bois-moyen:     #4a2c10;
+  --bois-chaud:     #7a4a1e;
+  --ivoire:         #f5e8ca;
+  --ivoire-doux:    rgba(245, 232, 202, 0.75);
+  --or:             #c8841a;
+  --or-vif:         #e0a030;
+  --or-dim:         rgba(200, 132, 26, 0.22);
+  --or-lueur:       rgba(200, 132, 26, 0.18);
+  --or-trait:       rgba(200, 132, 26, 0.18);
+  --terracotta:     #b04828;
+  --sage:           #4a6a38;
+
+  /* Ombres */
+  --ombre-carte:    0 12px 40px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+  --ombre-plateau:  0 24px 64px rgba(0,0,0,0.75), 0 4px 16px rgba(0,0,0,0.5);
+  --ombre-douce:    0 4px 14px rgba(0,0,0,0.45);
+  --ombre-lueur:    0 0 28px rgba(200,132,26,0.20);
+}
+
+/* ── 1. BODY & FOND ──────────────────────────────────────────── */
+body {
+  background-color: var(--bois-profond) !important;
+  background-image:
+    radial-gradient(ellipse 70% 55% at 12% 8%,  rgba(200,132,26,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 88% 88%, rgba(176,72,40,0.06) 0%, transparent 60%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><polygon points="70,8 132,40 132,100 70,132 8,100 8,40" fill="none" stroke="%23c8841a" stroke-width="0.8" opacity="0.07"/><polygon points="70,28 112,50 112,90 70,112 28,90 28,50" fill="none" stroke="%23c8841a" stroke-width="0.5" opacity="0.04"/><text x="70" y="76" text-anchor="middle" font-size="20" fill="%23c8841a" opacity="0.045">ⵣ</text></svg>') !important;
+  background-size: auto, auto, 140px 140px !important;
+  background-attachment: fixed !important;
+  color: var(--ivoire) !important;
+  font-family: 'Lora', Georgia, serif !important;
+}
+
+/* ── 2. EN-TÊTE ───────────────────────────────────────────────── */
+header {
+  padding: 1.1rem 0 0.65rem !important;
+  background: linear-gradient(180deg, rgba(14,8,3,0.85) 0%, transparent 100%) !important;
+}
+header::after {
+  content: 'ⵣ  ✦  ⵣ' !important;
+  letter-spacing: 12px !important;
+  font-size: 0.85rem !important;
+  color: var(--or) !important;
+  opacity: 0.38 !important;
+}
+h1 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700 !important;
+  font-size: clamp(2rem, 5.5vw, 3rem) !important;
+  letter-spacing: 10px !important;
+  color: var(--or-vif) !important;
+  text-shadow:
+    0 1px 0 rgba(255,230,140,0.55),
+    0 4px 16px rgba(200,132,26,0.45),
+    0 10px 35px rgba(200,132,26,0.15) !important;
+}
+h1::after {
+  font-family: 'Lora', Georgia, serif !important;
+  letter-spacing: 11px !important;
+  font-size: 0.29em !important;
+  color: var(--or) !important;
+  opacity: 0.55 !important;
+  font-style: italic !important;
+}
+
+/* ── 3. PÉTALES DÉCORATIVES ───────────────────────────────────── */
+.stone-decoration {
+  background: radial-gradient(circle at 32% 32%, rgba(200,132,26,0.45), var(--bois-profond) 72%) !important;
+  border: 1.5px solid rgba(200,132,26,0.30) !important;
+  box-shadow:
+    inset 0 -5px 12px rgba(0,0,0,0.55),
+    0 5px 14px rgba(0,0,0,0.5),
+    0 0 12px rgba(200,132,26,0.07) !important;
+  opacity: 0.45 !important;
+}
+
+/* ── 4. PANNEAUX DE SÉLECTION ─────────────────────────────────── */
+.selection-area {
+  background: rgba(20,11,4,0.80) !important;
+  border: 1px solid var(--or-trait) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    var(--ombre-carte),
+    inset 0 1px 0 rgba(255,230,140,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.4) !important;
+  backdrop-filter: blur(24px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4) !important;
+  padding: clamp(1.6rem, 4.5vw, 2.8rem) !important;
+}
+.selection-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(155deg, rgba(200,132,26,0.055) 0%, transparent 48%);
+  pointer-events: none;
+  z-index: 0;
+}
+.selection-area h2 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem) !important;
+  color: var(--or-vif) !important;
+  letter-spacing: 3px !important;
+  text-shadow: 0 0 20px rgba(200,132,26,0.35) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* ── 5. CARTES FAMILLES ────────────────────────────────────────── */
+.famille-card {
+  background: rgba(26,14,5,0.88) !important;
+  border: 1px solid rgba(200,132,26,0.18) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,230,140,0.06) !important;
+  backdrop-filter: blur(14px) !important;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease, transform 0.22s ease !important;
+  padding: 1.6rem 1.5rem 1.5rem !important;
+}
+.famille-card::before {
+  background: linear-gradient(148deg, rgba(200,132,26,0.065) 0%, transparent 52%) !important;
+}
+.famille-card:hover {
+  border-color: rgba(200,132,26,0.40) !important;
+  box-shadow:
+    0 16px 44px rgba(0,0,0,0.65),
+    0 0 22px rgba(200,132,26,0.07),
+    inset 0 1px 0 rgba(255,230,140,0.10) !important;
+  transform: translateY(-3px) !important;
+}
+.famille-card.has-active {
+  border-color: rgba(200,132,26,0.55) !important;
+  box-shadow:
+    0 0 32px rgba(200,132,26,0.18),
+    0 10px 36px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,230,140,0.12) !important;
+}
+.famille-header {
+  border-bottom: 1px solid rgba(200,132,26,0.15) !important;
+  padding-bottom: 1rem !important;
+  margin-bottom: 0.1rem !important;
+}
+.famille-title {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or-vif) !important;
+  font-size: clamp(1.15rem, 3.5vw, 1.45rem) !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 0 14px rgba(200,132,26,0.28) !important;
+}
+.famille-icon {
+  filter: drop-shadow(0 0 7px rgba(200,132,26,0.55)) !important;
+}
+
+/* ── 6. BOUTONS VARIANTE ───────────────────────────────────────── */
+.variant-btn {
+  background: rgba(255,255,255,0.025) !important;
+  border: 1px solid rgba(200,132,26,0.14) !important;
+  border-radius: 11px !important;
+  padding: 0.8rem 1.1rem !important;
+  color: rgba(245,232,202,0.78) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: clamp(0.9rem, 2.3vw, 1rem) !important;
+  transition: all 0.2s ease !important;
+}
+.variant-btn:hover {
+  background: rgba(200,132,26,0.09) !important;
+  border-color: rgba(200,132,26,0.42) !important;
+  color: var(--ivoire) !important;
+  transform: translateX(5px) !important;
+}
+.variant-btn.active {
+  background: linear-gradient(135deg, rgba(200,132,26,0.88), rgba(176,72,40,0.72)) !important;
+  color: #fdf5e3 !important;
+  border-color: rgba(200,132,26,0.82) !important;
+  box-shadow: 0 0 18px rgba(200,132,26,0.42), 0 4px 14px rgba(0,0,0,0.45) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45) !important;
+}
+.variant-letter {
+  background: rgba(200,132,26,0.13) !important;
+  border: 1px solid rgba(200,132,26,0.28) !important;
+  color: var(--or) !important;
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  width: 1.85rem !important;
+  height: 1.85rem !important;
+  font-size: 0.82rem !important;
+}
+.variant-btn.active .variant-letter {
+  background: rgba(0,0,0,0.22) !important;
+  border-color: rgba(0,0,0,0.18) !important;
+  color: #fdf5e3 !important;
+}
+.variant-arrow { color: var(--or) !important; opacity: 0.42 !important; }
+.variant-btn:hover .variant-arrow { opacity: 0.95 !important; }
+.variant-btn.active .variant-arrow { opacity: 0.65 !important; }
+
+.famille-rules-btn {
+  border: 1px solid rgba(200,132,26,0.16) !important;
+  color: rgba(200,132,26,0.52) !important;
+  border-radius: 10px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: 0.88rem !important;
+  transition: all 0.2s ease !important;
+}
+.famille-rules-btn:hover {
+  background: rgba(200,132,26,0.07) !important;
+  border-color: rgba(200,132,26,0.42) !important;
+  color: var(--or) !important;
+}
+
+/* ── 7. BOUTONS MODE DE JEU ────────────────────────────────────── */
+.option-btn {
+  background: rgba(24,13,4,0.88) !important;
+  border: 1px solid rgba(200,132,26,0.18) !important;
+  border-radius: 18px !important;
+  color: var(--ivoire) !important;
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-size: clamp(1.05rem, 3.5vw, 1.25rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow:
+    0 7px 22px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,230,140,0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  transition: all 0.28s cubic-bezier(0.34,1.15,0.64,1) !important;
+  padding: 1.5rem !important;
+}
+.option-btn:hover {
+  background: rgba(200,132,26,0.11) !important;
+  border-color: rgba(200,132,26,0.50) !important;
+  transform: translateY(-8px) !important;
+  box-shadow:
+    0 18px 44px rgba(0,0,0,0.65),
+    0 0 26px rgba(200,132,26,0.14),
+    inset 0 1px 0 rgba(255,230,140,0.11) !important;
+}
+.option-btn i {
+  color: var(--or-vif) !important;
+  filter: drop-shadow(0 0 6px rgba(200,132,26,0.55)) !important;
+  font-size: 2.6rem !important;
+}
+.option-btn span {
+  color: rgba(245,232,202,0.70) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+}
+
+/* ── 8. BOUTON COMMENCER ───────────────────────────────────────── */
+.start-game-btn {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 5px !important;
+  font-size: clamp(1.1rem, 3.5vw, 1.55rem) !important;
+  background: linear-gradient(150deg, #e0a030 0%, #b86818 55%, #9a4e10 100%) !important;
+  color: #1e0d04 !important;
+  text-shadow: 0 1px 0 rgba(255,235,150,0.55) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 1.05rem 3rem !important;
+  box-shadow:
+    0 6px 0 rgba(70,25,5,0.75),
+    0 10px 32px rgba(0,0,0,0.65),
+    inset 0 1px 0 rgba(255,230,140,0.30) !important;
+  animation: startPulse 3.2s ease-in-out infinite !important;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+@keyframes startPulse {
+  0%,100% { box-shadow: 0 6px 0 rgba(70,25,5,0.75), 0 10px 32px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,230,140,0.30); }
+  50%     { box-shadow: 0 6px 0 rgba(70,25,5,0.75), 0 10px 32px rgba(0,0,0,0.65), 0 0 38px rgba(200,132,26,0.28), inset 0 1px 0 rgba(255,230,140,0.30); }
+}
+.start-game-btn::before {
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.40), transparent) !important;
+}
+.start-game-btn:hover {
+  transform: translateY(-5px) scale(1.035) !important;
+  background: linear-gradient(150deg, #f0b040 0%, #d07820 55%, #b05810 100%) !important;
+  box-shadow:
+    0 10px 0 rgba(70,25,5,0.75),
+    0 20px 48px rgba(0,0,0,0.70),
+    0 0 42px rgba(200,132,26,0.32),
+    inset 0 1px 0 rgba(255,230,140,0.35) !important;
+  letter-spacing: 6px !important;
+}
+.start-game-btn:active {
+  transform: translateY(2px) scale(0.98) !important;
+  box-shadow: 0 3px 0 rgba(70,25,5,0.75), 0 4px 14px rgba(0,0,0,0.55) !important;
+  animation: none !important;
+}
+
+/* ── 9. BOUTONS RETOUR & RÈGLES ────────────────────────────────── */
+.back-btn {
+  background: rgba(20,12,4,0.72) !important;
+  border: 1px solid rgba(200,132,26,0.26) !important;
+  color: var(--or) !important;
+  border-radius: 99px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: 0.87rem !important;
+  font-style: italic !important;
+  box-shadow: var(--ombre-douce) !important;
+  transition: all 0.22s ease !important;
+}
+.back-btn:hover {
+  background: rgba(200,132,26,0.10) !important;
+  border-color: rgba(200,132,26,0.52) !important;
+  color: var(--or-vif) !important;
+  transform: translateY(-2px) !important;
+}
+.rules-btn {
+  background: rgba(20,12,4,0.72) !important;
+  border: 1px solid rgba(200,132,26,0.26) !important;
+  color: var(--or) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+  border-radius: 10px !important;
+  transition: all 0.22s ease !important;
+}
+.rules-btn:hover {
+  background: rgba(200,132,26,0.09) !important;
+  border-color: rgba(200,132,26,0.52) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ── 10. PLATEAU DE JEU — CADRE ────────────────────────────────── */
+.game-board-container {
+  padding: 18px !important;
+  background: linear-gradient(160deg, #55320e 0%, #321806 50%, #452010 100%) !important;
+  border: 10px solid #6a3c14 !important;
+  border-radius: 24px !important;
+  box-shadow:
+    var(--ombre-plateau),
+    0 0 0 1px rgba(200,132,26,0.22),
+    inset 0 0 28px rgba(0,0,0,0.55),
+    inset 0 2px 0 rgba(255,220,120,0.20) !important;
+  outline: 3px solid rgba(90,50,18,0.85) !important;
+  outline-offset: -15px !important;
+}
+
+/* ── 11. PLATEAU DE JEU — GRILLE ─────────────────────────────── */
+.game-board {
+  background: #1c1208 !important;
+  border: 3px solid rgba(0,0,0,0.65) !important;
+  border-radius: 8px !important;
+  box-shadow:
+    inset 0 0 22px rgba(0,0,0,0.65),
+    inset 0 2px 0 rgba(255,255,255,0.035) !important;
+}
+
+/* ── 12. CASES ───────────────────────────────────────────────── */
+.cell {
+  border: 1px solid rgba(200,132,26,0.12) !important;
+  box-shadow:
+    inset 1px 1px 4px rgba(255,200,90,0.07),
+    inset -1px -1px 3px rgba(0,0,0,0.28) !important;
+  transition: background 0.14s ease, transform 0.12s ease !important;
+}
+.cell:hover {
+  background: rgba(200,132,26,0.13) !important;
+  transform: scale(1.04) !important;
+  z-index: 3 !important;
+  box-shadow:
+    inset 0 0 14px rgba(200,132,26,0.20),
+    0 0 8px rgba(200,132,26,0.12) !important;
+}
+.dark-cell { background: rgba(0,0,0,0.14) !important; }
+.cell.selected { background: rgba(200,132,26,0.20) !important; z-index: 4 !important; }
+.cell.possible-move {
+  background: rgba(200,132,26,0.16) !important;
+  outline: 2px dashed rgba(200,132,26,0.62) !important;
+  box-shadow: inset 0 0 16px rgba(200,132,26,0.22) !important;
+}
+.cell.possible-move:hover { background: rgba(200,132,26,0.30) !important; }
+.cell.mill-highlight {
+  background: rgba(70,170,210,0.16) !important;
+  outline: 2.5px solid rgba(70,170,210,0.80) !important;
+}
+
+/* ── 13. PIONS ───────────────────────────────────────────────── */
+.stone {
+  width: 70% !important;
+  height: 70% !important;
+  border-radius: 50% !important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,0.65),
+    inset 0 -4px 10px rgba(0,0,0,0.48),
+    inset 0 4px 8px rgba(255,255,255,0.24) !important;
+  transition: all 0.25s ease !important;
+}
+.stone::after {
+  width: 30% !important;
+  height: 20% !important;
+  top: 14% !important;
+  left: 18% !important;
+  background: rgba(255,255,255,0.58) !important;
+  border-radius: 50% !important;
+  filter: blur(1.5px) !important;
+}
+.stone.player1 {
+  background: radial-gradient(circle at 33% 31%, #4a4238, #1c1812 58%, #090705 92%) !important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,0.70),
+    inset 0 -4px 10px rgba(0,0,0,0.52),
+    inset 0 4px 8px rgba(180,160,120,0.16) !important;
+}
+.stone.player2 {
+  background: radial-gradient(circle at 33% 31%, #ffffff, #ddd5c5 60%, #a89878 92%) !important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,0.50),
+    inset 0 -4px 10px rgba(0,0,0,0.18),
+    inset 0 4px 8px rgba(255,255,255,0.72) !important;
+}
+.stone.selected { transform: scale(1.22) !important; filter: brightness(1.12) !important; }
+
+@keyframes stone-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(200,132,26,0.72), 0 5px 14px rgba(0,0,0,0.65), inset 0 -4px 10px rgba(0,0,0,0.48); }
+  70%  { box-shadow: 0 0 0 16px rgba(200,132,26,0), 0 5px 14px rgba(0,0,0,0.65), inset 0 -4px 10px rgba(0,0,0,0.48); }
+  100% { box-shadow: 0 0 0 0 rgba(200,132,26,0), 0 5px 14px rgba(0,0,0,0.65), inset 0 -4px 10px rgba(0,0,0,0.48); }
+}
+
+/* ── 14. PANNEAUX JOUEUR ─────────────────────────────────────── */
+.player-info {
+  background: rgba(16,9,3,0.82) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 6px 22px rgba(0,0,0,0.50),
+    inset 0 1px 0 rgba(255,230,140,0.06) !important;
+  backdrop-filter: blur(14px) !important;
+  transition: all 0.38s ease !important;
+  padding: clamp(0.8rem, 2.2vw, 1.3rem) !important;
+}
+.player-info.player1-info { border: 1px solid rgba(60,50,40,0.55) !important; }
+.player-info.player2-info { border: 1px solid rgba(130,120,105,0.38) !important; }
+.player-info.active-player {
+  border-color: rgba(200,132,26,0.65) !important;
+  background: rgba(200,132,26,0.09) !important;
+  box-shadow:
+    0 0 30px rgba(200,132,26,0.28),
+    0 6px 22px rgba(0,0,0,0.50),
+    inset 0 1px 0 rgba(255,230,140,0.12) !important;
+  transform: scale(1.035) !important;
+}
+.player-title {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  font-size: clamp(0.88rem, 2.6vw, 1.08rem) !important;
+  color: var(--or) !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 0 10px rgba(200,132,26,0.22) !important;
+  margin-bottom: 0.65rem !important;
+}
+.stat-value {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-size: clamp(1.1rem, 2.8vw, 1.35rem) !important;
+  color: var(--or-vif) !important;
+  text-shadow: 0 0 8px rgba(200,132,26,0.28) !important;
+}
+.player-stat i { color: var(--or) !important; }
+
+/* ── 15. BARRE DE STATUT ─────────────────────────────────────── */
+.status {
+  background: rgba(14,8,3,0.84) !important;
+  border: 1px solid rgba(200,132,26,0.20) !important;
+  border-radius: 13px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: clamp(0.88rem, 2.4vw, 1.02rem) !important;
+  font-style: italic !important;
+  color: var(--ivoire-doux) !important;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.42),
+    inset 0 1px 0 rgba(255,230,140,0.05) !important;
+  min-height: 48px !important;
+  padding: 0.75rem 1.25rem !important;
+  backdrop-filter: blur(12px) !important;
+  letter-spacing: 0.2px !important;
+}
+.status.status-error {
+  background: rgba(176,72,40,0.28) !important;
+  border-color: rgba(176,72,40,0.65) !important;
+  font-style: normal !important;
+}
+
+/* ── 16. INFOS DE PARTIE ─────────────────────────────────────── */
+.game-info-display {
+  background: rgba(14,8,3,0.78) !important;
+  border: 1px solid rgba(200,132,26,0.16) !important;
+  border-radius: 12px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: 0.88rem !important;
+  color: rgba(245,232,202,0.72) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.42) !important;
+  backdrop-filter: blur(12px) !important;
+  padding: 0.62rem 1.1rem !important;
+}
+.game-info-display strong { color: var(--or) !important; }
+
+/* ── 17. BOUTONS DE CONTRÔLE ─────────────────────────────────── */
+.controls button {
+  background: rgba(22,12,4,0.90) !important;
+  border: 1px solid rgba(200,132,26,0.20) !important;
+  border-radius: 12px !important;
+  color: rgba(245,232,202,0.78) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: clamp(0.78rem, 2.1vw, 0.88rem) !important;
+  font-style: italic !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.48) !important;
+  padding: 0.65rem 1.1rem !important;
+  transition: all 0.22s ease !important;
+}
+.controls button:not([disabled]):hover {
+  background: rgba(200,132,26,0.13) !important;
+  border-color: rgba(200,132,26,0.50) !important;
+  color: var(--ivoire) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.55), 0 0 12px rgba(200,132,26,0.10) !important;
+}
+.controls button.surrender-btn {
+  background: rgba(176,72,40,0.22) !important;
+  border-color: rgba(176,72,40,0.42) !important;
+  color: rgba(245,185,160,0.88) !important;
+  font-style: normal !important;
+}
+.controls button.surrender-btn:hover {
+  background: rgba(176,72,40,0.38) !important;
+  border-color: rgba(176,72,40,0.68) !important;
+}
+#undo-btn {
+  background: rgba(28,42,65,0.88) !important;
+  border-color: rgba(75,115,175,0.28) !important;
+  color: rgba(155,195,255,0.80) !important;
+  font-style: normal !important;
+}
+#undo-btn:not([disabled]):hover {
+  background: rgba(48,72,120,0.45) !important;
+  border-color: rgba(80,138,220,0.55) !important;
+  color: rgba(190,220,255,0.95) !important;
+}
+
+/* ── 18. CARTES DIFFICULTÉ ──────────────────────────────────── */
+.difficulty-btn, .difficulty-card, .mode-card {
+  background: rgba(22,12,4,0.88) !important;
+  border: 1px solid rgba(200,132,26,0.18) !important;
+  border-radius: 16px !important;
+  color: var(--ivoire) !important;
+  font-family: 'Cinzel', Georgia, serif !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45) !important;
+  transition: all 0.24s ease !important;
+}
+.difficulty-btn:hover, .difficulty-card:hover, .mode-card:hover {
+  border-color: rgba(200,132,26,0.44) !important;
+  background: rgba(200,132,26,0.10) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 14px 32px rgba(0,0,0,0.60), 0 0 18px rgba(200,132,26,0.10) !important;
+}
+.difficulty-btn.active, .difficulty-card.active, .mode-card.active {
+  background: linear-gradient(135deg, rgba(200,132,26,0.88), rgba(176,72,40,0.70)) !important;
+  border-color: rgba(200,132,26,0.82) !important;
+  color: #fdf5e3 !important;
+  box-shadow: 0 0 22px rgba(200,132,26,0.40), 0 6px 20px rgba(0,0,0,0.55) !important;
+}
+
+/* ── 19. BARRE D'OUTILS ──────────────────────────────────────── */
+.toolbar-btn {
+  background: rgba(20,11,4,0.90) !important;
+  border: 1px solid rgba(200,132,26,0.22) !important;
+  color: var(--or) !important;
+  border-radius: 11px !important;
+  box-shadow: 0 3px 11px rgba(0,0,0,0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  transition: all 0.2s ease !important;
+}
+.toolbar-btn:hover {
+  background: rgba(200,132,26,0.12) !important;
+  border-color: rgba(200,132,26,0.50) !important;
+  color: var(--or-vif) !important;
+}
+.language-selector {
+  background: rgba(20,11,4,0.90) !important;
+  border: 1px solid rgba(200,132,26,0.22) !important;
+  border-radius: 11px !important;
+  color: var(--or) !important;
+  backdrop-filter: blur(12px) !important;
+}
+.language-selector select { color: var(--or) !important; background: transparent !important; }
+
+/* ── 20. FAB PARAMÈTRES ──────────────────────────────────────── */
+#settings-fab {
+  background: rgba(22,12,4,0.92) !important;
+  border: 1px solid rgba(200,132,26,0.30) !important;
+  color: var(--or) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.55) !important;
+  backdrop-filter: blur(14px) !important;
+}
+#settings-fab:hover, #settings-fab.open {
+  background: rgba(200,132,26,0.14) !important;
+  border-color: rgba(200,132,26,0.55) !important;
+  color: var(--or-vif) !important;
+}
+
+/* ── 21. CONFIGURATION JOUEURS ───────────────────────────────── */
+.player-setup-area {
+  background: rgba(14,8,3,0.92) !important;
+  border: 1px solid rgba(200,132,26,0.32) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    0 0 44px rgba(200,132,26,0.12),
+    0 22px 65px rgba(0,0,0,0.72),
+    inset 0 1px 0 rgba(255,230,140,0.09) !important;
+  backdrop-filter: blur(20px) !important;
+}
+.player-setup-area .setup-section {
+  background: rgba(255,255,255,0.022) !important;
+  border: 1px solid rgba(200,132,26,0.18) !important;
+  border-radius: 16px !important;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.32) !important;
+}
+.player-setup-area .setup-section h3 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or-vif) !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 0 14px rgba(200,132,26,0.28) !important;
+}
+.player-setup-area label {
+  color: rgba(245,232,202,0.72) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+}
+.player-setup-area input[type="text"] {
+  background: rgba(0,0,0,0.38) !important;
+  border: 1.5px solid rgba(200,132,26,0.28) !important;
+  color: var(--ivoire) !important;
+  border-radius: 11px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  padding: 0.88rem 1.25rem !important;
+  font-size: 1rem !important;
+}
+.player-setup-area input[type="text"]::placeholder { color: rgba(200,132,26,0.35) !important; font-style: italic !important; }
+.player-setup-area input[type="text"]:focus {
+  border-color: rgba(200,132,26,0.65) !important;
+  box-shadow: 0 0 0 3px rgba(200,132,26,0.11), inset 0 2px 5px rgba(0,0,0,0.38) !important;
+}
+.player-setup-area .color-option {
+  background: rgba(20,11,4,0.78) !important;
+  border: 2px solid rgba(200,132,26,0.26) !important;
+  border-radius: 18px !important;
+  color: rgba(245,232,202,0.75) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.45) !important;
+  transition: all 0.28s ease !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+}
+.player-setup-area .color-option:hover {
+  border-color: rgba(200,132,26,0.55) !important;
+  background: rgba(200,132,26,0.08) !important;
+  transform: translateY(-4px) !important;
+}
+.player-setup-area .color-option.selected {
+  background: linear-gradient(135deg, rgba(200,132,26,0.78), rgba(176,72,40,0.58)) !important;
+  border-color: rgba(200,132,26,0.92) !important;
+  color: #fdf5e3 !important;
+  box-shadow: 0 0 28px rgba(200,132,26,0.48), 0 6px 22px rgba(0,0,0,0.55) !important;
+  transform: scale(1.03) !important;
+}
+
+/* ── 22. HISTORIQUE DES COUPS ────────────────────────────────── */
+.move-history-panel {
+  background: rgba(14,8,3,0.84) !important;
+  border: 1px solid rgba(200,132,26,0.17) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.45) !important;
+  backdrop-filter: blur(12px) !important;
+}
+.move-history-title {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or) !important;
+  letter-spacing: 1.5px !important;
+  opacity: 1 !important;
+}
+.move-log-entry {
+  color: rgba(245,232,202,0.70) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: 0.88rem !important;
+}
+.move-log-entry.mill-entry {
+  background: rgba(70,170,210,0.08) !important;
+  border-left-color: rgba(70,170,210,0.72) !important;
+}
+.move-log-entry.capture-entry {
+  background: rgba(176,72,40,0.10) !important;
+  border-left-color: rgba(176,72,40,0.68) !important;
+}
+
+/* ── 23. MODALES ─────────────────────────────────────────────── */
+.modal-content {
+  background: linear-gradient(160deg, rgba(28,14,5,0.99), rgba(18,9,3,0.99)) !important;
+  border: 1px solid rgba(200,132,26,0.35) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    0 0 55px rgba(200,132,26,0.14),
+    0 26px 72px rgba(0,0,0,0.78),
+    inset 0 1px 0 rgba(255,230,140,0.09) !important;
+}
+.modal-content h3 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or-vif) !important;
+  letter-spacing: 2px !important;
+  text-shadow: 0 0 16px rgba(200,132,26,0.28) !important;
+}
+.modal-content p {
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+  color: var(--ivoire-doux) !important;
+}
+.modal-confirm-btn {
+  background: linear-gradient(135deg, #b04828, #8a2c12) !important;
+  border-radius: 11px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45) !important;
+}
+.modal-confirm-btn:hover {
+  background: linear-gradient(135deg, #cc5532, #a03218) !important;
+  transform: translateY(-2px) !important;
+}
+.modal-cancel-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(200,132,26,0.24) !important;
+  color: rgba(245,232,202,0.75) !important;
+  border-radius: 11px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+}
+.modal-cancel-btn:hover {
+  background: rgba(200,132,26,0.11) !important;
+  color: var(--ivoire) !important;
+}
+
+/* ── 24. MODAL RÈGLES ────────────────────────────────────────── */
+.rules-book {
+  background: rgba(24,13,4,0.98) !important;
+  border: 3px solid rgba(100,58,20,0.72) !important;
+  color: var(--ivoire-doux) !important;
+  border-radius: 12px !important;
+}
+.rules-book h3 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or-vif) !important;
+  letter-spacing: 2px !important;
+  border-bottom-color: rgba(200,132,26,0.20) !important;
+}
+.rules-book h4 {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or) !important;
+  letter-spacing: 1px !important;
+  border-bottom-color: rgba(200,132,26,0.14) !important;
+}
+.rules-book p, .rules-book li {
+  color: rgba(245,232,202,0.80) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-size: clamp(0.92rem, 2.4vw, 1rem) !important;
+  line-height: 1.75 !important;
+}
+.rules-book strong { color: rgba(220,115,75,0.92) !important; }
+.rules-book li::before { color: var(--or) !important; }
+.rules-close-btn {
+  color: rgba(200,132,26,0.60) !important;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease !important;
+}
+.rules-close-btn:hover {
+  color: var(--ivoire) !important;
+  background: rgba(176,72,40,0.22) !important;
+  transform: none !important;
+}
+
+/* ── 25. MODAL À PROPOS ──────────────────────────────────────── */
+.about-book {
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.025) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(200,132,26,0.06), transparent 65%),
+    rgba(18,10,3,0.98) !important;
+  border: 1px solid rgba(200,132,26,0.24) !important;
+  box-shadow:
+    0 0 55px rgba(200,132,26,0.14),
+    0 30px 72px rgba(0,0,0,0.78) !important;
+}
+.about-title {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700 !important;
+  color: var(--or-vif) !important;
+  text-shadow: 0 0 20px rgba(200,132,26,0.35) !important;
+}
+.about-tifinagh { color: rgba(200,132,26,0.32) !important; }
+.about-body { color: rgba(245,232,202,0.82) !important; font-family: 'Lora', Georgia, serif !important; }
+.about-body strong { color: var(--or) !important; }
+.about-body em { color: rgba(224,188,100,0.90) !important; }
+.about-variant-card {
+  background: rgba(200,132,26,0.05) !important;
+  border: 1px solid rgba(200,132,26,0.18) !important;
+  border-radius: 14px !important;
+}
+.about-quote {
+  background: rgba(200,132,26,0.05) !important;
+  border-left: 3px solid rgba(200,132,26,0.45) !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+.about-quote blockquote {
+  font-family: 'Cinzel', Georgia, serif !important;
+  color: var(--or-vif) !important;
+  text-shadow: 0 0 14px rgba(200,132,26,0.25) !important;
+}
+
+/* ── 26. LOBBY EN LIGNE ──────────────────────────────────────── */
+.online-lobby { --ol-gold: var(--or-vif) !important; }
+.ol-title {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  color: var(--or-vif) !important;
+  letter-spacing: 1.5px !important;
+}
+.ol-section {
+  background: rgba(20,11,4,0.82) !important;
+  border: 1px solid rgba(200,132,26,0.16) !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(14px) !important;
+}
+.ol-input {
+  background: rgba(0,0,0,0.40) !important;
+  border-color: rgba(200,132,26,0.22) !important;
+  color: var(--ivoire) !important;
+  border-radius: 13px !important;
+  font-family: 'Lora', Georgia, serif !important;
+}
+.ol-input:focus {
+  border-color: rgba(200,132,26,0.58) !important;
+  box-shadow: 0 0 0 3px rgba(200,132,26,0.10) !important;
+}
+.ol-action-btn {
+  background: rgba(20,11,4,0.78) !important;
+  border: 1.5px solid rgba(200,132,26,0.16) !important;
+  border-radius: 15px !important;
+}
+.ol-confirm-btn {
+  background: rgba(200,132,26,0.12) !important;
+  border-color: rgba(200,132,26,0.52) !important;
+  color: var(--or-vif) !important;
+  border-radius: 13px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+}
+.ol-confirm-btn:hover { background: rgba(200,132,26,0.24) !important; }
+.ol-preview-code {
+  color: var(--or-vif) !important;
+  text-shadow: 0 0 32px rgba(200,132,26,0.48) !important;
+  font-family: 'Cinzel', Georgia, serif !important;
+}
+.ol-preview-box {
+  background: rgba(200,132,26,0.05) !important;
+  border: 1px solid rgba(200,132,26,0.26) !important;
+  border-radius: 15px !important;
+}
+
+/* ── 27. OVERLAY GAGNANT ─────────────────────────────────────── */
+.winner-overlay {
+  --woa:  var(--or-vif) !important;
+  --woa2: var(--terracotta) !important;
+  --wog:  rgba(200,132,26,0.45) !important;
+  --wobg1: rgba(16,9,3,0.97) !important;
+  --wobg2: rgba(28,14,5,0.93) !important;
+  --wocb: rgba(200,132,26,0.28) !important;
+  --wotxt: rgba(245,232,202,0.88) !important;
+}
+.wo-card {
+  border-radius: 26px !important;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%),
+    rgba(16,9,3,0.97) !important;
+  border: 1px solid rgba(200,132,26,0.28) !important;
+  box-shadow:
+    0 0 60px rgba(200,132,26,0.20),
+    0 30px 72px rgba(0,0,0,0.78),
+    inset 0 1px 0 rgba(255,230,140,0.08) !important;
+}
+.winner-overlay .winner-message {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.22em !important;
+}
+.winner-overlay .winner-name {
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700 !important;
+}
+.winner-overlay .replay-button:not(.secondary) {
+  background: linear-gradient(135deg, var(--or-vif), var(--or)) !important;
+  color: #1c0a03 !important;
+  border-radius: 13px !important;
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+}
+.winner-overlay .replay-button.secondary {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(200,132,26,0.26) !important;
+  border-radius: 13px !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+}
+
+/* ── 28. BADGES JOUEUR ───────────────────────────────────────── */
+.player-badge .badge-pill {
+  background: rgba(22,12,4,0.90) !important;
+  border: 1px solid rgba(200,132,26,0.38) !important;
+  color: var(--or-vif) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+  text-shadow: 0 0 8px rgba(200,132,26,0.35) !important;
+  backdrop-filter: blur(12px) !important;
+}
+.player-badge.badge-mill .badge-pill {
+  border-color: rgba(70,170,210,0.52) !important;
+  color: #5cc0e0 !important;
+  background: rgba(70,170,210,0.08) !important;
+}
+.player-badge.badge-capture .badge-pill {
+  border-color: rgba(200,132,26,0.55) !important;
+  color: var(--or-vif) !important;
+}
+.player-badge.badge-sacrifice .badge-pill {
+  border-color: rgba(176,72,40,0.52) !important;
+  color: #e06050 !important;
+  background: rgba(176,72,40,0.08) !important;
+}
+
+/* ── 29. PLATEAU DAMES TURQUES ─────────────────────────────── */
+.game-board.turkish-draughts-board {
+  background: #8c4e1a !important;
+  border: 3px solid #5c2e0a !important;
+  border-radius: 8px !important;
+}
+.game-board.turkish-draughts-board .cell:not(.dark-cell) { background: #eed8a5 !important; }
+.game-board.turkish-draughts-board .cell.dark-cell { background: #a06028 !important; }
+.game-board.turkish-draughts-board .cell.selected {
+  background: rgba(200,132,26,0.55) !important;
+  box-shadow: inset 0 0 0 3px rgba(200,132,26,0.92) !important;
+}
+.game-board.turkish-draughts-board .cell .stone.player1 {
+  background: radial-gradient(circle at 33% 31%, #484035, #1c1812 70%) !important;
+  border: 2px solid rgba(0,0,0,0.35) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.65), inset 0 -4px 8px rgba(0,0,0,0.50), inset 0 4px 6px rgba(180,160,120,0.14) !important;
+}
+.game-board.turkish-draughts-board .cell .stone.player2 {
+  background: radial-gradient(circle at 33% 31%, #ffffff, #d5ccbe 70%) !important;
+  border: 2px solid rgba(155,135,105,0.52) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.42), inset 0 -4px 8px rgba(0,0,0,0.18), inset 0 4px 6px rgba(255,255,255,0.65) !important;
+}
+
+/* ── 30. PIED DE PAGE ────────────────────────────────────────── */
+footer {
+  color: rgba(200,132,26,0.42) !important;
+  border-top: 1px solid rgba(200,132,26,0.07) !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-style: italic !important;
+  font-size: 0.77rem !important;
+}
+footer::before {
+  content: 'ⵣ  ✦  ⵣ' !important;
+  letter-spacing: 14px !important;
+  color: rgba(200,132,26,0.28) !important;
+  opacity: 1 !important;
+}
+
+/* ── 31. DÉFILEMENT ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(200,132,26,0.26); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(200,132,26,0.50); }
+* { scrollbar-width: thin; scrollbar-color: rgba(200,132,26,0.26) transparent; }
+
+/* ── 32. FOCUS VISIBLE ───────────────────────────────────────── */
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid rgba(200,132,26,0.65) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── 33. THÈME KABYLIE — OVERRIDES (mode clair) ─────────────── */
+[data-theme="kabylie"] {
+  --text-gold: #8a5200 !important;
+}
+[data-theme="kabylie"] body {
+  background-color: #fff8e8 !important;
+  background-image:
+    radial-gradient(circle at 14% 18%, rgba(253,216,53,0.30), transparent 52%),
+    radial-gradient(circle at 86% 72%, rgba(30,136,229,0.18), transparent 58%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><path d="M70 8L132 40V100L70 132L8 100V40Z" fill="none" stroke="%231e88e5" stroke-width="0.8" opacity="0.06"/><text x="70" y="76" text-anchor="middle" font-size="22" fill="%23d32f2f" opacity="0.05">ⵣ</text></svg>') !important;
+  background-size: auto, auto, 140px 140px !important;
+  color: #1f1a12 !important;
+}
+[data-theme="kabylie"] h1 {
+  color: #9a2800 !important;
+  text-shadow: 0 2px 0 rgba(255,255,255,0.65), 0 5px 16px rgba(0,0,0,0.12) !important;
+}
+[data-theme="kabylie"] h1::after { color: #1e5a9a !important; }
+[data-theme="kabylie"] header::after { color: #9a2800 !important; }
+[data-theme="kabylie"] .selection-area {
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(30,100,200,0.20) !important;
+  box-shadow: 0 14px 44px rgba(0,0,0,0.12) !important;
+  backdrop-filter: blur(16px) !important;
+}
+[data-theme="kabylie"] .selection-area h2 {
+  color: #9a2800 !important;
+  text-shadow: none !important;
+}
+[data-theme="kabylie"] .famille-card {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(30,100,200,0.20) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10) !important;
+}
+[data-theme="kabylie"] .famille-card:hover {
+  border-color: rgba(30,100,200,0.40) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.14) !important;
+  transform: translateY(-3px) !important;
+}
+[data-theme="kabylie"] .famille-title { color: #1e5a9a !important; text-shadow: none !important; }
+[data-theme="kabylie"] .variant-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(30,100,200,0.20) !important;
+  color: #2a2218 !important;
+}
+[data-theme="kabylie"] .variant-btn:hover {
+  background: rgba(30,100,200,0.08) !important;
+  border-color: rgba(30,100,200,0.44) !important;
+  color: #1a120a !important;
+}
+[data-theme="kabylie"] .variant-btn.active {
+  background: linear-gradient(135deg, rgba(253,216,53,0.85), rgba(30,136,229,0.15)) !important;
+  color: #1a120a !important;
+  border-color: rgba(210,47,47,0.42) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+[data-theme="kabylie"] .variant-letter {
+  color: #1e5a9a !important;
+  border-color: rgba(30,100,200,0.30) !important;
+  background: rgba(30,100,200,0.09) !important;
+}
+[data-theme="kabylie"] .start-game-btn {
+  background: linear-gradient(150deg, #d4581a 0%, #a03508 55%, #b84010 100%) !important;
+  color: #fff8ec !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45) !important;
+  border: none !important;
+  box-shadow:
+    0 5px 0 rgba(70,20,5,0.65),
+    0 10px 30px rgba(0,0,0,0.30) !important;
+}
+[data-theme="kabylie"] .start-game-btn:hover {
+  background: linear-gradient(150deg, #e06828 0%, #b84010 55%, #c84818 100%) !important;
+  box-shadow:
+    0 8px 0 rgba(70,20,5,0.65),
+    0 18px 42px rgba(0,0,0,0.35),
+    0 0 32px rgba(212,88,26,0.28) !important;
+}
+[data-theme="kabylie"] .option-btn {
+  background: rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(30,100,200,0.22) !important;
+  color: #1f1a12 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+  backdrop-filter: none !important;
+}
+[data-theme="kabylie"] .option-btn:hover {
+  background: rgba(30,100,200,0.06) !important;
+  border-color: rgba(30,100,200,0.46) !important;
+}
+[data-theme="kabylie"] .option-btn i { color: #9a2800 !important; filter: none !important; }
+[data-theme="kabylie"] .option-btn span { color: #4a3f33 !important; font-style: italic !important; }
+[data-theme="kabylie"] .game-board-container {
+  background: linear-gradient(160deg, #7a4820 0%, #4e2c0c 50%, #602812 100%) !important;
+  border-color: #8a5220 !important;
+  box-shadow: 0 16px 44px rgba(0,0,0,0.20), inset 0 0 22px rgba(0,0,0,0.30), inset 0 2px 0 rgba(255,220,120,0.35) !important;
+}
+[data-theme="kabylie"] .game-board {
+  background: #faf5e8 !important;
+  border-color: rgba(47,30,14,0.48) !important;
+}
+[data-theme="kabylie"] .cell {
+  box-shadow: inset 1px 1px 4px rgba(255,255,255,0.65), inset -1px -1px 3px rgba(0,0,0,0.08) !important;
+}
+[data-theme="kabylie"] .cell:hover {
+  background: rgba(30,136,229,0.11) !important;
+  box-shadow: inset 0 0 14px rgba(30,136,229,0.16) !important;
+}
+[data-theme="kabylie"] .cell.possible-move {
+  background: rgba(46,125,50,0.12) !important;
+  outline-color: rgba(46,125,50,0.82) !important;
+}
+[data-theme="kabylie"] .stone.player1 {
+  background: radial-gradient(circle at 33% 31%, #484038, #1c1810 60%, #0a0806 92%) !important;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.28), inset 0 -4px 10px rgba(0,0,0,0.30), inset 0 4px 8px rgba(180,160,120,0.18) !important;
+}
+[data-theme="kabylie"] .stone.player2 {
+  background: radial-gradient(circle at 33% 31%, #ffffff, #ede6dc 60%, #c0b8a8 92%) !important;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.16), inset 0 -4px 10px rgba(0,0,0,0.12), inset 0 4px 8px rgba(255,255,255,0.72) !important;
+}
+[data-theme="kabylie"] .player-info {
+  background: rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(31,26,18,0.18) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10) !important;
+  backdrop-filter: blur(8px) !important;
+}
+[data-theme="kabylie"] .player-info.active-player {
+  background: rgba(212,88,26,0.07) !important;
+  border-color: rgba(212,88,26,0.55) !important;
+  box-shadow: 0 0 24px rgba(212,88,26,0.16), 0 4px 16px rgba(0,0,0,0.10) !important;
+}
+[data-theme="kabylie"] .player-title { color: #1e5a9a !important; text-shadow: none !important; }
+[data-theme="kabylie"] .stat-value { color: #8a4400 !important; text-shadow: none !important; }
+[data-theme="kabylie"] .player-stat i { color: #b06010 !important; }
+[data-theme="kabylie"] .status {
+  background: rgba(255,255,255,0.94) !important;
+  color: #1f1a12 !important;
+  border-color: rgba(30,100,200,0.26) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  font-style: italic !important;
+}
+[data-theme="kabylie"] .game-info-display {
+  background: rgba(255,255,255,0.92) !important;
+  color: #1f1a12 !important;
+  border-color: rgba(30,100,200,0.20) !important;
+}
+[data-theme="kabylie"] .game-info-display strong { color: #1e5a9a !important; }
+[data-theme="kabylie"] .controls button {
+  background: rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(30,100,200,0.20) !important;
+  color: #2a2218 !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.10) !important;
+  font-style: normal !important;
+}
+[data-theme="kabylie"] .controls button:not([disabled]):hover {
+  background: rgba(30,100,200,0.08) !important;
+  border-color: rgba(30,100,200,0.46) !important;
+}
+[data-theme="kabylie"] .controls button.surrender-btn {
+  background: rgba(154,40,0,0.10) !important;
+  border-color: rgba(154,40,0,0.36) !important;
+  color: #9a2800 !important;
+}
+[data-theme="kabylie"] .toolbar-btn, [data-theme="kabylie"] .language-selector {
+  background: rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(30,100,200,0.20) !important;
+  color: #1e5a9a !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.10) !important;
+}
+[data-theme="kabylie"] .back-btn {
+  background: rgba(255,255,255,0.88) !important;
+  border-color: rgba(30,100,200,0.26) !important;
+  color: #1e5a9a !important;
+}
+[data-theme="kabylie"] .move-history-panel {
+  background: rgba(255,255,255,0.92) !important;
+  border-color: rgba(31,26,18,0.16) !important;
+  color: #1f1a12 !important;
+}
+[data-theme="kabylie"] .move-history-title { color: #1e5a9a !important; }
+[data-theme="kabylie"] .move-log-entry { color: #2a2218 !important; }
+[data-theme="kabylie"] .move-log-entry.mill-entry {
+  background: rgba(30,100,200,0.08) !important;
+  border-left-color: #1e5a9a !important;
+}
+[data-theme="kabylie"] .move-log-entry.capture-entry {
+  background: rgba(154,40,0,0.08) !important;
+  border-left-color: #9a2800 !important;
+}
+[data-theme="kabylie"] .player-badge .badge-pill {
+  background: rgba(0,0,0,0.06) !important;
+  color: #2a2218 !important;
+  border-color: rgba(90,55,25,0.36) !important;
+  text-shadow: none !important;
+}
+[data-theme="kabylie"] .player-badge.badge-mill .badge-pill { color: #00695c !important; border-color: rgba(0,105,92,0.38) !important; }
+[data-theme="kabylie"] .player-badge.badge-capture .badge-pill { color: #8a4400 !important; border-color: rgba(138,68,0,0.38) !important; }
+[data-theme="kabylie"] .player-badge.badge-sacrifice .badge-pill { color: #9a2800 !important; border-color: rgba(154,40,0,0.38) !important; }
+
+/* ── 34. THÈME DÉSERT ─────────────────────────────────────────── */
+[data-theme="desert"] body {
+  background: linear-gradient(135deg, #fff1d6, #f2d0a0) !important;
+}
+
+/* ── 35. ANIMATION FADEUP RAFFINÉE ───────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FIN DU REDESIGN ─────────────────────────────────────────── */
+
+
+/* ===== Patch: Improved readability across themes ===== */
+:root {
+  --text-main: #f5f5f5;
+  --text-muted: rgba(245,245,245,0.85);
+}
+
+[data-theme="kabylie"], [data-theme="desert"] {
+  --text-main: #1a1a1a;
+  --text-muted: #3a3328;
+}
+
+/* Ensure board text and UI always visible */
+.status, .game-info-display, .player-info, .selection-area {
+  color: var(--text-main) !important;
+}
+
+/* Board contrast improvements */
+.game-board {
+  background: var(--board-surface-light) !important;
+}
+
+.cell {
+  border: 1px solid var(--cell-border, rgba(0,0,0,0.25)) !important;
+}
+
+/* Ensure stones remain visible on all boards */
+.stone.player1 {
+  filter: contrast(1.1) brightness(0.95);
+}
+.stone.player2 {
+  filter: contrast(1.05) brightness(1.05);
+}
+
+/* Fix board scaling on mobile */
+.game-board-container {
+  max-width: min(95vw, 600px);
+  max-height: min(95vw, 600px);
+}
+
+
+/* ===== Patch: Button text visibility and contrast ===== */
+:root {
+  --btn-text-dark: #1a1a1a;
+  --btn-text-light: #ffffff;
+  --btn-text-muted-dark: #2b241c;
+  --btn-text-muted-light: #f7f7f7;
+}
+
+/* Generic buttons */
+button,
+.option-btn,
+.variant-btn,
+.famille-rules-btn,
+.rules-btn,
+.back-btn,
+.start-game-btn,
+.controls button,
+.modal-actions button,
+.replay-button,
+.toolbar-btn,
+.language-selector,
+.version-card,
+.color-option {
+  color: var(--btn-text-light) !important;
+  text-shadow: none !important;
+}
+
+/* Light themes: use dark text on light button backgrounds */
+[data-theme="kabylie"] .option-btn,
+[data-theme="kabylie"] .variant-btn,
+[data-theme="kabylie"] .famille-rules-btn,
+[data-theme="kabylie"] .rules-btn,
+[data-theme="kabylie"] .back-btn,
+[data-theme="kabylie"] .toolbar-btn,
+[data-theme="kabylie"] .language-selector,
+[data-theme="kabylie"] .version-card,
+[data-theme="kabylie"] .player-setup-area .color-option,
+[data-theme="desert"] .option-btn,
+[data-theme="desert"] .variant-btn,
+[data-theme="desert"] .famille-rules-btn,
+[data-theme="desert"] .rules-btn,
+[data-theme="desert"] .back-btn,
+[data-theme="desert"] .toolbar-btn,
+[data-theme="desert"] .language-selector,
+[data-theme="desert"] .version-card,
+[data-theme="desert"] .player-setup-area .color-option {
+  color: var(--btn-text-dark) !important;
+}
+
+/* Text inside button-like cards */
+.option-btn span,
+.version-card p,
+.player-setup-area .color-option,
+.variant-name,
+.famille-rules-btn,
+.rules-btn,
+.back-btn,
+.controls button,
+.modal-actions button,
+.winner-overlay .replay-button.secondary {
+  color: inherit !important;
+}
+
+/* Active / highlighted buttons must keep dark text on gold backgrounds */
+.variant-btn.active,
+.version-card.active,
+.start-game-btn,
+.player-setup-area .color-option.selected {
+  color: #22170a !important;
+}
+
+/* Ensure badges and icons inside buttons also inherit readable color */
+.option-btn i,
+.controls button i,
+.rules-btn i,
+.start-game-btn i,
+.variant-letter,
+.variant-arrow,
+.player-setup-area .color-option .checkmark {
+  color: inherit !important;
+  filter: none !important;
+}
+
+/* Buttons with dark red / dark blue backgrounds need light text */
+.controls button.surrender-btn,
+#undo-btn,
+.modal-confirm-btn,
+.modal-cancel-btn,
+.winner-overlay .replay-button:not(.secondary) {
+  color: #ffffff !important;
+}
+
+/* Hover states in light themes stay readable */
+[data-theme="kabylie"] .option-btn:hover,
+[data-theme="kabylie"] .variant-btn:hover,
+[data-theme="kabylie"] .famille-rules-btn:hover,
+[data-theme="kabylie"] .rules-btn:hover,
+[data-theme="kabylie"] .back-btn:hover,
+[data-theme="kabylie"] .toolbar-btn:hover,
+[data-theme="desert"] .option-btn:hover,
+[data-theme="desert"] .variant-btn:hover,
+[data-theme="desert"] .famille-rules-btn:hover,
+[data-theme="desert"] .rules-btn:hover,
+[data-theme="desert"] .back-btn:hover,
+[data-theme="desert"] .toolbar-btn:hover {
+  color: var(--btn-text-dark) !important;
+}
+
+/* Select text contrast */
+.language-selector select,
+.language-selector option {
+  color: inherit !important;
+}
+
+/* Improve readability for button descriptions */
+.option-btn span,
+.version-card p {
+  opacity: 1 !important;
+}
+
+/* Winner overlay secondary buttons: enough contrast */
+.winner-overlay .replay-button.secondary {
+  color: var(--btn-text-muted-light) !important;
+}
+
+
+/* ===== Patch: Complete board visuals by app theme ===== */
+
+/* Shared board tokens */
+:root {
+  --board-frame-shadow: 0 14px 36px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+  --board-cell-radius: 3px;
+  --board-hover-ring: rgba(255,255,255,0.22);
+  --board-selected-ring: rgba(240,200,80,0.95);
+  --board-move-fill: rgba(46,125,50,0.16);
+  --board-move-ring: rgba(46,125,50,0.85);
+  --board-capture-fill: rgba(198,40,40,0.16);
+  --board-capture-ring: rgba(198,40,40,0.88);
+}
+
+/* Base board refinement for every theme */
+.game-board-container {
+  box-shadow: var(--board-frame-shadow) !important;
+}
+.game-board {
+  border-width: 3px !important;
+  border-style: solid !important;
+  overflow: hidden !important;
+}
+.cell {
+  border-radius: var(--board-cell-radius);
+}
+.cell:hover {
+  transform: scale(1.015) !important;
+}
+.cell.selected {
+  animation: none !important;
+  box-shadow: inset 0 0 0 3px var(--board-selected-ring), inset 0 0 22px rgba(255,215,0,0.18) !important;
+}
+.cell.possible-move {
+  background: var(--board-move-fill) !important;
+  outline: 2px dashed var(--board-move-ring) !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06) !important;
+}
+.cell.capturable {
+  background: var(--board-capture-fill) !important;
+  outline: 2px dashed var(--board-capture-ring) !important;
+}
+.cell.mill-highlight {
+  box-shadow: inset 0 0 0 3px var(--highlight-cyan) !important;
+}
+
+/* Improve stone legibility */
+.stone {
+  outline: 1px solid rgba(0,0,0,0.22);
+}
+.stone.player1 {
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.stone.player2 {
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ---------------- Default board per APP theme ---------------- */
+
+/* Kabylie */
+[data-theme="kabylie"] .game-board-container {
+  background:
+    linear-gradient(145deg, rgba(214,159,86,0.82), rgba(249,228,168,0.72)) !important;
+  border-color: rgba(140,92,36,0.56) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) {
+  background:
+    linear-gradient(180deg, rgba(255,251,240,0.98), rgba(251,244,223,0.98)) !important;
+  border-color: rgba(64,53,34,0.42) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .cell {
+  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(247,240,221,0.96)) !important;
+  border-color: rgba(78,61,34,0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.04) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: linear-gradient(180deg, rgba(248,222,145,0.95), rgba(231,193,93,0.95)) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .cell:hover {
+  background: linear-gradient(180deg, rgba(210,234,255,0.96), rgba(177,216,248,0.96)) !important;
+  box-shadow: inset 0 0 0 2px rgba(30,136,229,0.38), 0 0 0 1px rgba(255,255,255,0.35) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .cell.possible-move {
+  background: rgba(46,125,50,0.18) !important;
+  outline-color: rgba(46,125,50,0.92) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #5b5148, #2b241d 62%, #0f0c09 92%) !important;
+}
+[data-theme="kabylie"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #fffdf8, #efe4d1 64%, #b8a88e 94%) !important;
+}
+
+/* Desert */
+[data-theme="desert"] .game-board-container {
+  background: linear-gradient(145deg, rgba(180,116,48,0.88), rgba(232,201,129,0.72)) !important;
+  border-color: rgba(122,72,24,0.60) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) {
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 5px, rgba(0,0,0,0.02) 5px 10px),
+    linear-gradient(180deg, #ecd5a7, #d5b377) !important;
+  border-color: rgba(109,73,27,0.48) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) .cell {
+  background: linear-gradient(180deg, #f7e7c1, #ecd39b) !important;
+  border-color: rgba(135,94,35,0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(109,73,27,0.05) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: linear-gradient(180deg, #d6b173, #c3954f) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) .cell:hover {
+  background: linear-gradient(180deg, #ffe9bf, #f0cf8f) !important;
+  box-shadow: inset 0 0 0 2px rgba(184,122,16,0.38) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #725132, #3d2a14 62%, #1a1108 92%) !important;
+}
+[data-theme="desert"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #fff8ea, #f0e1c7 64%, #c9b28c 94%) !important;
+}
+
+/* Nuit */
+[data-theme="nuit"] .game-board-container {
+  background: linear-gradient(145deg, rgba(37,19,92,0.92), rgba(9,7,33,0.92)) !important;
+  border-color: rgba(117,74,232,0.55) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) {
+  background:
+    radial-gradient(circle at 50% 15%, rgba(187,134,252,0.11), transparent 48%),
+    linear-gradient(180deg, #0f102f, #09091a) !important;
+  border-color: rgba(125,85,255,0.38) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .cell {
+  background: linear-gradient(180deg, rgba(21,21,54,0.96), rgba(12,12,31,0.96)) !important;
+  border-color: rgba(187,134,252,0.09) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -1px 0 rgba(0,0,0,0.24) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: linear-gradient(180deg, rgba(45,22,92,0.96), rgba(25,13,54,0.96)) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .cell:hover {
+  background: linear-gradient(180deg, rgba(39,72,126,0.90), rgba(26,52,88,0.90)) !important;
+  box-shadow: inset 0 0 0 2px rgba(74,168,216,0.35), 0 0 12px rgba(74,168,216,0.16) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .cell.possible-move {
+  background: rgba(3,218,198,0.14) !important;
+  outline-color: rgba(3,218,198,0.92) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #b18cff, #5b2fc9 60%, #22104f 92%) !important;
+}
+[data-theme="nuit"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #a6fff6, #00cfc0 60%, #00555d 92%) !important;
+}
+
+/* Glass */
+[data-theme="glass"] .game-board-container {
+  background: linear-gradient(145deg, rgba(126,82,226,0.25), rgba(69,140,223,0.18)) !important;
+  border-color: rgba(232,180,248,0.36) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)) !important;
+  border-color: rgba(232,180,248,0.22) !important;
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) .cell {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.18) !important;
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: linear-gradient(180deg, rgba(232,180,248,0.12), rgba(125,211,247,0.05)) !important;
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) .cell:hover {
+  background: linear-gradient(180deg, rgba(232,180,248,0.18), rgba(125,211,247,0.12)) !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18), 0 0 12px rgba(232,180,248,0.18) !important;
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #e6d7ff, #8d65ff 60%, #351770 92%) !important;
+}
+[data-theme="glass"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #e6fbff, #53d4ff 60%, #0f5e7d 92%) !important;
+}
+
+/* Contrast */
+[data-theme="contrast"] .game-board-container {
+  background: #111 !important;
+  border-color: #ffd400 !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) {
+  background: #000 !important;
+  border-color: #ffd400 !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.20) !important;
+  box-shadow: none !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: #1e1e1e !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell:hover {
+  background: #003d66 !important;
+  box-shadow: inset 0 0 0 3px #6cf !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell.selected {
+  box-shadow: inset 0 0 0 4px #ffd400 !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell.possible-move {
+  background: rgba(0,180,120,0.25) !important;
+  outline-color: #00ff99 !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .cell.capturable {
+  background: rgba(255,0,0,0.25) !important;
+  outline-color: #ff4d4d !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #7a7a7a, #1f1f1f 62%, #000 92%) !important;
+}
+[data-theme="contrast"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #fff, #ddd 62%, #aaa 92%) !important;
+}
+
+/* Modern */
+[data-theme="modern"] .game-board-container {
+  background: linear-gradient(145deg, #dbe7f8, #b8cde6) !important;
+  border-color: rgba(56,84,136,0.25) !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) {
+  background: linear-gradient(180deg, #f8fbff, #edf3fb) !important;
+  border-color: rgba(56,84,136,0.18) !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) .cell {
+  background: #ffffff !important;
+  border-color: rgba(100,116,139,0.14) !important;
+  box-shadow: none !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: #eef4fb !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) .cell:hover {
+  background: rgba(37,99,235,0.08) !important;
+  box-shadow: inset 0 0 0 2px rgba(37,99,235,0.20) !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #69768a, #334155 62%, #111827 92%) !important;
+}
+[data-theme="modern"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #ffffff, #e5edf6 62%, #b8c4d3 92%) !important;
+}
+
+/* Modern dark */
+[data-theme="modern-dark"] .game-board-container {
+  background: linear-gradient(145deg, #182132, #0b1220) !important;
+  border-color: rgba(148,163,184,0.22) !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) {
+  background: linear-gradient(180deg, rgba(6,11,24,0.98), rgba(2,6,23,0.98)) !important;
+  border-color: rgba(148,163,184,0.16) !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) .cell {
+  background: rgba(15,23,42,0.85) !important;
+  border-color: rgba(148,163,184,0.10) !important;
+  box-shadow: none !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) .cell.dark-cell {
+  background: rgba(30,41,59,0.82) !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) .cell:hover {
+  background: rgba(37,99,235,0.12) !important;
+  box-shadow: inset 0 0 0 2px rgba(56,189,248,0.18) !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) .stone.player1 {
+  background: radial-gradient(circle at 32% 30%, #8ca3bf, #475569 62%, #0f172a 92%) !important;
+}
+[data-theme="modern-dark"] .game-board:not([data-board-theme]) .stone.player2 {
+  background: radial-gradient(circle at 32% 30%, #f8fbff, #dce6f4 62%, #94a3b8 92%) !important;
+}
+
+/* ---------------- Selected BOARD THEME harmonization ---------------- */
+
+/* Make board themes adapt better inside bright app themes */
+[data-theme="kabylie"] .game-board[data-board-theme="night"],
+[data-theme="desert"] .game-board[data-board-theme="night"],
+[data-theme="kabylie"] .game-board[data-board-theme="jade"],
+[data-theme="desert"] .game-board[data-board-theme="jade"],
+[data-theme="kabylie"] .game-board[data-board-theme="crimson"],
+[data-theme="desert"] .game-board[data-board-theme="crimson"] {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 10px 24px rgba(0,0,0,0.24) !important;
+}
+
+/* Brighter sand board in light themes */
+[data-theme="kabylie"] .game-board[data-board-theme="sand"],
+[data-theme="desert"] .game-board[data-board-theme="sand"] {
+  border-color: #d5ae56 !important;
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.06) 4px, rgba(255,255,255,0.06) 8px),
+    linear-gradient(135deg, #ddbf86, #bc8f4b) !important;
+}
+[data-theme="kabylie"] .game-board[data-board-theme="sand"] .cell,
+[data-theme="desert"] .game-board[data-board-theme="sand"] .cell {
+  background: linear-gradient(180deg, #f9e7c0, #eed29a) !important;
+}
+[data-theme="kabylie"] .game-board[data-board-theme="sand"] .cell.dark-cell,
+[data-theme="desert"] .game-board[data-board-theme="sand"] .cell.dark-cell {
+  background: linear-gradient(180deg, #deb972, #cc9d54) !important;
+}
+
+/* Night board enriched */
+.game-board[data-board-theme="night"] {
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(74,168,216,0.14), transparent 25%),
+    radial-gradient(circle at 80% 30%, rgba(187,134,252,0.10), transparent 24%),
+    linear-gradient(135deg, #0f1728, #1a2740) !important;
+}
+.game-board[data-board-theme="night"] .cell {
+  background: linear-gradient(180deg, #22344a, #172638) !important;
+}
+.game-board[data-board-theme="night"] .cell.dark-cell {
+  background: linear-gradient(180deg, #162435, #0f1928) !important;
+}
+
+/* Jade board enriched */
+.game-board[data-board-theme="jade"] {
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(77,184,122,0.12), transparent 28%),
+    linear-gradient(135deg, #1a3d2b, #0f2a1e) !important;
+}
+.game-board[data-board-theme="jade"] .cell.dark-cell {
+  background: linear-gradient(180deg, #173224, #10261a) !important;
+}
+
+/* Crimson board readability */
+.game-board[data-board-theme="crimson"] .cell {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.22) !important;
+}
+
+/* ---------------- Turkish draughts board harmonization ---------------- */
+
+/* Let Turkish board follow the active APP theme instead of staying fixed only */
+[data-theme="kabylie"] .game-board.turkish-draughts-board {
+  background: linear-gradient(135deg, #c79032, #8c5f1f) !important;
+  border-color: #6c4711 !important;
+}
+[data-theme="kabylie"] .game-board.turkish-draughts-board .cell:not(.dark-cell) {
+  background: linear-gradient(180deg, #fff3d8, #f7e2b3) !important;
+}
+[data-theme="kabylie"] .game-board.turkish-draughts-board .cell.dark-cell {
+  background: linear-gradient(180deg, #f1cf7a, #d9ad45) !important;
+}
+
+[data-theme="desert"] .game-board.turkish-draughts-board {
+  background: linear-gradient(135deg, #b67a2b, #7d4f19) !important;
+  border-color: #6c4311 !important;
+}
+[data-theme="desert"] .game-board.turkish-draughts-board .cell:not(.dark-cell) {
+  background: linear-gradient(180deg, #f8e4bb, #edd09b) !important;
+}
+[data-theme="desert"] .game-board.turkish-draughts-board .cell.dark-cell {
+  background: linear-gradient(180deg, #ddb46a, #c38d42) !important;
+}
+
+[data-theme="nuit"] .game-board.turkish-draughts-board,
+[data-theme="glass"] .game-board.turkish-draughts-board,
+[data-theme="modern-dark"] .game-board.turkish-draughts-board {
+  background: linear-gradient(135deg, #22154a, #0c0d2b) !important;
+  border-color: #6e4de4 !important;
+}
+[data-theme="nuit"] .game-board.turkish-draughts-board .cell:not(.dark-cell),
+[data-theme="glass"] .game-board.turkish-draughts-board .cell:not(.dark-cell),
+[data-theme="modern-dark"] .game-board.turkish-draughts-board .cell:not(.dark-cell) {
+  background: linear-gradient(180deg, rgba(46,55,110,0.95), rgba(28,34,78,0.95)) !important;
+}
+[data-theme="nuit"] .game-board.turkish-draughts-board .cell.dark-cell,
+[data-theme="glass"] .game-board.turkish-draughts-board .cell.dark-cell,
+[data-theme="modern-dark"] .game-board.turkish-draughts-board .cell.dark-cell {
+  background: linear-gradient(180deg, rgba(25,22,69,0.96), rgba(16,17,42,0.96)) !important;
+}
+
+[data-theme="modern"] .game-board.turkish-draughts-board {
+  background: linear-gradient(135deg, #7c93b8, #516a94) !important;
+  border-color: #405372 !important;
+}
+[data-theme="modern"] .game-board.turkish-draughts-board .cell:not(.dark-cell) {
+  background: linear-gradient(180deg, #f9fbff, #e9f0f8) !important;
+}
+[data-theme="modern"] .game-board.turkish-draughts-board .cell.dark-cell {
+  background: linear-gradient(180deg, #d5e0ef, #bccde1) !important;
+}
+
+[data-theme="contrast"] .game-board.turkish-draughts-board {
+  background: #000 !important;
+  border-color: #ffd400 !important;
+}
+[data-theme="contrast"] .game-board.turkish-draughts-board .cell:not(.dark-cell) {
+  background: #f2f2f2 !important;
+}
+[data-theme="contrast"] .game-board.turkish-draughts-board .cell.dark-cell {
+  background: #6a6a6a !important;
+}
+[data-theme="contrast"] .game-board.turkish-draughts-board .cell.selected {
+  box-shadow: inset 0 0 0 4px #ffd400 !important;
+}
+
 </style>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
-
-</head>
 <body>
 <!-- ===== LANGUAGE SPLASH SCREEN ===== -->
 <div aria-label="Choix de la langue / Afran n tutlayt" aria-modal="true" id="lang-splash" role="dialog">
