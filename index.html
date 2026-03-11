@@ -89,6 +89,126 @@ fill: currentColor;
 stroke: none;
 }
 
+/* ══════════════════════════════════════════
+   PWA INSTALL BANNER — Première ouverture
+   ══════════════════════════════════════════ */
+#pwa-install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  background: linear-gradient(135deg, #2c2318 0%, #1a1208 100%);
+  border-top: 2px solid rgba(240,200,80,0.55);
+  box-shadow: 0 -6px 32px rgba(0,0,0,0.55), 0 -1px 0 rgba(240,200,80,0.2);
+  padding: clamp(0.9rem, 3vw, 1.3rem) clamp(1rem, 4vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 2.5vw, 1.5rem);
+  transform: translateY(110%);
+  transition: transform 0.42s cubic-bezier(0.22,1,0.36,1);
+  backdrop-filter: blur(8px);
+}
+#pwa-install-banner.visible {
+  transform: translateY(0);
+}
+#pwa-install-banner.hiding {
+  transform: translateY(110%);
+}
+.pwa-banner-icon {
+  flex-shrink: 0;
+  width: clamp(44px, 10vw, 56px);
+  height: clamp(44px, 10vw, 56px);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5), 0 0 0 1.5px rgba(240,200,80,0.35);
+}
+.pwa-banner-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.pwa-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+.pwa-banner-title {
+  font-family: var(--font-title);
+  font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+  color: var(--text-gold);
+  margin-bottom: 0.18em;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.pwa-banner-sub {
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 2.2vw, 0.9rem);
+  color: rgba(245,225,160,0.72);
+  line-height: 1.4;
+}
+.pwa-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+#pwa-banner-install-btn {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #e8b830, #c89010);
+  color: #1a0f00;
+  border: none;
+  border-radius: 22px;
+  font-family: var(--font-title);
+  font-size: clamp(0.82rem, 2.2vw, 0.95rem);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(200,144,16,0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  letter-spacing: 0.3px;
+}
+#pwa-banner-install-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(200,144,16,0.6);
+  filter: brightness(1.08);
+}
+#pwa-banner-install-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+#pwa-banner-dismiss-btn {
+  background: transparent;
+  border: 1px solid rgba(240,200,80,0.28);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(240,200,80,0.6);
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  flex-shrink: 0;
+}
+#pwa-banner-dismiss-btn:hover {
+  background: rgba(240,200,80,0.12);
+  color: var(--text-gold);
+  border-color: rgba(240,200,80,0.55);
+}
+@media (max-width: 480px) {
+  #pwa-install-banner {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+  .pwa-banner-actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: calc(clamp(44px, 10vw, 56px) + clamp(0.8rem, 2.5vw, 1.5rem));
+  }
+}
+
 * {
 margin: 0;
 padding: 0;
@@ -12833,6 +12953,492 @@ html[data-theme="desert"] .ol-action-create .ol-action-icon,
 html[data-theme="desert"] body .ol-action-create .ol-action-icon { color: #9a4810 !important; }
 html[data-theme="desert"] .ol-action-join .ol-action-icon,
 html[data-theme="desert"] body .ol-action-join .ol-action-icon  { color: #1a6e34 !important; }
+
+
+/* ===== FINAL MERGE HOTFIX: modal text readability safeguard ===== */
+.rules-book,
+.rules-book .rules-content,
+.about-book,
+.about-book .about-body,
+.settings-tray,
+.game-info-display,
+.status,
+.player-info,
+.move-history-panel,
+.move-log-entry {
+  -webkit-text-fill-color: currentColor;
+}
+body.btheme-parchment .rules-book,
+body.btheme-sand .rules-book,
+body.btheme-parchment .about-book,
+body.btheme-sand .about-book {
+  color: #2e2216 !important;
+}
+body.btheme-parchment .rules-book h1,
+body.btheme-parchment .rules-book h2,
+body.btheme-parchment .rules-book h3,
+body.btheme-sand .rules-book h1,
+body.btheme-sand .rules-book h2,
+body.btheme-sand .rules-book h3,
+body.btheme-parchment .about-book .about-title,
+body.btheme-sand .about-book .about-title {
+  color: #7b4b19 !important;
+}
+body.btheme-parchment .rules-book p,
+body.btheme-parchment .rules-book li,
+body.btheme-sand .rules-book p,
+body.btheme-sand .rules-book li,
+body.btheme-parchment .about-book .about-body,
+body.btheme-sand .about-book .about-body {
+  color: #3b2b1d !important;
+}
+
+
+
+/* ===== HOTFIX FINAL: plateau intersection + visibilité modales ===== */
+/* En mode intersections, ne pas laisser un fond transparent persister.
+   Le plateau doit reprendre le thème d'apparence choisi. */
+body .game-board.ntlata-board:not(.ntlata-cases-mode)[data-board-theme] {
+  background: var(--nt-board-bg) !important;
+  border: var(--nt-board-border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--nt-container-shadow), inset 0 0 18px rgba(0,0,0,0.22) !important;
+  padding: 10px !important;
+  overflow: hidden !important;
+}
+body .game-board.ntlata-board:not(.ntlata-cases-mode)[data-board-theme]::before {
+  inset: 8px !important;
+  background-size: calc(100% - 12%) calc(100% - 12%) !important;
+}
+body .game-board.ntlata-board:not(.ntlata-cases-mode)[data-board-theme="parchment"],
+body .game-board.ntlata-board:not(.ntlata-cases-mode)[data-board-theme="sand"] {
+  box-shadow: 0 14px 34px rgba(0,0,0,0.18), inset 0 0 18px rgba(255,255,255,0.28) !important;
+}
+
+/* Fallback explicite sur le conteneur pour les navigateurs mobiles */
+body.btheme-teal .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #1a4a5c, #153d50) !important; border-color: #5bbcd8 !important; }
+body.btheme-wood .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #7a4e28, #6a4220) !important; border-color: #9b6530 !important; }
+body.btheme-parchment .game-board-container.ntlata-container-active { background: linear-gradient(160deg, rgba(184,154,106,0.65), rgba(176,140,90,0.55)) !important; border-color: #b89a6a !important; }
+body.btheme-obsidian .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #222, #111) !important; border-color: #d4af8f !important; }
+body.btheme-berber .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #8c4a1a, #5a2d0c) !important; border-color: #f0c850 !important; }
+body.btheme-night .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #1a2e42, #0d1b2a) !important; border-color: #4aa8d8 !important; }
+body.btheme-sand .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #c9a96e, #a07840) !important; border-color: #e8c882 !important; }
+body.btheme-jade .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #1a3d2b, #0f2a1e) !important; border-color: #4db87a !important; }
+body.btheme-crimson .game-board-container.ntlata-container-active { background: linear-gradient(160deg, #5c1010, #3d0a0a) !important; border-color: #cc3333 !important; }
+
+/* Lisibilité renforcée pour la modale d'installation et boutons de fermeture */
+#install-help-modal .modal-content,
+#install-help-modal .modal-content p,
+#install-help-modal .modal-content span {
+  color: var(--modal-text, #f5f5f5) !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+#install-help-modal .modal-actions button,
+#install-help-close-btn {
+  background: color-mix(in srgb, var(--modal-heading, #f0c850) 16%, var(--modal-surface, #2a201a)) !important;
+  border: 1.5px solid color-mix(in srgb, var(--modal-heading, #f0c850) 55%, transparent) !important;
+  color: var(--modal-text, #fff) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25) !important;
+  opacity: 1 !important;
+}
+#install-help-modal .modal-actions button span,
+#install-help-close-btn span {
+  color: inherit !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+#install-help-modal .modal-actions button:hover,
+#install-help-close-btn:hover {
+  background: color-mix(in srgb, var(--modal-heading, #f0c850) 28%, var(--modal-surface, #2a201a)) !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* ===== PROD PATCH: modal visibility + theme harmony ===== */
+:root {
+  --app-modal-bg: linear-gradient(160deg, rgba(42,24,10,0.985), rgba(22,12,5,0.985));
+  --app-modal-border: rgba(240, 184, 48, 0.55);
+  --app-modal-title: #f4c24a;
+  --app-modal-text: #f7efe2;
+  --app-modal-muted: rgba(247, 239, 226, 0.9);
+  --app-modal-btn-bg: rgba(18, 31, 58, 0.88);
+  --app-modal-btn-border: rgba(54, 126, 255, 0.72);
+  --app-modal-btn-text: #f8fbff;
+  --app-modal-btn-bg-hover: rgba(31, 60, 109, 0.96);
+  --app-modal-cancel-bg: rgba(84, 60, 35, 0.95);
+  --app-modal-cancel-border: rgba(240, 184, 48, 0.45);
+  --app-modal-cancel-text: #fff6e7;
+  --app-modal-danger-bg: linear-gradient(135deg, #b42318, #dc3545);
+  --app-modal-danger-border: rgba(255,255,255,0.16);
+  --app-modal-danger-text: #ffffff;
+}
+
+.modal-overlay,
+.modal-overlay.app-modal {
+  background: rgba(5, 7, 12, 0.76) !important;
+  backdrop-filter: blur(7px) saturate(1.05);
+  -webkit-backdrop-filter: blur(7px) saturate(1.05);
+}
+
+#replay-modal.modal-overlay.app-modal {
+  background: rgba(5, 7, 12, 0.28) !important;
+}
+
+.modal-overlay .modal-content,
+.modal-overlay.app-modal .modal-content,
+#confirmation-modal .modal-content,
+#install-help-modal .modal-content {
+  background: var(--app-modal-bg) !important;
+  color: var(--app-modal-text) !important;
+  border: 1.5px solid var(--app-modal-border) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.72),
+    0 0 0 1px rgba(255,255,255,0.03) inset,
+    0 0 24px rgba(240,184,48,0.08) !important;
+}
+
+.modal-overlay .modal-content h1,
+.modal-overlay .modal-content h2,
+.modal-overlay .modal-content h3,
+.modal-overlay .modal-content h4,
+.modal-overlay .modal-content p,
+.modal-overlay .modal-content li,
+.modal-overlay .modal-content span,
+#modal-title,
+#modal-message,
+#install-help-content,
+#install-help-content p {
+  color: var(--app-modal-text) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.modal-overlay .modal-content h3,
+#modal-title,
+#install-modal-title {
+  color: var(--app-modal-title) !important;
+  letter-spacing: 0.04em;
+}
+
+.modal-overlay .modal-content p,
+#modal-message,
+#install-help-content p {
+  color: var(--app-modal-muted) !important;
+  font-size: clamp(1rem, 2.8vw, 1.08rem);
+  line-height: 1.65;
+}
+
+.modal-overlay .modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.9rem;
+}
+
+.modal-overlay .modal-actions button,
+#install-help-close-btn,
+#modal-cancel-btn,
+#modal-confirm-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 132px;
+  min-height: 48px;
+  padding: 0.78rem 1.35rem;
+  border-radius: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 1.5px solid var(--app-modal-btn-border) !important;
+  background: var(--app-modal-btn-bg) !important;
+  color: var(--app-modal-btn-text) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+.modal-overlay .modal-actions button span,
+#install-help-close-btn span,
+#modal-cancel-btn span,
+#modal-confirm-btn span {
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+.modal-overlay .modal-actions button:hover,
+.modal-overlay .modal-actions button:focus-visible,
+#install-help-close-btn:hover,
+#install-help-close-btn:focus-visible,
+#modal-cancel-btn:hover,
+#modal-cancel-btn:focus-visible,
+#modal-confirm-btn:hover,
+#modal-confirm-btn:focus-visible {
+  background: var(--app-modal-btn-bg-hover) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+#modal-cancel-btn {
+  background: var(--app-modal-cancel-bg) !important;
+  border-color: var(--app-modal-cancel-border) !important;
+  color: var(--app-modal-cancel-text) !important;
+}
+
+#modal-confirm-btn {
+  background: var(--app-modal-danger-bg) !important;
+  border-color: var(--app-modal-danger-border) !important;
+  color: var(--app-modal-danger-text) !important;
+}
+
+#modal-confirm-btn:hover,
+#modal-confirm-btn:focus-visible {
+  filter: brightness(1.08);
+}
+
+#confirmation-modal .modal-content,
+#install-help-modal .modal-content {
+  max-width: min(92vw, 620px);
+  border-radius: 22px !important;
+}
+
+@media (max-width: 560px) {
+  .modal-overlay .modal-content,
+  #confirmation-modal .modal-content,
+  #install-help-modal .modal-content {
+    padding: 1.5rem 1.1rem !important;
+  }
+
+  .modal-overlay .modal-actions button,
+  #install-help-close-btn,
+  #modal-cancel-btn,
+  #modal-confirm-btn {
+    min-width: 120px;
+    width: auto;
+    flex: 0 1 auto;
+  }
+}
+/* ===== END PROD PATCH ===== */
+
+
+/* ===== ULTRA PATCH: fix modal text invisibility on dark themed dialogs ===== */
+html body .modal-overlay.active .modal-content,
+html body .modal-overlay.app-modal.active .modal-content,
+html body #install-help-modal.active .modal-content,
+html body #confirmation-modal.active .modal-content {
+  background: linear-gradient(160deg, rgba(52,24,8,0.99), rgba(26,10,3,0.99)) !important;
+  color: #f7efe2 !important;
+  border: 2px solid rgba(232,184,48,0.72) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.74), 0 0 0 1px rgba(255,255,255,0.03) inset !important;
+}
+
+html body #install-help-modal.active #install-help-content,
+html body #install-help-modal.active #install-help-content *,
+html body #confirmation-modal.active #modal-message,
+html body #confirmation-modal.active #modal-message *,
+html body .modal-overlay.active .modal-content p,
+html body .modal-overlay.active .modal-content span,
+html body .modal-overlay.active .modal-content div:not(.modal-actions),
+html body .modal-overlay.active .modal-content li,
+html body .modal-overlay.active .modal-content strong,
+html body .modal-overlay.active .modal-content em {
+  color: #f8f1e5 !important;
+  -webkit-text-fill-color: #f8f1e5 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  text-shadow: none !important;
+}
+
+html body #install-help-modal.active h1,
+html body #install-help-modal.active h2,
+html body #install-help-modal.active h3,
+html body #confirmation-modal.active h1,
+html body #confirmation-modal.active h2,
+html body #confirmation-modal.active h3,
+html body .modal-overlay.active .modal-content h1,
+html body .modal-overlay.active .modal-content h2,
+html body .modal-overlay.active .modal-content h3 {
+  color: #f1bc43 !important;
+  -webkit-text-fill-color: #f1bc43 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html body #install-help-close-btn,
+html body #install-help-close-btn *,
+html body #modal-cancel-btn,
+html body #modal-cancel-btn *,
+html body #modal-confirm-btn,
+html body #modal-confirm-btn *,
+html body .modal-overlay.active .modal-actions button,
+html body .modal-overlay.active .modal-actions button * {
+  color: #fff8ee !important;
+  -webkit-text-fill-color: #fff8ee !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html body #install-help-close-btn,
+html body .modal-overlay.active .modal-actions button {
+  background: rgba(92,54,20,0.98) !important;
+  border: 2px solid rgba(240,184,48,0.52) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+}
+
+html body #modal-confirm-btn {
+  background: linear-gradient(135deg, #b42318, #dc3545) !important;
+  border: 2px solid rgba(255,255,255,0.12) !important;
+}
+
+html body .modal-overlay.active .modal-content [style*="color"],
+html body .modal-overlay.active .modal-content [style*="opacity"],
+html body .modal-overlay.active .modal-content [style*="-webkit-text-fill-color"] {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  opacity: 1 !important;
+}
+
+/* specifically neutralize theme rules that dim install-help modal text/buttons */
+html[data-theme] body #install-help-modal.active .modal-content,
+html[data-theme] body #install-help-modal.active .modal-content *,
+html[data-theme] body #confirmation-modal.active .modal-content,
+html[data-theme] body #confirmation-modal.active .modal-content * {
+  filter: none !important;
+}
+
+/* If browser applies visited/button autofill-like dimming, force repaint */
+html body #install-help-modal.active .modal-content,
+html body #confirmation-modal.active .modal-content {
+  transform: translateZ(0) !important;
+}
+/* ===== END ULTRA PATCH ===== */
+
+
+/* ===== FINAL FIX: modal readability + button harmony ===== */
+html body #install-help-modal.active .modal-content,
+html body #confirmation-modal.active .modal-content {
+  background:
+    radial-gradient(circle at top, rgba(255,190,80,0.07), transparent 38%),
+    linear-gradient(160deg, rgba(56,24,8,0.995), rgba(28,10,4,0.995)) !important;
+  color: #fff6ea !important;
+  border: 2px solid rgba(232,184,48,0.78) !important;
+  border-radius: 22px !important;
+}
+
+html body #install-help-modal.active #install-help-content,
+html body #install-help-modal.active #install-help-content p,
+html body #install-help-modal.active #install-help-content span,
+html body #install-help-modal.active #install-help-content em,
+html body #confirmation-modal.active #modal-message,
+html body #confirmation-modal.active #modal-message span {
+  color: #fff6ea !important;
+  -webkit-text-fill-color: #fff6ea !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: none !important;
+}
+
+html body #install-help-modal.active #install-modal-title,
+html body #confirmation-modal.active #modal-title {
+  color: #f2c24b !important;
+  -webkit-text-fill-color: #f2c24b !important;
+  opacity: 1 !important;
+}
+
+html body #install-help-close-btn,
+html body #modal-cancel-btn,
+html body #modal-confirm-btn {
+  min-width: 150px !important;
+  min-height: 54px !important;
+  padding: 0.9rem 1.5rem !important;
+  border-radius: 18px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.38) !important;
+  opacity: 1 !important;
+}
+
+html body #install-help-close-btn,
+html body #modal-cancel-btn {
+  background: linear-gradient(180deg, #8a561d, #6c3f12) !important;
+  border: 2px solid rgba(245,194,88,0.62) !important;
+  color: #fffaf1 !important;
+  -webkit-text-fill-color: #fffaf1 !important;
+}
+
+html body #modal-confirm-btn {
+  background: linear-gradient(180deg, #cc3d28, #a71f16) !important;
+  border: 2px solid rgba(255,255,255,0.16) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body #install-help-close-btn span,
+html body #modal-cancel-btn span,
+html body #modal-confirm-btn span,
+html body #install-help-close-btn *,
+html body #modal-cancel-btn *,
+html body #modal-confirm-btn * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html body #install-help-modal.active .modal-actions,
+html body #confirmation-modal.active .modal-actions {
+  gap: 1rem !important;
+}
+/* ===== END FINAL FIX ===== */
+
+
+/* ==== FIX FINAL bouton Fermer — iOS Safari compatible ==== */
+/* Spécificité maximale : html + body + id — écrase tous les blocs précédents */
+html body #install-help-close-btn,
+html body #install-help-modal .modal-actions #install-help-close-btn {
+  display:             inline-flex !important;
+  align-items:         center !important;
+  justify-content:     center !important;
+  min-width:           150px !important;
+  min-height:          52px !important;
+  padding:             0.85rem 1.6rem !important;
+  border-radius:       16px !important;
+  font-weight:         700 !important;
+  font-size:           1rem !important;
+  letter-spacing:      0.02em !important;
+  /* Fond opaque — pas de rgba transparent sur iOS */
+  background:          #7a4214 !important;
+  border:              2px solid #f0b840 !important;
+  /* Couleur texte explicite — pas de variable, pas de currentColor */
+  color:               #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow:         0 1px 3px rgba(0,0,0,0.55) !important;
+  opacity:             1 !important;
+  visibility:          visible !important;
+  box-shadow:          0 8px 22px rgba(0,0,0,0.40) !important;
+  cursor:              pointer !important;
+}
+
+html body #install-help-close-btn span,
+html body #install-help-close-btn *,
+html body #install-help-modal .modal-actions #install-help-close-btn span,
+html body #install-help-modal .modal-actions #install-help-close-btn * {
+  color:               #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity:             1 !important;
+  visibility:          visible !important;
+}
+
+html body #install-help-close-btn:hover,
+html body #install-help-close-btn:active {
+  background:          #9a5520 !important;
+  color:               #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+/* ==== END FIX FINAL ==== */
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12873,6 +13479,23 @@ Choisissez votre langue  /  Fren tutlayt-ik
 Patrimoine Amazigh • Idles Amaziɣ
 </p>
 </div>
+<!-- ═══════════════════════════════════════════
+     PWA Install Banner — première ouverture
+     ═══════════════════════════════════════════ -->
+<div id="pwa-install-banner" role="dialog" aria-live="polite" aria-label="Installer l'application" hidden>
+  <div class="pwa-banner-icon">
+    <img alt="Tiddas" src="data:image/png;base64,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" />
+  </div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title" id="pwa-banner-title">Voulez-vous installer l'application ?</div>
+    <div class="pwa-banner-sub" id="pwa-banner-sub">Tiddas • Jeu Ancestral Amazigh</div>
+  </div>
+  <div class="pwa-banner-actions">
+    <button id="pwa-banner-install-btn" type="button">Installer</button>
+    <button id="pwa-banner-dismiss-btn" type="button" aria-label="Fermer">✕</button>
+  </div>
+</div>
+
 <div class="toolbar-buttons" id="toolbar-buttons">
 <!-- Hidden guided btn (JS refs preserved) -->
 <button aria-label="Mode guidé" aria-pressed="true" id="guided-btn" class="guided-btn-hidden" title="Mode guidé"></button>
@@ -13941,7 +14564,7 @@ The basic rules apply, but each variant introduces important specifics:
 <div class="replay-board-indicator" id="replay-board-indicator"></div>
 <div aria-hidden="true" class="modal-overlay app-modal" id="install-help-modal">
 <div aria-labelledby="install-modal-title" aria-modal="true" class="modal-content install-modal-content" role="dialog">
-<h3 data-i18n="installHelpTitle" id="install-modal-title">Installer l'app</h3>
+<h3 data-i18n="installHelpTitle" id="install-modal-title">Installer l\'app</h3>
 <div id="install-help-content">
 <p data-i18n="installHelpBody">
 Astuce : sur iPhone/iPad, utilisez “Partager” → “Sur l'écran d'accueil”. Sur Android/Chrome, le bouton “Installer” apparaît si l'app est éligible.
@@ -15784,7 +16407,7 @@ Languagelabel: "Tutlayt",
 Gamelabel: "Urar",
 btnDragMode: "Asezger",
 confirm: "Yahwa-yi",
-cancel: "ALA",
+cancel: "Ala",
 defaultPlayer1: "Amyurar 1",
 defaultPlayer2: "Amyurar 2",
 defaultComputerName: "Aselkim",
@@ -15933,7 +16556,7 @@ replayLast: "aɛiwed",
 guidedMode: "Awelleh",
 speed: "aɣiwel",
 installHelpTitle: "Areṣṣi n wurar",
-installHelpBody: "awelleh : iPhone/iPad «zuzer» → «Deg ​usebtar agejdan». Android/Chrome: «Areṣṣi» ma yella.",
+installHelpBody: "Awelleh: iPhone/iPad: «Zuzer» → «Deg usebtar agejdan». Android/Chrome: aqeffal «Areṣṣi» ad d-iban ma yella yelha usnas.",
 toastInstalled: "✅ urar yettwareṣṣa.",
 toastInstallUnavailable: "ℹ️ Areṣṣi ur yelli ara.",
 toastReplayReady: "⏯️ Aɛiwed yewjed.",
@@ -23923,20 +24546,28 @@ if (ntlataStyleBtn) ntlataStyleBtn.addEventListener('click', toggleNtlataBoardSt
 
   const ALL_BTHEMES = ['teal','wood','parchment','obsidian','berber','night','sand','jade','crimson'];
   function applyBoardTheme(theme) {
-    if (theme === 'default') {
+    const safeTheme = theme || 'default';
+    if (safeTheme === 'default') {
       board.removeAttribute('data-board-theme');
     } else {
-      board.setAttribute('data-board-theme', theme);
+      board.setAttribute('data-board-theme', safeTheme);
     }
     // Sync body class for :has() fallback (browsers sans support :has)
+    document.body.dataset.btheme = safeTheme;
     ALL_BTHEMES.forEach(t => document.body.classList.remove('btheme-' + t));
-    if (theme && theme !== 'default') {
-      document.body.classList.add('btheme-' + theme);
+    if (safeTheme !== 'default') {
+      document.body.classList.add('btheme-' + safeTheme);
     }
     grid.querySelectorAll('.btp-dot').forEach(b => {
-      b.classList.toggle('active', b.dataset.btheme === theme);
+      b.classList.toggle('active', b.dataset.btheme === safeTheme);
     });
-    try { localStorage.setItem(STORAGE_KEY, theme); } catch(_) {}
+    try { localStorage.setItem(STORAGE_KEY, safeTheme); } catch(_) {}
+    if (typeof ntlataUpdateSvg === 'function') {
+      try { ntlataUpdateSvg(); } catch(_) {}
+    }
+    if (typeof renderBoard === 'function' && typeof state !== 'undefined' && state && !state.winner && typeof isNTlataVariant === 'function' && isNTlataVariant()) {
+      try { renderBoard(); } catch(_) {}
+    }
   }
 
   // Load saved preference
@@ -23954,6 +24585,176 @@ if (ntlataStyleBtn) ntlataStyleBtn.addEventListener('click', toggleNtlataBoardSt
 })();
 
 
+// ─────────────────────────────────────────────────────────────
+// PWA Install Banner — première ouverture uniquement
+// ─────────────────────────────────────────────────────────────
+(function initPwaBanner() {
+  const BANNER_KEY    = 'tiddas_pwa_banner_shown';
+  const INSTALLED_KEY = 'tiddas_pwa_installed';
+  const DELAY_MS      = 1800; // délai après fermeture du splash
+
+  // Textes multilingues selon navigator.language
+  const bannerI18n = {
+    fr: {
+      title: 'Voulez-vous installer l\'application ?',
+      sub:   'Profitez de Tiddas hors-ligne, comme une vraie app !',
+      btn:   'Installer'
+    },
+    kab: {
+      title: 'Tebɣiḍ ad treṣṣeḍ asnas ?',
+      sub:   'Urar Tiddas s wanwa, am yiwen urar n tidet!',
+      btn:   'Areṣṣi'
+    },
+    en: {
+      title: 'Would you like to install the app?',
+      sub:   'Play Tiddas offline, just like a native app!',
+      btn:   'Install'
+    }
+  };
+
+  function getBannerLang() {
+    // Priorité : langue jeu choisie > navigator.language
+    const gameLang = (function() {
+      try { return localStorage.getItem('tiddas_lang'); } catch(_) { return null; }
+    })();
+    if (gameLang && bannerI18n[gameLang]) return gameLang;
+    const nav = (navigator.language || navigator.userLanguage || 'fr').toLowerCase().slice(0, 2);
+    if (nav === 'fr') return 'fr';
+    if (nav === 'en') return 'en';
+    // Kabyle: 'kab', 'ber', 'zgh', ou toute langue non reconnue → fr par défaut
+    return bannerI18n[nav] ? nav : 'fr';
+  }
+
+  function wasShownOrInstalled() {
+    try {
+      return localStorage.getItem(BANNER_KEY) === '1' ||
+             localStorage.getItem(INSTALLED_KEY) === '1';
+    } catch(_) { return false; }
+  }
+
+  function markShown() {
+    try { localStorage.setItem(BANNER_KEY, '1'); } catch(_) {}
+  }
+
+  const banner       = document.getElementById('pwa-install-banner');
+  const titleEl      = document.getElementById('pwa-banner-title');
+  const subEl        = document.getElementById('pwa-banner-sub');
+  const installBtn   = document.getElementById('pwa-banner-install-btn');
+  const dismissBtn   = document.getElementById('pwa-banner-dismiss-btn');
+
+  if (!banner || !installBtn || !dismissBtn) return;
+
+  let bannerPwaPrompt = null; // prompt capturé localement pour le banner
+
+  function applyBannerTexts() {
+    const lang = getBannerLang();
+    const tr   = bannerI18n[lang] || bannerI18n.fr;
+    if (titleEl)   titleEl.textContent   = tr.title;
+    if (subEl)     subEl.textContent     = tr.sub;
+    if (installBtn) installBtn.textContent = tr.btn;
+  }
+
+  function showBanner() {
+    if (wasShownOrInstalled()) return;
+    applyBannerTexts();
+    banner.hidden = false;
+    // Forcer le reflow pour l'animation CSS
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        banner.classList.add('visible');
+      });
+    });
+    markShown();
+  }
+
+  function hideBanner(fast) {
+    banner.classList.add('hiding');
+    banner.classList.remove('visible');
+    const delay = fast ? 0 : 430;
+    setTimeout(() => {
+      banner.hidden = true;
+      banner.classList.remove('hiding');
+    }, delay);
+  }
+
+  // Écoute beforeinstallprompt pour le banner (en plus du bouton toolbar)
+  window.addEventListener('beforeinstallprompt', (e) => {
+    bannerPwaPrompt = e;
+  });
+
+  // Fermer si déjà installée
+  window.addEventListener('appinstalled', () => {
+    try { localStorage.setItem(INSTALLED_KEY, '1'); } catch(_) {}
+    hideBanner(true);
+  });
+
+  // Bouton Installer du banner
+  installBtn.addEventListener('click', async () => {
+    // Utiliser le prompt capturé par le toolbar (deferredPrompt) ou celui du banner
+    const prompt = (typeof deferredPrompt !== 'undefined' && deferredPrompt) || bannerPwaPrompt;
+    if (prompt) {
+      prompt.prompt();
+      hideBanner();
+      try {
+        const choice = await prompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          if (typeof showToast === 'function')
+            showToast(typeof t === 'function' ? t('toastInstalled', '✅ App installée.') : '✅ App installée.', 1800);
+          try { localStorage.setItem(INSTALLED_KEY, '1'); } catch(_) {}
+        }
+      } catch(_) {}
+      if (typeof deferredPrompt !== 'undefined') window.deferredPrompt = null;
+      bannerPwaPrompt = null;
+    } else {
+      // Fallback : ouvre l'aide install du toolbar
+      hideBanner();
+      if (typeof openInstallHelp === 'function') openInstallHelp();
+    }
+  });
+
+  // Bouton Fermer
+  dismissBtn.addEventListener('click', () => hideBanner());
+
+  // Swipe vers le bas pour fermer (mobile)
+  let touchStartY = 0;
+  banner.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  banner.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy > 50) hideBanner();
+  }, { passive: true });
+
+  // Afficher le banner à la première ouverture
+  // — attend la fermeture du splash langue puis un petit délai
+  if (!wasShownOrInstalled()) {
+    function tryShowAfterSplash() {
+      const splash = document.getElementById('lang-splash');
+      // Si le splash est caché (style.display === 'none' ou pas affiché), on peut montrer le banner
+      if (!splash || splash.style.display === 'none' || !splash.offsetParent) {
+        setTimeout(showBanner, DELAY_MS);
+      } else {
+        // Attendre que le splash disparaisse
+        const observer = new MutationObserver(() => {
+          if (splash.style.display === 'none' || splash.classList.contains('hidden')) {
+            observer.disconnect();
+            setTimeout(showBanner, DELAY_MS);
+          }
+        });
+        observer.observe(splash, { attributes: true, attributeFilter: ['style', 'class'] });
+        // Fallback au cas où
+        setTimeout(() => { observer.disconnect(); showBanner(); }, 8000);
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      tryShowAfterSplash();
+    } else {
+      document.addEventListener('DOMContentLoaded', tryShowAfterSplash, { once: true });
+    }
+  }
+})();
+
 // Service worker
 setTimeout(registerServiceWorker, 1200);
 
@@ -23962,6 +24763,213 @@ setTimeout(registerServiceWorker, 1200);
 })(); // fin IIFE principale
 </script>
 
+
+
+<script>
+(function(){
+  const STORAGE_KEY = 'tiddas_board_theme_v1';
+  const ALL_BTHEMES = ['default','teal','wood','parchment','obsidian','berber','night','sand','jade','crimson'];
+  const THEMES = {
+    teal: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#1e4f62 0%,#153d50 50%,#1a4a5c 100%) !important; border: 5px solid #5bbcd8 !important; border-radius: 10px !important; padding: 7px !important; box-shadow: inset 0 0 28px rgba(0,0,0,.55), inset 0 2px 0 rgba(140,220,255,.12), 0 0 0 2px rgba(91,188,216,.22), 0 12px 36px rgba(0,0,0,.70) !important; gap: 3px !important;',
+        cell: 'background: rgba(80,180,210,.10) !important; border: 1.5px solid rgba(91,188,216,.32) !important; border-radius: 5px !important; box-shadow: inset 0 1px 3px rgba(0,0,0,.30) !important;',
+        hover: 'background: rgba(100,200,230,.22) !important; border-color: rgba(91,188,216,.78) !important; box-shadow: 0 0 10px rgba(91,188,216,.20) !important; transform: scale(1.04) !important;'
+      },
+      ntlata: '--nt-surface:#204a58; --nt-surface-2:#183945; --nt-line:#58c4d9; --nt-node:#7fe6ff; --nt-border:#7ecedf; --nt-glow:rgba(91,188,216,.45);'
+    },
+    wood: {
+      classic: {
+        board: 'background-image: repeating-linear-gradient(88deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px), repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,.035) 4px,rgba(255,255,255,.035) 8px), linear-gradient(145deg,#7a4e28 0%,#5a3618 50%,#6a4220 100%) !important; border: 7px solid #9b6530 !important; border-radius: 14px !important; padding: 8px !important; box-shadow: inset 0 1px 0 rgba(255,230,160,.12), inset 0 -3px 8px rgba(0,0,0,.55), 0 14px 40px rgba(0,0,0,.80) !important; gap: 5px !important;',
+        cell: 'background: rgba(255,255,255,.03) !important; border: 1px solid rgba(255,210,150,.15) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(255,220,170,.10) !important; border-color: rgba(255,205,130,.45) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#7a4e28; --nt-surface-2:#5a3618; --nt-line:#d79a2b; --nt-node:#ffd071; --nt-border:#bf7d3e; --nt-glow:rgba(215,154,43,.40);'
+    },
+    parchment: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#f4ead4 0%,#e7d6b2 55%,#d9c199 100%) !important; border: 5px solid #c3a77d !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 24px rgba(120,82,36,.14), 0 12px 30px rgba(80,55,20,.20) !important; gap: 4px !important;',
+        cell: 'background: rgba(255,255,255,.20) !important; border: 1.5px solid rgba(130,92,43,.18) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(195,167,125,.18) !important; border-color: rgba(130,92,43,.32) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#efe2c7; --nt-surface-2:#dcc39a; --nt-line:#b78a43; --nt-node:#e9c887; --nt-border:#c4a06e; --nt-glow:rgba(183,138,67,.28);'
+    },
+    obsidian: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#171717 0%,#0f0f10 50%,#232323 100%) !important; border: 5px solid #5d5550 !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 30px rgba(255,255,255,.03), 0 12px 36px rgba(0,0,0,.85) !important; gap: 4px !important;',
+        cell: 'background: rgba(255,255,255,.04) !important; border: 1px solid rgba(255,255,255,.08) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(255,255,255,.09) !important; border-color: rgba(234,216,168,.28) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#181818; --nt-surface-2:#0d0d0e; --nt-line:#c7b48b; --nt-node:#f0ddb0; --nt-border:#5f5550; --nt-glow:rgba(234,216,168,.24);'
+    },
+    berber: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#503116 0%,#2f180d 55%,#6e4117 100%) !important; border: 6px solid #c89639 !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 1px 0 rgba(255,220,140,.12), 0 10px 30px rgba(0,0,0,.60) !important; gap: 4px !important;',
+        cell: 'background: rgba(255,210,120,.05) !important; border: 1px solid rgba(230,175,70,.18) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(240,190,90,.13) !important; border-color: rgba(240,190,90,.40) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#503116; --nt-surface-2:#2f180d; --nt-line:#d6a23e; --nt-node:#f0be69; --nt-border:#ba7c33; --nt-glow:rgba(214,162,62,.30);'
+    },
+    night: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#0a1830 0%,#0d2042 55%,#102958 100%) !important; border: 5px solid #3b6db0 !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 24px rgba(160,210,255,.08), 0 12px 36px rgba(0,0,0,.75) !important; gap: 4px !important;',
+        cell: 'background: rgba(120,160,255,.08) !important; border: 1px solid rgba(130,175,255,.18) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(120,160,255,.18) !important; border-color: rgba(140,190,255,.42) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#11224a; --nt-surface-2:#09142e; --nt-line:#6ea4ff; --nt-node:#9ed0ff; --nt-border:#416db0; --nt-glow:rgba(110,164,255,.28);'
+    },
+    sand: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#ecd1a5 0%,#ddb67d 55%,#d0a263 100%) !important; border: 5px solid #b98746 !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 22px rgba(120,70,15,.12), 0 10px 28px rgba(130,75,20,.22) !important; gap: 4px !important;',
+        cell: 'background: rgba(255,255,255,.14) !important; border: 1px solid rgba(140,90,25,.16) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(255,240,210,.18) !important; border-color: rgba(160,100,30,.28) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#e5c089; --nt-surface-2:#d3a86a; --nt-line:#b87b28; --nt-node:#f0c77f; --nt-border:#bf9150; --nt-glow:rgba(184,123,40,.25);'
+    },
+    jade: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#0f3b2c 0%,#104f3b 55%,#14684b 100%) !important; border: 5px solid #3fa06e !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 24px rgba(170,255,210,.06), 0 12px 34px rgba(0,0,0,.65) !important; gap: 4px !important;',
+        cell: 'background: rgba(130,220,170,.08) !important; border: 1px solid rgba(120,215,160,.18) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(130,220,170,.18) !important; border-color: rgba(133,232,178,.38) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#114231; --nt-surface-2:#0b2e22; --nt-line:#4fc88d; --nt-node:#85e8b2; --nt-border:#2f8c61; --nt-glow:rgba(79,200,141,.28);'
+    },
+    crimson: {
+      classic: {
+        board: 'background: linear-gradient(145deg,#4a0e16 0%,#66111e 55%,#821425 100%) !important; border: 5px solid #c44d5d !important; border-radius: 12px !important; padding: 7px !important; box-shadow: inset 0 0 24px rgba(255,200,200,.05), 0 12px 34px rgba(0,0,0,.72) !important; gap: 4px !important;',
+        cell: 'background: rgba(255,170,170,.06) !important; border: 1px solid rgba(255,170,170,.14) !important; border-radius: 6px !important;',
+        hover: 'background: rgba(255,170,170,.16) !important; border-color: rgba(255,152,152,.35) !important; transform: scale(1.03) !important;'
+      },
+      ntlata: '--nt-surface:#5b0f1b; --nt-surface-2:#320812; --nt-line:#e06a78; --nt-node:#ff9898; --nt-border:#ab3d4d; --nt-glow:rgba(224,106,120,.28);'
+    }
+  };
+
+  function styleEl(){
+    let el = document.getElementById('board-theme-runtime-style');
+    if(!el){
+      el = document.createElement('style');
+      el.id = 'board-theme-runtime-style';
+      document.head.appendChild(el);
+    }
+    return el;
+  }
+
+  function runtimeCss(theme){
+    if (!theme || theme === 'default' || !THEMES[theme]) return '';
+    const t = THEMES[theme];
+    return `
+body #board.game-board[data-board-theme="${theme}"]:not(.ntlata-board){${t.classic.board}}
+body #board.game-board[data-board-theme="${theme}"]:not(.ntlata-board) .cell{${t.classic.cell}}
+body #board.game-board[data-board-theme="${theme}"]:not(.ntlata-board) .cell:hover{${t.classic.hover}}
+body #board.game-board[data-board-theme="${theme}"].ntlata-board{${t.ntlata}}
+body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-bg-1{fill:var(--nt-surface) !important;}
+body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-bg-2{fill:var(--nt-surface-2) !important;}
+body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-line{stroke:var(--nt-line) !important;}
+body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fill:var(--nt-node) !important; stroke:var(--nt-border) !important; filter: drop-shadow(0 0 6px var(--nt-glow)) !important;}
+`;
+  }
+
+  function cleanupBodyThemeClasses(){
+    ALL_BTHEMES.forEach(t => {
+      document.body.classList.remove('btheme-' + t);
+      document.documentElement.classList.remove('btheme-' + t);
+    });
+  }
+
+  function sanitize(theme){
+    return ALL_BTHEMES.includes(theme) ? theme : 'default';
+  }
+
+  function applyBoardThemeFinal(theme, persist=true){
+    const board = document.getElementById('board');
+    const grid = document.getElementById('btp-inline-grid');
+    const safeTheme = sanitize(theme || 'default');
+    window.__currentBoardTheme = safeTheme;
+
+    cleanupBodyThemeClasses();
+    document.body.dataset.btheme = safeTheme;
+    document.documentElement.dataset.boardTheme = safeTheme;
+
+    if (safeTheme === 'default') {
+      if (board) board.removeAttribute('data-board-theme');
+    } else {
+      if (board) board.setAttribute('data-board-theme', safeTheme);
+      document.body.classList.add('btheme-' + safeTheme);
+      document.documentElement.classList.add('btheme-' + safeTheme);
+    }
+
+    styleEl().textContent = runtimeCss(safeTheme);
+
+    if (grid) {
+      grid.querySelectorAll('.btp-dot').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.btheme === safeTheme);
+      });
+    }
+
+    if (persist) {
+      try { localStorage.setItem(STORAGE_KEY, safeTheme); } catch (_) {}
+    }
+
+    if (typeof ntlataUpdateSvg === 'function') {
+      try { ntlataUpdateSvg(); } catch (_) {}
+    }
+    if (typeof renderBoard === 'function' && typeof state !== 'undefined' && state && !state.winner) {
+      try { renderBoard(); } catch (_) {}
+    }
+  }
+
+  window.applyBoardThemeFinal = applyBoardThemeFinal;
+
+  document.addEventListener('click', function(ev){
+    const btn = ev.target.closest && ev.target.closest('#btp-inline-grid .btp-dot');
+    if (!btn) return;
+    ev.stopPropagation();
+    applyBoardThemeFinal(btn.dataset.btheme || 'default');
+  }, true);
+
+  const init = () => {
+    let saved = 'default';
+    try { saved = sanitize(localStorage.getItem(STORAGE_KEY) || 'default'); } catch(_) {}
+    applyBoardThemeFinal(saved, false);
+
+    if (typeof renderBoard === 'function' && !window.__boardThemeRenderWrapped) {
+      const original = renderBoard;
+      window.__boardThemeRenderWrapped = true;
+      renderBoard = function(){
+        const result = original.apply(this, arguments);
+        const current = sanitize(window.__currentBoardTheme || 'default');
+        const board = document.getElementById('board');
+        if (board) {
+          if (current === 'default') board.removeAttribute('data-board-theme');
+          else board.setAttribute('data-board-theme', current);
+        }
+        styleEl().textContent = runtimeCss(current);
+        if (typeof ntlataUpdateSvg === 'function') {
+          try { ntlataUpdateSvg(); } catch (_) {}
+        }
+        return result;
+      };
+    }
+
+    const observerTarget = document.getElementById('board');
+    if (observerTarget && !window.__boardThemeObserver) {
+      const obs = new MutationObserver(() => {
+        const current = sanitize(window.__currentBoardTheme || 'default');
+        const board = document.getElementById('board');
+        if (!board) return;
+        if (current === 'default') board.removeAttribute('data-board-theme');
+        else board.setAttribute('data-board-theme', current);
+        styleEl().textContent = runtimeCss(current);
+      });
+      obs.observe(observerTarget, { attributes: true, childList: true, subtree: false, attributeFilter: ['class', 'data-board-theme', 'style'] });
+      window.__boardThemeObserver = obs;
+    }
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once:true });
+  else init();
+})();
+</script>
 
 </body>
 </html>
