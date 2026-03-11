@@ -12718,6 +12718,121 @@ body .game-board.ntlata-board.ntlata-cases-mode[data-board-theme] .cell:hover {
 [data-theme="kabylie"] .ol-action-btn .ol-action-sub {
   color: #6b5740 !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   CORRECTIFS DE VISIBILITÉ — THÈMES CLAIRS (kabylie & desert)
+   Placé EN DERNIER pour garantir la priorité sur tous les overrides
+   précédents qui forcent un fond sombre sur les éléments interactifs.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Mode selection : option-btn ─────────────────────────────── */
+html[data-theme="kabylie"] .option-btn,
+html[data-theme="kabylie"] body .option-btn {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1.5px solid rgba(26,86,219,0.20) !important;
+  color: #1c1409 !important;
+  box-shadow: 0 6px 20px rgba(31,26,18,0.12) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="kabylie"] .option-btn:hover,
+html[data-theme="kabylie"] body .option-btn:hover {
+  background: rgba(26,86,219,0.06) !important;
+  border-color: rgba(26,86,219,0.45) !important;
+  box-shadow: 0 12px 32px rgba(31,26,18,0.16) !important;
+}
+html[data-theme="kabylie"] .option-btn .svg-icon,
+html[data-theme="kabylie"] body .option-btn .svg-icon,
+html[data-theme="kabylie"] .option-btn i,
+html[data-theme="kabylie"] body .option-btn i {
+  color: #b91c1c !important;
+  filter: none !important;
+}
+html[data-theme="kabylie"] .option-btn > span:last-child,
+html[data-theme="kabylie"] body .option-btn > span:last-child {
+  color: #6b5740 !important;
+}
+html[data-theme="kabylie"] .option-btn > span:first-of-type,
+html[data-theme="kabylie"] body .option-btn > span:first-of-type {
+  color: #1c1409 !important;
+}
+
+/* ── Online lobby sections ────────────────────────────────────── */
+html[data-theme="kabylie"] .ol-section,
+html[data-theme="kabylie"] body .ol-section {
+  background: rgba(255,255,255,0.97) !important;
+  border: 1px solid rgba(35,24,10,0.14) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="kabylie"] .ol-section-label,
+html[data-theme="kabylie"] body .ol-section-label,
+html[data-theme="kabylie"] .ol-section-num,
+html[data-theme="kabylie"] body .ol-section-num { color: #92400e !important; }
+
+/* ── Online lobby action buttons ─────────────────────────────── */
+html[data-theme="kabylie"] .ol-action-btn,
+html[data-theme="kabylie"] body .ol-action-btn {
+  background: rgba(255,255,255,0.96) !important;
+  border: 1px solid rgba(35,24,10,0.18) !important;
+  color: #1c1409 !important;
+}
+html[data-theme="kabylie"] .ol-action-btn .ol-action-main,
+html[data-theme="kabylie"] body .ol-action-btn .ol-action-main { color: #1c1409 !important; }
+html[data-theme="kabylie"] .ol-action-btn .ol-action-sub,
+html[data-theme="kabylie"] body .ol-action-btn .ol-action-sub  { color: #6b5740 !important; }
+html[data-theme="kabylie"] .ol-action-create .ol-action-icon,
+html[data-theme="kabylie"] body .ol-action-create .ol-action-icon { color: #92400e !important; }
+html[data-theme="kabylie"] .ol-action-join .ol-action-icon,
+html[data-theme="kabylie"] body .ol-action-join .ol-action-icon  { color: #1a56db !important; }
+html[data-theme="kabylie"] .ol-action-recent .ol-action-icon,
+html[data-theme="kabylie"] body .ol-action-recent .ol-action-icon { color: #1e7e34 !important; }
+
+/* ── DÉSERT : même correctifs ────────────────────────────────── */
+html[data-theme="desert"] .option-btn,
+html[data-theme="desert"] body .option-btn {
+  background: rgba(255,248,228,0.96) !important;
+  border: 1.5px solid rgba(120,70,20,0.22) !important;
+  color: #2c1810 !important;
+  box-shadow: 0 6px 20px rgba(80,50,10,0.12) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="desert"] .option-btn:hover,
+html[data-theme="desert"] body .option-btn:hover {
+  background: rgba(200,140,40,0.10) !important;
+  border-color: rgba(180,100,20,0.45) !important;
+}
+html[data-theme="desert"] .option-btn .svg-icon,
+html[data-theme="desert"] body .option-btn .svg-icon,
+html[data-theme="desert"] .option-btn i,
+html[data-theme="desert"] body .option-btn i {
+  color: #9a4810 !important;
+  filter: none !important;
+}
+html[data-theme="desert"] .option-btn > span:last-child,
+html[data-theme="desert"] body .option-btn > span:last-child { color: #7a5830 !important; }
+html[data-theme="desert"] .option-btn > span:first-of-type,
+html[data-theme="desert"] body .option-btn > span:first-of-type { color: #2c1810 !important; }
+
+html[data-theme="desert"] .ol-section,
+html[data-theme="desert"] body .ol-section {
+  background: rgba(255,248,228,0.97) !important;
+  border: 1px solid rgba(120,70,20,0.16) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="desert"] .ol-action-btn,
+html[data-theme="desert"] body .ol-action-btn {
+  background: rgba(255,248,225,0.96) !important;
+  border: 1px solid rgba(120,70,20,0.20) !important;
+  color: #2c1810 !important;
+}
+html[data-theme="desert"] .ol-action-btn .ol-action-main,
+html[data-theme="desert"] body .ol-action-btn .ol-action-main { color: #2c1810 !important; }
+html[data-theme="desert"] .ol-action-btn .ol-action-sub,
+html[data-theme="desert"] body .ol-action-btn .ol-action-sub  { color: #7a5830 !important; }
+html[data-theme="desert"] .ol-action-create .ol-action-icon,
+html[data-theme="desert"] body .ol-action-create .ol-action-icon { color: #9a4810 !important; }
+html[data-theme="desert"] .ol-action-join .ol-action-icon,
+html[data-theme="desert"] body .ol-action-join .ol-action-icon  { color: #1a6e34 !important; }
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
