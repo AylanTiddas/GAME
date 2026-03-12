@@ -993,6 +993,19 @@ overflow: hidden;
 z-index: 2;
 box-sizing: border-box;
 }
+.game-board.board-flipped {
+transform: rotate(180deg);
+transform-origin: center center;
+}
+.game-board.board-flipped .stone,
+.game-board.board-flipped .cell::before,
+.game-board.board-flipped .cell::after,
+.game-board.board-flipped .stone::before,
+.game-board.board-flipped .stone::after {
+transform: rotate(180deg);
+transform-origin: center center;
+}
+
 .player-info {
 display: flex;
 flex-direction: column;
@@ -1479,7 +1492,7 @@ opacity: 0;
 filter: blur(5px);
 }
 }
-/* ── Dames Turques : Dame (King) ── */
+/* ── Dames kabyle : Dame (King) ── */
 .stone.king {
   box-shadow: 0 0 0 3px gold, 0 min(2.8vw,14px) min(7vw,35px) rgba(0,0,0,0.8), inset 0 min(-1.8vw,-9px) min(4.5vw,22px) rgba(0,0,0,0.4);
 }
@@ -1496,16 +1509,16 @@ filter: blur(5px);
   z-index: 4;
   line-height: 1;
 }
-/* Pour la Damma (Turkish Draughts) : les symboles dame sont gérés via ::before
+/* Pour la Damma (Kabylian Draughts) : les symboles dame sont gérés via ::before
    sur .player1.king et .player2.king — annuler le ::after générique */
-.game-board.turkish-draughts-board .cell .stone.king::after {
+.game-board.Kabylian-draughts-board .cell .stone.king::after {
   content: '' !important;
   background: none !important;
   opacity: 0 !important;
 }
 
-/* ── Dames Turques : Plateau 5×5 ── */
-.game-board.turkish-draughts-board {
+/* ── Dames kabyle : Plateau 5×5 ── */
+.game-board.Kabylian-draughts-board {
   grid-template-columns: repeat(5, 1fr) !important;
   grid-template-rows:    repeat(5, 1fr) !important;
   background: #b5651d;
@@ -1513,7 +1526,7 @@ filter: blur(5px);
   border-radius: 6px;
   gap: 0;
 }
-.game-board.turkish-draughts-board .cell {
+.game-board.Kabylian-draughts-board .cell {
   border-radius: 0;
   border: none;
   display: flex;
@@ -1525,24 +1538,24 @@ filter: blur(5px);
   position: relative;
 }
 /* Cases claires */
-.game-board.turkish-draughts-board .cell:not(.dark-cell) {
+.game-board.Kabylian-draughts-board .cell:not(.dark-cell) {
   background: #f0d9b5;
 }
 /* Cases sombres */
-.game-board.turkish-draughts-board .cell.dark-cell {
+.game-board.Kabylian-draughts-board .cell.dark-cell {
   background: #b58863;
 }
-.game-board.turkish-draughts-board .cell:not(.dark-cell):hover,
-.game-board.turkish-draughts-board .cell.dark-cell:hover {
+.game-board.Kabylian-draughts-board .cell:not(.dark-cell):hover,
+.game-board.Kabylian-draughts-board .cell.dark-cell:hover {
   filter: brightness(1.12);
 }
 /* Case sélectionnée */
-.game-board.turkish-draughts-board .cell.selected {
+.game-board.Kabylian-draughts-board .cell.selected {
   background: rgba(240, 200, 80, 0.55) !important;
   box-shadow: inset 0 0 0 3px rgba(240, 200, 80, 0.9);
 }
 /* Destinations possibles */
-.game-board.turkish-draughts-board .cell.possible-move::before {
+.game-board.Kabylian-draughts-board .cell.possible-move::before {
   content: '';
   position: absolute;
   width: 38%;
@@ -1553,15 +1566,15 @@ filter: blur(5px);
   pointer-events: none;
   z-index: 3;
 }
-.game-board.turkish-draughts-board .cell.possible-move:has(.stone)::before {
+.game-board.Kabylian-draughts-board .cell.possible-move:has(.stone)::before {
   background: rgba(0, 200, 120, 0.28);
   width: 100%;
   height: 100%;
   border-radius: 0;
   box-shadow: inset 0 0 0 3px rgba(0,200,120,0.7);
 }
-/* Pions du plateau de Dames Turques — plus grands */
-.game-board.turkish-draughts-board .cell .stone {
+/* Pions du plateau de Dames Kabyle — plus grands */
+.game-board.Kabylian-draughts-board .cell .stone {
   width: 78%;
   height: 78%;
   border-radius: 50%;
@@ -1570,25 +1583,25 @@ filter: blur(5px);
   flex-shrink: 0;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.game-board.turkish-draughts-board .cell .stone:hover,
-.game-board.turkish-draughts-board .cell.selected .stone {
+.game-board.Kabylian-draughts-board .cell .stone:hover,
+.game-board.Kabylian-draughts-board .cell.selected .stone {
   transform: scale(1.08);
 }
 /* Joueur 1 (foncé) */
-.game-board.turkish-draughts-board .cell .stone.player1 {
+.game-board.Kabylian-draughts-board .cell .stone.player1 {
   background: radial-gradient(circle at 35% 32%, #555, #1a1a1a 70%);
   box-shadow: 0 5px 14px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.45), inset 0 5px 8px rgba(255,255,255,0.12);
   border: 2px solid rgba(0,0,0,0.35);
 }
 /* Joueur 2 (clair) */
-.game-board.turkish-draughts-board .cell .stone.player2 {
+.game-board.Kabylian-draughts-board .cell .stone.player2 {
   background: radial-gradient(circle at 35% 32%, #ffffff, #d0c8b8 70%);
   box-shadow: 0 5px 14px rgba(0,0,0,0.45), inset 0 -4px 8px rgba(0,0,0,0.20), inset 0 5px 8px rgba(255,255,255,0.60);
   border: 2px solid rgba(180,160,120,0.55);
 }
 /* Reflet sur les pions */
 /* Reflet sur les pions (non-kings seulement) */
-.game-board.turkish-draughts-board .cell .stone:not(.king)::after {
+.game-board.Kabylian-draughts-board .cell .stone:not(.king)::after {
   content: '';
   position: absolute;
   inset: 10% 16% auto 16%;
@@ -1598,8 +1611,8 @@ filter: blur(5px);
   opacity: 0.7;
   pointer-events: none;
 }
-/* Dame (King) sur plateau Dames Turques — supprime le reflet standard */
-.game-board.turkish-draughts-board .cell .stone.king::after {
+/* Dame (King) sur plateau Dames Kabyle — supprime le reflet standard */
+.game-board.Kabylian-draughts-board .cell .stone.king::after {
   content: '';
   inset: unset;
   height: unset;
@@ -1607,7 +1620,7 @@ filter: blur(5px);
   opacity: 0;
 }
 /* Symbole dame J1 (⚫ → ♚) via before */
-.game-board.turkish-draughts-board .cell .stone.player1.king::before {
+.game-board.Kabylian-draughts-board .cell .stone.player1.king::before {
   content: '♚';
   position: absolute;
   top: 50%; left: 50%;
@@ -1620,7 +1633,7 @@ filter: blur(5px);
   z-index: 4;
 }
 /* Symbole dame J2 (⚪ → ♔) via before */
-.game-board.turkish-draughts-board .cell .stone.player2.king::before {
+.game-board.Kabylian-draughts-board .cell .stone.player2.king::before {
   content: '♔';
   position: absolute;
   top: 50%; left: 50%;
@@ -1633,12 +1646,12 @@ filter: blur(5px);
   z-index: 4;
 }
 /* Anneau doré autour des dames */
-.game-board.turkish-draughts-board .cell .stone.king {
+.game-board.Kabylian-draughts-board .cell .stone.king {
   box-shadow: 0 0 0 2.5px rgba(240,200,80,0.85), 0 5px 14px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.4);
   outline: 1.5px solid rgba(240,200,80,0.35);
   outline-offset: 2px;
 }
-/* Pions capturables en dames turques */
+/* Pions capturables en dames Kabyle */
 .cell.capturable .stone {
   outline: 3px solid var(--danger-red);
   outline-offset: 2px;
@@ -1998,413 +2011,525 @@ padding: 1.2rem 1.1rem 1.4rem;
 flex-direction: column;
 }
 }
-/* ═══════════════════════════════════════
-           WINNER OVERLAY — redesign complet
-        ═══════════════════════════════════════ */
-@keyframes winnerFadeIn {
-from { opacity: 0; backdrop-filter: blur(0px); }
-to   { opacity: 1; backdrop-filter: blur(22px); }
-}
-@keyframes woCardUp {
-from { opacity:0; transform: translateY(56px) scale(.92); filter:blur(4px); }
-60%  { transform: translateY(-6px) scale(1.01); filter:blur(0); }
-to   { opacity:1; transform: translateY(0) scale(1); filter:blur(0); }
-}
-@keyframes woTrophyPop {
-0%   { opacity:0; transform: scale(.2) rotate(-20deg); }
-60%  { transform: scale(1.25) rotate(6deg); }
-80%  { transform: scale(.95) rotate(-2deg); }
-100% { opacity:1; transform: scale(1) rotate(0); }
-}
-@keyframes woLabelIn {
-from { opacity:0; transform:translateY(-12px) letterSpacing:0.3em; }
-to   { opacity:1; transform:translateY(0); }
-}
-@keyframes woSubIn {
-from { opacity:0; transform:translateX(18px); }
-to   { opacity:1; transform:translateX(0); }
-}
-@keyframes woNamePop {
-0%   { opacity:0; transform:scale(.55) translateY(10px); }
-70%  { transform:scale(1.04) translateY(-2px); }
-100% { opacity:1; transform:scale(1) translateY(0); }
-}
-@keyframes woDivExpand {
-from { opacity:0; transform:scaleX(0); }
-to   { opacity:1; transform:scaleX(1); }
-}
-@keyframes woActionsIn {
-from { opacity:0; transform:translateY(22px); }
-to   { opacity:1; transform:translateY(0); }
-}
-@keyframes woPulseRing {
-0%,100% { transform:scale(1); opacity:.4; }
-50%     { transform:scale(1.4); opacity:0; }
-}
-@keyframes woGemSpin {
-0%   { transform:rotate(0deg) scale(1); }
-50%  { transform:rotate(180deg) scale(1.5); }
-100% { transform:rotate(360deg) scale(1); }
-}
-@keyframes woParticle {
-0%   { transform:translateY(0) rotate(0deg) scale(1); opacity:.85; }
-80%  { opacity:.3; }
-100% { transform:translateY(-110vh) rotate(600deg) scale(.4); opacity:0; }
-}
-@keyframes woShake {
-0%,100% { transform:translateX(0); }
-20%  { transform:translateX(-9px) rotate(-1.5deg); }
-40%  { transform:translateX(9px) rotate(1.5deg); }
-60%  { transform:translateX(-5px); }
-80%  { transform:translateX(4px); }
-}
-@keyframes woBeamSweep {
-0%   { transform:translateX(-100%) skewX(-20deg); opacity:.7; }
-100% { transform:translateX(350%) skewX(-20deg); opacity:0; }
-}
-@keyframes woStatsIn {
-from { opacity:0; transform:translateY(14px) scale(.95); }
-to   { opacity:1; transform:translateY(0) scale(1); }
-}
-@keyframes woBorderGlow {
-0%,100% { opacity:.55; }
-50%     { opacity:1; }
-}
+/* ═══════════════════════════════════════════════════════════════
+   WINNER OVERLAY — REFONTE COMPLÈTE — Thèmes multiples
+   ═══════════════════════════════════════════════════════════════ */
 
+/* ── Keyframes globaux ───────────────────────────────────────── */
+@keyframes woFadeIn     { from{opacity:0} to{opacity:1} }
+@keyframes woSlideUp    { from{opacity:0;transform:translateY(32px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes woPopIn      { 0%{opacity:0;transform:scale(.5) rotate(-12deg)} 65%{transform:scale(1.12) rotate(4deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes woNameReveal { from{opacity:0;transform:translateY(14px);letter-spacing:.5em} to{opacity:1;transform:translateY(0);letter-spacing:inherit} }
+@keyframes woShake      { 0%,100%{transform:translateX(0)} 18%{transform:translateX(-10px) rotate(-1deg)} 36%{transform:translateX(10px) rotate(1deg)} 54%{transform:translateX(-6px)} 72%{transform:translateX(5px)} }
+@keyframes woBeam       { 0%{transform:translateX(-130%) skewX(-18deg);opacity:.6} 100%{transform:translateX(280%) skewX(-18deg);opacity:0} }
+@keyframes woPulse      { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:.12;transform:scale(2)} }
+@keyframes woSpin       { from{transform:rotate(45deg)} to{transform:rotate(405deg)} }
+@keyframes woBreathe    { 0%,100%{opacity:.6;transform:scaleX(1)} 50%{opacity:1;transform:scaleX(1.04)} }
+@keyframes woChipIn     { from{opacity:0;transform:translateY(10px) scale(.9)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes woActIn      { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes woRingOut    { 0%{opacity:0;width:60px;height:60px;margin-left:-30px;margin-top:-30px} 25%{opacity:.28} 100%{opacity:0;width:550px;height:550px;margin-left:-275px;margin-top:-275px} }
+@keyframes slideInUp    { from{transform:translateY(50px);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes zoomIn       { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes fadeIn       { from{opacity:0} to{opacity:1} }
+
+/* ── Structure de base ──────────────────────────────────────── */
 .winner-overlay {
-position: fixed;
-inset: 0;
-z-index: 1001;
-display: flex;
-align-items: center;
-justify-content: center;
-opacity: 0;
-pointer-events: none;
-transition: opacity .4s ease;
---woa:  #f0c850;
---woa2: #e88c30;
---wog:  rgba(240,200,80,.5);
---wobg1: rgba(10,8,6,.97);
---wobg2: rgba(18,14,10,.94);
---wocb: rgba(240,200,80,.3);
---wosub: #e8c87a;
---wotxt: rgba(255,248,220,.85);
---wotxt2: rgba(255,248,220,.55);
+  position: fixed; inset: 0; z-index: 1001;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .35s ease;
+  --wo-accent:   #f0c850;
+  --wo-accent2:  #c8841a;
+  --wo-glow:     rgba(240,200,80,.45);
+  --wo-bg:       rgba(8,6,3,.93);
+  --wo-card-bg:  rgba(16,11,5,.96);
+  --wo-card-b:   rgba(240,200,80,.28);
+  --wo-txt:      rgba(252,244,210,.9);
+  --wo-txt2:     rgba(230,208,150,.58);
+  --wo-btn-txt:  #140900;
+  --wo-chip-bg:  rgba(240,200,80,.08);
+  --wo-chip-b:   rgba(240,200,80,.2);
+  --wo-sep:      rgba(240,200,80,.22);
+  --wo-radius:   24px;
+  --wo-blur:     28px;
 }
 .winner-overlay.active {
-opacity:1;
-pointer-events:all;
-animation: winnerFadeIn .45s ease-out forwards;
-}
-.winner-overlay.wo-defeat {
---woa:  #7ab8ff;
---woa2: #4480e0;
---wog:  rgba(100,160,255,.45);
---wobg1: rgba(4,8,22,.97);
---wobg2: rgba(8,14,38,.94);
---wocb: rgba(100,160,255,.3);
---wosub: #96c0ff;
---wotxt: rgba(200,218,255,.88);
---wotxt2: rgba(180,200,255,.50);
+  opacity: 1; pointer-events: all;
+  animation: woFadeIn .4s ease-out forwards;
 }
 
-/* ── Fond scène ─────────────────────────────────── */
+/* ── Fond backdrop ──────────────────────────────────────────── */
 .wo-bg {
-position: absolute; inset: 0;
-background:
-  radial-gradient(ellipse 70% 55% at 50% 35%, rgba(240,200,80,.07), transparent 70%),
-  rgba(6,4,3,.88);
-backdrop-filter: blur(22px) saturate(1.2);
--webkit-backdrop-filter: blur(22px) saturate(1.2);
+  position: absolute; inset: 0; overflow: hidden;
+  background: var(--wo-bg);
+  backdrop-filter: blur(var(--wo-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--wo-blur)) saturate(1.4);
 }
-.winner-overlay.wo-defeat .wo-bg {
-background:
-  radial-gradient(ellipse 70% 55% at 50% 35%, rgba(80,130,255,.07), transparent 70%),
-  rgba(3,4,10,.88);
+.wo-bg::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 60% 45% at 50% 30%, var(--wo-glow), transparent 65%);
+  opacity:.55; pointer-events:none;
 }
-
-/* ── Particules ─────────────────────────────────── */
-.wo-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-.wo-particles .p {
-position:absolute; border-radius:50%;
-animation: woParticle linear infinite;
+.wo-bg::after {
+  content:''; position:absolute; border-radius:50%;
+  border:1px solid var(--wo-accent);
+  top:50%; left:50%;
+  animation: woRingOut 3.6s ease-out .7s infinite;
+  pointer-events:none; opacity:0;
 }
 
-/* ── CARTE ────────────────────────────────────────── */
+/* ── CARTE ──────────────────────────────────────────────────── */
 .wo-card {
-position: relative;
-z-index: 2;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: clamp(.75rem, 1.8vh, 1.1rem);
-padding: clamp(1.8rem,4.5vw,2.8rem) clamp(1.8rem,6vw,3.8rem) clamp(1.6rem,4vw,2.4rem);
-/* glassmorphism */
-background:
-  linear-gradient(155deg, rgba(255,255,255,.055) 0%, rgba(0,0,0,0) 55%),
-  linear-gradient(to bottom, rgba(255,255,255,.025), rgba(0,0,0,.15)),
-  rgba(14,10,6,.92);
-backdrop-filter: blur(32px) saturate(1.4);
--webkit-backdrop-filter: blur(32px) saturate(1.4);
-border: 1px solid rgba(255,255,255,.08);
-border-radius: 28px;
-max-width: min(460px, 90vw);
-width: 100%;
-opacity:0;
-animation: woCardUp .7s cubic-bezier(.22,1,.36,1) .15s forwards;
-overflow: hidden;
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(.65rem,1.6vh,1rem);
+  padding: clamp(1.6rem,4vw,2.6rem) clamp(1.6rem,5.5vw,3.4rem) clamp(1.4rem,3.5vw,2.2rem);
+  background: var(--wo-card-bg);
+  border: 1px solid var(--wo-card-b);
+  border-radius: var(--wo-radius);
+  max-width: min(440px, 92vw); width: 100%;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04),
+              0 24px 70px rgba(0,0,0,.75),
+              0 0 60px var(--wo-glow);
+  opacity: 0;
+  animation: woSlideUp .65s cubic-bezier(.22,1,.36,1) .2s forwards;
+  overflow: hidden;
 }
-/* Bord lumineux (pseudo-élément) */
-.wo-card::before {
-content:'';
-position:absolute; inset:0;
-border-radius: 28px;
-padding: 1px;
-background: linear-gradient(140deg, var(--woa) 0%, transparent 40%, transparent 60%, var(--woa2) 100%);
--webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
--webkit-mask-composite: xor;
-mask-composite: exclude;
-pointer-events:none;
-opacity: .55;
-animation: woBorderGlow 3s ease-in-out infinite;
-}
-/* Bandeau coloré en haut */
 .wo-card::after {
-content:'';
-position:absolute; inset:0 0 auto 0;
-height: 3px;
-background: linear-gradient(90deg, transparent 0%, var(--woa) 40%, var(--woa2) 60%, transparent 100%);
-border-radius: 28px 28px 0 0;
-opacity: .9;
+  content:''; position:absolute; inset:0 0 auto 0; height:3px;
+  background: linear-gradient(90deg, transparent, var(--wo-accent) 35%, var(--wo-accent2) 65%, transparent);
+  border-radius: var(--wo-radius) var(--wo-radius) 0 0;
+  animation: woBreathe 2.8s ease-in-out 1s infinite;
 }
-/* Carte défaite : shake */
+.wo-card::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: linear-gradient(145deg, rgba(255,255,255,.045) 0%, transparent 45%);
+  border-radius: var(--wo-radius);
+}
 .winner-overlay.wo-defeat .wo-card {
-animation: woCardUp .7s cubic-bezier(.22,1,.36,1) .15s forwards, woShake .65s ease-out .85s 1;
+  animation: woSlideUp .65s cubic-bezier(.22,1,.36,1) .2s forwards,
+             woShake .6s ease-out .9s 1;
 }
 
-/* ── Trophée ────────────────────────────────────── */
+/* ── Icône résultat ─────────────────────────────────────────── */
 .wo-trophy {
-font-size: clamp(2.6rem, 8vw, 3.8rem);
-line-height:1;
-filter: drop-shadow(0 0 20px var(--wog));
-opacity:0;
-animation: woTrophyPop .7s cubic-bezier(.34,1.56,.64,1) .6s forwards;
-position:relative;
+  font-size: clamp(2.8rem,9vw,4rem); line-height:1;
+  opacity:0; animation: woPopIn .65s cubic-bezier(.34,1.56,.64,1) .65s forwards;
+  position:relative;
+  filter: drop-shadow(0 0 18px var(--wo-glow));
 }
-.wo-trophy::before, .wo-trophy::after {
-content:''; position:absolute; inset:-10px;
-border-radius:50%; border:1px solid var(--wog);
+.wo-trophy::before {
+  content:''; position:absolute; inset:-14px; border-radius:50%;
+  border:1px solid var(--wo-accent); opacity:.5;
+  animation: woPulse 2.8s ease-out 1.4s infinite;
 }
-.wo-trophy::before { animation: woPulseRing 2.6s ease-out 1.3s infinite; }
-.wo-trophy::after  { animation: woPulseRing 2.6s ease-out 1.9s infinite; }
 
-/* ── Zone résultat ─────────────────────────────── */
-.wo-result { display:flex; flex-direction:column; align-items:center; gap:.2rem; }
-
+/* ── Étiquettes ─────────────────────────────────────────────── */
+.wo-result { display:flex; flex-direction:column; align-items:center; gap:.18rem; }
 .winner-overlay .winner-message {
-font-family: var(--font-title);
-font-size: clamp(.72rem, 2vw, .88rem);
-font-weight: 700;
-letter-spacing: .22em;
-text-transform: uppercase;
-color: var(--wotxt2);
-opacity:0;
-animation: woLabelIn .5s ease-out 1.05s forwards;
-margin:0;
+  font-family: var(--font-title);
+  font-size: clamp(.68rem,1.8vw,.82rem);
+  font-weight: 700; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--wo-txt2); margin:0;
+  opacity:0; animation: woFadeIn .45s ease-out 1.1s forwards;
 }
 .wo-result-sub {
-font-family: var(--font-title);
-font-size: clamp(.6rem, 1.7vw, .75rem);
-font-weight: 500;
-letter-spacing: .16em;
-text-transform: uppercase;
-color: var(--woa);
-opacity:0;
-animation: woSubIn .5s ease-out 1.3s forwards;
+  font-family: var(--font-title);
+  font-size: clamp(.6rem,1.6vw,.72rem);
+  font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--wo-accent);
+  opacity:0; animation: woFadeIn .45s ease-out 1.35s forwards;
 }
 
-/* ── Nom du gagnant ─────────────────────────────── */
+/* ── Nom du gagnant ─────────────────────────────────────────── */
 .winner-overlay .winner-name {
-font-family: var(--font-title);
-font-size: clamp(1.55rem, 6.5vw, 2.8rem) !important;
-font-weight: 900 !important;
-color: var(--woa);
-text-align:center;
-line-height:1.15;
-text-shadow: 0 0 28px var(--wog), 0 3px 10px rgba(0,0,0,.7) !important;
-letter-spacing: -.01em;
-opacity:0;
-animation: woNamePop .7s cubic-bezier(.34,1.56,.64,1) 1.45s forwards;
+  font-family: var(--font-title);
+  font-size: clamp(1.6rem,6.5vw,2.9rem) !important;
+  font-weight: 900 !important; color: var(--wo-accent);
+  text-align:center; line-height:1.12;
+  text-shadow: 0 0 32px var(--wo-glow), 0 2px 12px rgba(0,0,0,.65) !important;
+  opacity:0; animation: woNameReveal .7s cubic-bezier(.22,1,.36,1) 1.55s forwards;
 }
 
-/* ── Stats chips ────────────────────────────────── */
+/* ── Stats chips ────────────────────────────────────────────── */
 .wo-stats {
-display:flex; gap:10px; align-items:center; justify-content:center;
-flex-wrap:wrap;
-opacity:0;
-animation: woStatsIn .5s ease-out 1.8s forwards;
+  display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;
+  opacity:0; animation: woChipIn .45s ease-out 1.85s forwards;
 }
 .wo-chip {
-display:flex; align-items:center; gap:5px;
-padding:.28rem .75rem;
-background: rgba(255,255,255,.055);
-border: 1px solid rgba(255,255,255,.1);
-border-radius: 99px;
-font-family: var(--font-ui);
-font-size: clamp(.65rem,1.8vw,.78rem);
-font-weight: 600;
-color: var(--wotxt2);
-letter-spacing:.02em;
+  display:flex; align-items:center; gap:5px;
+  padding:.26rem .7rem;
+  background: var(--wo-chip-bg); border: 1px solid var(--wo-chip-b); border-radius: 99px;
+  font-family: var(--font-ui); font-size: clamp(.63rem,1.7vw,.76rem);
+  font-weight: 600; color: var(--wo-txt2); letter-spacing:.02em;
 }
-.wo-chip .wo-chip-val {
-color: var(--woa);
-font-weight: 700;
-font-size: 1.05em;
-}
+.wo-chip .wo-chip-val { color: var(--wo-accent); font-weight:700; font-size:1.06em; }
 
-/* ── Séparateur ─────────────────────────────────── */
+/* ── Séparateur ─────────────────────────────────────────────── */
 .wo-divider {
-display:flex; align-items:center; gap:10px;
-width:72%;
-opacity:0;
-animation: woDivExpand .45s ease-out 2s forwards;
+  display:flex; align-items:center; gap:10px; width:68%;
+  opacity:0; animation: woFadeIn .4s ease-out 2.05s forwards;
 }
-.wo-divider span {
-flex:1; height:1px;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
-}
+.wo-divider span { flex:1; height:1px; background: linear-gradient(90deg, transparent, var(--wo-sep), transparent); }
 .wo-gem {
-width:6px; height:6px;
-background: var(--woa);
-transform:rotate(45deg);
-box-shadow: 0 0 8px var(--wog);
-animation: woGemSpin 3.5s ease-in-out 2.2s infinite;
-flex-shrink:0;
+  width:5px; height:5px; background: var(--wo-accent);
+  transform:rotate(45deg); flex-shrink:0;
+  box-shadow: 0 0 7px var(--wo-glow);
+  animation: woSpin 4s linear 2.2s infinite;
 }
 
-/* ── Boutons ─────────────────────────────────────── */
+/* ── Boutons ─────────────────────────────────────────────────── */
 .wo-actions {
-display:flex; flex-direction:column; align-items:center;
-gap:9px; width:100%;
-opacity:0;
-animation: woActionsIn .55s ease-out 2.1s forwards;
+  display:flex; flex-direction:column; align-items:center;
+  gap:8px; width:100%;
+  opacity:0; animation: woActIn .5s ease-out 2.15s forwards;
 }
-.wo-row {
-display:flex; flex-wrap:wrap; gap:8px;
-width:100%; justify-content:center;
-}
-
-/* Bouton principal */
+.wo-row { display:flex; flex-wrap:wrap; gap:8px; width:100%; justify-content:center; }
 .winner-overlay .replay-button {
-border:none; cursor:pointer;
-font-family: var(--font-title);
-font-weight: 700;
-border-radius: 14px;
-transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-position:relative; overflow:hidden;
+  border:none; cursor:pointer; font-family: var(--font-title);
+  font-weight: 700; border-radius: 13px;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  position:relative; overflow:hidden;
 }
 .winner-overlay .replay-button:not(.secondary) {
-width:100%;
-padding:.9rem 1.5rem;
-font-size: clamp(.9rem, 3vw, 1.1rem) !important;
-background: linear-gradient(135deg, var(--woa) 0%, var(--woa2) 100%);
-color: #12090200;
-color: #160a02;
-box-shadow: 0 4px 20px var(--wog), 0 2px 8px rgba(0,0,0,.45);
-letter-spacing:.04em;
-text-transform: uppercase;
-}
-/* Reflet animé sur le bouton principal */
-.winner-overlay .replay-button:not(.secondary)::before {
-content:'';
-position:absolute; inset:0;
-background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 55%);
-pointer-events:none;
+  width:100%; padding:.88rem 1.4rem;
+  font-size: clamp(.88rem,2.8vw,1.05rem) !important;
+  background: linear-gradient(130deg, var(--wo-accent) 0%, var(--wo-accent2) 100%);
+  color: var(--wo-btn-txt) !important;
+  box-shadow: 0 4px 22px var(--wo-glow), 0 2px 6px rgba(0,0,0,.4);
+  letter-spacing:.05em; text-transform: uppercase;
 }
 .winner-overlay .replay-button:not(.secondary)::after {
-content:'';
-position:absolute; top:0; left:-60%; width:40%; height:100%;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-animation: woBeamSweep 2.8s ease-in-out 2.6s infinite;
-pointer-events:none;
+  content:''; position:absolute; top:0; left:-70%; width:42%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+  animation: woBeam 3s ease-in-out 2.7s infinite; pointer-events:none;
 }
 .winner-overlay .replay-button:not(.secondary):hover {
-transform: translateY(-3px) scale(1.02);
-box-shadow: 0 10px 32px var(--wog), 0 4px 14px rgba(0,0,0,.5);
-filter: brightness(1.1);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 36px var(--wo-glow), 0 4px 14px rgba(0,0,0,.5);
+  filter: brightness(1.08);
 }
-.winner-overlay .replay-button:not(.secondary):active {
-transform:scale(.98);
-}
-
-/* Boutons secondaires */
+.winner-overlay .replay-button:not(.secondary):active { transform:scale(.97); }
 .winner-overlay .replay-button.secondary {
-flex:1;
-padding:.65rem 1rem;
-font-size: clamp(.75rem, 2vw, .88rem) !important;
-background: rgba(255,255,255,.05);
-color: var(--wotxt);
-border: 1px solid rgba(255,255,255,.1) !important;
-box-shadow: 0 2px 8px rgba(0,0,0,.3);
-font-family: var(--font-ui) !important;
-font-weight: 600 !important;
-letter-spacing:.02em;
-display:flex; align-items:center; justify-content:center; gap:6px;
+  flex:1; padding:.62rem 1rem;
+  font-size: clamp(.72rem,1.9vw,.85rem) !important;
+  background: var(--wo-chip-bg); color: var(--wo-txt) !important;
+  border: 1px solid var(--wo-card-b) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  font-family: var(--font-ui) !important; font-weight: 600 !important; letter-spacing:.02em;
+  display:flex; align-items:center; justify-content:center; gap:6px;
 }
 .winner-overlay .replay-button.secondary:hover:not(:disabled) {
-transform:translateY(-2px);
-background:rgba(255,255,255,.09);
-border-color:rgba(255,255,255,.22) !important;
-color:#fff;
+  transform:translateY(-2px); background: rgba(255,255,255,.08);
+  border-color: var(--wo-sep) !important; color:#fff !important;
 }
-.winner-overlay .replay-button.secondary:active:not(:disabled) {
-transform:scale(.97);
+.winner-overlay .replay-button.secondary:active:not(:disabled) { transform:scale(.97); }
+.winner-overlay .replay-button.secondary:disabled { opacity:.25 !important; cursor:not-allowed; }
+
+/* ══════════════════════════════════════════════════════════════
+   THÈMES — PALETTES DÉDIÉES FIN DE PARTIE
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── KABYLIE : Berbère solaire — ivoire chaud, saphir, or miel ─ */
+[data-theme="kabylie"] .winner-overlay {
+  --wo-accent:   #c8840a;
+  --wo-accent2:  #1a56db;
+  --wo-glow:     rgba(200,132,10,.35);
+  --wo-bg:       rgba(250,244,228,.97);
+  --wo-card-bg:  rgba(255,251,238,.99);
+  --wo-card-b:   rgba(200,132,10,.32);
+  --wo-txt:      #1c1409;
+  --wo-txt2:     #7a5020;
+  --wo-btn-txt:  #ffffff;
+  --wo-chip-bg:  rgba(200,132,10,.09);
+  --wo-chip-b:   rgba(200,132,10,.26);
+  --wo-sep:      rgba(200,132,10,.28);
+  --wo-blur:     0px;
+  --wo-radius:   22px;
 }
-.winner-overlay .replay-button.secondary:disabled {
-opacity:.28 !important;
-cursor:not-allowed;
+[data-theme="kabylie"] .wo-bg {
+  background: linear-gradient(160deg, #fdf6e0 0%, #f5e8c0 100%);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
 }
-80% {
-transform: translateX(5px)
+[data-theme="kabylie"] .wo-bg::before {
+  background: radial-gradient(ellipse 55% 40% at 50% 28%, rgba(200,132,10,.16), transparent 65%);
 }
+[data-theme="kabylie"] .wo-bg::after { border-color: rgba(200,132,10,.3); }
+[data-theme="kabylie"] .wo-card {
+  background: #fffcf0;
+  box-shadow: 0 0 0 1px rgba(200,132,10,.08), 0 20px 60px rgba(140,90,10,.18), 0 0 35px rgba(200,132,10,.12);
 }
-@keyframes slideInUp {
-from {
-transform: translateY(50px);
-opacity: 0
+[data-theme="kabylie"] .wo-card::after {
+  background: linear-gradient(90deg, transparent, #c8840a 35%, #1a56db 65%, transparent);
+}
+[data-theme="kabylie"] .winner-overlay .winner-name {
+  text-shadow: 0 0 20px rgba(200,132,10,.45), 0 2px 6px rgba(0,0,0,.12) !important;
+}
+[data-theme="kabylie"] .winner-overlay.wo-defeat {
+  --wo-accent:   #1a56db;
+  --wo-accent2:  #7c3aed;
+  --wo-glow:     rgba(26,86,219,.28);
+  --wo-card-b:   rgba(26,86,219,.24);
+  --wo-chip-bg:  rgba(26,86,219,.07);
+  --wo-chip-b:   rgba(26,86,219,.2);
+  --wo-sep:      rgba(26,86,219,.22);
 }
 
-to {
-transform: translateY(0);
-opacity: 1
+/* ── DESERT : Parchemin brûlé — ambre, brique, sable profond ── */
+[data-theme="desert"] .winner-overlay {
+  --wo-accent:   #e07820;
+  --wo-accent2:  #8b3010;
+  --wo-glow:     rgba(224,120,32,.4);
+  --wo-bg:       rgba(6,3,1,.94);
+  --wo-card-bg:  rgba(22,10,3,.97);
+  --wo-card-b:   rgba(224,120,32,.26);
+  --wo-txt:      rgba(252,230,190,.9);
+  --wo-txt2:     rgba(220,170,100,.58);
+  --wo-btn-txt:  #0e0500;
+  --wo-chip-bg:  rgba(224,120,32,.09);
+  --wo-chip-b:   rgba(224,120,32,.22);
+  --wo-sep:      rgba(224,120,32,.26);
+  --wo-blur:     26px;
 }
+[data-theme="desert"] .wo-bg {
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(100,40,5,.92), rgba(6,3,1,.97));
 }
-@keyframes zoomIn {
-from {
-transform: scale(.5);
-opacity: 0
+[data-theme="desert"] .wo-card {
+  background: linear-gradient(160deg, rgba(32,16,5,.98) 0%, rgba(18,8,2,.99) 100%);
+  box-shadow: 0 0 0 1px rgba(255,180,80,.05), 0 24px 70px rgba(0,0,0,.82), 0 0 50px rgba(224,120,32,.18);
+}
+[data-theme="desert"] .winner-overlay.wo-defeat {
+  --wo-accent:   #5ea8d8;
+  --wo-accent2:  #1e6090;
+  --wo-glow:     rgba(90,160,210,.32);
+  --wo-card-b:   rgba(90,160,210,.2);
+  --wo-chip-bg:  rgba(90,160,210,.07);
+  --wo-chip-b:   rgba(90,160,210,.17);
+  --wo-sep:      rgba(90,160,210,.2);
 }
 
-to {
-transform: scale(1);
-opacity: 1
+/* ── NUIT : Cosmos — violet indigo, néon cyan glacé ─────────── */
+[data-theme="nuit"] .winner-overlay {
+  --wo-accent:   #a78bfa;
+  --wo-accent2:  #34d4ed;
+  --wo-glow:     rgba(167,139,250,.38);
+  --wo-bg:       rgba(4,2,18,.96);
+  --wo-card-bg:  rgba(10,6,38,.97);
+  --wo-card-b:   rgba(167,139,250,.24);
+  --wo-txt:      rgba(230,220,255,.9);
+  --wo-txt2:     rgba(190,175,240,.55);
+  --wo-btn-txt:  #070320;
+  --wo-chip-bg:  rgba(167,139,250,.09);
+  --wo-chip-b:   rgba(167,139,250,.22);
+  --wo-sep:      rgba(167,139,250,.22);
+  --wo-blur:     30px;
 }
+[data-theme="nuit"] .wo-bg {
+  background: linear-gradient(170deg, rgba(8,4,28,.97) 0%, rgba(2,1,14,.98) 100%);
 }
-@keyframes fadeIn {
-from {
-opacity: 0
+[data-theme="nuit"] .wo-bg::before {
+  background: radial-gradient(ellipse 55% 40% at 50% 28%, rgba(120,80,255,.22), transparent 65%),
+              radial-gradient(ellipse 30% 25% at 80% 75%, rgba(52,212,237,.1), transparent 55%);
+  opacity:1;
+}
+[data-theme="nuit"] .wo-card {
+  background: linear-gradient(148deg, rgba(18,10,55,.97) 0%, rgba(8,5,30,.98) 100%);
+  box-shadow: 0 0 0 1px rgba(167,139,250,.07),
+              0 24px 70px rgba(0,0,0,.86),
+              0 0 60px rgba(120,80,255,.2),
+              inset 0 1px 0 rgba(200,180,255,.05);
+}
+[data-theme="nuit"] .winner-overlay.wo-defeat {
+  --wo-accent:   #fb7185;
+  --wo-accent2:  #f43f5e;
+  --wo-glow:     rgba(251,113,133,.32);
+  --wo-card-b:   rgba(251,113,133,.2);
+  --wo-chip-bg:  rgba(251,113,133,.07);
+  --wo-chip-b:   rgba(251,113,133,.18);
+  --wo-sep:      rgba(251,113,133,.2);
 }
 
-to {
-opacity: 1
+/* ── GLASS : Cristal liquide — prismatique, violet/cyan ─────── */
+[data-theme="glass"] .winner-overlay {
+  --wo-accent:   #e9d5ff;
+  --wo-accent2:  #67e8f9;
+  --wo-glow:     rgba(167,139,250,.32);
+  --wo-bg:       rgba(8,5,24,.88);
+  --wo-card-bg:  rgba(255,255,255,.07);
+  --wo-card-b:   rgba(233,213,255,.2);
+  --wo-txt:      rgba(242,238,255,.92);
+  --wo-txt2:     rgba(210,195,245,.56);
+  --wo-btn-txt:  #0e0520;
+  --wo-chip-bg:  rgba(233,213,255,.07);
+  --wo-chip-b:   rgba(233,213,255,.17);
+  --wo-sep:      rgba(233,213,255,.18);
+  --wo-blur:     40px;
 }
+[data-theme="glass"] .wo-bg {
+  background: linear-gradient(160deg, rgba(20,8,50,.9) 0%, rgba(6,3,20,.92) 100%);
+}
+[data-theme="glass"] .wo-bg::before {
+  background: radial-gradient(ellipse 50% 38% at 50% 28%, rgba(140,100,255,.24), transparent 60%),
+              radial-gradient(ellipse 35% 28% at 80% 78%, rgba(103,232,249,.14), transparent 55%);
+  opacity:1;
+}
+[data-theme="glass"] .wo-card {
+  background: linear-gradient(148deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.04) 100%);
+  backdrop-filter: blur(36px) saturate(1.6);
+  -webkit-backdrop-filter: blur(36px) saturate(1.6);
+  box-shadow: 0 0 0 1px rgba(233,213,255,.1),
+              0 24px 70px rgba(0,0,0,.65),
+              0 0 50px rgba(140,100,255,.18),
+              inset 0 1px 0 rgba(255,255,255,.1);
+}
+[data-theme="glass"] .winner-overlay.wo-defeat {
+  --wo-accent:   #fda4af;
+  --wo-accent2:  #f472b6;
+  --wo-glow:     rgba(253,164,175,.28);
+  --wo-card-b:   rgba(253,164,175,.18);
+  --wo-chip-bg:  rgba(253,164,175,.06);
+  --wo-chip-b:   rgba(253,164,175,.16);
+  --wo-sep:      rgba(253,164,175,.18);
 }
 
-/* (duplicate ancien bloc supprimé) */
-.winner-overlay.wo-defeat .wo-card {
-animation: woCardUp .65s cubic-bezier(.22,1,.36,1) .2s forwards, woShake .6s ease-out .9s 1;
+/* ── CONTRAST : Noir radical — blanc tranchant, jaune pur ────── */
+[data-theme="contrast"] .winner-overlay {
+  --wo-accent:   #fbbf24;
+  --wo-accent2:  #ffffff;
+  --wo-glow:     rgba(251,191,36,.38);
+  --wo-bg:       #000000;
+  --wo-card-bg:  #080808;
+  --wo-card-b:   rgba(255,255,255,.9);
+  --wo-txt:      #ffffff;
+  --wo-txt2:     rgba(255,255,255,.62);
+  --wo-btn-txt:  #000000;
+  --wo-chip-bg:  rgba(255,255,255,.06);
+  --wo-chip-b:   rgba(255,255,255,.7);
+  --wo-sep:      rgba(255,255,255,.55);
+  --wo-blur:     0px;
+  --wo-radius:   4px;
 }
+[data-theme="contrast"] .wo-bg {
+  background: #000;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-theme="contrast"] .wo-bg::before { display:none; }
+[data-theme="contrast"] .wo-bg::after  { border-color: rgba(251,191,36,.75); }
+[data-theme="contrast"] .wo-card {
+  background: #080808;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 0 0 5px rgba(251,191,36,.1), 5px 5px 0 rgba(255,255,255,.55);
+}
+[data-theme="contrast"] .wo-card::before { display:none; }
+[data-theme="contrast"] .wo-card::after {
+  height:4px; border-radius:0;
+  background: linear-gradient(90deg, #fbbf24, #ffffff 50%, #fbbf24);
+}
+[data-theme="contrast"] .winner-overlay .winner-name { text-shadow: none !important; }
+[data-theme="contrast"] .winner-overlay.wo-defeat {
+  --wo-accent:   #22d3ee;
+  --wo-accent2:  #ffffff;
+  --wo-glow:     rgba(34,211,238,.32);
+  --wo-card-b:   rgba(255,255,255,.9);
+}
+
+/* ── MODERN (light) : Pro minimaliste — blanc/bleu, clean ────── */
+[data-theme="modern"] .winner-overlay {
+  --wo-accent:   #2563eb;
+  --wo-accent2:  #0891b2;
+  --wo-glow:     rgba(37,99,235,.22);
+  --wo-bg:       rgba(248,250,252,.97);
+  --wo-card-bg:  rgba(255,255,255,.99);
+  --wo-card-b:   rgba(37,99,235,.18);
+  --wo-txt:      #0f172a;
+  --wo-txt2:     #475569;
+  --wo-btn-txt:  #ffffff;
+  --wo-chip-bg:  rgba(37,99,235,.06);
+  --wo-chip-b:   rgba(37,99,235,.17);
+  --wo-sep:      rgba(37,99,235,.16);
+  --wo-blur:     0px;
+  --wo-radius:   20px;
+}
+[data-theme="modern"] .wo-bg {
+  background: linear-gradient(160deg, #f8fafc 0%, #eff6ff 100%);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-theme="modern"] .wo-bg::before {
+  background: radial-gradient(ellipse 55% 40% at 50% 28%, rgba(37,99,235,.09), transparent 65%);
+}
+[data-theme="modern"] .wo-bg::after { border-color: rgba(37,99,235,.22); }
+[data-theme="modern"] .wo-card {
+  background: #ffffff;
+  border-color: rgba(37,99,235,.14);
+  box-shadow: 0 1px 3px rgba(0,0,0,.05),
+              0 20px 50px rgba(37,99,235,.1),
+              0 0 0 1px rgba(37,99,235,.05);
+}
+[data-theme="modern"] .winner-overlay .winner-name {
+  text-shadow: 0 0 18px rgba(37,99,235,.22), 0 2px 6px rgba(0,0,0,.08) !important;
+}
+[data-theme="modern"] .winner-overlay.wo-defeat {
+  --wo-accent:   #dc2626;
+  --wo-accent2:  #9333ea;
+  --wo-glow:     rgba(220,38,38,.18);
+  --wo-card-b:   rgba(220,38,38,.16);
+  --wo-chip-bg:  rgba(220,38,38,.05);
+  --wo-chip-b:   rgba(220,38,38,.14);
+  --wo-sep:      rgba(220,38,38,.16);
+}
+
+/* ── MODERN-DARK : Slate foncé — accent cyan, cartes flottantes */
+[data-theme="modern-dark"] .winner-overlay {
+  --wo-accent:   #38bdf8;
+  --wo-accent2:  #818cf8;
+  --wo-glow:     rgba(56,189,248,.28);
+  --wo-bg:       rgba(2,8,22,.96);
+  --wo-card-bg:  rgba(8,14,38,.97);
+  --wo-card-b:   rgba(56,189,248,.2);
+  --wo-txt:      rgba(226,232,240,.9);
+  --wo-txt2:     rgba(148,163,184,.62);
+  --wo-btn-txt:  #020814;
+  --wo-chip-bg:  rgba(56,189,248,.07);
+  --wo-chip-b:   rgba(56,189,248,.18);
+  --wo-sep:      rgba(56,189,248,.18);
+  --wo-blur:     30px;
+  --wo-radius:   18px;
+}
+[data-theme="modern-dark"] .wo-bg {
+  background: linear-gradient(170deg, rgba(4,10,30,.97) 0%, rgba(2,5,18,.98) 100%);
+}
+[data-theme="modern-dark"] .wo-bg::before {
+  background: radial-gradient(ellipse 50% 38% at 50% 28%, rgba(56,189,248,.17), transparent 60%),
+              radial-gradient(ellipse 30% 25% at 80% 75%, rgba(129,140,248,.11), transparent 55%);
+  opacity:1;
+}
+[data-theme="modern-dark"] .wo-card {
+  background: linear-gradient(148deg, rgba(12,20,52,.97) 0%, rgba(6,10,30,.98) 100%);
+  box-shadow: 0 0 0 1px rgba(56,189,248,.06),
+              0 24px 70px rgba(0,0,0,.82),
+              0 0 50px rgba(56,189,248,.16),
+              inset 0 1px 0 rgba(255,255,255,.04);
+}
+[data-theme="modern-dark"] .winner-overlay.wo-defeat {
+  --wo-accent:   #f472b6;
+  --wo-accent2:  #e879f9;
+  --wo-glow:     rgba(244,114,182,.28);
+  --wo-card-b:   rgba(244,114,182,.18);
+  --wo-chip-bg:  rgba(244,114,182,.06);
+  --wo-chip-b:   rgba(244,114,182,.16);
+  --wo-sep:      rgba(244,114,182,.18);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-height: 600px) {
+  .wo-card { gap:.5rem; padding:1.2rem 1.8rem 1rem; }
+  .wo-trophy { font-size:2.2rem; }
+  .winner-overlay .winner-name { font-size:1.4rem !important; }
+}
+
 /* ─── Ghost référence JS (ne recouvre rien, invisible) ─── */
+
 #ephemeral-message-bubble {
 display: none !important;
 }
@@ -2428,6 +2553,198 @@ transition:
   opacity 0.25s ease,
   margin-top 0.25s ease;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PLAYER INFO PANEL v4
+   ═══════════════════════════════════════════════════════════════════ */
+
+.player-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  padding: clamp(0.55rem, 1.5vw, 0.9rem) clamp(0.6rem, 1.6vw, 0.9rem) !important;
+}
+
+/* Nom du joueur */
+.pi-name {
+  font-size: clamp(0.75rem, 2vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-gold, #f0c850);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+/* Panneau central : track en haut, compteur discret en bas à droite */
+.pi-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.15rem;
+  width: 100%;
+  position: relative;
+  padding-bottom: 1.05rem;
+}
+
+/* ── Grand compteur numérique ── */
+.pi-big-count {
+  order: 2;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  align-self: flex-end;
+  margin-top: 0;
+  padding-inline: 0.18rem;
+  font-size: clamp(0.84rem, 1.2vw, 0.98rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--text-gold, #f0c850);
+  text-shadow: 0 1px 6px rgba(240,200,80,0.22), 0 0 14px rgba(240,200,80,0.08);
+  transition: color 0.35s ease;
+  min-width: 1.3ch;
+  text-align: right;
+  opacity: 0.88;
+  will-change: transform;
+}
+/* Mode déplacement : compteur = captures → rouge */
+.pi-panel.mode-capt .pi-big-count {
+  color: #ff8a8a;
+  text-shadow: 0 2px 10px rgba(255,100,80,0.35), 0 0 22px rgba(255,80,50,0.18);
+}
+.pi-panel.mode-capt .pi-big-count[data-val="0"] { opacity: 0.22; }
+
+@keyframes pi-count-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  70%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+.pi-big-count.pop { animation: pi-count-pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* ── Track de pions ── */
+.pi-track {
+  order: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 8px 8px;
+  width: 100%;
+  min-height: 46px;
+}
+
+/* ── Pierre individuelle ──
+   Taille volontairement plus grande pour être bien visible dans les panneaux.
+   Les pions "en main" sont pleins et nets.
+   Les pions "capturés" restent visibles mais plus discrets.        */
+.pi-panel .pi-track .pi-stone {
+  width:  clamp(30px, 4.6vw, 40px) !important;
+  height: clamp(30px, 4.6vw, 40px) !important;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+/* Joueur 1 — sphère sombre */
+.pi-stone.s1 {
+  background: radial-gradient(circle at 32% 27%,
+    var(--player1-stone-color-light, #777),
+    var(--player1-stone-color-dark,  #111) 60%, #000 92%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.75),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+}
+/* Joueur 2 — sphère claire */
+.pi-stone.s2 {
+  background: radial-gradient(circle at 32% 27%,
+    var(--player2-stone-color-light, #fff),
+    var(--player2-stone-color-dark,  #ccc) 60%, #999 92%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35),
+              inset 0 1px 0 rgba(255,255,255,0.65);
+}
+
+/* ── États mode MAIN (placement) ── */
+.pi-stone.in-hand { opacity: 1; transform: scale(1); }
+
+/* Pion posé : monte et disparaît */
+.pi-stone.placing {
+  animation: pi-place-out 0.24s ease-in forwards;
+  pointer-events: none;
+}
+@keyframes pi-place-out {
+  0%   { opacity: 1;   transform: scale(1); }
+  55%  { opacity: 0.4; transform: scale(1.15) translateY(-4px); }
+  100% { opacity: 0;   transform: scale(0.45) translateY(-6px); }
+}
+
+/* Pion revenu (undo placement) */
+.pi-stone.appearing {
+  animation: pi-appear 0.27s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes pi-appear {
+  0%   { opacity: 0; transform: scale(0.15) rotate(-20deg); }
+  100% { opacity: 1; transform: scale(1)    rotate(0deg); }
+}
+
+/* ── États mode CAPTURÉS (déplacement) ──
+   Plus grand, plus visible, teinté rougeâtre pour signifier la mort   */
+.pi-stone.captured-still {
+  opacity: 0.92;
+  transform: scale(1);
+  filter: grayscale(6%) brightness(0.98);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.32);
+}
+
+/* Nouvelle capture : flash → fondu */
+.pi-stone.capturing {
+  animation: pi-capture-in 0.52s cubic-bezier(0.22,0.61,0.36,1) forwards;
+  pointer-events: none;
+}
+@keyframes pi-capture-in {
+  0%   { opacity: 1;    transform: scale(1.5);  filter: grayscale(0%)  brightness(2.0) saturate(2.5); box-shadow: 0 0 16px 4px rgba(255,55,20,1); }
+  30%  { opacity: 0.85; transform: scale(1.15); filter: grayscale(15%) brightness(1.3); }
+  100% { opacity: 0.56; transform: scale(0.94); filter: grayscale(45%) sepia(26%) brightness(0.8); box-shadow: 0 1px 2px rgba(0,0,0,0.22); }
+}
+
+/* Undo de capture : pion disparaît du track */
+.pi-stone.uncapturing {
+  animation: pi-uncapture 0.28s ease-in forwards;
+  pointer-events: none;
+}
+@keyframes pi-uncapture {
+  0%   { opacity: 0.56; transform: scale(0.94); filter: grayscale(45%); }
+  100% { opacity: 0;    transform: scale(0.2);  filter: none; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .pi-panel .pi-track .pi-stone { width: clamp(28px, 4vw, 34px) !important; height: clamp(28px, 4vw, 34px) !important; }
+  .pi-track { gap: 6px 6px; min-height: 42px; }
+}
+@media (max-width: 900px) {
+  .pi-big-count { font-size: clamp(0.8rem, 2vw, 0.92rem); }
+  .pi-panel .pi-track .pi-stone { width: clamp(24px, 3.8vw, 30px) !important; height: clamp(24px, 3.8vw, 30px) !important; }
+}
+@media (max-width: 640px) {
+  .pi-big-count { font-size: 0.78rem; }
+  .pi-panel .pi-track .pi-stone { width: 22px !important; height: 22px !important; }
+  .pi-track { gap: 4px; min-height: 34px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Sound button state indicator ── */
+.toolbar-btn[data-snd-state="both"]  .snd-icon { opacity: 1; }
+.toolbar-btn[data-snd-state="sound"] .snd-icon { opacity: 0.7; }
+.toolbar-btn[data-snd-state="mute"]  .snd-icon { opacity: 0.45; }
+.toolbar-btn.sound-off { opacity: 0.55; }
 
 /* Pastille intérieure via pseudo-element pour chaque variante */
 .player-badge .badge-pill {
@@ -3987,8 +4304,8 @@ scroll-behavior: auto !important;
 }
 }
 /* Debug overlay (runtime errors, rejections, logs) */
-/* Confetti canvas (no external dependency) */
-#confetti-canvas {
+/* Confetti canvas (removed) */
+#confetti-canvas-unused {
 position: fixed;
 inset: 0;
 pointer-events: none;
@@ -10114,15 +10431,7 @@ body:has(.game-play-area.active) footer {
   flex-shrink: 0;
 }
 
-/* ── Winner overlay: trophy glow enhancement ── */
-.wo-trophy {
-  text-shadow: 0 0 40px rgba(240,200,80,0.9), 0 0 80px rgba(240,200,80,0.5);
-  animation: trophyGlow 2s ease-in-out infinite;
-}
-@keyframes trophyGlow {
-  0%, 100% { text-shadow: 0 0 40px rgba(240,200,80,0.9), 0 0 80px rgba(240,200,80,0.5); }
-  50%       { text-shadow: 0 0 60px rgba(255,220,80,1.0), 0 0 100px rgba(240,200,80,0.7); transform: scale(1.05); }
-}
+/* Trophy glow: now handled by theme tokens */
 
 /* ── Version card: shimmer line on hover ── */
 .version-card::after {
@@ -11192,61 +11501,7 @@ h1::after {
   border-radius: 15px !important;
 }
 
-/* ── 27. OVERLAY GAGNANT ─────────────────────────────────────── */
-.winner-overlay {
-  --woa:  var(--or-vif) !important;
-  --woa2: var(--terracotta) !important;
-  --wog:  rgba(200,132,26,0.45) !important;
-  --wobg1: rgba(10,6,2,0.97) !important;
-  --wobg2: rgba(14,9,4,0.98) !important;
-  --wocb: rgba(200,132,26,0.22) !important;
-  --wotxt: rgba(245,232,202,0.88) !important;
-  --wotxt2: rgba(230,210,170,0.55) !important;
-}
-.wo-card {
-  border-radius: 28px !important;
-  background:
-    linear-gradient(175deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0) 40%),
-    rgba(12,8,4,0.96) !important;
-  border: 1px solid rgba(200,132,26,0.22) !important;
-  box-shadow:
-    0 0 80px rgba(200,132,26,0.18),
-    0 32px 80px rgba(0,0,0,0.85),
-    inset 0 1px 0 rgba(255,230,140,0.06) !important;
-}
-.winner-overlay .winner-message {
-  font-family: 'Cinzel', Georgia, serif !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.22em !important;
-}
-.winner-overlay .winner-name {
-  font-family: 'Cinzel', Georgia, serif !important;
-  font-weight: 700 !important;
-}
-/* Stats chips */
-.wo-chip {
-  background: rgba(200,132,26,0.08) !important;
-  border: 1px solid rgba(200,132,26,0.22) !important;
-  color: rgba(230,210,170,0.6) !important;
-  font-family: 'Cinzel', Georgia, serif !important;
-}
-.wo-chip .wo-chip-val { color: var(--or-vif) !important; }
-.winner-overlay .replay-button:not(.secondary) {
-  background: linear-gradient(135deg, var(--or-vif), var(--or)) !important;
-  color: #130800 !important;
-  border-radius: 14px !important;
-  font-family: 'Cinzel', Georgia, serif !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
-  text-transform: uppercase !important;
-}
-.winner-overlay .replay-button.secondary {
-  background: rgba(255,255,255,0.04) !important;
-  border: 1px solid rgba(200,132,26,0.22) !important;
-  border-radius: 14px !important;
-  font-family: 'Cinzel', Georgia, serif !important;
-  font-weight: 600 !important;
-}
+/* ── 27. OVERLAY GAGNANT : styles dans le bloc WINNER OVERLAY ── */
 
 /* ── 28. BADGES JOUEUR ───────────────────────────────────────── */
 .player-badge .badge-pill {
@@ -11273,39 +11528,39 @@ h1::after {
   background: rgba(176,72,40,0.08) !important;
 }
 
-/* ── 29. PLATEAU DAMES TURQUES ─────────────────────────────── */
-.game-board.turkish-draughts-board {
+/* ── 29. PLATEAU DAMES Kabyle ─────────────────────────────── */
+.game-board.Kabylian-draughts-board {
   background: #2a1a08 !important;
   border: 5px solid #6a3c14 !important;
   border-radius: 8px !important;
   box-shadow: inset 0 0 30px rgba(0,0,0,0.70), inset 0 2px 0 rgba(255,200,90,0.06) !important;
 }
 /* Cases claires : ivoire chaud */
-.game-board.turkish-draughts-board .cell:not(.dark-cell) {
+.game-board.Kabylian-draughts-board .cell:not(.dark-cell) {
   background: #e8d4a8 !important;
 }
 /* Cases sombres : bois acajou */
-.game-board.turkish-draughts-board .cell.dark-cell {
+.game-board.Kabylian-draughts-board .cell.dark-cell {
   background: #7a3e14 !important;
 }
 /* Hover */
-.game-board.turkish-draughts-board .cell:not(.dark-cell):hover {
+.game-board.Kabylian-draughts-board .cell:not(.dark-cell):hover {
   background: #f0dcb4 !important;
 }
-.game-board.turkish-draughts-board .cell.dark-cell:hover {
+.game-board.Kabylian-draughts-board .cell.dark-cell:hover {
   background: #924a1c !important;
 }
 /* Sélection */
-.game-board.turkish-draughts-board .cell.selected {
+.game-board.Kabylian-draughts-board .cell.selected {
   background: rgba(200,132,26,0.60) !important;
   box-shadow: inset 0 0 0 3px rgba(200,132,26,0.95) !important;
 }
 /* Coups possibles */
-.game-board.turkish-draughts-board .cell.possible-move {
+.game-board.Kabylian-draughts-board .cell.possible-move {
   outline: 2.5px dashed rgba(200,132,26,0.75) !important;
   background: rgba(200,132,26,0.22) !important;
 }
-.game-board.turkish-draughts-board .cell.possible-move::before {
+.game-board.Kabylian-draughts-board .cell.possible-move::before {
   content: '' !important;
   display: block !important;
   width: 32% !important;
@@ -11319,28 +11574,28 @@ h1::after {
   pointer-events: none !important;
   z-index: 1 !important;
 }
-.game-board.turkish-draughts-board .cell.possible-move:has(.stone)::before {
+.game-board.Kabylian-draughts-board .cell.possible-move:has(.stone)::before {
   display: none !important;
 }
 /* Pion J1 : bois sombre veiné */
-.game-board.turkish-draughts-board .cell .stone.player1 {
+.game-board.Kabylian-draughts-board .cell .stone.player1 {
   background: radial-gradient(circle at 33% 31%, #4a4238, #1c1812 58%, #090705 92%) !important;
   border: none !important;
   box-shadow: 0 5px 14px rgba(0,0,0,0.70), inset 0 -4px 10px rgba(0,0,0,0.52), inset 0 4px 8px rgba(180,160,120,0.16) !important;
 }
 /* Pion J2 : nacre ivoire */
-.game-board.turkish-draughts-board .cell .stone.player2 {
+.game-board.Kabylian-draughts-board .cell .stone.player2 {
   background: radial-gradient(circle at 33% 31%, #ffffff, #ddd5c5 60%, #a89878 92%) !important;
   border: none !important;
   box-shadow: 0 5px 14px rgba(0,0,0,0.50), inset 0 -4px 10px rgba(0,0,0,0.18), inset 0 4px 8px rgba(255,255,255,0.72) !important;
 }
 /* Dame (king) — symboles différenciés par joueur via ::before */
-.game-board.turkish-draughts-board .cell .stone.king::after {
+.game-board.Kabylian-draughts-board .cell .stone.king::after {
   content: '' !important;
   background: none !important;
   opacity: 0 !important;
 }
-.game-board.turkish-draughts-board .cell .stone.player1.king::before {
+.game-board.Kabylian-draughts-board .cell .stone.player1.king::before {
   content: '♚' !important;
   position: absolute !important;
   top: 50% !important; left: 50% !important;
@@ -11352,7 +11607,7 @@ h1::after {
   pointer-events: none !important;
   z-index: 4 !important;
 }
-.game-board.turkish-draughts-board .cell .stone.player2.king::before {
+.game-board.Kabylian-draughts-board .cell .stone.player2.king::before {
   content: '♔' !important;
   position: absolute !important;
   top: 50% !important; left: 50% !important;
@@ -11364,19 +11619,19 @@ h1::after {
   pointer-events: none !important;
   z-index: 4 !important;
 }
-.game-board.turkish-draughts-board .cell .stone.king {
+.game-board.Kabylian-draughts-board .cell .stone.king {
   box-shadow: 0 0 0 2.5px rgba(240,200,80,0.85), 0 5px 14px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.4) !important;
   outline: 1.5px solid rgba(240,200,80,0.35) !important;
   outline-offset: 2px !important;
 }
 /* Pion capturable */
-.game-board.turkish-draughts-board .cell.capturable .stone {
+.game-board.Kabylian-draughts-board .cell.capturable .stone {
   outline: 3px solid rgba(176,72,40,0.88) !important;
   outline-offset: 2px !important;
   animation: pulse-capturable 0.8s ease-in-out infinite alternate !important;
 }
-/* Moulin sur dames turques */
-.game-board.turkish-draughts-board .cell.mill-highlight {
+/* Moulin sur dames Kabyle */
+.game-board.Kabylian-draughts-board .cell.mill-highlight {
   background: rgba(70,170,210,0.18) !important;
   outline: 2px solid rgba(70,170,210,0.78) !important;
 }
@@ -13640,12 +13895,12 @@ Patrimoine Amazigh • Idles Amaziɣ
       <h3 class="famille-title" data-i18n="familleDammaTitle">Damma Kabyle</h3>
     </div>
     <div class="famille-variants">
-      <button class="variant-btn" data-variant="turkish-draughts">
+      <button class="variant-btn" data-variant="Kabylian-draughts">
         <span class="variant-letter">A</span>
         <span class="variant-name" data-i18n="dammaShortTitle">Damma</span>
         <span class="variant-arrow">›</span>
       </button>
-      <button class="variant-btn" data-variant="turkish-draughts-bessif">
+      <button class="variant-btn" data-variant="Kabylian-draughts-bessif">
         <span class="variant-letter">B</span>
         <span class="variant-name" data-i18n="dammaBessifShortTitle">Damma Misère</span>
         <span class="variant-arrow">›</span>
@@ -14089,18 +14344,12 @@ Vous jouez avec les&nbsp;:
 <div class="player-panel-container player-panel-left">
 <div class="player-panel">
 <div class="player-info player1-info">
-<div class="player-title" id="p1-display-name"></div>
-<div class="player-stats">
-<div class="player-stat" title="Pions restants">
-<span class="player-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/></svg></span>
-<span class="stat-value" id="p1-count">10</span>
-</div>
-<div class="player-stat" title="Pions capturés">
-<span class="player-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="8"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span>
-<span class="stat-value" id="p1-capt">0</span>
-</div>
-</div>
-<div class="player-badge" id="p1-badge" aria-live="polite" role="status"></div>
+  <div class="pi-name" id="p1-display-name"></div>
+  <div class="pi-panel" id="p1-panel">
+    <div class="pi-big-count" id="p1-count">10</div>
+    <div class="pi-track" id="p1-track" aria-label="Pions joueur 1"></div>
+  </div>
+  <div class="player-badge" id="p1-badge" aria-live="polite" role="status"></div>
 </div>
 </div>
 </div>
@@ -14151,18 +14400,12 @@ Vous jouez avec les&nbsp;:
 <div class="player-panel-container player-panel-right">
 <div class="player-panel">
 <div class="player-info player2-info">
-<div class="player-title" id="p2-display-name"></div>
-<div class="player-stats">
-<div class="player-stat" title="Pions restants">
-<span class="player-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/></svg></span>
-<span class="stat-value" id="p2-count">10</span>
-</div>
-<div class="player-stat" title="Pions capturés">
-<span class="player-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="8"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span>
-<span class="stat-value" id="p2-capt">0</span>
-</div>
-</div>
-<div class="player-badge" id="p2-badge" aria-live="polite" role="status"></div>
+  <div class="pi-name" id="p2-display-name"></div>
+  <div class="pi-panel" id="p2-panel">
+    <div class="pi-big-count" id="p2-count">10</div>
+    <div class="pi-track" id="p2-track" aria-label="Pions joueur 2"></div>
+  </div>
+  <div class="player-badge" id="p2-badge" aria-live="polite" role="status"></div>
 </div>
 </div>
 </div>
@@ -14179,7 +14422,6 @@ Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle
 <div class="winner-overlay" id="winner-overlay">
 <!-- Fond animé -->
 <div class="wo-bg"></div>
-<div class="wo-particles" id="wo-particles"></div>
 <!-- Carte -->
 <div class="wo-card">
 
@@ -14625,7 +14867,7 @@ Astuce : sur iPhone/iPad, utilisez “Partager” → “Sur l'écran d'accueil�
   </div>
 
 <!-- Éléments requis dans le DOM avant exécution du script -->
-  <canvas id="confetti-canvas" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999;display:none;"></canvas>
+
   <div id="ephemeral-message-bubble" aria-live="polite" aria-atomic="true"></div>
   <script nonce="tiddas">
 /*!
@@ -15467,8 +15709,8 @@ async function onlineStartMatch_Back4App() {
     updateGameInfoDisplay?.();
     showScreen('game-play-area');
 
-    // Turkish Draughts (Damma) : initialisation spéciale — même logique que startGame()
-    if (cfg().isTurkishDraughts) {
+    // Kabylian Draughts (Damma) : initialisation spéciale — même logique que startGame()
+    if (cfg().isKabylianDraughts) {
       state.phase = 'move';
       state.kings = (typeof td_initKings === 'function') ? td_initKings() : {};
       // J2 (Blanc, commence) : rangées 0-1 ; J1 (Noir) : rangées 3-4
@@ -15563,7 +15805,7 @@ function onlineApplyState(msg) {
     // Pour la Damma en mode en ligne : recalculer les variables de tour globales
     // après réception du state de l'adversaire, sinon le joueur local ne peut pas jouer
     try {
-      if (cfg().isTurkishDraughts && state && !state.winner) {
+      if (cfg().isKabylianDraughts && state && !state.winner) {
         if (!state.kings) state.kings = {};
         // Toujours vider la sélection locale à la réception d'un état externe
         td_selectedIdx = null;
@@ -15681,81 +15923,7 @@ el.innerHTML = sanitizeHTML(html);
 // ============================================================
 // === CANVAS CONFETTI (no external dependency) ===
 // ============================================================
-const _confettiCanvas = document.getElementById('confetti-canvas');
-const _ctx2d = _confettiCanvas?.getContext('2d');
-let _confettiRAF = 0;
-
-(function() {
-function resizeCanvas() {
-if (!_confettiCanvas) return;
-const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-_confettiCanvas.width = Math.floor(window.innerWidth * dpr);
-_confettiCanvas.height = Math.floor(window.innerHeight * dpr);
-_confettiCanvas.style.width = window.innerWidth + 'px';
-_confettiCanvas.style.height = window.innerHeight + 'px';
-_ctx2d?.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-window.addEventListener('resize', resizeCanvas, {
-passive: true
-});
-resizeCanvas();
-})();
-
-function runConfetti(durationMs = 4500) {
-if (!_confettiCanvas || !_ctx2d) return;
-cancelAnimationFrame(_confettiRAF);
-const start = performance.now();
-const particles = [];
-const colors = ['#f0c850',
-'#ffffff',
-'#00ffff',
-'#ff4d4d',
-'#d0c4b2'];
-
-const emit = () => {
-const n = 14;
-for (let i = 0; i < n; i++) {
-particles.push({
-x: Math.random()*window.innerWidth,
-y: -10,
-vx: (Math.random()-0.5)*5,
-vy: Math.random()*3+2,
-color: colors[Math.floor(Math.random()*colors.length)],
-r: Math.random()*5+3,
-life: 1.0,
-decay: Math.random()*0.008+0.004,
-spin: (Math.random()-0.5)*0.3
-});
-}
-};
-
-const tick = (ts) => {
-const elapsed = ts - start;
-if (elapsed < durationMs) emit();
-_ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
-for (let i = particles.length-1; i >= 0; i--) {
-const p = particles[i];
-p.x += p.vx; p.y += p.vy; p.vy += 0.07;
-p.life -= p.decay;
-if (p.life <= 0 || p.y > window.innerHeight + 60) {
-particles.splice(i, 1); continue;
-}
-_ctx2d.save();
-_ctx2d.globalAlpha = Math.max(0, p.life);
-_ctx2d.fillStyle = p.color;
-_ctx2d.translate(p.x, p.y);
-_ctx2d.rotate(p.spin * elapsed * 0.01);
-_ctx2d.fillRect(-p.r/2, -p.r/2, p.r, p.r * 1.6);
-_ctx2d.restore();
-}
-if (particles.length > 0 || elapsed < durationMs) {
-_confettiRAF = requestAnimationFrame(tick);
-} else {
-_ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
-}
-};
-_confettiRAF = requestAnimationFrame(tick);
-}
+// Confetti removed
 
 
 
@@ -15836,8 +16004,9 @@ const boardDiv = document.getElementById("board");
 const statusDiv = document.getElementById("status");
 const p1Count = document.getElementById("p1-count");
 const p2Count = document.getElementById("p2-count");
-const p1Capt = document.getElementById("p1-capt");
-const p2Capt = document.getElementById("p2-capt");
+// p1Capt / p2Capt supprimés du DOM (v10) — compteurs fusionnés dans pi-big-count
+const p1Capt = null;
+const p2Capt = null;
 const p1Info = document.querySelector('.player1-info');
 const p2Info = document.querySelector('.player2-info');
 const allScreens = document.querySelectorAll('.selection-area, .game-play-area');
@@ -15879,28 +16048,28 @@ const variantConfig = {
 name: "TIDDEST",
 isInverseWin: false,
 forceMillMove: false,
-isTurkishDraughts: false
+isKabylianDraughts: false
 },
 "bessif-TIDDEST": {
 name: "Tiddest n tlata",
 isInverseWin: false,
 forceMillMove: false,
-isTurkishDraughts: false,
+isKabylianDraughts: false,
 isNTlata: true,
 pieces: 3
 },
-"turkish-draughts": {
-name: "Dames Turques",
+"Kabylian-draughts": {
+name: "Dames Kabyle",
 isInverseWin: false,
 forceMillMove: false,
-isTurkishDraughts: true,
+isKabylianDraughts: true,
 tdInverseWin: false
 },
-"turkish-draughts-bessif": {
+"Kabylian-draughts-bessif": {
 name: "Damma Misère",
 isInverseWin: false,
 forceMillMove: false,
-isTurkishDraughts: true,
+isKabylianDraughts: true,
 tdInverseWin: true
 }
 };
@@ -16012,23 +16181,23 @@ TIDDESTTitle: "TIDDEST",
 TIDDESTDesc: "Pas de capture pendant le placement. Interdiction d'aligner 3 pions pendant le placement. Déplacements et captures uniquement horizontaux/verticaux. Victoire normale.",
 bessifTitle: "TIDDEST N TLATA",
 bessifDesc: "Variante à 3 pions sur 9 intersections. Pendant le placement, il est interdit de former un alignement. En phase de déplacement, le premier alignement de 3 pions — horizontal, vertical ou diagonal — gagne immédiatement.",
-turkishDraughtsTitle: "Dames Turques",
-turkishDraughtsDesc: "Plateau 5×5. Captures en sautant par-dessus les pions adverses. Prise obligatoire et maximale. Promotion en Dame sur la dernière rangée.",
-turkishDraughtsBessifTitle: "Damma (victoire inversée)",
+KabylianDraughtsTitle: "Dames Kabyle",
+KabylianDraughtsDesc: "Plateau 5×5. Captures en sautant par-dessus les pions adverses. Prise obligatoire et maximale. Promotion en Dame sur la dernière rangée.",
+KabylianDraughtsBessifTitle: "Damma (victoire inversée)",
 familleTiddasTitle: "Tiddas",
 familleDammaTitle: "Damma",
 bessifShortTitle: "Morpion carré",
 dammaShortTitle: "Damma",
 dammaBessifShortTitle: "Damma (victoire inversée)",
 dammaRulesTitle: "Règles Damma Kabyle",
-turkishDraughtsBessifDesc: "Dames Turques inversées : gagnez en perdant tous vos pions ou en étant bloqué ! Prise obligatoire et maximale.",
-turkishStatusJump: "Capturez un pion adverse !",
-turkishStatusJumpChain: "Continuez à capturer !",
-turkishStatusChoosePiece: "Choisissez un pion à déplacer.",
-turkishStatusInvalidJump: "Ce saut est invalide.",
-turkishStatusMustJump: "Vous devez capturer un pion !",
-turkishBessifStatusJump: "Capture obligatoire… mais attention, vous voulez perdre !",
-turkishPromoted: "Promotion en Dame !",
+KabylianDraughtsBessifDesc: "Dames Kabyle inversées : gagnez en perdant tous vos pions ou en étant bloqué ! Prise obligatoire et maximale.",
+KabylianStatusJump: "Capturez un pion adverse !",
+KabylianStatusJumpChain: "Continuez à capturer !",
+KabylianStatusChoosePiece: "Choisissez un pion à déplacer.",
+KabylianStatusInvalidJump: "Ce saut est invalide.",
+KabylianStatusMustJump: "Vous devez capturer un pion !",
+KabylianBessifStatusJump: "Capture obligatoire… faits attention, ",
+KabylianPromoted: "Promotion en Dame !",
 howToPlay: "Comment souhaitez-vous jouer ?",
 playOnline: "Jouer en ligne",
 playOnlineDesc: "Créer ou rejoindre une partie",
@@ -16419,22 +16588,22 @@ chooseVersion: "Fren acu n tiddest ara turareḍ :",
 TIDDESTTitle: "TIDDEST",
 TIDDESTDesc: "Yerbeḥ win yeččan ileqqafen.",
 bessifTitle: "TIDDEST N TLATA",
-turkishDraughtsTitle: "Damma uṭurki",
-turkishDraughtsBessifTitle: "Damma (n usečči)",
+KabylianDraughtsTitle: "Tamyuččit",
+KabylianDraughtsBessifTitle: "Damma (n usečči)",
 familleTiddasTitle: "Tiddas",
 familleDammaTitle: "Damma",
 bessifShortTitle: "Tiddest N Tlata",
 dammaShortTitle: "Tamyuččit",
 dammaBessifShortTitle: "Damma (n usečči)",
 dammaRulesTitle: "Ilugan n Damma n Yeqbayliyen",
-turkishDraughtsBessifDesc: "Damma uṭurki n usečči: yerbeḥ win i wummi mmeččen ileqqafen-is. Učči tamara.",
-turkishStatusJump: "Ečč aleqqaf n wexṣim-ik!",
-turkishStatusJumpChain: "Kemmel ad teččeḍ!",
-turkishStatusChoosePiece: "Fren aleqqaf ara tneqleḍ.",
-turkishStatusInvalidJump: "Tuddist-a mačči d taɛqalt.",
-turkishStatusMustJump: "Ilaq-ak ad teččeḍ!",
-turkishBessifStatusJump: "Učči ilaq… maca ur tebɣiḍ ara ad terbeḥ!",
-turkishPromoted: "Yettemqaddal d Adghel!",
+KabylianDraughtsBessifDesc: "Damma n usečči: yerbeḥ win i wummi mmeččen ileqqafen-is. Učči tamara.",
+KabylianStatusJump: "Ečč aleqqaf n wexṣim-ik!",
+KabylianStatusJumpChain: "Kemmel ad teččeḍ!",
+KabylianStatusChoosePiece: "Fren aleqqaf ara tneqleḍ.",
+KabylianStatusInvalidJump: "Tuddist-a mačči d taɛqalt.",
+KabylianStatusMustJump: "Ilaq-ak ad teččeḍ!",
+KabylianBessifStatusJump: "Učči bessif… terra-k tmara !",
+KabylianPromoted: "Aleqqaf yuɣal d Damma!",
 howToPlay: "Amek tebɣiḍ ad turareḍ ?",
 playOnline: "Urar s internet",
 playOnlineDesc: "Qqim ɣer teslaḍt d umeddakel ibaɛden ",
@@ -16631,9 +16800,9 @@ onlineTitle: "Urar d umeddakul s lebɛid",
 onlineProfileLabel: "Nekkwa",
 onlineSalonLabel: "Taslaḍt n wurar",
 onlineProfileTitle: "Amaɣnu",
-onlineProfileDesc: "Isem-ik ad d-iban i umeddakul-ik",
+onlineProfileDesc: "Isem-ik ad d-ibanen i umeddakul-ik",
 onlineYourNameLabel: "Isem-ik",
-onlineNameHint: "Isem-a yettwaḥraz .",
+onlineNameHint: "Isem-ayi yettwaḥraz .",
 onlineRoomTitle: "Taslaḍt",
 onlineRoomDesc: "Rnu tasarut neɣ kecem s yiwet yellan yakan",
 onlineSubtitle: "Bnu taslaḍt, teceyyeɛeḍ-as tasarut, neɣ rnu ɣer tin umeddakul-ik.",
@@ -16662,7 +16831,7 @@ onlineCreatedShare: "taslaḍt yettwabna. Ceyyeɛ tasarut : {code}",
 onlineConnectingRoom: "Tuqqna ɣer teslaḍt {tasarut}…",
 onlineRoomNotFound: "Ulac taslaḍt-ayi. senqed tasarut-ik.",
 onlineGameFinished: "Yekkfa Wurar.",
-onlineRoomFull: "Asalon yeččur (2 yimyuraren).",
+onlineRoomFull: "taslaḍt-ayi yeččur (2 yimyuraren).",
 onlineNetworkError: "Tuccḍa n uzeṭṭa Back4App. Selken izerfan (CLP) akked tuqqna-inek.",
 onlineParseNotReady: "Back4App ur yettuseɣwer ara neɣ Parse ur yuli ara.",
 onlineSendError: "Tuccḍa deg tuznit. Senqed tuqqna Back4App.",
@@ -16841,23 +17010,23 @@ TIDDESTTitle: "TIDDEST",
 TIDDESTDesc: "No captures during placement. Forming 3 in a row during placement is forbidden. Moves and captures are horizontal/vertical only. Standard victory.",
 bessifTitle: "TIDDEST N TLATA",
 bessifDesc: "A 3-piece variant played on 9 intersections. During placement, making an alignment is forbidden. During movement, the first player to align their 3 stones — horizontally, vertically or diagonally — wins immediately.",
-turkishDraughtsTitle: "Turkish Draughts",
-turkishDraughtsDesc: "5×5 board. Jump captures over opponent pieces. Capture is mandatory and maximal. Promotion to King on the last row.",
-turkishDraughtsBessifTitle: "Damma (Reversed victory)",
+KabylianDraughtsTitle: "Kabylian Draughts",
+KabylianDraughtsDesc: "5×5 board. Jump captures over opponent pieces. Capture is mandatory and maximal. Promotion to King on the last row.",
+KabylianDraughtsBessifTitle: "Damma (Reversed victory)",
 familleTiddasTitle: "Tiddas",
 familleDammaTitle: "Damma",
 bessifShortTitle: "Square tic-tac-toe",
 dammaShortTitle: "Damma",
 dammaBessifShortTitle: "Damma (Reversed victory)",
 dammaRulesTitle: "Kabyle DammaRules",
-turkishDraughtsBessifDesc: "Reversed Turkish Draughts: win by losing all your pieces or getting blocked! Capture is mandatory and maximal.",
-turkishStatusJump: "Capture an opponent piece!",
-turkishStatusJumpChain: "Keep capturing!",
-turkishStatusChoosePiece: "Choose a piece to move.",
-turkishStatusInvalidJump: "Invalid jump.",
-turkishStatusMustJump: "You must capture a piece!",
-turkishBessifStatusJump: "Mandatory capture… but remember, you want to lose!",
-turkishPromoted: "Promoted to King!",
+KabylianDraughtsBessifDesc: "Reversed Kabylian Draughts: win by losing all your pieces or getting blocked! Capture is mandatory and maximal.",
+KabylianStatusJump: "Capture an opponent piece!",
+KabylianStatusJumpChain: "Keep capturing!",
+KabylianStatusChoosePiece: "Choose a piece to move.",
+KabylianStatusInvalidJump: "Invalid jump.",
+KabylianStatusMustJump: "You must capture a piece!",
+KabylianBessifStatusJump: "Mandatory capture… but remember, you want to lose!",
+KabylianPromoted: "Promoted to King!",
 howToPlay: "How would you like to play?",
 playOnline: "Play Online",
 playOnlineDesc: "Create or join a match",
@@ -17483,7 +17652,7 @@ const variantInfoEl = document.getElementById('game-variant-info');
 const difficultyInfoEl = document.getElementById('game-difficulty-info');
 
 if (variant) {
-const variantTitleKey = variant === 'TIDDEST-no-diag' ? 'TIDDESTTitle' : variant === 'turkish-draughts' ? 'turkishDraughtsTitle' : variant === 'turkish-draughts-bessif' ? 'turkishDraughtsBessifTitle' : 'bessifTitle';
+const variantTitleKey = variant === 'TIDDEST-no-diag' ? 'TIDDESTTitle' : variant === 'Kabylian-draughts' ? 'KabylianDraughtsTitle' : variant === 'Kabylian-draughts-bessif' ? 'KabylianDraughtsBessifTitle' : 'bessifTitle';
 variantInfoEl.innerHTML = `<strong>${translations[currentLanguage].gameVersion}</strong> ${translations[currentLanguage][variantTitleKey]}`;
 } else {
 variantInfoEl.innerHTML = '';
@@ -17505,12 +17674,13 @@ difficultyInfoEl.style.display = 'none';
 }
 
 function triggerConfetti() {
-runConfetti(5000);
+  // confetti removed
 }
+
 
 function showWinnerAnimation(message, name, isDefeat) {
   playSound('victory');
-  clearSave();
+  vibrateGame(isDefeat ? 'defeat' : 'victory');
 
   if (!winnerOverlay) return;
 
@@ -17538,7 +17708,7 @@ function showWinnerAnimation(message, name, isDefeat) {
       const p1cap = state.captured?.[1] || 0;
       const p2cap = state.captured?.[2] || 0;
       const totalMoves = (p1cap + p2cap) || null;
-      const isTD = cfg().isTurkishDraughts;
+      const isTD = cfg().isKabylianDraughts;
       const p1sym = '⚫'; const p2sym = '⚪';
       let chips = [];
       if (isTD || state.phase === 'move') {
@@ -17555,51 +17725,19 @@ function showWinnerAnimation(message, name, isDefeat) {
   // Classe défaite
   winnerOverlay.classList.toggle('wo-defeat', !!isDefeat);
 
-  // Particules
-  _spawnWoParticles(isDefeat);
-
   winnerOverlay.classList.add('active');
-  triggerConfetti();
 }
 
-function _spawnWoParticles(isDefeat) {
-const c = document.getElementById('wo-particles');
-if (!c) return;
-c.innerHTML = '';
-const cols = isDefeat
-  ? ['rgba(100,160,255,.7)', 'rgba(70,110,220,.5)', 'rgba(160,190,255,.45)']
-  : ['rgba(240,200,80,.75)', 'rgba(230,140,50,.6)', 'rgba(255,225,110,.5)', 'rgba(255,255,200,.4)'];
-const shapes = [true, true, false]; // true=circle false=diamond
-for (let i = 0; i < 28; i++) {
-  const p = document.createElement('div');
-  p.className = 'p';
-  const s = 3 + Math.random() * 8;
-  const isDiamond = Math.random() > .65;
-  p.style.cssText = [
-    `width:${s}px`,
-    `height:${s}px`,
-    `left:${Math.random()*100}%`,
-    `bottom:${-s}px`,
-    `background:${cols[i%cols.length]}`,
-    `border-radius:${isDiamond ? '2px' : '50%'}`,
-    `transform:${isDiamond ? 'rotate(45deg)' : 'none'}`,
-    `animation-duration:${4.5+Math.random()*5.5}s`,
-    `animation-delay:${Math.random()*3.5}s`
-  ].join(';');
-  c.appendChild(p);
-}
-}
+function _spawnWoParticles() {} // removed
 
 function hideWinnerAnimation() {
 stopSpectatorMode();
 winnerOverlay.classList.remove('active', 'wo-defeat');
-const c = document.getElementById('wo-particles');
-if (c) c.innerHTML = '';
 showScreen('version-selection-area');
 }
 
 function showStatusError(messageKey) {
-playSound('error');
+playSound('error'); vibrateGame('error');
 // Annuler l'éventuel timer précédent pour éviter les restaurations de texte erronées
 if (showStatusError._timer) {
   clearTimeout(showStatusError._timer);
@@ -17668,7 +17806,7 @@ ephemeralMill:          'badge-mill',
 ephemeralCaptureNormal: 'badge-capture',
 ephemeralCaptureBessif: 'badge-sacrifice',
 ephemeralMovePhase:     'badge-phase',
-turkishPromoted:        'badge-mill',
+KabylianPromoted:        'badge-mill',
 };
 const badgeVariant = variantMap[messageKey] || 'badge-capture';
 
@@ -17711,7 +17849,7 @@ badge._ephTimer = setTimeout(() => {
 
 
 // ============================================================
-// ===  DAMES TURQUES — Logique complète (plateau 5×5)      ===
+// ===  DAMES Kabyle — Logique complète (plateau 5×5)      ===
 // ============================================================
 // Règles :
 //  - Déplacements orthogonaux (haut/bas/gauche/droite)
@@ -17722,7 +17860,7 @@ badge._ephTimer = setTimeout(() => {
 //  - Dame : se déplace/capture orthogonalement sur plusieurs cases (comme une tour)
 //  - Victoire : adversaire sans pions ou bloqué
 
-// État Turkish Draughts : kings[idx] = true si le pion est une dame
+// État Kabylian Draughts : kings[idx] = true si le pion est une dame
 // Stocké dans state.kings = {} (index => boolean)
 
 function td_initKings() { return {}; }
@@ -17746,7 +17884,7 @@ function td_getAllCapturePaths(board, kings, idx, player, visited) {
   for (const [dr, dc] of TD_DIRS) {
     if (!isKing) {
       // Pion normal : saute sur une seule case (pas de direction arrière pour le non-roi)
-      // En dames turques, le pion PEUT capturer dans toutes directions (y compris arrière)
+      // En dames Kabyle, le pion PEUT capturer dans toutes directions (y compris arrière)
       const mr = r + dr, mc = c + dc;
       const lr = r + 2*dr, lc = c + 2*dc;
       if (mr < 0 || mr >= SIZE || mc < 0 || mc >= SIZE) continue;
@@ -17765,7 +17903,7 @@ function td_getAllCapturePaths(board, kings, idx, player, visited) {
       newBoard[midIdx] = null;
       if (newKings[idx]) { newKings[landIdx] = true; delete newKings[idx]; }
       delete newKings[midIdx];
-      // Promotion au vol ? En dames turques, la promotion se fait seulement à la fin du tour.
+      // Promotion au vol ? En dames Kabyle, la promotion se fait seulement à la fin du tour.
 
       const newVisited = new Set(visited);
       newVisited.add(midIdx);
@@ -17913,7 +18051,7 @@ function td_checkWinner() {
   }
 }
 
-// État du tour pour les dames turques (chemins de capture disponibles, chemin en cours)
+// État du tour pour les dames Kabyle (chemins de capture disponibles, chemin en cours)
 let td_availableCaptures = []; // chemins possibles pour le tour actuel
 let td_currentPath = null;     // chemin en cours d'exécution (multi-saut)
 let td_selectedIdx = null;     // pion sélectionné
@@ -17933,6 +18071,7 @@ function td_startTurn() {
   td_phase = (td_availableCaptures.length > 0) ? 'jump' : 'select';
   td_renderBoard();
   td_updateStatus();
+  updateInfo();
   // IA ?
   if (gameMode === 'spectator') {
     // Mode spectateur : les deux joueurs sont des IA — déclencher l'IA pour le joueur actif
@@ -17954,7 +18093,7 @@ function td_startTurn() {
   }
 }
 
-// Gestion du clic sur une cellule (mode dames turques)
+// Gestion du clic sur une cellule (mode dames Kabyle)
 function td_onCellClick(i) {
   if (state.winner) return;
   if (typeof replay !== 'undefined' && replay.active) return; // aucune interaction pendant le replay
@@ -17971,7 +18110,7 @@ function td_onCellClick(i) {
       // Sélectionner un pion qui peut capturer
       const piecesWithCaptures = [...new Set(td_availableCaptures.map(p => p.path[0]))];
       if (!piecesWithCaptures.includes(i)) {
-        td_showStatus('turkishStatusMustJump'); return;
+        td_showStatus('KabylianStatusMustJump'); return;
       }
       td_selectedIdx = i;
       td_renderBoard();
@@ -17986,7 +18125,7 @@ function td_onCellClick(i) {
           td_renderBoard();
           return;
         }
-        td_showStatus('turkishStatusInvalidJump'); return;
+        td_showStatus('KabylianStatusInvalidJump'); return;
       }
       // Exécuter le premier saut du chemin optimal
       // Si plusieurs chemins valides, choisir le plus long (max captures)
@@ -17996,7 +18135,7 @@ function td_onCellClick(i) {
   } else {
     // Phase select : mouvement simple
     if (td_selectedIdx === null) {
-      if (board[i] !== player) { td_showStatus('turkishStatusChoosePiece'); return; }
+      if (board[i] !== player) { td_showStatus('KabylianStatusChoosePiece'); return; }
       td_selectedIdx = i;
       td_renderBoard();
     } else {
@@ -18004,10 +18143,10 @@ function td_onCellClick(i) {
         td_selectedIdx = i; td_renderBoard(); return;
       }
       const moves = td_getSimpleMoves(board, state.kings, td_selectedIdx, player);
-      if (!moves.includes(i)) { td_showStatus('turkishStatusInvalidJump'); return; }
+      if (!moves.includes(i)) { td_showStatus('KabylianStatusInvalidJump'); return; }
       // Déplacement simple — sauvegarder l'état complet pour l'undo
       moveHistory.push(deepCopy(state));
-      playSound('move');
+      playSound('move'); vibrateGame('move');
       const from = td_selectedIdx;
       state.board[i] = player;
       state.board[from] = null;
@@ -18016,7 +18155,7 @@ function td_onCellClick(i) {
       if (Math.floor(i / SIZE) === td_promoRow(player)) {
         if (!state.kings[i]) {
           state.kings[i] = true;
-          showEphemeralBubbleMessage('turkishPromoted', '♛', player);
+          showEphemeralBubbleMessage('KabylianPromoted', '♛', player);
           // Track promotion
           if (player === 1) session.tdPromotionsP1 = (session.tdPromotionsP1 || 0) + 1;
           else session.tdPromotionsP2 = (session.tdPromotionsP2 || 0) + 1;
@@ -18049,7 +18188,7 @@ function td_executeStep(capturePath) {
   const dest = capturePath.path[capturePath.path.length - 1];
   
   // Animation : séquentiallement
-  playSound('capture');
+  playSound('capture'); vibrateGame('capture');
   
   // Track multi-jump
   const captureCount = capturePath.captured.length;
@@ -18092,7 +18231,7 @@ function td_executeStep(capturePath) {
   if (Math.floor(dest / SIZE) === td_promoRow(player)) {
     if (!state.kings[dest]) {
       state.kings[dest] = true;
-      showEphemeralBubbleMessage('turkishPromoted', '♛', player);
+      showEphemeralBubbleMessage('KabylianPromoted', '♛', player);
       if (player === 1) session.tdPromotionsP1 = (session.tdPromotionsP1 || 0) + 1;
       else session.tdPromotionsP2 = (session.tdPromotionsP2 || 0) + 1;
     }
@@ -18107,14 +18246,24 @@ function td_executeStep(capturePath) {
   if (!state.winner) { td_startTurn(); saveGame(); }
 }
 
-// Rendu du plateau dames turques
+// Rendu du plateau dames Kabyle
+function shouldFlipBoardForHumanWhite() {
+  return gameMode !== 'spectator' && humanPlayerId === 2;
+}
+
+function applyBoardOrientation() {
+  if (!boardDiv) return;
+  boardDiv.classList.toggle('board-flipped', shouldFlipBoardForHumanWhite());
+}
+
 function td_renderBoard() {
   // ── Fix: reset any leftover ntlata/3×3 board state ──────────────
   boardDiv.classList.remove('ntlata-board');
-  boardDiv.classList.add('turkish-draughts-board');
+  boardDiv.classList.add('Kabylian-draughts-board');
   boardDiv.style.gridTemplateColumns = 'repeat(5, 1fr)';
   boardDiv.style.gridTemplateRows    = 'repeat(5, 1fr)';
   // ────────────────────────────────────────────────────────────────
+  applyBoardOrientation();
   boardDiv.innerHTML = '';
   const board = state.board;
   const player = state.turn;
@@ -18169,15 +18318,15 @@ function td_updateStatus() {
   const isInverse = !!(cfg().tdInverseWin);
   const pName = state.turn === 1 ? p1DisplayName.textContent.split(' (')[0] : p2DisplayName.textContent.split(' (')[0];
   if (td_phase === 'jump') {
-    const jumpKey = isInverse ? 'turkishBessifStatusJump' : 'turkishStatusJump';
-    const msg = translations[currentLanguage][jumpKey] || translations[currentLanguage].turkishStatusJump || 'Capturez !';
+    const jumpKey = isInverse ? 'KabylianBessifStatusJump' : 'KabylianStatusJump';
+    const msg = translations[currentLanguage][jumpKey] || translations[currentLanguage].KabylianStatusJump || 'Capturez !';
     statusDiv.textContent = pName + ' : ' + msg;
   } else {
     statusDiv.textContent = (translations[currentLanguage].statusMovePhase || 'Déplacement :') + ' ' + pName;
   }
 }
 
-// IA pour les dames turques
+// IA pour les dames Kabyle
 function td_makeAiMove() {
   if (state.winner) return;
   // En mode spectateur les deux joueurs sont des IA : utiliser le joueur actif du tour
@@ -18242,7 +18391,7 @@ function td_makeAiMove() {
 
   // Sauvegarder l'état complet pour l'undo avant de modifier
   moveHistory.push(deepCopy(state));
-  playSound('move');
+  playSound('move'); vibrateGame('move');
   const wasKingAi = !!(state.kings && state.kings[bestMove.from]);
   state.board[bestMove.to] = player;
   state.board[bestMove.from] = null;
@@ -18250,7 +18399,7 @@ function td_makeAiMove() {
   const promoted = !wasKingAi && Math.floor(bestMove.to / SIZE) === td_promoRow(player);
   if (promoted) {
     state.kings[bestMove.to] = true;
-    showEphemeralBubbleMessage('turkishPromoted', '♛', player);
+    showEphemeralBubbleMessage('KabylianPromoted', '♛', player);
     if (player === 1) session.tdPromotionsP1 = (session.tdPromotionsP1 || 0) + 1;
     else session.tdPromotionsP2 = (session.tdPromotionsP2 || 0) + 1;
   }
@@ -18266,7 +18415,7 @@ function td_makeAiMove() {
 }
 
 // ============================================================
-// === FIN DAMES TURQUES =====================================
+// === FIN DAMES Kabyle =====================================
 // ============================================================
 
 // --- GAME INITIALIZATION AND LOGIC ---
@@ -18289,7 +18438,7 @@ captureMode: false,
 winner: null,
 highlightedMills: [],
 pendingCaptures: 0,
-kings: {}, // dames turques: index -> true si dame
+kings: {}, // dames Kabyle: index -> true si dame
 consecutivePiece: {
 1: null,
 2: null
@@ -18385,6 +18534,8 @@ function startGame() {
 resetReplayAndSession(); // §2 integrated from ex-monkey-patch
 clearSave(); // effacer toute sauvegarde précédente avant de démarrer
 hideSaveNotification();
+// Reset pion dot capture counters
+['p1-track','p2-track'].forEach(id => { const el = document.getElementById(id); if (el) { el.dataset.total='0'; el.dataset.captured='0'; } });
 // Annuler tout coup IA en attente d'un éventuel setTimeout précédent
 if (typeof triggerNextAction._gen === 'number') triggerNextAction._gen++;
 state = initState();
@@ -18427,8 +18578,8 @@ player2Name = p1Input || translations[currentLanguage].defaultPlayer2; // Blanc 
 updateGameInfoDisplay();
 showScreen('game-play-area');
 
-// Turkish Draughts : initialisation spéciale
-if (cfg().isTurkishDraughts) {
+// Kabylian Draughts : initialisation spéciale
+if (cfg().isKabylianDraughts) {
   state.phase = 'move'; // Pas de phase de placement
   state.kings = td_initKings();
   // Placement initial des pions sur le plateau 5x5
@@ -18536,7 +18687,7 @@ try {
 } catch(_) {}
 
 // §2 Core render
-if (cfg().isTurkishDraughts) {
+if (cfg().isKabylianDraughts) {
   td_renderBoard();
 } else {
   renderBoard();
@@ -18555,6 +18706,7 @@ try {
 }
 
 function renderBoard() {
+applyBoardOrientation();
 boardDiv.innerHTML = '';
 // Calcul du pion bloqué pour le joueur actif (affichage visuel)
 const blockedIdx = (state.phase === 'move' && !state.captureMode)
@@ -18630,19 +18782,189 @@ cell.onpointerdown = null;
 updateActivePlayerDisplay();
 }
 
-function updateInfo() {
-if (cfg().isTurkishDraughts) {
-p1Count.textContent = state.board.filter(p => p === 1).length;
-p2Count.textContent = state.board.filter(p => p === 2).length;
-} else if (state.phase === 'placement') {
-p1Count.textContent = state.counts[1];
-p2Count.textContent = state.counts[2];
-} else {
-p1Count.textContent = state.board.filter(p => p === 1).length;
-p2Count.textContent = state.board.filter(p => p === 2).length;
+// ══════════════════════════════════════════════════════════════════════
+// SYSTÈME D'AFFICHAGE DES PIONS — refonte complète
+// Deux modes distincts selon la phase de jeu :
+//   • "hand"  (placement) : pions restant à poser, s'évaporent un par un
+//   • "capt"  (déplacement) : pions capturés, s'accumulent avec flash rouge
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * _piPanel(player) → { panel, track, label, count }
+ * Récupère les éléments DOM du panneau d'un joueur.
+ */
+function _piPanel(player) {
+  const p = String(player);
+  return {
+    panel: document.getElementById(`p${p}-panel`),
+    track: document.getElementById(`p${p}-track`),
+    label: document.getElementById(`p${p}-label`),
+    count: document.getElementById(`p${p}-count`),
+  };
 }
-p1Capt.textContent = state.captured[1] || 0;
-p2Capt.textContent = state.captured[2] || 0;
+
+/**
+ * _piSetCount(el, val, translations)
+ * Met à jour le grand compteur avec animation pop si la valeur change.
+ */
+function _piSetCount(el, val) {
+  if (!el) return;
+  const prev = parseInt(el.dataset.val ?? '-999', 10);
+  el.dataset.val = String(val);
+  el.textContent = String(val);
+  if (prev !== val) {
+    el.classList.remove('pop');
+    void el.offsetWidth; // reflow pour relancer l'animation
+    el.classList.add('pop');
+    el.addEventListener('animationend', () => el.classList.remove('pop'), { once: true });
+  }
+}
+
+/**
+ * renderPiHand(player, count)
+ * Mode PLACEMENT — pions encore en main, pleins et nets.
+ * Diff incrémental : retire (placing) ou ajoute (appearing) uniquement ce qui change.
+ */
+function renderPiHand(player, count) {
+  const { panel, track } = _piPanel(player);
+  if (!track) return;
+  const cls = player === 1 ? 's1' : 's2';
+  const prevMode  = track.dataset.mode  || '';
+  const prevCount = parseInt(track.dataset.val ?? '-1', 10);
+
+  if (panel) panel.className = 'pi-panel mode-hand';
+
+  // Rebuild complet si changement de mode
+  if (prevMode !== 'hand') {
+    track.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('span');
+      s.className = `pi-stone ${cls} in-hand appearing`;
+      s.style.animationDelay = `${i * 18}ms`;
+      track.appendChild(s);
+      s.addEventListener('animationend', () => s.classList.remove('appearing'), { once: true });
+    }
+    track.dataset.mode = 'hand';
+    track.dataset.val  = String(count);
+    return;
+  }
+
+  if (prevCount === count) return;
+
+  if (count < prevCount) {
+    // Pion posé : animer la sortie des dernières pierres
+    const alive = track.querySelectorAll('.pi-stone.in-hand:not(.placing)');
+    const n = prevCount - count;
+    for (let i = 0; i < n && i < alive.length; i++) {
+      const s = alive[alive.length - 1 - i];
+      s.classList.add('placing');
+      s.addEventListener('animationend', () => s.remove(), { once: true });
+    }
+  } else {
+    // Undo placement : remettre des pierres
+    for (let i = 0; i < count - prevCount; i++) {
+      const s = document.createElement('span');
+      s.className = `pi-stone ${cls} in-hand appearing`;
+      track.appendChild(s);
+      s.addEventListener('animationend', () => s.classList.remove('appearing'), { once: true });
+    }
+  }
+  track.dataset.val = String(count);
+}
+
+/**
+ * renderPiCaptured(player, captured)
+ * Mode DÉPLACEMENT / DAMMA — pions capturés, estompés, s'accumulent.
+ * Gère n'importe quel nombre (Damma peut dépasser 10).
+ * Diff incrémental : ajoute (capturing) ou retire (uncapturing).
+ */
+function renderPiCaptured(player, captured, forceRebuild = false) {
+  const { panel, track } = _piPanel(player);
+  if (!track) return;
+  const capturedPieceOwner = 3 - player;
+  const cls = capturedPieceOwner === 1 ? 's1' : 's2';
+  const prevMode = track.dataset.mode || '';
+  const prevCapt = parseInt(track.dataset.val ?? '0', 10);
+
+  if (panel) panel.className = 'pi-panel mode-capt';
+
+  const mustRebuild = forceRebuild || prevMode !== 'capt' || Number.isNaN(prevCapt) || track.childElementCount !== captured;
+  if (mustRebuild) {
+    track.innerHTML = '';
+    for (let i = 0; i < captured; i++) {
+      const s = document.createElement('span');
+      s.className = `pi-stone ${cls} captured-still`;
+      track.appendChild(s);
+    }
+    track.dataset.mode = 'capt';
+    track.dataset.val  = String(captured);
+    return;
+  }
+
+  if (prevCapt === captured) return;
+
+  if (captured > prevCapt) {
+    for (let i = 0; i < captured - prevCapt; i++) {
+      const s = document.createElement('span');
+      s.className = `pi-stone ${cls} capturing`;
+      track.appendChild(s);
+      s.addEventListener('animationend', () => {
+        s.classList.remove('capturing');
+        s.classList.add('captured-still');
+      }, { once: true });
+    }
+  } else {
+    const stones = Array.from(track.querySelectorAll('.pi-stone'));
+    for (let i = 0; i < prevCapt - captured; i++) {
+      const s = stones[stones.length - 1 - i];
+      if (!s) continue;
+      s.classList.remove('captured-still', 'capturing');
+      s.classList.add('uncapturing');
+      s.addEventListener('animationend', () => s.remove(), { once: true });
+    }
+  }
+  track.dataset.mode = 'capt';
+  track.dataset.val = String(captured);
+}
+
+// ── UPDATE INFO — point d'entrée principal ─────────────────────────────────
+function updateInfo() {
+  const isTD        = cfg().isKabylianDraughts;
+  const isTlata     = cfg().isNTlata;
+  const inPlacement = !isTD && state.phase === 'placement';
+
+  let p1capt = state.captured[1] || 0;
+  let p2capt = state.captured[2] || 0;
+  let forceCapturedRebuild = false;
+
+  if (isTD && Array.isArray(state.board)) {
+    const totalPiecesPerPlayer = PIECES;
+    const p1OnBoard = state.board.reduce((n, p) => n + (p === 1 ? 1 : 0), 0);
+    const p2OnBoard = state.board.reduce((n, p) => n + (p === 2 ? 1 : 0), 0);
+    p1capt = Math.max(0, totalPiecesPerPlayer - p2OnBoard);
+    p2capt = Math.max(0, totalPiecesPerPlayer - p1OnBoard);
+    forceCapturedRebuild = true;
+    state.captured[1] = p1capt;
+    state.captured[2] = p2capt;
+  }
+
+  if (inPlacement) {
+    // Phase placement : grand compteur = pions restant à poser
+    const p1hand = state.counts[1] ?? 0;
+    const p2hand = state.counts[2] ?? 0;
+    _piSetCount(p1Count, p1hand);
+    _piSetCount(p2Count, p2hand);
+    renderPiHand(1, p1hand);
+    renderPiHand(2, p2hand);
+  } else {
+    // Phase déplacement ou Damma : grand compteur = pions capturés
+    // (pour Damma le compteur peut dépasser 10, c'est correct)
+    _piSetCount(p1Count, p1capt);
+    _piSetCount(p2Count, p2capt);
+    renderPiCaptured(1, p1capt, forceCapturedRebuild);
+    renderPiCaptured(2, p2capt, forceCapturedRebuild);
+  }
+  // p1Capt / p2Capt ne sont plus dans le DOM — ignorés gracieusement
 }
 
 function updatePlayerNamesDisplay() {
@@ -18657,7 +18979,7 @@ if (state.winner) {
 statusDiv.textContent = translations[currentLanguage].statusGameOver;
 return;
 }
-if (cfg().isTurkishDraughts) {
+if (cfg().isKabylianDraughts) {
 td_updateStatus(); return;
 }
 
@@ -18690,9 +19012,9 @@ p2Info.classList.toggle('active-player', activePlayer === 2);
 }
 
 function updateUndoButtonState() {
-// Pour les Dames Turques en mode IA : le human vient de jouer, c'est au tour de l'IA —
+// Pour les Dames Kabyle en mode IA : le human vient de jouer, c'est au tour de l'IA —
 // on autorise l'annulation tant que l'IA n'a pas encore joué (moveHistory non vide)
-const isTD = cfg().isTurkishDraughts;
+const isTD = cfg().isKabylianDraughts;
 const canUndo = moveHistory.length > 0 &&
 !state.winner &&
 (gameMode !== 'ai' || state.turn === humanPlayerId || (isTD && moveHistory.length > 0)) &&
@@ -18704,8 +19026,8 @@ function onCellClick(i) {
 if (typeof replay !== 'undefined' && replay.active) return; // §2 no interaction during replay
 if (_dragSuppressClick) return; // un glissement vient de se terminer
 if (state.winner) return;
-// Dames Turques : rediriger vers la logique dédiée
-if (cfg().isTurkishDraughts) { td_onCellClick(i); return; }
+// Dames Kabyle : rediriger vers la logique dédiée
+if (cfg().isKabylianDraughts) { td_onCellClick(i); return; }
 if (gameMode === 'spectator') return;
 const playerWhoShouldAct = state.captureMode ? state.turnForCapture: state.turn;
 if (gameMode === 'ai' && playerWhoShouldAct === aiPlayerId) {
@@ -18723,7 +19045,7 @@ handlePlacement(i);
 } else {
 handleMove(i);
 if (state.selected !== null && state.selected !== prevSelected) {
-playSound('select');
+playSound('select'); vibrateGame('select');
 }
 }
 }
@@ -18742,7 +19064,7 @@ if (moveHistory.length === 0) return;
 // Annuler tout coup IA en attente dans le setTimeout
 triggerNextAction._gen++;
 
-playSound('undo');
+playSound('undo'); vibrateGame('undo');
 if (gameMode === 'ai') {
 const isPlayableHumanTurn = (s) => s && !s.captureMode && s.turn === humanPlayerId;
 let candidate = null;
@@ -18758,12 +19080,12 @@ state = moveHistory.pop();
 if (moveLog.length > 0) {
 moveLog.pop(); renderMoveLog();
 }
-// Restore kings for Turkish Draughts (sécurité si state vient d'un ancien format)
-if (cfg().isTurkishDraughts && !state.kings) state.kings = {};
+// Restore kings for Kabylian Draughts (sécurité si state vient d'un ancien format)
+if (cfg().isKabylianDraughts && !state.kings) state.kings = {};
 renderAll();
 saveGame();
 if (!state.winner) {
-  if (cfg().isTurkishDraughts) { td_startTurn(); }
+  if (cfg().isKabylianDraughts) { td_startTurn(); }
   else { triggerNextAction(); }
 }
 // §2 Rewind replay timeline after undo
@@ -19051,6 +19373,7 @@ state.highlightedMills = formedMills.flat();
 
 const emoji = cfg().isInverseWin ? '😋' : 'far fa-grin-beam';
 showEphemeralBubbleMessage('ephemeralMill', emoji, state.turnForCapture);
+playSound('mill'); vibrateGame('mill');
 
 renderBoard();
 updateUndoButtonState();
@@ -19098,7 +19421,7 @@ if (targetCell) targetCell.classList.add('capture-pending');
 // ── Étape 2 : après 900 ms, jouer le son + animation de suppression ──
 setTimeout(() => {
 if (targetCell) targetCell.classList.remove('capture-pending');
-playSound('capture');
+playSound('capture'); vibrateGame('capture');
 addMoveLog( {
 player: capturerTurn, text: `${(translations[currentLanguage] && translations[currentLanguage].logCapture) || 'Capture'} [${Math.floor(idxToCapture/5)+1},${idxToCapture%5+1}]`, capture: true
 });
@@ -19214,8 +19537,8 @@ function endGame() {
 
 function triggerNextAction() {
 if (state.winner) return;
-// Turkish Draughts uses its own turn system via td_startTurn()
-if (cfg().isTurkishDraughts) return;
+// Kabylian Draughts uses its own turn system via td_startTurn()
+if (cfg().isKabylianDraughts) return;
 const playerToAct = state.captureMode ? state.turnForCapture: state.turn;
 
 if (gameMode === 'spectator') {
@@ -20327,6 +20650,7 @@ return bestMove || possibleMoves[Math.floor(Math.random() * possibleMoves.length
 
 // --- GLOBALS ---
 let soundEnabled = true;
+let vibrEnabled  = true;   // vibration toggle (same button, long-press cycle)
 const THEMES = ['kabylie',
 'desert',
 'nuit',
@@ -20370,147 +20694,325 @@ let _dragVisualReady = false;
 
 const _DRAG_THRESHOLD = 3; // px min pour considérer que c'est un glissement (plus réactif)
 
-// --- IMPROVED SOUND SYSTEM (Web Audio API with dynamics + reverb) ---
+// ════════════════════════════════════════════════════════════════════════════
+// SOUND ENGINE v3 — Percussif · Organique · Riche
+//
+// Architecture: Per-voice DSP → Pan → Master gain → Soft limiter → Output
+//                                  ↘ Plate reverb (convolver) ↗
+//
+// Palette sonore inspirée du jeu de plateau kabyle :
+//   bois dense, pierre, métal, résonances naturelles.
+// ════════════════════════════════════════════════════════════════════════════
 let __audio = null;
 
 function ensureAudioGraph() {
-const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
-if (!AudioContextCtor) return null;
-if (__audio?.ctx) return __audio;
-const ctx = new AudioContextCtor();
-const master = ctx.createGain();
-master.gain.value = 0.85;
-const compressor = ctx.createDynamicsCompressor();
-compressor.threshold.value = -22;
-compressor.knee.value = 24;
-compressor.ratio.value = 10;
-compressor.attack.value = 0.004;
-compressor.release.value = 0.18;
-const delayNode = ctx.createDelay(0.35);
-delayNode.delayTime.value = 0.16;
-const feedback = ctx.createGain();
-feedback.gain.value = 0.18;
-const wet = ctx.createGain();
-wet.gain.value = 0.16;
-delayNode.connect(feedback);
-feedback.connect(delayNode);
-delayNode.connect(wet);
-master.connect(compressor);
-wet.connect(compressor);
-compressor.connect(ctx.destination);
-__audio = {
-ctx,
-master,
-wetSend: delayNode,
-wetGain: wet
-};
-return __audio;
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return null;
+  if (__audio?.ctx) return __audio;
+
+  const ctx = new Ctor();
+
+  // ── Master gain ──────────────────────────────────────────────────────────
+  const master = ctx.createGain();
+  master.gain.value = 0.72;
+
+  // ── Plate reverb (courte — ~0.8s — pour ne pas noyer les percussions) ───
+  const convolver  = ctx.createConvolver();
+  const reverbGain = ctx.createGain();
+  reverbGain.gain.value = 0.14;
+  (function buildPlate() {
+    const sr  = ctx.sampleRate;
+    const len = Math.floor(sr * 0.85);   // 850 ms
+    const buf = ctx.createBuffer(2, len, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      // Exponential decay + slight early reflections
+      for (let i = 0; i < len; i++) {
+        const decay = Math.pow(1 - i / len, 2.8);
+        const er = (i < 0.03 * sr) ? Math.sin(i * 180) * 0.4 : 0; // early reflection burst
+        d[i] = ((Math.random() * 2 - 1) * decay + er * decay);
+      }
+    }
+    convolver.buffer = buf;
+  })();
+
+  // ── Soft limiter ─────────────────────────────────────────────────────────
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -12;
+  limiter.knee.value       = 4;
+  limiter.ratio.value      = 20;
+  limiter.attack.value     = 0.001;
+  limiter.release.value    = 0.08;
+
+  // ── Routing ───────────────────────────────────────────────────────────────
+  master.connect(limiter);           // dry
+  master.connect(convolver);         // wet send
+  convolver.connect(reverbGain);
+  reverbGain.connect(limiter);       // wet return
+  limiter.connect(ctx.destination);
+
+  __audio = { ctx, master };
+  return __audio;
 }
 
-function audioNow() {
-const a = ensureAudioGraph();
-return a ? a.ctx.currentTime: 0;
+// ── Helpers DSP ──────────────────────────────────────────────────────────────
+
+function _now() {
+  const a = ensureAudioGraph();
+  return a ? a.ctx.currentTime : 0;
 }
 
-function audioEnv(gainNode, t0, a = 0.005, d = 0.09, s = 0.0, r = 0.12, peak = 0.6) {
-const g = gainNode.gain;
-g.cancelScheduledValues(t0);
-g.setValueAtTime(0.0001, t0);
-g.exponentialRampToValueAtTime(Math.max(0.0002, peak), t0 + a);
-g.exponentialRampToValueAtTime(Math.max(0.0002, peak * Math.max(0.001, s)), t0 + a + d);
-g.exponentialRampToValueAtTime(0.0001, t0 + a + d + r);
+/** ADSR sur un GainNode */
+function _env(g, t, att, dec, sus, rel, pk) {
+  const gn = g.gain;
+  gn.cancelScheduledValues(t);
+  gn.setValueAtTime(0.00001, t);
+  gn.exponentialRampToValueAtTime(Math.max(0.00002, pk), t + att);
+  gn.exponentialRampToValueAtTime(Math.max(0.00002, pk * Math.max(0.001, sus)), t + att + dec);
+  gn.exponentialRampToValueAtTime(0.00001, t + att + dec + rel);
 }
 
-function addNoiseBurst(t0, duration = 0.08, peak = 0.35) {
-const a = ensureAudioGraph(); if (!a) return;
-const ctx = a.ctx;
-const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
-const data = buf.getChannelData(0);
-for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
-const src = ctx.createBufferSource();
-src.buffer = buf;
-const filt = ctx.createBiquadFilter();
-filt.type = 'highpass';
-filt.frequency.value = 700;
-const g = ctx.createGain();
-src.connect(filt); filt.connect(g); g.connect(a.master); g.connect(a.wetSend);
-audioEnv(g, t0, 0.001, 0.03, 0.0, 0.08, peak);
-src.start(t0); src.stop(t0 + duration + 0.02);
+/** Oscillateur simple avec filtre LP + env + pan */
+function _osc(t, freq, dur, type, pk, pan = 0, lpF = 0, freqEnd = 0) {
+  const a = ensureAudioGraph(); if (!a) return;
+  const { ctx, master } = a;
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  if (freqEnd) osc.frequency.exponentialRampToValueAtTime(Math.max(1, freqEnd), t + dur * 0.9);
+  const filt = ctx.createBiquadFilter();
+  filt.type = 'lowpass';
+  filt.frequency.value = lpF || Math.min(9000, freq * 6);
+  filt.Q.value = 0.5;
+  const g = ctx.createGain();
+  const p = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (p) p.pan.setValueAtTime(pan, t);
+  osc.connect(filt); filt.connect(g);
+  if (p) { g.connect(p); p.connect(master); } else g.connect(master);
+  _env(g, t, 0.002, dur * 0.28, 0.04, dur * 0.68, pk);
+  osc.start(t); osc.stop(t + dur + 0.06);
 }
 
-function audioTone(t0, f0, duration = 0.11, type = 'sine', peak = 0.35, pan = 0) {
-const a = ensureAudioGraph(); if (!a) return;
-const ctx = a.ctx;
-const osc = ctx.createOscillator();
-osc.type = type;
-osc.frequency.setValueAtTime(f0, t0);
-const filt = ctx.createBiquadFilter();
-filt.type = 'lowpass';
-filt.frequency.setValueAtTime(Math.min(6000, Math.max(900, f0*6)), t0);
-const g = ctx.createGain();
-const p = ctx.createStereoPanner ? ctx.createStereoPanner(): null;
-if (p) p.pan.setValueAtTime(pan, t0);
-osc.connect(filt); filt.connect(g);
-if (p) {
-g.connect(p); p.connect(a.master); p.connect(a.wetSend);
-} else {
-g.connect(a.master); g.connect(a.wetSend);
-}
-audioEnv(g, t0, 0.004, duration*0.35, 0.12, duration*0.6, peak);
-osc.start(t0); osc.stop(t0 + duration + 0.04);
+/** Noise filtré (impacts, frottements) */
+function _noise(t, dur, pk, hpF = 600, lpF = 5000, pan = 0) {
+  const a = ensureAudioGraph(); if (!a) return;
+  const { ctx, master } = a;
+  const len = Math.floor(ctx.sampleRate * (dur + 0.06));
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d   = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.6);
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = hpF;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass';  lp.frequency.value = lpF;
+  const g  = ctx.createGain();
+  const p  = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (p) p.pan.setValueAtTime(pan, t);
+  src.connect(hp); hp.connect(lp); lp.connect(g);
+  if (p) { g.connect(p); p.connect(master); } else g.connect(master);
+  _env(g, t, 0.001, 0.015, 0, dur * 0.95, pk);
+  src.start(t); src.stop(t + dur + 0.07);
 }
 
-function audioChord(t0, freqs, duration = 0.22) {
-freqs.forEach((f, i) => audioTone(t0 + i*0.03, f, duration, 'triangle', 0.32, (i-1)*0.25));
+/** Synthèse FM (richesse harmonique) */
+function _fm(t, car, mRatio, mIdx, dur, pk, pan = 0, pitchSlide = 0) {
+  const a = ensureAudioGraph(); if (!a) return;
+  const { ctx, master } = a;
+  const mFreq   = car * mRatio;
+  const mod = ctx.createOscillator(); mod.type = 'sine';
+  mod.frequency.setValueAtTime(mFreq, t);
+  const mGain = ctx.createGain();
+  mGain.gain.setValueAtTime(mFreq * mIdx, t);
+  mGain.gain.exponentialRampToValueAtTime(Math.max(0.001, mFreq * mIdx * 0.05), t + dur);
+  mod.connect(mGain);
+  const carOsc = ctx.createOscillator(); carOsc.type = 'sine';
+  carOsc.frequency.setValueAtTime(car, t);
+  if (pitchSlide) carOsc.frequency.exponentialRampToValueAtTime(Math.max(1, pitchSlide), t + dur);
+  mGain.connect(carOsc.frequency);
+  const g = ctx.createGain();
+  const p = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (p) p.pan.setValueAtTime(pan, t);
+  carOsc.connect(g);
+  if (p) { g.connect(p); p.connect(master); } else g.connect(master);
+  _env(g, t, 0.003, dur * 0.22, 0.06, dur * 0.74, pk);
+  mod.start(t); carOsc.start(t);
+  mod.stop(t + dur + 0.1); carOsc.stop(t + dur + 0.1);
 }
 
+/** Bruit physique modelé : impact bois sur bois */
+function _woodImpact(t, pitch = 1.0, pk = 0.5) {
+  // Corps boisé : bruit court filtré bas
+  _noise(t, 0.022, pk * 0.9, 80, 1400);
+  // Ton fondamental avec pitch drop rapide (bois : inharmonique)
+  _osc(t, 200 * pitch, 0.15, 'sine', pk * 0.55, 0, 500, 60 * pitch);
+  // Haute fréquence : claquement
+  _noise(t + 0.004, 0.014, pk * 0.4, 2000, 9000);
+}
+
+/** Bruit physique modelé : frottement pierre sur bois */
+function _stoneSlide(t, pk = 0.28) {
+  _noise(t, 0.028, pk, 400, 3500);
+  _noise(t + 0.012, 0.018, pk * 0.5, 1200, 5000);
+  _osc(t + 0.015, 280, 0.08, 'sine', pk * 0.3, 0, 900, 200);
+}
+
+/** Carillon : ton métallique FM + harmonique */
+function _bell(t, freq, dur, pk, pan = 0) {
+  _fm(t, freq, 2.756, 0.55, dur, pk * 0.7, pan);       // ton principal FM
+  _osc(t, freq * 2.0, dur * 0.6, 'sine', pk * 0.18, pan, freq * 12); // harmonique douce
+  _osc(t + 0.008, freq * 3.5, dur * 0.35, 'sine', pk * 0.08, pan);  // shimmer
+}
+
+// ── playSound — tous les sons du jeu ─────────────────────────────────────────
 function playSound(type) {
-if (!soundEnabled) return;
-try {
-const a = ensureAudioGraph(); if (!a) return;
-if (a.ctx.state === 'suspended') a.ctx.resume();
-const t0 = audioNow();
-switch (type) {
-case 'place':
-audioTone(t0, 420, 0.09, 'sine', 0.24, -0.12);
-audioTone(t0+0.04, 650, 0.07, 'sine', 0.18, 0.12);
-break;
-case 'move':
-audioTone(t0, 360, 0.08, 'triangle', 0.18, -0.08);
-audioTone(t0+0.06, 520, 0.09, 'triangle', 0.15, 0.08);
-break;
-case 'select':
-audioTone(t0, 700, 0.06, 'sine', 0.12, 0);
-break;
-case 'undo':
-audioTone(t0, 520, 0.07, 'sine', 0.14, 0);
-audioTone(t0+0.08, 360, 0.09, 'sine', 0.12, 0);
-break;
-case 'mill':
-audioChord(t0, [523.25, 659.25, 783.99], 0.22);
-break;
-case 'capture':
-addNoiseBurst(t0, 0.07, 0.38);
-audioTone(t0+0.02, 220, 0.12, 'sawtooth', 0.14, 0);
-break;
-case 'victory':
-audioChord(t0, [392.0, 523.25, 659.25], 0.28);
-audioChord(t0+0.22, [440.0, 587.33, 739.99], 0.30);
-break;
-case 'phase':
-audioTone(t0, 330, 0.14, 'triangle', 0.16, -0.15);
-audioTone(t0+0.10, 550, 0.14, 'triangle', 0.16, 0.15);
-break;
-case 'error':
-audioTone(t0, 180, 0.14, 'sawtooth', 0.10, 0);
-addNoiseBurst(t0+0.03, 0.09, 0.22);
-break;
-default:
-audioTone(t0, 440, 0.06, 'sine', 0.08, 0);
+  if (!soundEnabled) return;
+  try {
+    const a = ensureAudioGraph(); if (!a) return;
+    if (a.ctx.state === 'suspended') a.ctx.resume();
+    const t = _now();
+
+    switch (type) {
+
+      // ─ Place : pion posé sur le plateau ──────────────────────────────────
+      // Sensation : lourdeur du bois, netteté du dépôt
+      case 'place':
+        _woodImpact(t, 1.0, 0.58);
+        // Résonance légère de la surface du plateau
+        _osc(t + 0.018, 320, 0.22, 'triangle', 0.12, 0, 1200, 180);
+        break;
+
+      // ─ Move : pion déplacé, glissement ───────────────────────────────────
+      // Sensation : légèreté, précision, friction douce
+      case 'move':
+        _stoneSlide(t, 0.32);
+        // Petite résonance d'arrivée
+        _osc(t + 0.035, 440, 0.09, 'sine', 0.10, 0, 1800, 360);
+        break;
+
+      // ─ Select : pion sélectionné ─────────────────────────────────────────
+      // Sensation : ping cristallin, léger et précis
+      case 'select':
+        _bell(t, 1047, 0.11, 0.20, 0);
+        break;
+
+      // ─ Undo : retour en arrière ───────────────────────────────────────────
+      // Sensation : carillon descendant — rembobinage temporel
+      case 'undo':
+        _bell(t,        740,  0.13, 0.18,  0.1);
+        _bell(t + 0.10, 523,  0.14, 0.16, -0.1);
+        _bell(t + 0.20, 370,  0.14, 0.14,  0  );
+        break;
+
+      // ─ Mill : moulin formé — événement majeur ────────────────────────────
+      // Sensation : accord gagnant, majestueux, résonant
+      case 'mill': {
+        // Sub-bass hit
+        _osc(t, 65, 0.22, 'sine', 0.32, 0, 160, 35);
+        // Carillon pentatonique ascendant
+        const millNotes = [392, 523.25, 659.25, 880];
+        millNotes.forEach((f, i) => _bell(t + i * 0.07, f, 0.35, 0.28, (i - 1.5) * 0.22));
+        // Shimmer final
+        _fm(t + 0.28, 1046.5, 2, 0.3, 0.45, 0.18, 0);
+        break;
+      }
+
+      // ─ Capture : pion capturé — impact dramatique ─────────────────────────
+      // Sensation : choc physique, lourd, irréversible
+      case 'capture':
+        // Impact principal : percussif et sombre
+        _woodImpact(t, 0.72, 0.70);
+        // Cœur de l'impact : sub-bass brutal
+        _osc(t, 90, 0.28, 'sine', 0.38, 0, 250, 38);
+        // Traîne métallique
+        _noise(t + 0.04, 0.14, 0.22, 300, 4000);
+        _fm(t + 0.05, 280, 1.8, 1.4, 0.18, 0.24, 0);
+        break;
+
+      // ─ Victory : victoire — fanfare organique ────────────────────────────
+      // Sensation : élévation progressive, lumière, triomphe
+      case 'victory': {
+        // Coup de tambour d'intro
+        _woodImpact(t, 0.8, 0.6);
+        _osc(t, 60, 0.28, 'sine', 0.35, 0, 140, 30);
+        // Montée mélodique
+        const vSeq = [
+          [0.12, 392.0,   0.20],
+          [0.26, 523.25,  0.22],
+          [0.40, 659.25,  0.24],
+          [0.55, 783.99,  0.28],
+        ];
+        vSeq.forEach(([dt, f, d]) => {
+          _bell(t + dt, f, d, 0.30, 0);
+          _osc(t + dt, f * 2, d * 0.7, 'sine', 0.10, 0, f * 10);
+        });
+        // Accord final plein
+        [392, 523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+          _bell(t + 0.78 + i * 0.04, f, 0.65, 0.28, (i - 2) * 0.18);
+        });
+        break;
+      }
+
+      // ─ Phase : transition placement → déplacement ────────────────────────
+      case 'phase':
+        _bell(t,        523, 0.22, 0.20, -0.25);
+        _bell(t + 0.14, 659, 0.22, 0.20,  0.25);
+        _bell(t + 0.28, 880, 0.20, 0.18,  0   );
+        _osc(t, 130, 0.30, 'sine', 0.20, 0, 300, 70);
+        break;
+
+      // ─ Error : mouvement invalide ─────────────────────────────────────────
+      // Sensation : refus, dissonance, court
+      case 'error':
+        _osc(t,        135, 0.14, 'sawtooth', 0.14, -0.12, 450);
+        _osc(t + 0.03, 142, 0.13, 'sawtooth', 0.11,  0.12, 450); // battement
+        _noise(t + 0.01, 0.09, 0.18, 180, 1100);
+        break;
+
+      default:
+        _osc(t, 520, 0.07, 'sine', 0.09, 0, 3000);
+    }
+  } catch(e) { /* silence is golden */ }
 }
-} catch (e) {
-/* silently ignore audio errors */
-}
+
+// ── playUiTock — sons d'interface (boutons, cartes) ──────────────────────────
+function playUiTock(variant = 'default') {
+  if (!soundEnabled) return;
+  try {
+    const a = ensureAudioGraph(); if (!a) return;
+    if (a.ctx.state === 'suspended') a.ctx.resume();
+    const t = _now();
+    switch (variant) {
+
+      case 'nav':       // retour / fermer — carillon doux descendant
+        _bell(t,        660, 0.09, 0.11, 0);
+        _bell(t + 0.06, 495, 0.09, 0.09, 0);
+        break;
+
+      case 'card':      // sélection de variante / carte
+        _noise(t, 0.016, 0.14, 700, 5000);
+        _bell(t + 0.006, 700, 0.10, 0.16, 0);
+        break;
+
+      case 'confirm':   // lancer la partie / confirmer
+        _bell(t,        620, 0.09, 0.18, -0.15);
+        _bell(t + 0.07, 880, 0.10, 0.16,  0.15);
+        _bell(t + 0.14, 1240,0.08, 0.13,  0   );
+        break;
+
+      case 'danger':    // abandonner / action destructrice
+        _osc(t,        185, 0.14, 'sine', 0.16, 0, 450, 100);
+        _noise(t, 0.07, 0.12, 100, 900);
+        break;
+
+      case 'settings':  // toggle son/thème — clic sec
+        _noise(t, 0.01, 0.14, 1200, 7000);
+        _fm(t + 0.003, 820, 4, 0.18, 0.06, 0.13, 0);
+        break;
+
+      default:          // tap générique — léger et propre
+        _noise(t, 0.011, 0.10, 900, 6000);
+        _fm(t + 0.004, 580, 3, 0.22, 0.07, 0.10, 0);
+    }
+  } catch(e) {}
 }
 
 // --- THEME SYSTEM ---
@@ -20542,27 +21044,169 @@ currentTheme = (currentTheme + 1) % THEMES.length;
 applyTheme(currentTheme);
 }
 
-// --- SOUND TOGGLE ---
-function toggleSound() {
-soundEnabled = !soundEnabled;
-const btn = document.getElementById('sound-btn');
-if (btn) {
-const sndLabel = (typeof translations !== 'undefined' && translations[currentLanguage] && translations[currentLanguage].btnSound) || 'Son';
-btn.textContent = '';
-btn.appendChild(document.createTextNode(soundEnabled ? '🔊 ': '🔇 '));
-const span = document.createElement('span');
-span.className = 'btn-label';
-span.setAttribute('data-i18n', 'btnSound');
-span.textContent = sndLabel;
-btn.appendChild(span);
-btn.classList.toggle('sound-off', !soundEnabled);
+// ─── SOUND + VIBRATION TOGGLE ───────────────────────────────────────────────
+// 3-state cycle on the same button:
+//   🔊📳  →  sound ON,  vibration ON
+//   🔊    →  sound ON,  vibration OFF
+//   🔇    →  sound OFF, vibration OFF
+// (vibration alone without sound not offered — less useful)
+function _getSoundState() {
+  if (soundEnabled && vibrEnabled)  return 'both';
+  if (soundEnabled && !vibrEnabled) return 'sound';
+  return 'mute';
 }
-try {
-localStorage.setItem('tiddas_sound', soundEnabled ? '1': '0');
-} catch(e) {}
+function _applySoundState(state) {
+  const ICONS = { both: '🔊', sound: '🔉', mute: '🔇' };
+  const VIBR  = { both: '📳',  sound: '',    mute: '' };
+  soundEnabled = (state !== 'mute');
+  vibrEnabled  = (state === 'both');
+  const btn = document.getElementById('sound-btn');
+  if (btn) {
+    btn.textContent = '';
+    const icon = document.createElement('span');
+    icon.className = 'stray-icon snd-icon';
+    icon.textContent = ICONS[state] + (VIBR[state] ? ' ' + VIBR[state] : '');
+    btn.appendChild(icon);
+    const label = document.createElement('span');
+    label.className = 'stray-item-label btn-label';
+    label.setAttribute('data-i18n', 'btnSound');
+    label.textContent = (typeof translations !== 'undefined' && translations[currentLanguage]?.btnSound) || 'Son';
+    btn.appendChild(label);
+    btn.classList.toggle('sound-off', state === 'mute');
+    btn.dataset.sndState = state;
+  }
+  try {
+    localStorage.setItem('tiddas_sound', state);
+  } catch(e) {}
+}
+function toggleSound() {
+  const cur = _getSoundState();
+  const next = { both: 'sound', sound: 'mute', mute: 'both' }[cur];
+  _applySoundState(next);
 }
 
-// --- MODE GLISSER-DÉPOSER ---
+// ============================================================
+// --- VIBRATION SYSTEM ---
+// ============================================================
+const vibrate = (() => {
+  const vib = navigator.vibrate ? navigator.vibrate.bind(navigator) : null;
+  return (pattern) => {
+    if (!vib) return;
+    try { vib(pattern); } catch(e) {}
+  };
+})();
+
+// Vibration patterns (ms)
+const VIBRATION = {
+  tap:      [18],            // light tap — UI buttons, cards
+  select:   [12],            // piece selected
+  place:    [25],            // piece placed
+  move:     [20],            // piece moved
+  capture:  [40, 30, 60],   // strong — piece captured
+  mill:     [30, 20, 30, 20, 80], // mill formed
+  error:    [15, 15, 15],   // error feedback
+  undo:     [20, 15],       // undo
+  victory:  [60, 40, 120],  // game over — win
+  defeat:   [80, 50, 80],   // game over — lose
+};
+
+function vibrateGame(type) {
+  if (!vibrEnabled) return;
+  const pattern = VIBRATION[type] || VIBRATION.tap;
+  vibrate(pattern);
+}
+
+// ============================================================
+// --- UI CLICK SOUND: light "tock" for buttons & cards ---
+// ============================================================
+function playUiTock(variant = 'default') {
+  if (!soundEnabled) return;
+  try {
+    const a = ensureAudioGraph(); if (!a) return;
+    if (a.ctx.state === 'suspended') a.ctx.resume();
+    const t = _now();
+    switch(variant) {
+      case 'nav':     // back / close — soft descending chime
+        _fm(t, 660, 2, 0.2, 0.08, 0.11, 0);
+        _fm(t+0.045, 495, 2, 0.15, 0.07, 0.09, 0);
+        break;
+      case 'card':    // variant / mode card — satisfying tock
+        _noise(t, 0.014, 0.12, 600, 4000);
+        _fm(t+0.005, 700, 3, 0.3, 0.10, 0.14, 0);
+        break;
+      case 'confirm': // start / confirm — rising bright chime
+        _fm(t,       600, 2, 0.4, 0.09, 0.17, -0.15);
+        _fm(t+0.06,  900, 2, 0.3, 0.09, 0.15,  0.15);
+        _fm(t+0.12, 1200, 2, 0.2, 0.08, 0.13,  0);
+        break;
+      case 'danger':  // surrender / destructive — low dull thud
+        _osc(t, 200, 0.12, 'sine', 0.13, 0, 500, 100);
+        _noise(t, 0.06, 0.10, 100, 800);
+        break;
+      case 'settings': // toggle — crisp click
+        _fm(t, 800, 4, 0.2, 0.06, 0.12, 0);
+        break;
+      default:        // generic tap — neutral click
+        _noise(t, 0.012, 0.10, 800, 5000);
+        _fm(t+0.004, 550, 3, 0.25, 0.07, 0.09, 0);
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// --- ATTACH UI SOUNDS + VIBRATION TO ALL INTERACTIVE ELS ---
+// ============================================================
+(function attachUiSoundsAndVibration() {
+  // Map of selectors → {sound variant, vibration pattern}
+  const rules = [
+    { sel: '.variant-btn, .mode-card, .difficulty-btn, .color-option',       sound: 'card',     vib: 'tap' },
+    { sel: '#start-game-from-setup, #winner-replay-button, #restart',         sound: 'confirm',  vib: 'tap' },
+    { sel: '#surrender, #modal-confirm-btn',                                   sound: 'danger',   vib: 'tap' },
+    { sel: '#sound-btn, #theme-btn, #drag-btn',                               sound: 'settings', vib: 'tap' },
+    { sel: '#new-game, #winner-menu-btn, #back-to-versions-btn, #back-to-modes-btn, #back-to-modes-from-setup-btn', sound: 'nav', vib: 'tap' },
+    { sel: '.lang-btn, .rules-close-btn, #rules-close-btn, #damma-rules-close-btn, #about-close-btn, #modal-cancel-btn', sound: 'nav', vib: 'tap' },
+    { sel: '#show-rules-btn, #show-damma-rules-btn, #show-about-btn',         sound: 'nav',      vib: 'tap' },
+    { sel: '#undo-btn',                                                        sound: 'default',  vib: 'tap' },
+    { sel: '.settings-fab, #settings-fab',                                    sound: 'settings', vib: 'tap' },
+    { sel: '.play-btn, #play-ai-btn, #play-offline-btn, .online-btn',         sound: 'card',     vib: 'tap' },
+    { sel: '.ctrl-btn',                                                        sound: 'default',  vib: 'tap' },
+  ];
+
+  function attachToEl(el, soundVariant, vibPattern) {
+    if (el.__uiSoundAttached) return;
+    el.__uiSoundAttached = true;
+    el.addEventListener('pointerdown', (e) => {
+      // Skip if button is disabled
+      if (el.disabled || el.getAttribute('aria-disabled') === 'true') return;
+      // Only primary pointer
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      playUiTock(soundVariant);
+      vibrateGame(vibPattern);
+    }, { passive: true });
+  }
+
+  function applyRules() {
+    rules.forEach(({ sel, sound, vib }) => {
+      try {
+        document.querySelectorAll(sel).forEach(el => attachToEl(el, sound, vib));
+      } catch(e) {}
+    });
+  }
+
+  // Run once DOM ready, and observe for dynamic elements
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyRules);
+  } else {
+    applyRules();
+  }
+
+  // MutationObserver for dynamically added buttons/cards
+  const observer = new MutationObserver(() => applyRules());
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+
+
+
 function loadDragPref() {
 try {
 dragMode = localStorage.getItem('tiddas_drag') === '1';
@@ -20965,8 +21609,8 @@ showScreen('game-play-area');
 renderAll();
 renderMoveLog();
 // Pour la Damma : initialiser les variables de tour globales (td_phase, td_availableCaptures)
-// triggerNextAction() fait un return immédiat pour isTurkishDraughts
-if (cfg().isTurkishDraughts && state && !state.winner) {
+// triggerNextAction() fait un return immédiat pour isKabylianDraughts
+if (cfg().isKabylianDraughts && state && !state.winner) {
   if (!state.kings) state.kings = {};
   td_startTurn();
 } else {
@@ -21058,8 +21702,8 @@ document.getElementById('spectator-controls').classList.add('visible');
 document.getElementById('undo-btn').disabled = true;
 document.getElementById('surrender').disabled = true;
 renderMoveLog();
-// Damma (Turkish Draughts) : initialisation spéciale identique à startGame()
-if (cfg().isTurkishDraughts) {
+// Damma (Kabylian Draughts) : initialisation spéciale identique à startGame()
+if (cfg().isKabylianDraughts) {
   state.phase = 'move';
   state.kings = td_initKings();
   for (let c = 0; c < SIZE; c++) {
@@ -21086,7 +21730,7 @@ document.getElementById('spectator-controls').classList.remove('visible');
 
 // --- ANIMATIONS ---
 function animateStonePlacement(idx, player) {
-playSound('place');
+playSound('place'); vibrateGame('place');
 const row = Math.floor(idx/SIZE)+1,
 col = idx%SIZE+1;
 addMoveLog( {
@@ -21103,7 +21747,7 @@ once: true
 });
 }
 function animateStoneMove(fromIdx, toIdx) {
-playSound('move');
+playSound('move'); vibrateGame('move');
 const row = Math.floor(fromIdx/SIZE)+1,
 col = fromIdx%SIZE+1;
 const toRow = Math.floor(toIdx/SIZE)+1,
@@ -21418,7 +22062,7 @@ mode: gameMode || null,
 variant: variant || null,
 difficulty: aiDifficulty || null,
 winner: null,
-// Turkish Draughts (Damma) specific counters
+// Kabylian Draughts (Damma) specific counters
 tdPromotionsP1: 0,
 tdPromotionsP2: 0,
 tdMultiJumpsP1: 0,
@@ -22055,11 +22699,11 @@ if (!state.consecutiveCount) state.consecutiveCount = {
 1: 0,
 2: 0
 };
-// Restore kings for Turkish Draughts replay
-if (cfg().isTurkishDraughts && !state.kings) state.kings = {};
+// Restore kings for Kabylian Draughts replay
+if (cfg().isKabylianDraughts && !state.kings) state.kings = {};
 // Pour la Damma : recalculer les variables globales de tour à partir du frame
 // sinon td_renderBoard() affiche des pièces capturables erronées
-if (cfg().isTurkishDraughts) {
+if (cfg().isKabylianDraughts) {
   try {
     td_selectedIdx = null;
     // En mode replay, ne pas afficher les captures disponibles (confusant)
@@ -22166,7 +22810,7 @@ replay.active = true;
 // Pour la Damma : réinitialiser les variables globales td_* avant le premier rendu
 // pour éviter que les captures/sélections de la partie en cours polluent l'affichage du replay
 try {
-  if (cfg().isTurkishDraughts) {
+  if (cfg().isKabylianDraughts) {
     td_selectedIdx = null;
     td_availableCaptures = [];
     td_phase = 'select';
@@ -22246,7 +22890,7 @@ if (header && state?.phase) header.classList.add('hidden');
 } catch(_) {}
 
 // Pour la Damma : restaurer les variables globales de tour après le replay
-if (cfg().isTurkishDraughts) {
+if (cfg().isKabylianDraughts) {
   try {
     if (!state.kings) state.kings = {};
     td_selectedIdx = null;
@@ -22657,21 +23301,20 @@ const idx = parseInt(savedTheme, 10);
 currentTheme = Number.isFinite(idx) ? ((idx % THEMES.length) + THEMES.length) % THEMES.length: 0;
 }
 const savedSound = localStorage.getItem('tiddas_sound');
-if (savedSound !== null) soundEnabled = savedSound === '1';
+if (savedSound !== null) {
+  // Legacy '1'/'0' compat + new 'both'/'sound'/'mute'
+  if (savedSound === '0') { soundEnabled = false; vibrEnabled = false; }
+  else if (savedSound === '1') { soundEnabled = true; vibrEnabled = true; }
+  else if (savedSound === 'sound') { soundEnabled = true; vibrEnabled = false; }
+  else if (savedSound === 'mute') { soundEnabled = false; vibrEnabled = false; }
+  // 'both' is default (soundEnabled=true, vibrEnabled=true)
+}
 } catch(e) {}
 applyTheme(currentTheme);
 const soundBtn = document.getElementById('sound-btn');
 if (soundBtn) {
-const sndLabel = (typeof translations !== 'undefined' && translations[currentLanguage] && translations[currentLanguage].btnSound) || 'Son';
-soundBtn.textContent = '';
-soundBtn.appendChild(document.createTextNode(soundEnabled ? '🔊 ': '🔇 '));
-const span = document.createElement('span');
-span.className = 'btn-label';
-span.setAttribute('data-i18n', 'btnSound');
-span.textContent = sndLabel;
-soundBtn.appendChild(span);
-soundBtn.classList.toggle('sound-off', !soundEnabled);
-soundBtn.addEventListener('click', toggleSound);
+  _applySoundState(_getSoundState());
+  soundBtn.addEventListener('click', toggleSound);
 }
 const themeBtn = document.getElementById('theme-btn');
 if (themeBtn) {
@@ -23736,14 +24379,14 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
     const container = boardDiv.closest('.game-board-container');
     if (!isNTlataVariant()) {
       boardDiv.classList.remove('ntlata-board');
-      boardDiv.classList.remove('turkish-draughts-board');
+      boardDiv.classList.remove('Kabylian-draughts-board');
       boardDiv.style.gridTemplateColumns = '';
       boardDiv.style.gridTemplateRows = '';
       if (container) container.classList.remove('ntlata-container-active');
       return _origRenderBoard();
     }
     boardDiv.innerHTML = '';
-    boardDiv.classList.remove('turkish-draughts-board');
+    boardDiv.classList.remove('Kabylian-draughts-board');
     boardDiv.classList.add('ntlata-board');
     boardDiv.classList.toggle('ntlata-cases-mode', !!ntlataCasesMode);
     boardDiv.style.gridTemplateColumns = 'repeat(3, 1fr)';
@@ -23917,7 +24560,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
   animateStonePlacement = function patchedAnimateStonePlacement(idx, player) {
     if (!isNTlataVariant()) return _origAnimateStonePlacement(idx, player);
-    playSound('place');
+    playSound('place'); vibrateGame('place');
     addMoveLog({ player, text: `${formatBoardPos(idx)}` });
     const cell = boardDiv.children[idx];
     const stone = document.createElement('div');
@@ -23929,7 +24572,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
   animateStoneMove = function patchedAnimateStoneMove(fromIdx, toIdx) {
     if (!isNTlataVariant()) return _origAnimateStoneMove(fromIdx, toIdx);
-    playSound('move');
+    playSound('move'); vibrateGame('move');
     addMoveLog({ player: state.turn, text: `${formatBoardPos(fromIdx)} → ${formatBoardPos(toIdx)}` });
     const stone = boardDiv.children[fromIdx]?.querySelector('.stone');
     if (stone) stone.classList.add('fade-out');
@@ -24017,7 +24660,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
   }
 
   function getCapturableTargetsFromState(s) {
-    if (!s || !s.captureMode || cfg().isTurkishDraughts || cfg().isNTlata) return [];
+    if (!s || !s.captureMode || cfg().isKabylianDraughts || cfg().isNTlata) return [];
     const actor = (s.turnForCapture === 1 || s.turnForCapture === 2) ? s.turnForCapture : null;
     if (!actor) return [];
     const targetOwner = cfg().isInverseWin ? actor : (3 - actor);
@@ -24031,7 +24674,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
   function repairState(reason) {
     if (!state || !Array.isArray(state.board)) return state;
 
-    const isTD = !!cfg().isTurkishDraughts;
+    const isTD = !!cfg().isKabylianDraughts;
     const isNT = !!cfg().isNTlata;
     const expectedLen = activeBoardSize();
     const piecesPerPlayer = piecesPerPlayerForVariant();
@@ -24085,6 +24728,11 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
     if (isTD) {
       state.phase = 'move';
+      // En Damma, les compteurs représentent les prises réalisées par chaque joueur.
+      state.captured = {
+        1: Math.max(0, piecesPerPlayer - p2OnBoard),
+        2: Math.max(0, piecesPerPlayer - p1OnBoard)
+      };
       if (!state.kings || typeof state.kings !== 'object') state.kings = {};
     } else {
       if (state.phase === 'placement') {
@@ -24191,14 +24839,14 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
   // Moulin valide = strictement 3 pions, horizontal/vertical, et pas un reliquat d'une ligne de 4.
   findAllMills = function hardenedFindAllMills(originalBoard, newBoard, from, to, player) {
-    if (cfg().isNTlata || cfg().isTurkishDraughts) {
+    if (cfg().isNTlata || cfg().isKabylianDraughts) {
       return __prevFindAllMills(originalBoard, newBoard, from, to, player);
     }
     return computeClassicNewMills(originalBoard, newBoard, player);
   };
 
   handleMove = function hardenedHandleMove(i) {
-    if (cfg().isTurkishDraughts) return __prevHandleMove(i);
+    if (cfg().isKabylianDraughts) return __prevHandleMove(i);
     repairState('handleMove:start');
 
     if (gameMode === 'online' && !isMyTurnOnline()) {
@@ -24314,6 +24962,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
         state.highlightedMills = formedMills.flat();
         const emoji = cfg().isInverseWin ? '😋' : 'far fa-grin-beam';
         showEphemeralBubbleMessage('ephemeralMill', emoji, state.turnForCapture);
+        playSound('mill'); vibrateGame('mill');
         repairState('classic-capture-open');
         renderBoard();
         updateUndoButtonState();
@@ -24329,7 +24978,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
   };
 
   handleCapture = function hardenedHandleCapture(idxToCapture) {
-    if (cfg().isTurkishDraughts || cfg().isNTlata) return __prevHandleCapture(idxToCapture);
+    if (cfg().isKabylianDraughts || cfg().isNTlata) return __prevHandleCapture(idxToCapture);
     repairState('handleCapture:start');
 
     if (gameMode === 'online' && !isMyTurnOnline()) {
@@ -24357,7 +25006,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
     setTimeout(() => {
       if (epoch !== currentRulesAsyncEpoch()) return;
       if (targetCell) targetCell.classList.remove('capture-pending');
-      playSound('capture');
+      playSound('capture'); vibrateGame('capture');
       addMoveLog({
         player: capturerTurn,
         text: `${(translations[currentLanguage] && translations[currentLanguage].logCapture) || 'Capture'} [${Math.floor(idxToCapture / 5) + 1},${idxToCapture % 5 + 1}]`,
