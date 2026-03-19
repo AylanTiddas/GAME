@@ -14626,7 +14626,7 @@ Patrimoine Amazigh • Idles Amaziɣ
   <div class="online-chat-quick" id="online-chat-quick"></div>
   <form class="online-chat-compose" id="online-chat-form" autocomplete="off" onsubmit="return window.__forceOnlineChatSend ? window.__forceOnlineChatSend(event) : false;">
     <input id="online-chat-input" type="text" maxlength="120" inputmode="text" placeholder="Écrire un message…" aria-label="Écrire un message" />
-    <button id="online-chat-send" type="button" aria-label="Envoyer" onclick="return window.__forceOnlineChatSend ? window.__forceOnlineChatSend(event) : false;">Envoyer</button>
+    <button id="online-chat-send" type="button" aria-label="Envoyer" onclick="return window.__forceOnlineChatSend ? window.__forceOnlineChatSend(event) : false;"><span class="ocsend-icon" aria-hidden="true"></span><span class="ocsend-label">Envoyer</span></button>
   </form>
 </div>
 <button aria-label="Messages" id="online-chat-fab" title="Messages" aria-expanded="false" aria-controls="online-chat-panel" hidden>
@@ -27082,7 +27082,7 @@ const ONLINE_CHAT_I18N = {
     unavailable: 'Messagerie disponible uniquement dans un salon en ligne.',
     you: 'Vous',
     close: 'Fermer',
-    quick: ['Vas y ! Joue.', 'Je réfléchis', 'Piégé !', 'Moulin isolé', "C'est serré"],
+    quick: ['⚡ Vas-y !', '🤔 Je réfléchis…', '😤 Piégé !', '🔗 Moulin isolé', "😅 C'est serré", '👏 Bien joué !'],
     sendError: 'Message non envoyé. Vérifie ta connexion.'
   },
   kab: {
@@ -27098,7 +27098,7 @@ const ONLINE_CHAT_I18N = {
     unavailable: 'Tameslayt tella kan deg lqaa n internet.',
     you: 'Kečč',
     close: 'Mdel',
-    quick: ['Aha urar !', 'La ttxemmimeɣ', 'Tettuseqqa', 'yettwaɛzal', 'Busufeɣ !'],
+    quick: ['⚡ Aha urar !', '🤔 La ttxemmimeɣ', '😤 Tettuseqqa', '🔗 Yettwaɛzal', '😅 Busufeɣ !', '👏 Ihwa !'],
     sendError: 'Izen ur yettwazen ara. Senqed tuqqna-k.'
   },
   en: {
@@ -27114,7 +27114,7 @@ const ONLINE_CHAT_I18N = {
     unavailable: 'Chat is only available inside an online room.',
     you: 'You',
     close: 'Close',
-    quick: ['Go ahead! Play.', "I'm thinking", 'Trapped!', 'Isolated mill', "It\'s tight"],
+    quick: ['⚡ Go ahead!', "🤔 I'm thinking…", '😤 Trapped!', '🔗 Isolated mill', "😅 It's tight", '👏 Well played!'],
     sendError: 'Message not sent. Check your connection.'
   }
 };
@@ -27216,7 +27216,9 @@ function setOnlineChatSending(sending) {
     const sendLabel = onlineChat.sending
       ? onlineChatText('sendBusy', onlineChatText('sending', 'Envoi…'))
       : onlineChatText('send', 'Envoyer');
-    onlineChatEls.send.textContent = sendLabel;
+    const sendLabelEl = onlineChatEls.send.querySelector('.ocsend-label');
+    if (sendLabelEl) sendLabelEl.textContent = sendLabel;
+    else onlineChatEls.send.setAttribute('data-label', sendLabel);
     onlineChatEls.send.setAttribute('aria-label', sendLabel);
     onlineChatEls.send.title = sendLabel;
   }
@@ -27227,9 +27229,9 @@ function getOnlineChatSenderName(msg) {
   return normalizeName(msg.senderName || fallback || 'Joueur', msg.senderName || fallback || 'Joueur');
 }
 function getOnlineChatStatusLabel(item) {
-  if (item.status === 'sending') return onlineChatText('sending', 'Envoi…');
+  if (item.status === 'sending') return '○';
   if (item.status === 'failed') return onlineChatText('failed', 'Échec');
-  return onlineChatText('sent', 'Envoyé');
+  return '✓✓';
 }
 function upsertOnlineChatMessage(entry, options = {}) {
   if (!entry || !entry.id) return null;
@@ -27389,7 +27391,8 @@ function refreshOnlineChatI18n() {
     const sendLabel = onlineChat.sending
       ? onlineChatText('sendBusy', onlineChatText('sending', 'Envoi…'))
       : send;
-    onlineChatEls.send.textContent = sendLabel;
+    const sendLabelEl2 = onlineChatEls.send.querySelector('.ocsend-label');
+    if (sendLabelEl2) sendLabelEl2.textContent = sendLabel;
     onlineChatEls.send.title = sendLabel;
     onlineChatEls.send.setAttribute('aria-label', sendLabel);
   }
@@ -27912,6 +27915,268 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
 
 <style>
 /* ═══════════════════════════════════════════════════════════════
+   TIDDAS v19 — Suite améliorations messagerie
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Bouton envoi : icône SVG via mask, label caché visuellement ── */
+.ocsend-label {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+.ocsend-icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transform: translateX(1px);
+  transition: transform 0.18s ease;
+}
+#online-chat-send:hover .ocsend-icon {
+  transform: translateX(3px);
+}
+#online-chat-send[data-state="sending"] .ocsend-icon {
+  animation: ocSendPulse 0.9s ease-in-out infinite;
+}
+@keyframes ocSendPulse {
+  0%, 100% { opacity: 1; transform: translateX(1px) scale(1); }
+  50%       { opacity: 0.5; transform: translateX(3px) scale(0.85); }
+}
+
+/* ── Statut ✓✓ : style élégant ── */
+.ocm-status.sent {
+  background: transparent !important;
+  font-size: 0.8rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.04em !important;
+  padding: 0 !important;
+  color: var(--chat-status-sent-text) !important;
+}
+.ocm-status.pending {
+  background: transparent !important;
+  font-size: 0.78rem !important;
+  padding: 0 !important;
+  color: var(--chat-muted) !important;
+  animation: ocStatusBlink 1.2s ease-in-out infinite;
+}
+@keyframes ocStatusBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.ocm-status.failed {
+  font-size: 0.68rem !important;
+  padding: 0.1rem 0.36rem !important;
+}
+
+/* ── Bulles OCM : micro-animation sur chaque nouvelle bulle ── */
+.ocm.first-of-group {
+  animation: ocmGroupIn 0.24s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.ocm.cont {
+  animation: ocmContIn 0.16s ease-out;
+}
+@keyframes ocmGroupIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ocmContIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Bulles : ombre douce + meilleur rendu ── */
+.ocm.me .ocm-body {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+.ocm.them .ocm-body {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+}
+
+/* ── Nom adversaire : avec petite puce de couleur ── */
+.ocm-name {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+.ocm-name::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chat-accent);
+  flex: 0 0 auto;
+  opacity: 0.8;
+}
+
+/* ── Message vide : plus élégant ── */
+.online-chat-empty {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 1.4rem 1rem !important;
+  border: 1px dashed var(--chat-border) !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+  color: var(--chat-muted) !important;
+  font-size: 0.8rem !important;
+  text-align: center !important;
+  opacity: 0.7 !important;
+}
+.online-chat-empty::before {
+  content: '💬';
+  font-size: 1.6rem;
+  opacity: 0.4;
+  display: block;
+}
+
+/* ── FAB chat : animation ping quand non-lu ── */
+#online-chat-unread:not([hidden]) ~ * ,
+#online-chat-fab:has(#online-chat-unread:not([hidden])) {
+  /* fallback: géré par la classe js-has-unread */
+}
+#online-chat-fab.has-unread {
+  animation: fabPing 2s ease-in-out infinite;
+}
+@keyframes fabPing {
+  0%, 90%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.42), 0 0 0 0 var(--chat-fab-ring); }
+  45%            { box-shadow: 0 4px 14px rgba(0,0,0,0.42), 0 0 0 7px rgba(240,200,80,0); }
+}
+
+/* ── Popup entrante : avatar initiale ── */
+.cip-inner {
+  border-radius: 20px !important;
+  padding: 0.78rem 0.9rem !important;
+  gap: 0.65rem !important;
+}
+.cip-icon {
+  display: none !important; /* remplacé par cip-avatar injecté en JS */
+}
+.cip-avatar {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--chat-accent, #f0c850);
+  color: #08111e;
+  font: 800 0.9rem/34px var(--font-ui, sans-serif);
+  text-align: center;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+.cip-sender {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.07em !important;
+  margin-bottom: 0.05rem !important;
+}
+.cip-text {
+  font-size: 0.86rem !important;
+  line-height: 1.3 !important;
+}
+.cip-open {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 0.7rem !important;
+}
+
+/* ── Quick chips : légère animation d'entrée ── */
+.online-chat-quick-btn {
+  animation: chipFadeIn 0.2s ease both;
+}
+.online-chat-quick-btn:nth-child(1) { animation-delay: 0.00s; }
+.online-chat-quick-btn:nth-child(2) { animation-delay: 0.04s; }
+.online-chat-quick-btn:nth-child(3) { animation-delay: 0.08s; }
+.online-chat-quick-btn:nth-child(4) { animation-delay: 0.12s; }
+.online-chat-quick-btn:nth-child(5) { animation-delay: 0.16s; }
+.online-chat-quick-btn:nth-child(6) { animation-delay: 0.20s; }
+@keyframes chipFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 0.82; transform: translateY(0); }
+}
+
+/* ── Panel : séparateur avant compose ── */
+.online-chat-compose {
+  border-top: 1px solid var(--chat-border) !important;
+  padding-top: 0.52rem !important;
+}
+
+/* ── Thèmes clairs : texte de statut plus lisible ── */
+html[data-theme="kabylie"] .ocm-status.sent,
+html[data-theme="desert"]  .ocm-status.sent,
+html[data-theme="modern"]  .ocm-status.sent {
+  color: rgba(0,120,60,0.85) !important;
+}
+html[data-theme="kabylie"] .ocm-time,
+html[data-theme="desert"]  .ocm-time,
+html[data-theme="modern"]  .ocm-time {
+  color: rgba(0,0,0,0.45) !important;
+}
+</style>
+
+<script>
+/* ── v19 JS patches ── */
+(function() {
+  /* 1. FAB ping animation quand non-lu */
+  const origRenderUnread = window.__ocRenderUnread;
+  function patchFabUnread() {
+    const fab = document.getElementById('online-chat-fab');
+    const badge = document.getElementById('online-chat-unread');
+    if (!fab || !badge) return;
+    const hasUnread = !badge.hidden && parseInt(badge.textContent || '0', 10) > 0;
+    fab.classList.toggle('has-unread', hasUnread);
+  }
+  // Observer sur le badge pour mettre à jour la classe du fab
+  const badge = document.getElementById('online-chat-unread');
+  if (badge) {
+    new MutationObserver(patchFabUnread).observe(badge, { attributes: true, childList: true, characterData: true, subtree: true });
+  }
+
+  /* 2. Avatar initiale dans le popup entrant */
+  const origShowPopup = window.showChatIncomingPopup;
+  // On monkey-patch après DOMContentLoaded car la fonction est dans le scope IIFE
+  // — on intercepte via l'élément directement après chaque affichage
+  const popup = document.getElementById('chat-incoming-popup');
+  if (popup) {
+    new MutationObserver(function(muts) {
+      muts.forEach(function(m) {
+        if (m.attributeName === 'hidden' && !popup.hidden) {
+          // Injecter avatar si pas encore là
+          const inner = popup.querySelector('.cip-inner');
+          if (!inner) return;
+          let av = inner.querySelector('.cip-avatar');
+          if (!av) {
+            av = document.createElement('div');
+            av.className = 'cip-avatar';
+            inner.insertBefore(av, inner.firstChild);
+          }
+          const sender = document.getElementById('cip-sender');
+          const name = sender ? (sender.textContent || '?').trim() : '?';
+          av.textContent = name.charAt(0).toUpperCase();
+        }
+      });
+    }).observe(popup, { attributes: true });
+  }
+})();
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
    TIDDAS v18 — Refonte messagerie en ligne
    • Zone de saisie : bouton envoi intégré (icône), input pleine largeur
    • Messages rapides : chips horizontaux scrollables, discrets
@@ -28095,6 +28360,348 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
     height: 32px !important;
     right: 5px !important;
   }
+}
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TIDDAS v20 — Améliorations UX mobile & polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. body.chat-open : désactive les FABs proprement ── */
+body.chat-open #settings-fab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.72) translateY(6px) !important;
+  transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+body.chat-open #online-chat-fab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.72) translateY(6px) !important;
+  transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+/* Retour fluide */
+body:not(.chat-open) #settings-fab,
+body:not(.chat-open) #online-chat-fab {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  transition: opacity 0.22s ease 0.05s, transform 0.22s ease 0.05s !important;
+}
+
+/* ── 2. Toolbar-buttons : remontée dynamique via CSS var ── */
+.toolbar-buttons {
+  bottom: var(--chat-kb-offset, calc(1.25rem + env(safe-area-inset-bottom, 0px))) !important;
+  transition: bottom 0.22s cubic-bezier(0.4,0,0.2,1) !important;
+}
+
+/* ── 3. Vraies queues de bulles SMS ── */
+/* Queue droite (mes messages) */
+.ocm.me.first-of-group .ocm-body::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  right: -7px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 0 8px;
+  border-color: transparent transparent transparent var(--ocm-me-tail, rgba(123,182,255,0.25));
+  filter: drop-shadow(1px 1px 0 var(--chat-border-strong));
+}
+/* Queue gauche (adversaire) */
+.ocm.them.first-of-group .ocm-body::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 6px 8px;
+  border-color: transparent transparent var(--ocm-them-tail, rgba(255,255,255,0.08)) transparent;
+  filter: drop-shadow(-1px 1px 0 var(--chat-border));
+}
+.ocm-body { position: relative; overflow: visible !important; }
+
+/* ── Correction couleurs queue selon thème ── */
+html[data-theme="kabylie"] .ocm.me.first-of-group .ocm-body::after,
+html[data-theme="desert"]  .ocm.me.first-of-group .ocm-body::after,
+html[data-theme="modern"]  .ocm.me.first-of-group .ocm-body::after {
+  --ocm-me-tail: rgba(123,182,255,0.3);
+}
+html[data-theme="kabylie"] .ocm.them.first-of-group .ocm-body::after,
+html[data-theme="desert"]  .ocm.them.first-of-group .ocm-body::after,
+html[data-theme="modern"]  .ocm.them.first-of-group .ocm-body::after {
+  --ocm-them-tail: rgba(255,255,255,0.85);
+  border-color: transparent transparent rgba(255,255,255,0.85) transparent;
+}
+
+/* ── 4. Indicateur "typing" ── */
+.ocm-typing {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.52rem 0.78rem;
+  border-radius: 18px;
+  border-bottom-left-radius: 5px;
+  border: 1px solid var(--chat-border);
+  background: var(--chat-msg-them-bg);
+  animation: ocmGroupIn 0.24s cubic-bezier(0.34,1.56,0.64,1);
+  margin-top: 0.4rem;
+}
+.ocm-typing span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chat-muted);
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+.ocm-typing span:nth-child(2) { animation-delay: 0.18s; }
+.ocm-typing span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.5; }
+  30%            { transform: translateY(-5px); opacity: 1;   }
+}
+
+/* ── 5. Scroll fluide dans la liste ── */
+#online-chat-list {
+  scroll-behavior: smooth !important;
+}
+
+/* ── 6. Panel : animation entrée depuis le bas ── */
+.online-chat-panel {
+  transform-origin: bottom right !important;
+}
+.online-chat-panel:not(.open) {
+  transform: translateY(12px) scale(0.97) !important;
+}
+.online-chat-panel.open {
+  transform: translateY(0) scale(1) !important;
+}
+
+/* ── 7. Input : focus ring cohérent tous thèmes ── */
+#online-chat-input:focus {
+  outline: none !important;
+}
+
+/* ── 8. Chip sélectionnée (feedback tap) ── */
+#online-chat-quick .online-chat-quick-btn:active {
+  transform: scale(0.93) !important;
+  opacity: 1 !important;
+}
+
+/* ── 9. Scrollbar liste : invisible mais fonctionnelle ── */
+#online-chat-list {
+  scrollbar-width: none !important;
+}
+#online-chat-list::-webkit-scrollbar { display: none !important; }
+
+/* ── 10. Fade-in bas de liste ── */
+.online-chat-panel .online-chat-list-wrap {
+  position: relative;
+}
+
+</style>
+
+<script>
+/* ── TIDDAS v20 : patches JS clavier + chat-open + typing ── */
+(function() {
+  /* ─ 1. body.chat-open synchronisé avec l'état du panel ─ */
+  const _origSetOpen = window.setOnlineChatOpen;
+  // On patch via MutationObserver sur le panel (plus fiable que monkey-patch de IIFE)
+  const panel = document.getElementById('online-chat-panel');
+  if (panel) {
+    new MutationObserver(function() {
+      const isOpen = panel.classList.contains('open');
+      document.body.classList.toggle('chat-open', isOpen);
+      if (isOpen) {
+        // Scroll liste en bas après transition
+        setTimeout(function() {
+          const list = document.getElementById('online-chat-list');
+          if (list) list.scrollTop = list.scrollHeight;
+        }, 60);
+      }
+    }).observe(panel, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* ─ 2. visualViewport : remonte le panel quand clavier ouvert ─ */
+  if (window.visualViewport) {
+    var _toolbar = document.getElementById('toolbar-buttons');
+    function _onVVResize() {
+      if (!_toolbar) return;
+      var vv = window.visualViewport;
+      var kbHeight = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      var offset = kbHeight > 50
+        ? (kbHeight + 8) + 'px'
+        : 'calc(1.25rem + env(safe-area-inset-bottom, 0px))';
+      _toolbar.style.setProperty('--chat-kb-offset', offset);
+    }
+    window.visualViewport.addEventListener('resize', _onVVResize);
+    window.visualViewport.addEventListener('scroll', _onVVResize);
+  }
+
+  /* ─ 3. Scroll to bottom quand input focalisé ─ */
+  var chatInput = document.getElementById('online-chat-input');
+  if (chatInput) {
+    chatInput.addEventListener('focus', function() {
+      setTimeout(function() {
+        var list = document.getElementById('online-chat-list');
+        if (list) list.scrollTop = list.scrollHeight;
+      }, 320); /* délai après resize clavier */
+    });
+  }
+
+  /* ─ 4. Typing indicator : simulé à la réception d'un message ─
+     Affiche les 3 points pendant 1.2s avant que la bulle apparaisse.
+     Patch renderOnlineChatMessages pour injecter l'indicateur. */
+  var _lastMsgCount = 0;
+  var _typingEl = null;
+  var _typingTimer = null;
+
+  function _removeTyping() {
+    clearTimeout(_typingTimer);
+    if (_typingEl && _typingEl.parentNode) _typingEl.parentNode.removeChild(_typingEl);
+    _typingEl = null;
+  }
+
+  // Observer sur la liste pour détecter ajout de bulles adversaires
+  var chatList = document.getElementById('online-chat-list');
+  if (chatList) {
+    new MutationObserver(function(muts) {
+      // Si nouvelles bulles adversaires → retire l'indicateur
+      var hasNewThem = muts.some(function(m) {
+        return Array.from(m.addedNodes).some(function(n) {
+          return n.nodeType === 1 && n.classList && n.classList.contains('them');
+        });
+      });
+      if (hasNewThem) _removeTyping();
+    }).observe(chatList, { childList: true });
+  }
+
+  /* Expose fonction pour déclencher le typing indicator depuis l'extérieur */
+  window._showTypingIndicator = function() {
+    _removeTyping();
+    var list = document.getElementById('online-chat-list');
+    if (!list) return;
+    _typingEl = document.createElement('div');
+    _typingEl.className = 'ocm-typing';
+    _typingEl.innerHTML = '<span></span><span></span><span></span>';
+    list.appendChild(_typingEl);
+    list.scrollTop = list.scrollHeight;
+    _typingTimer = setTimeout(_removeTyping, 3000);
+  };
+
+})();
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TIDDAS v19 — PATCH clavier/FAB overlap
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Cacher les FABs quand le panel chat est ouvert ──
+   DOM order: .online-chat-panel → #online-chat-fab → #settings-fab
+   Le sélecteur ~ cible les frères suivants */
+#online-chat-panel.open ~ #online-chat-fab,
+#online-chat-panel.open ~ #settings-fab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.7) !important;
+  transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+/* ── 2. Chips rapides : forcer scroll horizontal via ID (spécificité max) ── */
+#online-chat-quick {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 0.4rem !important;
+  padding: 0.08rem 0.1rem 0.2rem !important;
+  /* fondu bords */
+  mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%) !important;
+  /* Annuler grid */
+  grid-template-columns: none !important;
+}
+#online-chat-quick::-webkit-scrollbar { display: none !important; }
+
+/* Chips : nowrap absolu via ID */
+#online-chat-quick .online-chat-quick-btn,
+#online-chat-quick button {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  min-height: unset !important;
+  height: 28px !important;
+  padding: 0 0.75rem !important;
+  font-size: 0.75rem !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--chat-border) !important;
+  background: var(--chat-surface-soft) !important;
+  color: var(--chat-muted) !important;
+  opacity: 0.85 !important;
+  transition: background 0.15s, color 0.15s, transform 0.15s !important;
+}
+#online-chat-quick .online-chat-quick-btn:hover,
+#online-chat-quick button:hover {
+  background: var(--chat-surface-soft-2) !important;
+  color: var(--chat-text) !important;
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── 3. Compose : garantir pas de débordement ── */
+#online-chat-form {
+  display: block !important;
+  position: relative !important;
+}
+#online-chat-input {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-right: 3rem !important;
+}
+#online-chat-send {
+  position: absolute !important;
+  right: 5px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 36px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+}
+
+/* ── 4. Panel : hauteur adaptative quand clavier ouvert ──
+   Sur mobile, dvh suit la hauteur du viewport visible */
+#online-chat-panel {
+  max-height: min(55dvh, 430px) !important;
+}
+@media (max-width: 680px) {
+  #online-chat-panel {
+    max-height: min(50dvh, 400px) !important;
+    width: min(94vw, 330px) !important;
+  }
+  /* Liste messages : se comprime davantage avec clavier */
+  #online-chat-panel .online-chat-list {
+    max-height: min(26dvh, 180px) !important;
+  }
+}
+
+/* ── 5. Séparateur plus discret ── */
+#online-chat-form {
+  border-top: 1px solid var(--chat-border) !important;
+  padding-top: 0.5rem !important;
+  margin-top: 0.1rem !important;
 }
 </style>
 </body>
