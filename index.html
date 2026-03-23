@@ -27804,6 +27804,16 @@ function setOnlineChatOpen(open) {
   onlineChatEls.panel.setAttribute('aria-hidden', String(!next));
   onlineChatEls.fab.classList.toggle('open', next);
   onlineChatEls.fab.setAttribute('aria-expanded', String(next));
+  // Cacher/montrer le FAB vocal immédiatement selon état chat
+  const vcFabEl = document.getElementById('voice-chat-fab');
+  if (vcFabEl) {
+    if (next) {
+      vcFabEl.hidden = true;
+    } else {
+      // Remettre visible uniquement si le chat est disponible et MediaRecorder présent
+      try { if (window.TiddasVoiceChat && typeof window.TiddasVoiceChat.syncVisibility === 'function') window.TiddasVoiceChat.syncVisibility(); } catch(_) {}
+    }
+  }
   if (next) {
     closeSettingsTrayForChat();
     markOnlineChatRead();
@@ -29046,7 +29056,10 @@ var VoiceChat = (function() {
     var fab2 = document.getElementById('voice-chat-fab');
     if (!fab2) return;
     var available = !!(window.isOnlineChatAvailable && window.isOnlineChatAvailable());
-    fab2.hidden = !available || !window.MediaRecorder;
+    // Cacher le FAB vocal si le chat est ouvert (évite le chevauchement avec le bouton envoi)
+    var chatPanel = document.getElementById('online-chat-panel');
+    var chatOpen  = !!(chatPanel && chatPanel.classList.contains('open'));
+    fab2.hidden = !available || !window.MediaRecorder || chatOpen;
   }
 
   return { init: init, syncVisibility: syncVisibility, renderVoiceBubble: renderVoiceBubble };
@@ -29268,143 +29281,129 @@ var OnlineReconnect = (function() {
 // ─────────────────────────────────────────────────────────────────────
 var SpectatorEnhanced = (function() {
 
-  var _spectateRoomCode = null;
-  var _spectatorRole    = 0; // 0 = spectateur pur
-  var _disconnectedSlot = null; // 1 ou 2
+  // Slot du joueur déconnecté que le spectateur peut reprendre (1 ou 2, null = personne)
+  var _disconnectedSlot = null;
 
-  /* ── Afficher/masquer la carte spectateur ── */
-  function _showSpectateCard(show, code) {
-    var card = document.getElementById('ol-spectate-card');
-    if (!card) return;
-    _spectateRoomCode = code || null;
-    if (show) card.classList.add('visible');
-    else      card.classList.remove('visible');
-  }
+  /* ── Rejoindre la partie en cours comme spectateur ── */
+  async function joinAsSpectator() {
+    // matchId et code sont toujours définis ici : le code principal les stocke
+    // dans _spectatorPendingMatchId/_spectatorPendingCode dès que le salon est plein.
+    var matchId = window._spectatorPendingMatchId;
+    var code    = window._spectatorPendingCode || '';
 
-  /* ── Rejoindre comme spectateur — implémentation réelle ── */
-  async function joinAsSpectator(roomCode) {
-    var matchId  = window._spectatorPendingMatchId;
-    var code     = roomCode || window._spectatorPendingCode
-                 || ((document.getElementById('online-room-code') || {}).value || '').trim().toUpperCase();
-
-    if (!matchId && !code) {
-      try { showToast('Entrez le code du salon à observer.', 2000); } catch(_) {}
+    if (!matchId) {
+      showToast && showToast('Impossible de trouver le salon.', 2000);
       return;
     }
 
     try {
-      // Résoudre matchId si absent
-      if (!matchId && code && window.Parse && window.BACK4APP_CLASS) {
-        var q2 = new Parse.Query(window.BACK4APP_CLASS);
-        q2.equalTo('code', code.toUpperCase());
-        var res2 = await q2.first();
-        if (!res2) { showToast && showToast('Salon introuvable.', 2000); return; }
-        matchId = res2.id;
-      }
-      if (!matchId) { showToast && showToast('Impossible de trouver le salon.', 2000); return; }
+      showToast && showToast('👁 Connexion comme spectateur…', 1500);
 
-      showToast && showToast('👁 Connexion comme spectateur…', 1800);
-
-      // Configurer online pour mode spectateur (rôle 0 = observateur)
+      // Configurer l'objet online en mode observateur (rôle 0)
       if (window.online) {
-        window.online.matchId   = matchId;
-        window.online.room      = code;
-        window.online.role      = 0;
-        window.online.isHost    = false;
-        window.online.connected = true;
-        window.online.ready     = false;
+        window.online.matchId     = matchId;
+        window.online.room        = code;
+        window.online.role        = 0;
+        window.online.isHost      = false;
+        window.online.connected   = true;
+        window.online.ready       = false;
         window.online.lastSeenRev = -1;
       }
-      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
       window.gameMode = 'spectator';
 
-      // Cacher la carte spectateur, masquer le pre-connect
-      var card3 = document.getElementById('ol-spectate-card');
-      if (card3) card3.classList.remove('visible');
-      var _pc3 = document.getElementById('ol-pre-connect');
-      if (_pc3) _pc3.style.display = 'none';
-      var _sc3 = document.getElementById('online-status');
-      if (_sc3) _sc3.style.display = '';
+      // UI : masquer pre-connect, montrer status, afficher badge
+      var elPre   = document.getElementById('ol-pre-connect');
+      var elSt    = document.getElementById('online-status');
+      var elCard  = document.getElementById('ol-spectate-card');
+      var elBadge = document.getElementById('spectator-badge');
+      if (elPre)   elPre.style.display = 'none';
+      if (elSt)    elSt.style.display  = '';
+      if (elCard)  elCard.classList.remove('visible');
+      if (elBadge) elBadge.classList.add('visible');
 
-      // Badge spectateur
-      var badge2 = document.getElementById('spectator-badge');
-      if (badge2) { badge2.classList.add('visible'); }
-
-      // Afficher chat spectateurs
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
       SpectatorChat.syncVisibility();
 
-      // Démarrer le polling (réutilise le mécanisme existant)
-      if (typeof _startPolling === 'function') {
-        try { _startPolling(); } catch(_) {}
-      }
+      // Lancer le polling (réutilise le mécanisme existant)
+      if (typeof _startPolling === 'function') _startPolling();
 
-      // Charger l'état actuel immédiatement
+      // Appliquer l'état courant de la partie immédiatement
       if (window.Parse && window.BACK4APP_CLASS) {
-        var q3 = new Parse.Query(window.BACK4APP_CLASS);
-        var m3 = await q3.get(matchId);
-        var payload3 = m3.get('payload');
-        if (payload3 && payload3.state && typeof onlineApplyState === 'function') {
-          onlineApplyState(payload3);
+        var q = new Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var payload = m.get('payload');
+        if (payload && payload.state && typeof onlineApplyState === 'function') {
+          onlineApplyState(payload);
           if (typeof showScreen === 'function') showScreen('game-play-area');
         }
       }
 
-      // FAB tournoi
+      // Afficher le FAB tournoi
       var tfab = document.getElementById('tournament-fab');
       if (tfab) tfab.hidden = false;
 
       showToast && showToast('👁 Mode spectateur actif', 1800);
-      _showTakeoverBtn(false);
+      showTakeoverSlot(null); // s'assurer que le bouton relève est caché
     } catch(e) {
-      showToast && showToast('Impossible de rejoindre comme spectateur : ' + ((e && e.message) || e), 2800);
+      showToast && showToast('Impossible de rejoindre : ' + ((e && e.message) || e), 2800);
     }
   }
 
-  /* ── Bouton takeover (relève si joueur déconnecté) ── */
-  function _showTakeoverBtn(show, slot) {
+  /* ── Afficher/masquer le bouton de relève d'un joueur déconnecté ──
+     Appelé par le polling principal via window.TiddasSpectator.showTakeoverSlot */
+  function showTakeoverSlot(slot) {
     var btn = document.getElementById('ol-takeover-btn');
     if (!btn) return;
-    if (show) {
+    if (slot) {
       _disconnectedSlot = slot;
       btn.textContent = '⚔️ Prendre la place du joueur ' + (slot === 1 ? '1 (Noir)' : '2 (Blanc)') + ' déconnecté';
       btn.classList.add('visible');
     } else {
+      _disconnectedSlot = null;
       btn.classList.remove('visible');
     }
   }
 
-  /* ── Effectuer la relève ── */
-  async function takeover() {
+  /* ── Effectuer la relève d'un joueur déconnecté ── */
+  function takeover() {
     if (!_disconnectedSlot) return;
+    var slot = _disconnectedSlot;
     try {
       if (window.online) {
-        window.online.role     = _disconnectedSlot;
-        window.online.playerId = _disconnectedSlot;
-        window.gameMode        = 'online';
-        if (typeof window.humanPlayerId !== 'undefined') window.humanPlayerId = _disconnectedSlot;
-        if (typeof window.aiPlayerId    !== 'undefined') window.aiPlayerId    = 3 - _disconnectedSlot;
+        window.online.role     = slot;
+        window.online.playerId = slot;
       }
+      window.gameMode = 'online';
+      if (typeof window.humanPlayerId !== 'undefined') window.humanPlayerId = slot;
+      if (typeof window.aiPlayerId    !== 'undefined') window.aiPlayerId    = 3 - slot;
+
+      // Masquer badge spectateur et bouton relève
       var badge = document.getElementById('spectator-badge');
       if (badge) badge.classList.remove('visible');
-      _showTakeoverBtn(false);
-      showToast && showToast('⚔️ Vous avez pris la partie en main !', 2200);
+      showTakeoverSlot(null);
+
+      // Masquer chat spectateurs, relancer le polling joueur
+      SpectatorChat.syncVisibility();
+      if (typeof _startPolling === 'function') _startPolling();
+
       if (typeof renderAll === 'function') renderAll();
+      showToast && showToast('⚔️ Vous avez pris la partie en main !', 2200);
     } catch(e) {
       showToast && showToast('Impossible de prendre la relève.', 2200);
     }
   }
 
-  /* ── Live dot sur le lobby ── */
+  /* ── Point vivant sur le lobby (partie en cours) ── */
   function showLiveDot(show) {
     var dot = document.getElementById('ol-live-dot');
     if (dot) dot.style.display = show ? 'inline-flex' : 'none';
   }
 
-  /* ── Follow player ── */
+  /* ── Suivi de joueurs ── */
   var _followedPlayers = new Set();
   try {
-    var _fp = JSON.parse(localStorage.getItem('tiddas_followed_v1') || '[]');
-    _fp.forEach(function(n) { _followedPlayers.add(n); });
+    JSON.parse(localStorage.getItem('tiddas_followed_v1') || '[]')
+      .forEach(function(n) { _followedPlayers.add(n); });
   } catch(_) {}
 
   function _saveFollowed() {
@@ -29436,74 +29435,25 @@ var SpectatorEnhanced = (function() {
 
   /* ── Initialisation ── */
   function init() {
-    // Bouton rejoindre comme spectateur
+    // Bouton « Regarder la partie »
     var specBtn = document.getElementById('ol-spectate-join-btn');
-    if (specBtn) {
-      specBtn.addEventListener('click', function() {
-        var code = (document.getElementById('online-room-code') || {}).value;
-        joinAsSpectator(code);
-      });
-    }
+    if (specBtn) specBtn.addEventListener('click', function() { joinAsSpectator(); });
 
-    // Bouton takeover
+    // Bouton relève joueur déconnecté
     var takeBtn = document.getElementById('ol-takeover-btn');
     if (takeBtn) takeBtn.addEventListener('click', takeover);
 
-    // Follow buttons
+    // Boutons suivi de joueur
     var fp1 = document.getElementById('ol-follow-p1');
     var fp2 = document.getElementById('ol-follow-p2');
     if (fp1) fp1.addEventListener('click', function() {
-      var name = (document.getElementById('online-p1-name') || {}).textContent;
-      toggleFollow(name, fp1);
+      toggleFollow((document.getElementById('online-p1-name') || {}).textContent, fp1);
     });
     if (fp2) fp2.addEventListener('click', function() {
-      var name = (document.getElementById('online-p2-name') || {}).textContent;
-      toggleFollow(name, fp2);
+      toggleFollow((document.getElementById('online-p2-name') || {}).textContent, fp2);
     });
 
-    // Afficher carte spectateur quand le salon est complet (2 joueurs déjà présents)
-    // Patcher le handler de connexion existant
-    var origConnect = window.onlineConnectToRoom;
-    if (typeof origConnect === 'function') {
-      window.onlineConnectToRoom = async function(code, opts) {
-        try {
-          return await origConnect(code, opts);
-        } catch(e) {
-          var msg = String(e && (e.message || e));
-          if (/full|complet|2.*joueur/i.test(msg)) {
-            _showSpectateCard(true, code);
-          }
-          throw e;
-        }
-      };
-    }
-
-    // Surveiller déconnexion d'un joueur pour afficher bouton relève
-    var origApply = window.onlineApplyState;
-    if (typeof origApply === 'function') {
-      window.onlineApplyState = function(msg) {
-        origApply(msg);
-        try {
-          var gm = window.gameMode;
-          if (gm === 'spectator') {
-            // Détecter si un joueur est inactif (champ optionnel du state)
-            var p1Active = msg && msg.p1Active !== false;
-            var p2Active = msg && msg.p2Active !== false;
-            if (!p1Active) _showTakeoverBtn(true, 1);
-            else if (!p2Active) _showTakeoverBtn(true, 2);
-            else _showTakeoverBtn(false);
-          }
-          // Live dot si partie en cours
-          showLiveDot(!!(msg && msg.state && msg.state.phase));
-          // Notifier joueurs suivis
-          if (msg && msg.p1Name && msg.p2Name) {
-            checkFollowedNotify(msg.p1Name, msg.p2Name);
-          }
-        } catch(_) {}
-      };
-    }
-
-    // Bouton code input → montrer carte spectateur si salon full
+    // Masquer la carte spectateur si l'utilisateur modifie le code salon
     var codeInput = document.getElementById('online-room-code');
     if (codeInput) {
       codeInput.addEventListener('input', function() {
@@ -29513,7 +29463,10 @@ var SpectatorEnhanced = (function() {
     }
   }
 
-  return { init: init, joinAsSpectator: joinAsSpectator, takeover: takeover, showLiveDot: showLiveDot };
+  // showTakeoverSlot est exporté car le polling principal l'appelle via window.TiddasSpectator
+  return { init: init, joinAsSpectator: joinAsSpectator, takeover: takeover,
+           showTakeoverSlot: showTakeoverSlot, showLiveDot: showLiveDot,
+           toggleFollow: toggleFollow, checkFollowedNotify: checkFollowedNotify };
 })();
 
 
