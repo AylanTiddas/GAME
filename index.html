@@ -28172,7 +28172,15 @@ document.getElementById('settings-fab')?.addEventListener('click', () => {
 }, true);
 const __prevOnlineApplyStateForChat = onlineApplyState;
 onlineApplyState = function(msg) {
+  // Mémoriser le mode spectateur AVANT l'appel (onlineApplyState force gameMode='online')
+  const _wasSpectator = window.gameMode === 'spectator';
   const out = __prevOnlineApplyStateForChat.apply(this, arguments);
+  // Restaurer le mode spectateur si c'était le cas avant l'appel
+  if (_wasSpectator) {
+    window.gameMode = 'spectator';
+    var _sbadge = document.getElementById('spectator-badge');
+    if (_sbadge) _sbadge.classList.add('visible');
+  }
   // Visibilité du chat mise à jour après chaque changement d'état de jeu
   try { syncOnlineChatVisibility(); } catch(_) {}
   return out;
@@ -28637,6 +28645,15 @@ var VoiceChat = (function() {
     }
   }
 
+  /* ── Pré-chauffer le stream micro (appelé sur geste utilisateur avant HOLD_THRESHOLD) ──
+     Sur mobile, getUserMedia DOIT être appelé dans le handler du geste pour déclencher
+     la dialog d'autorisation. Si la permission est déjà accordée, aucune dialog n'apparaît. */
+  function _prewarmStream() {
+    if (_stream && _stream.active) return; // déjà prêt
+    if (_permState === 'denied') return;   // refusé, inutile de re-demander
+    _acquireStream(); // fire-and-forget dans le contexte du geste tactile
+  }
+
   /* ── Fallback si micro refusé ── */
   function _fallbackToText() {
     if (fab) fab.hidden = true;
@@ -29006,6 +29023,22 @@ var VoiceChat = (function() {
 
     _updateFabIcon();
 
+    // Vérifier la permission micro via l'API Permissions (sans déclencher de dialog)
+    // Si déjà accordée : pré-acquérir le stream silencieusement dès le chargement
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: 'microphone' }).then(function(ps) {
+        _permState = ps.state;
+        ps.onchange = function() {
+          _permState = ps.state;
+          if (ps.state === 'denied') { _stream = null; _fallbackToText(); }
+        };
+        if (ps.state === 'granted') {
+          // Permission déjà accordée → pré-chauffer le stream sans dialog
+          _acquireStream();
+        }
+      }).catch(function(){});
+    }
+
     // Long press = record; clic court = toggle mute
     var _pressStart = 0;
     var _pressTimer = null;
@@ -29016,6 +29049,14 @@ var VoiceChat = (function() {
       e.preventDefault();
       _pressStart  = Date.now();
       _didRecord   = false;
+      // ── MOBILE FIX ──────────────────────────────────────────────────────────
+      // Appeler getUserMedia IMMÉDIATEMENT dans le handler du geste tactile.
+      // Sur iOS/Android le navigateur exige que la demande de permission soit
+      // déclenchée directement par l'événement utilisateur. Si on attend la fin
+      // du timer (HOLD_THRESHOLD) l'origine gestuelle est perdue et la dialog
+      // n'apparaît pas (ou le stream est refusé silencieusement).
+      _prewarmStream();
+      // ────────────────────────────────────────────────────────────────────────
       _pressTimer  = setTimeout(function() {
         _didRecord = true;
         _startRecording();
@@ -29334,9 +29375,15 @@ var SpectatorEnhanced = (function() {
         var payload = m.get('payload');
         if (payload && payload.state && typeof onlineApplyState === 'function') {
           onlineApplyState(payload);
-          if (typeof showScreen === 'function') showScreen('game-play-area');
+          // onlineApplyState force gameMode='online' — le wrapper le restaurera,
+          // mais on le force ici aussi pour s'assurer que le badge reste visible
+          window.gameMode = 'spectator';
+          var elBadge2 = document.getElementById('spectator-badge');
+          if (elBadge2) elBadge2.classList.add('visible');
         }
       }
+      // Toujours afficher la zone de jeu (même si la partie n'a pas encore démarré)
+      if (typeof showScreen === 'function') showScreen('game-play-area');
 
       // Afficher le FAB tournoi
       var tfab = document.getElementById('tournament-fab');
