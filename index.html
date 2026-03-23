@@ -5,9 +5,9 @@
     <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <!-- Security hardening -->
-<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'nonce-tiddas' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'nonce-tiddas' https://unpkg.com; connect-src 'self' https://parseapi.back4app.com https://*.b4a.io wss://*.b4a.io; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
+<meta content="default-src 'self' data: blob:; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self' data: blob: mediastream:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'nonce-tiddas' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'nonce-tiddas' https://unpkg.com; connect-src 'self' https://parseapi.back4app.com https://*.b4a.io wss://*.b4a.io wss: blob:; upgrade-insecure-requests; worker-src 'self' blob:; manifest-src 'self' blob:" http-equiv="Content-Security-Policy" />
 <meta content="no-referrer" name="referrer" />
-<meta content="camera=(), microphone=(), geolocation=(), payment=(), usb=()" http-equiv="Permissions-Policy" />
+<meta content="camera=(), microphone=(self), geolocation=(), payment=(), usb=()" http-equiv="Permissions-Policy" />
 <meta content="dark light" name="color-scheme" />
 <title data-i18n="appTitle">Tiddas - Jeu</title>
 <link id="pwa-manifest" rel="manifest" href="">
@@ -1467,6 +1467,7 @@ box-shadow: 0 0 0 0 rgba(240, 200, 80, 0), 0 min(2.8vw, 14px) min(7vw, 35px) rgb
 }
 .stone.moving {
 animation: placeStone 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+will-change: transform, opacity;
 }
 @keyframes placeStone {
 0% {
@@ -1484,6 +1485,7 @@ transform: scale(1) translateY(0);
 }
 .stone.captured, .stone.fade-out {
 animation: fadeOutStone 0.5s ease-in forwards;
+will-change: transform, opacity, filter;
 }
 @keyframes fadeOutStone {
 to {
@@ -7450,64 +7452,7 @@ font-size: 0.88rem;
       Croix rouge en overlay + animation de pulsation
    ──────────────────────────────────────────────────────────────── */
 
-/* La cellule hôte du pion bloqué */
-.consecutive-blocked-cell {
-cursor: not-allowed !important;
-}
-
-/* Le pion bloqué lui-même */
-.stone.consecutive-blocked {
-/* Filtre visuel : désaturé + teinte rouge */
-filter: grayscale(55%) sepia(0.6) saturate(2.5) hue-rotate(300deg) brightness(0.82) !important;
-/* Bordure rouge pulsée */
-outline: 3px solid rgba(255, 60, 60, 0.90) !important;
-outline-offset: 2px !important;
-border-radius: 50% !important;
-animation: blockedPulse 1.4s ease-in-out infinite !important;
-cursor: not-allowed !important;
-position: relative;
-}
-
-/* Pseudo-élément : croix ✕ en overlay sur le pion */
-.consecutive-blocked-cell::after {
-content: '✕';
-position: absolute;
-inset: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: clamp(0.85rem, 2.8vw, 1.1rem);
-font-weight: 900;
-color: rgba(255, 60, 60, 0.92);
-text-shadow: 0 0 6px rgba(0,0,0,0.7);
-pointer-events: none;
-z-index: 10;
-line-height: 1;
-}
-
-/* Animation de pulsation rouge */
-@keyframes blockedPulse {
-0%, 100% {
-outline-color: rgba(255, 60, 60, 0.85);
-box-shadow: 0 0 0 0 rgba(255, 60, 60, 0);
-}
-50% {
-outline-color: rgba(255, 60, 60, 1);
-box-shadow: 0 0 0 5px rgba(255, 60, 60, 0.22);
-}
-}
-
-/* Adaptation thème Kabylie / Desert / Modern (clairs) */
-[data-theme="kabylie"] .stone.consecutive-blocked,
-[data-theme="desert"] .stone.consecutive-blocked,
-[data-theme="modern"] .stone.consecutive-blocked {
-outline-color: rgba(200, 20, 20, 0.90) !important;
-}
-[data-theme="kabylie"] .consecutive-blocked-cell::after,
-[data-theme="desert"] .consecutive-blocked-cell::after,
-[data-theme="modern"] .consecutive-blocked-cell::after {
-color: rgba(200, 20, 20, 0.95);
-}
+/* Règle des 3 coups consécutifs supprimée — no CSS needed */
 
 /* =====================================================================
    OPTIMISATION ERGONOMIE & LISIBILITÉ v5
@@ -13663,6 +13608,9 @@ html[data-theme="glass"] {
   border-top: 1px solid var(--chat-border);
   flex-shrink: 0;
   background: color-mix(in srgb, var(--chat-surface-2) 65%, transparent);
+  /* Garantir que le bouton envoi reste toujours visible */
+  box-sizing: border-box;
+  overflow: visible;
 }
 #online-chat-input {
   flex: 1 1 auto !important;
@@ -13687,6 +13635,41 @@ html[data-theme="glass"] {
   background: var(--chat-surface-soft-2);
 }
 #online-chat-input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Bouton micro dans la barre de composition ── */
+#chat-mic-btn {
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: unset !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1.5px solid var(--chat-border) !important;
+  background: transparent !important;
+  color: var(--chat-accent, #f0c850) !important;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s, border-color 0.15s;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#chat-mic-btn[hidden] { display: none !important; }
+#chat-mic-btn svg { width: 18px; height: 18px; pointer-events: none; }
+#chat-mic-btn:hover { background: rgba(240,200,80,0.12) !important; border-color: var(--chat-border-strong) !important; }
+#chat-mic-btn.recording {
+  background: rgba(200,0,0,0.18) !important;
+  border-color: rgba(220,50,50,0.7) !important;
+  color: #ff5050 !important;
+  animation: chatMicPulse 0.7s ease-in-out infinite;
+}
+@keyframes chatMicPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,50,50,0.4); }
+  50%      { box-shadow: 0 0 0 5px rgba(220,50,50,0); }
+}
+#chat-mic-btn:disabled { opacity: 0.35 !important; cursor: not-allowed; }
 
 /* ── Bouton envoi : cercle icône, aucun texte ── */
 #online-chat-send {
@@ -13729,7 +13712,8 @@ html[data-theme="glass"] {
 
 /* ── FABs masqués quand chat ouvert ── */
 body.chat-open #settings-fab,
-body.chat-open #online-chat-fab {
+body.chat-open #online-chat-fab,
+body.chat-open #voice-chat-fab {
   opacity: 0 !important;
   pointer-events: none !important;
   transform: scale(0.75) translateY(6px) !important;
@@ -14108,6 +14092,731 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
     padding: 0.3rem 0.6rem !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   VOICE CHAT — Push-to-Talk Button & Audio Bubbles
+   ══════════════════════════════════════════════════════════════ */
+#voice-chat-fab {
+  position: fixed;
+  bottom: 5.6rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--chat-fab-bg, linear-gradient(145deg,rgba(22,12,4,0.96),rgba(72,38,15,0.96)));
+  color: var(--text-gold, #f0c850);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+  transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#voice-chat-fab[hidden] { display: none !important; }
+#voice-chat-fab:hover { transform: scale(1.08); }
+#voice-chat-fab.recording {
+  background: linear-gradient(145deg,#c00,#880000) !important;
+  animation: vcPulse 0.8s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(200,0,0,0);
+}
+@keyframes vcPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(200,0,0,0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(200,0,0,0); }
+}
+#voice-chat-fab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+#voice-chat-fab .vc-mic-slash { display: none; }
+#voice-chat-fab.mic-muted .vc-mic-on { display: none; }
+#voice-chat-fab.mic-muted .vc-mic-slash { display: block; }
+#voice-chat-fab .vc-recording-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,60,60,0);
+  pointer-events: none;
+  transition: border-color 0.2s;
+}
+#voice-chat-fab.recording .vc-recording-ring {
+  border-color: rgba(255,60,60,0.7);
+}
+
+/* Voice message bubbles — v4 */
+.ocm-voice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.5rem 0.65rem 0.5rem 0.55rem;
+  background: rgba(240,200,80,0.09);
+  border: 1px solid rgba(240,200,80,0.16);
+  border-radius: 14px;
+  min-width: 210px;
+  max-width: 268px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.ocm-voice.playing {
+  background: rgba(240,200,80,0.15);
+  border-color: rgba(240,200,80,0.32);
+}
+.ocm-voice-play {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(240,200,80,0.20);
+  color: var(--text-gold,#f0c850);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+}
+.ocm-voice-play:hover { background: rgba(240,200,80,0.38); transform: scale(1.07); }
+.ocm-voice-play:active { transform: scale(0.95); }
+.ocm-voice-play svg { width: 15px; height: 15px; fill: currentColor; stroke: none; }
+.ocm-voice.playing .ocm-voice-play {
+  background: rgba(240,200,80,0.32);
+  animation: vcPlayPulse 1.7s ease-in-out infinite;
+}
+@keyframes vcPlayPulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(240,200,80,0.16); }
+  50%      { box-shadow: 0 0 0 7px rgba(240,200,80,0.05); }
+}
+/* Colonne centrale (waveform + durée) */
+.ocm-voice-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.ocm-voice-waveform {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.ocm-voice-waveform:active { opacity: 0.8; }
+.ocm-voice-bar {
+  flex: 1;
+  border-radius: 2px;
+  background: rgba(240,200,80,0.36);
+  min-height: 3px;
+  transition: background 0.1s;
+}
+.ocm-voice-bar.active { background: var(--text-gold,#f0c850); }
+.ocm-voice.playing .ocm-voice-bar.active {
+  animation: vcBarGlow 0.55s ease-in-out infinite alternate;
+}
+@keyframes vcBarGlow {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.4) drop-shadow(0 0 2px rgba(240,200,80,0.6)); }
+}
+/* Curseur de progression */
+.ocm-voice-cursor {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--text-gold,#f0c850);
+  border-radius: 1px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.ocm-voice.playing .ocm-voice-cursor { opacity: 0.9; }
+.ocm-voice-dur {
+  font-size: 0.68rem;
+  opacity: 0.62;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+/* Colonne droite (vitesse) */
+.ocm-voice-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ocm-voice-speed {
+  font-size: 0.60rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(240,200,80,0.75);
+  background: rgba(240,200,80,0.10);
+  border: 1px solid rgba(240,200,80,0.24);
+  border-radius: 5px;
+  padding: 0.1rem 0.28rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  min-width: 2.0em;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+.ocm-voice-speed:hover {
+  background: rgba(240,200,80,0.22);
+  color: var(--text-gold,#f0c850);
+}
+/* Badge "nouveau" */
+.ocm-voice-new {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--danger-red,#ff4d4d);
+  border: 2px solid var(--stone-dark,#2c2722);
+  animation: vcNewPulse 1.3s ease-in-out infinite;
+}
+@keyframes vcNewPulse {
+  0%,100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.35); opacity: 0.65; }
+}
+
+/* Voice incoming popup indicator */
+.cip-voice-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-gold,#f0c850);
+  font-weight: 700;
+}
+.cip-voice-badge svg { width: 14px; height: 14px; }
+
+/* ── Bouton lecture directe depuis la notification vocale ── */
+.cip-play-btn {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(240,200,80,0.55);
+  background: rgba(240,200,80,0.16);
+  color: #f0c850;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.cip-play-btn[hidden] { display: none !important; }
+.cip-play-btn:hover  { background: rgba(240,200,80,0.30); }
+.cip-play-btn:active { transform: scale(0.91); }
+.cip-play-btn.cip-playing {
+  background: rgba(255,100,50,0.20);
+  border-color: rgba(255,100,50,0.55);
+  color: #ff7744;
+  animation: cipPulse 1.1s ease-in-out infinite;
+}
+@keyframes cipPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,100,50,0.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(255,100,50,0); }
+}
+.cip-play-btn svg { width: 14px; height: 14px; fill: currentColor; stroke: none; }
+
+/* Toast record indicator */
+#vc-recording-toast {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: rgba(160,0,0,0.93);
+  color: #fff;
+  padding: 0.42rem 1.1rem 0.42rem 0.85rem;
+  border-radius: 22px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  box-shadow: 0 3px 16px rgba(0,0,0,0.38);
+  letter-spacing: 0.01em;
+}
+#vc-recording-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#vc-recording-toast::before {
+  content: '';
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff5555;
+  flex-shrink: 0;
+  animation: vcRecDot 0.9s ease-in-out infinite;
+}
+@keyframes vcRecDot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.7); }
+}
+#vc-recording-toast .vc-rec-label {
+  flex: 1;
+}
+#vc-recording-toast .vc-rec-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  opacity: 0.85;
+  min-width: 2.6em;
+  text-align: right;
+}
+#vc-recording-toast .vc-rec-max {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SPECTATOR — Rejoindre salon complet, relève joueur, chat séparé
+   ══════════════════════════════════════════════════════════════ */
+.ol-spectate-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(240,200,80,0.18);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  margin-top: 0.6rem;
+  display: none;
+}
+.ol-spectate-card.visible { display: block; }
+.ol-spectate-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-gold,#f0c850);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ol-spectate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(240,200,80,0.35);
+  background: rgba(240,200,80,0.08);
+  color: var(--text-gold,#f0c850);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.ol-spectate-btn:hover { background: rgba(240,200,80,0.2); }
+.ol-takeover-btn {
+  display: none;
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,200,80,0.5);
+  background: rgba(200,120,0,0.25);
+  color: var(--text-gold,#f0c850);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.ol-takeover-btn.visible { display: block; }
+.ol-takeover-btn:hover { background: rgba(200,120,0,0.4); }
+
+/* Spectator chat — separate panel */
+#spectator-chat-panel {
+  position: fixed;
+  bottom: 7rem;
+  left: 1rem;
+  width: min(260px,90vw);
+  background: rgba(10,6,2,0.92);
+  border: 1px solid rgba(240,200,80,0.22);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  z-index: 8900;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+#spectator-chat-panel[hidden] { display: none !important; }
+.spec-chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.7rem;
+  background: rgba(240,200,80,0.07);
+  border-bottom: 1px solid rgba(240,200,80,0.12);
+}
+.spec-chat-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-gold,#f0c850);
+}
+.spec-chat-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  line-height: 1;
+}
+.spec-chat-list {
+  flex: 1;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.spec-chat-msg {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.spec-chat-msg .sc-name {
+  font-weight: 700;
+  color: var(--text-gold,#f0c850);
+  margin-right: 0.3em;
+}
+.spec-chat-compose {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border-top: 1px solid rgba(240,200,80,0.1);
+}
+.spec-chat-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(240,200,80,0.15);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  outline: none;
+}
+.spec-chat-send {
+  background: rgba(240,200,80,0.15);
+  border: none;
+  border-radius: 6px;
+  color: var(--text-gold,#f0c850);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+#spectator-chat-fab {
+  position: fixed;
+  bottom: 9.2rem;
+  left: 1rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(10,6,2,0.88);
+  border: 1px solid rgba(240,200,80,0.2);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 8900;
+}
+#spectator-chat-fab[hidden] { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   TOURNAMENT BRACKET
+   ══════════════════════════════════════════════════════════════ */
+#tournament-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 99000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+#tournament-overlay[hidden] { display: none !important; }
+.tournament-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 1.2rem;
+}
+.tournament-title {
+  flex: 1;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-gold,#f0c850);
+  font-family: var(--font-title);
+}
+.tournament-close {
+  background: none;
+  border: 1px solid rgba(240,200,80,0.3);
+  border-radius: 8px;
+  color: var(--text-gold,#f0c850);
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.bracket-container {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 140px;
+}
+.bracket-round-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(240,200,80,0.6);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+.bracket-match {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(240,200,80,0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.bracket-match.live {
+  border-color: rgba(255,80,80,0.7);
+  box-shadow: 0 0 12px rgba(255,80,80,0.25);
+}
+.bracket-match.live::before {
+  content: '🔴 LIVE';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #ff5050;
+  background: rgba(0,0,0,0.8);
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,80,80,0.4);
+  white-space: nowrap;
+}
+.bracket-player {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(240,200,80,0.08);
+}
+.bracket-player:last-child { border-bottom: none; }
+.bracket-player.winner {
+  color: var(--text-gold,#f0c850);
+  font-weight: 700;
+  background: rgba(240,200,80,0.07);
+}
+.bracket-player.loser { opacity: 0.4; text-decoration: line-through; }
+.bracket-player-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(240,200,80,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-gold,#f0c850);
+  flex-shrink: 0;
+}
+.bracket-player-name { flex: 1; truncate: ellipsis; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.bracket-player-score {
+  font-weight: 800;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+.tournament-register-btn {
+  margin-top: 1.2rem;
+  padding: 0.65rem 2rem;
+  border-radius: 24px;
+  border: none;
+  background: linear-gradient(135deg,#c8a228,#e8c040);
+  color: #1a0f00;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tournament-register-btn:hover { transform: scale(1.05); box-shadow: 0 4px 18px rgba(200,160,40,0.4); }
+.tournament-register-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.tournament-participants {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.tournament-participant-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  background: rgba(240,200,80,0.10);
+  border: 1px solid rgba(240,200,80,0.2);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.tournament-participant-chip.ready { border-color: rgba(80,200,80,0.4); color: #90ee90; }
+.tournament-empty {
+  color: rgba(240,200,80,0.45);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 2rem;
+}
+/* Tournoi FAB */
+#tournament-fab {
+  position: fixed;
+  top: 1rem;
+  right: 4.5rem;
+  background: rgba(10,6,2,0.88);
+  border: 1px solid rgba(240,200,80,0.25);
+  color: var(--text-gold,#f0c850);
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 8800;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background 0.15s;
+}
+#tournament-fab[hidden] { display: none !important; }
+#tournament-fab:hover { background: rgba(30,16,4,0.95); }
+
+/* Live indicator on room list */
+.ol-live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ff5050;
+  flex-shrink: 0;
+}
+.ol-live-dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff5050;
+  animation: liveBlink 1s ease-in-out infinite;
+  display: block;
+}
+@keyframes liveBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Follow player button */
+.ol-follow-btn {
+  background: none;
+  border: 1px solid rgba(240,200,80,0.2);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 0.18rem 0.45rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.ol-follow-btn.following { background: rgba(240,200,80,0.15); color: var(--text-gold,#f0c850); border-color: rgba(240,200,80,0.4); }
+.ol-follow-btn:hover { background: rgba(240,200,80,0.12); }
+
+/* Swipe-to-undo hint */
+.swipe-undo-hint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%) scale(0.85);
+  background: rgba(0,0,0,0.82);
+  border: 1px solid rgba(240,200,80,0.3);
+  border-radius: 16px;
+  padding: 0.8rem 1.5rem;
+  color: var(--text-gold,#f0c850);
+  font-size: 0.9rem;
+  font-weight: 700;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.swipe-undo-hint.visible { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
+/* Reconnect banner */
+#online-reconnect-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(180,60,0,0.95);
+  color: #fff;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+#online-reconnect-banner[hidden] { display: none !important; }
+#online-reconnect-banner .rcn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14269,6 +14978,14 @@ Patrimoine Amazigh • Idles Amaziɣ
   <div id="online-chat-list" class="online-chat-list" aria-live="polite" aria-relevant="additions text"></div>
   <div class="online-chat-quick" id="online-chat-quick"></div>
   <div class="online-chat-compose">
+    <button id="chat-mic-btn" type="button" aria-label="Message vocal (maintenir)" title="Maintenir pour enregistrer, relâcher pour envoyer" hidden>
+      <svg id="chat-mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    </button>
     <input id="online-chat-input" type="text" maxlength="120" inputmode="text"
            placeholder="Écrire un message…" aria-label="Écrire un message" autocomplete="off" />
     <button id="online-chat-send" type="button" aria-label="Envoyer"></button>
@@ -14280,6 +14997,61 @@ Patrimoine Amazigh • Idles Amaziɣ
   <span aria-hidden="true" class="online-chat-icon">💬</span>
   <span class="online-chat-badge" id="online-chat-unread" hidden>0</span>
 </button>
+
+<!-- Voice Chat FAB (push-to-talk) -->
+<button id="voice-chat-fab" title="Maintenir pour parler" hidden aria-label="Message vocal">
+  <span class="vc-recording-ring"></span>
+  <svg class="vc-mic-on" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+  <svg class="vc-mic-slash" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+</button>
+
+<!-- Recording toast -->
+<div id="vc-recording-toast" role="status" aria-live="assertive">
+  <span class="vc-rec-label">Enregistrement… relâchez pour envoyer</span>
+  <span class="vc-rec-timer" id="vc-rec-timer">0:00</span>
+  <span class="vc-rec-max" id="vc-rec-max">/ 1:00</span>
+</div>
+
+<!-- Spectator Chat Panel (séparé des joueurs) -->
+<div id="spectator-chat-panel" hidden aria-label="Chat spectateurs">
+  <div class="spec-chat-head">
+    <span class="spec-chat-title">👁 Chat spectateurs</span>
+    <button class="spec-chat-close" id="spec-chat-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="spec-chat-list" id="spec-chat-list"></div>
+  <div class="spec-chat-compose">
+    <input class="spec-chat-input" id="spec-chat-input" type="text" maxlength="80" placeholder="Message spectateurs…" autocomplete="off" />
+    <button class="spec-chat-send" id="spec-chat-send" type="button">↑</button>
+  </div>
+</div>
+<button id="spectator-chat-fab" hidden title="Chat spectateurs" aria-label="Chat spectateurs">👁</button>
+
+<!-- Online Reconnect Banner -->
+<div id="online-reconnect-banner" hidden role="alert">
+  <span class="rcn-spinner"></span>
+  <span id="online-reconnect-msg">Reconnexion en cours…</span>
+  <button id="online-reconnect-cancel" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.75rem;cursor:pointer;">Annuler</button>
+</div>
+
+<!-- Swipe Undo Hint -->
+<div class="swipe-undo-hint" id="swipe-undo-hint" aria-hidden="true">⟵ Glisser pour annuler</div>
+
+<!-- Tournament Overlay -->
+<div id="tournament-overlay" hidden role="dialog" aria-modal="true" aria-label="Tournoi">
+  <div class="tournament-header">
+    <span class="tournament-title">🏆 Tournoi à élimination directe</span>
+    <button class="tournament-close" id="tournament-close">✕ Fermer</button>
+  </div>
+  <div id="tournament-status-msg" style="color:rgba(240,200,80,0.7);font-size:0.82rem;margin-bottom:0.8rem;text-align:center;"></div>
+  <div class="tournament-participants" id="tournament-participants"></div>
+  <div class="bracket-container" id="bracket-container">
+    <div class="tournament-empty">Aucun tournoi actif.<br>Rejoignez ou créez un salon pour s'inscrire.</div>
+  </div>
+  <button class="tournament-register-btn" id="tournament-register-btn" style="display:none;">S'inscrire au tournoi</button>
+</div>
+
+<!-- Tournament FAB -->
+<button id="tournament-fab" hidden title="Tournoi" aria-label="Tournoi">🏆 <span id="tournament-fab-label">Tournoi</span></button>
 
 <button aria-label="Paramètres" id="settings-fab" title="Paramètres"><span aria-hidden="true" class="settings-icon">⚙️</span><span class="settings-label" data-i18n="btnSettings">Paramètres</span></button>
 </div>
@@ -14466,6 +15238,11 @@ Patrimoine Amazigh • Idles Amaziɣ
         </button>
       </div>
       <p class="ol-join-hint" data-i18n="onlineJoinHint">Entrez le code de 6 caractères partagé par votre ami</p>
+      <!-- Rejoindre comme spectateur si salon complet -->
+      <div class="ol-spectate-card" id="ol-spectate-card">
+        <div class="ol-spectate-title">👁 Salon complet — Rejoindre comme spectateur ?</div>
+        <button class="ol-spectate-btn" id="ol-spectate-join-btn" type="button">👁 Regarder la partie</button>
+      </div>
     </div>
   </div>
 
@@ -14481,6 +15258,7 @@ Patrimoine Amazigh • Idles Amaziɣ
     <div class="ol-status-line">
       <span class="ol-dot" id="ol-status-dot"></span>
       <span id="online-status-text">—</span>
+      <span class="ol-live-dot" id="ol-live-dot" style="display:none;">EN DIRECT</span>
     </div>
 
     <!-- Matchup joueurs -->
@@ -14488,13 +15266,17 @@ Patrimoine Amazigh • Idles Amaziɣ
       <div class="ol-player-chip">
         <div class="ol-player-avatar">J1</div>
         <span class="ol-player-name" id="online-p1-name" data-i18n="onlineChipPending">En attente</span>
+        <button class="ol-follow-btn" id="ol-follow-p1" title="Suivre ce joueur">⭐</button>
       </div>
       <div class="ol-vs-badge">VS</div>
       <div class="ol-player-chip">
         <div class="ol-player-avatar">J2</div>
         <span class="ol-player-name" id="online-p2-name" data-i18n="onlineChipPending">En attente</span>
+        <button class="ol-follow-btn" id="ol-follow-p2" title="Suivre ce joueur">⭐</button>
       </div>
     </div>
+    <!-- Takeover si spectateur et joueur déconnecté -->
+    <button class="ol-takeover-btn" id="ol-takeover-btn" type="button">⚔️ Prendre la place du joueur déconnecté</button>
 
     <!-- Code + partage -->
     <div id="online-roomcode-row" style="display:none;">
@@ -14938,7 +15720,11 @@ Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle
       <span class="cip-sender" id="cip-sender"></span>
       <span class="cip-text" id="cip-text"></span>
     </div>
-    <button class="cip-open" id="cip-open" type="button" aria-label="Ouvrir le chat">▶</button>
+    <!-- Bouton lecture directe (visible uniquement pour les messages vocaux) -->
+    <button class="cip-play-btn" id="cip-play-btn" type="button" aria-label="Lire le message vocal" hidden>
+      <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+    <button class="cip-open" id="cip-open" type="button" aria-label="Ouvrir le chat">→</button>
   </div>
 </div>
 
@@ -15455,6 +16241,7 @@ const BACK4APP_APP_ID     = "Ss1jQzlY35RboeN8frk07S9ZdFFcOD8cTVFGDJ32"; // ← r
 const BACK4APP_JS_KEY     = "iIopiXLb1CbeqrQkGVX1zw2nfIU10uJ6M5xlmJrK"; // ← remplacer (JS Key)
 const BACK4APP_SERVER_URL = "https://parseapi.back4app.com";              // URL API par défaut
 const BACK4APP_CLASS      = "GameMatch"; // Nom de la class/table Back4App
+window.BACK4APP_CLASS = BACK4APP_CLASS;
 
 // ╚══════════════════════════════════════════════════════════╝
 // ══ FIN CONFIG ══
@@ -15479,6 +16266,7 @@ function _getOrCreatePlayerId() {
   }
 }
 const onlinePlayerId = _getOrCreatePlayerId();
+window.onlinePlayerId = onlinePlayerId;
 
 // Persist last used room code / match id (lets users rejoin after leaving)
 const ONLINE_LAST_ROOM_KEY = "tiddas_online_last_room_v1";
@@ -15666,6 +16454,12 @@ let online = {
   parseReady: false,
   fetching: false  // race-condition guard for polling
 };
+// Expose online object so new modules (VoiceChat, SpectatorEnhanced, Tournament) can read/write it
+window.online = online;
+// Expose name getter used by voice/spectator chat
+window.getOnlinePlayerName = function() {
+  try { return _getOnlineNameSafe('') || ''; } catch(_) { return ''; }
+};
 
 const onlineEls = {
   area: null, statusText: null, roomCodeRow: null, roomCode: null,
@@ -15740,6 +16534,8 @@ function _setOnlineStatus(msg) {
     const pc = document.getElementById('ol-pre-connect');
     if (pc) pc.style.display = 'none';
   }
+  // Expose as global for reconnect module
+  window._setOnlineStatus = _setOnlineStatus;
 }
 function _show(el, yes) { if (!el) return; el.style.display = yes ? '' : 'none'; }
 function _randCode(len=4) {
@@ -15940,6 +16736,8 @@ function _applyLobbyStateFromMatch(match) {
   if (startBtn) startBtn.disabled = false;
   _setOnlineStatus(online.isHost ? t('onlineStatusTwoPlayersHost') : t('onlineStatusTwoPlayersGuest'));
   _show(startBtn, !!online.isHost);
+  // Expose for reconnect module
+  window._applyLobbyStateFromMatch = _applyLobbyStateFromMatch;
 }
 
 
@@ -15959,11 +16757,14 @@ const _ONLINE_CHAT_MAX_ITEMS = 40;
 function _pruneChatArray(items) {
   const now = Date.now();
   return (items || [])
-    .filter(function(m) { return m && m.id && m.text && (!m.expiresAt || m.expiresAt > now); })
+    .filter(function(m) {
+      // Keep text messages AND voice messages AND spectator-chat messages
+      return m && m.id
+        && (m.text || m.audioData || m.type === 'spectator-chat' || m.type === 'voice')
+        && (!m.expiresAt || m.expiresAt > now);
+    })
     .slice(-_ONLINE_CHAT_MAX_ITEMS);
 }
-
-// Appelé à chaque tick de polling — délègue au handler exposé sur window par le module chat
 function _processMatchChatFromArray(match) {
   if (!match || !match.get) return;
   // window._onlineChatProcessTick est exposé par le module chat dans DOMContentLoaded
@@ -15993,6 +16794,39 @@ function _startPolling() {
 
       // ── Lecture du chat (ephemeralChat array — même mécanisme ancienne version) ──
       try { _processMatchChatFromArray(match); } catch (_) {}
+
+      // ── Spectator-chat messages ──────────────────────────────────────────────
+      try {
+        var rawChat = match.get('ephemeralChat');
+        if (Array.isArray(rawChat)) {
+          rawChat.forEach(function(msg) {
+            if (msg && msg.type === 'spectator-chat' && window._specChatInjectMsg) {
+              window._specChatInjectMsg(msg);
+            }
+          });
+        }
+      } catch(_) {}
+
+      // ── Live dot + player disconnect detection ──────────────────────────────
+      try {
+        var matchStatus = match.get('status') || 'waiting';
+        var liveDotEl = document.getElementById('ol-live-dot');
+        if (liveDotEl) liveDotEl.style.display = (matchStatus === 'playing') ? 'inline-flex' : 'none';
+
+        // Check for player inactivity (optional field p1Active/p2Active)
+        var p1Active = match.get('p1Active') !== false;
+        var p2Active = match.get('p2Active') !== false;
+        if (window.gameMode === 'spectator') {
+          if (!p1Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(1);
+          else if (!p2Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(2);
+        }
+
+        // Tournament state from server
+        var tournData = match.get('tournament');
+        if (tournData && window.TiddasTournament) {
+          window.TiddasTournament.applyFromServer(tournData);
+        }
+      } catch(_) {}
 
       // ── Lecture de l'état de jeu (champ rev / payload) ────────────────────
       const rev = Number(match.get('rev') || 0);
@@ -16049,6 +16883,8 @@ function _startPolling() {
   };
 
   online.pollTimer = setInterval(tick, _pollCurrentInterval);
+  // Expose for spectator and reconnect modules
+  window._startPolling = _startPolling;
 }
 
 async function onlineConnectToRoom_Back4App(code, creating) {
@@ -16104,6 +16940,7 @@ async function onlineConnectToRoom_Back4App(code, creating) {
       online.isHost = true;
       online.connected = true;
       online.ready = false;
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
 
       _setOnlineStatus(t('onlineCreatedShare', 'Salon créé. Partage le code : {code}').replace('{code}', code));
     } else {
@@ -16133,13 +16970,27 @@ async function onlineConnectToRoom_Back4App(code, creating) {
         await match.save();
         online.role = 2; online.isHost = false;
       } else {
-        throw new Error(t('onlineRoomFull', 'Salon complet (2 joueurs).'));
+        // Room full — offer spectator mode, expose match for spectator join
+        clearTimeout(_connTimeout);
+        const _pc2 = document.getElementById('ol-pre-connect');
+        const _sc2 = document.getElementById('online-status');
+        if (_pc2) _pc2.style.display = '';
+        if (_sc2) _sc2.style.display = 'none';
+        // Store match id for spectator join
+        window._spectatorPendingMatchId = match.id;
+        window._spectatorPendingCode    = code;
+        // Show spectate card
+        const card = document.getElementById('ol-spectate-card');
+        if (card) card.classList.add('visible');
+        _setOnlineStatus(t('onlineRoomFull', 'Salon complet (2 joueurs).') + ' Vous pouvez regarder en spectateur.');
+        return;
       }
 
       online.matchId = match.id;
       try { saveLastOnlineRoom({ code, matchId: match.id }); addRecentOnlineRoom(code); renderRecentOnlineRooms(); } catch(_) {}
       online.connected = true;
       online.ready = !!(match.get('p1Id') && match.get('p2Id'));
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
 
       _applyLobbyStateFromMatch(match);
 
@@ -16528,6 +17379,20 @@ let humanPlayerId = 1;
 let aiPlayerId = null;
 let currentLanguage = 'fr';
 let onConfirmCallback = null;
+
+// Expose key game variables as globals for new feature modules
+// (VoiceChat, SpectatorEnhanced, SpectatorChat, Tournament, OnlineReconnect, SwipeUndo)
+// These are proxies that always reflect the live value via getter/setter
+Object.defineProperty(window, 'gameMode', {
+  get: function() { return gameMode; },
+  set: function(v) { gameMode = v; },
+  configurable: true
+});
+Object.defineProperty(window, 'humanPlayerId', {
+  get: function() { return humanPlayerId; },
+  set: function(v) { humanPlayerId = v; },
+  configurable: true
+});
 
 // ============================================================
 // === PLAYER NAMES (setup) — persistent save on each edit ===
@@ -17190,7 +18055,7 @@ Appearancelabel: "Udem",
 Languagelabel: "Tutlayt",
 Gamelabel: "Urar",
 btnDragMode: "Asezger",
-confirm: "Yahwa-yi",
+confirm: "Ih!",
 cancel: "Ala",
 defaultPlayer1: "Amyurar 1",
 defaultPlayer2: "Amyurar 2",
@@ -19388,14 +20253,6 @@ winner: null,
 highlightedMills: [],
 pendingCaptures: 0,
 kings: {}, // dames Kabyle: index -> true si dame
-consecutivePiece: {
-1: null,
-2: null
-},
-consecutiveCount: {
-1: 0,
-2: 0
-},
 };
 }
 
@@ -19403,70 +20260,12 @@ consecutiveCount: {
 // ─────────────────────────────────────────────────────────────
 // RÈGLE : Même pion max 3 fois consécutives
 // ─────────────────────────────────────────────────────────────
-
-/**
-* Vérifie si le pion à la position fromIdx est interdit pour player
-* parce quil a déjà été déplacé 3 fois de suite.
-* Exception : si cest le SEUL pion que le joueur peut bouger (deadlock)
-*/
-function isConsecutiveBlocked(player, fromIdx) {
-if (state.phase !== 'move') return false;
-if (state.consecutivePiece[player] !== fromIdx) return false;
-if (state.consecutiveCount[player] < 3) return false;
-return hasAlternativePiece(player, fromIdx);
-}
-
-/**
-* Renvoie true si le joueur possède au moins un autre pion capable de bouger.
-*/
-function hasAlternativePiece(player, forbiddenIdx) {
-for (let from = 0; from < SIZE * SIZE; from++) {
-if (from === forbiddenIdx) continue;
-if (state.board[from] !== player) continue;
-for (let to = 0; to < SIZE * SIZE; to++) {
-if (state.board[to] === null && isAdjacent(from, to)) return true;
-}
-}
-return false;
-}
-
-/**
-* Met à jour le suivi consécutif APRÈS un déplacement from->to.
-*/
-function updateConsecutiveTracking(player, fromIdx, toIdx) {
-if (state.consecutivePiece[player] === fromIdx) {
-state.consecutiveCount[player] = Math.min(state.consecutiveCount[player] + 1, 99);
-} else {
-state.consecutiveCount[player] = 1;
-}
-state.consecutivePiece[player] = toIdx;
-}
-
-/**
-* Réinitialise le suivi consécutif d'un joueur si le pion suivi a été capturé
-* (la case est devenue null ou appartient à l'adversaire).
-*/
-function resetConsecutiveIfCaptured(player) {
-const tracked = state.consecutivePiece[player];
-if (tracked !== null && state.board[tracked] !== player) {
-  state.consecutivePiece[player] = null;
-  state.consecutiveCount[player] = 0;
-}
-}
-
-/**
-* Filtre une liste de mouvements pour retirer le pion interdit.
-* Exception : si aucun autre mouvement nexiste, garde tout (deadlock).
-*/
-function filterConsecutiveMoves(player, moves) {
-if (state.phase !== 'move') return moves;
-const forbidden = state.consecutivePiece[player];
-if (forbidden === null) return moves;
-if (state.consecutiveCount[player] < 3) return moves;
-const allowed = moves.filter(m => m.from !== forbidden);
-return allowed.length > 0 ? allowed: moves;
-}
-
+// Règle des 3 coups consécutifs SUPPRIMÉE — stubs no-op pour rétrocompatibilité
+function isConsecutiveBlocked(player, fromIdx) { return false; }
+function hasAlternativePiece(player, forbiddenIdx) { return false; }
+function updateConsecutiveTracking(player, fromIdx, toIdx) { /* no-op */ }
+function resetConsecutiveIfCaptured(player) { /* no-op */ }
+function filterConsecutiveMoves(player, moves) { return moves; }
 // ─────────────────────────────────────────────────────────────
 
 // Internal helper — called by startGame and startSpectatorGame
@@ -19657,14 +20456,7 @@ try {
 function renderBoard() {
 applyBoardOrientation();
 boardDiv.innerHTML = '';
-// Calcul du pion bloqué pour le joueur actif (affichage visuel)
-const blockedIdx = (state.phase === 'move' && !state.captureMode)
-? (() => {
-const p = state.turn;
-const idx = state.consecutivePiece[p];
-if (idx === null || state.consecutiveCount[p] < 3) return null;
-return hasAlternativePiece(p, idx) ? idx: null;
-})(): null;
+const blockedIdx = null; // Règle des 3 coups consécutifs supprimée
 
 for (let i = 0; i < SIZE * SIZE; i++) {
 const cell = document.createElement('div');
@@ -19686,12 +20478,8 @@ if (state.board[i]) {
 const stone = document.createElement('div');
 stone.className = `stone player${state.board[i]}`;
 if (state.selected === i) stone.classList.add("selected");
-// ── Marquage pion épuisé (3 fois de suite) ──
-if (i === blockedIdx) stone.classList.add("consecutive-blocked");
 cell.appendChild(stone);
 }
-// Marquer la cellule aussi si le pion y est bloqué
-if (i === blockedIdx) cell.classList.add("consecutive-blocked-cell");
 cell.onclick = () => onCellClick(i);
 boardDiv.appendChild(cell);
 }
@@ -20057,6 +20845,7 @@ try {
   }
 } catch(_) {}
 }
+window.handleUndo = handleUndo;
 
 
 function handleCaptureClick(i) {
@@ -20194,12 +20983,6 @@ if (gameMode === 'online' && !isMyTurnOnline()) {
 
 if (state.selected === null) {
 if (state.board[i] === state.turn) {
-// ── Règle : pion joué 3× de suite interdit ──
-if (isConsecutiveBlocked(state.turn, i)) {
-showStatusError('statusConsecutiveBlocked');
-moveHistory.pop();
-return;
-}
 state.selected = i;
 moveHistory.pop();
 renderBoard();
@@ -20214,17 +20997,7 @@ const to = i;
 if (to === from) {
 state.selected = null; moveHistory.pop(); renderBoard(); updateStatus(); return;
 }
-// Si le joueur clique sur un autre de ses pions → le sélectionner
-// Mais vérifier la règle consécutive sur le nouveau pion aussi
 if (state.board[to] === state.turn) {
-if (isConsecutiveBlocked(state.turn, to)) {
-showStatusError('statusConsecutiveBlocked');
-state.selected = null;
-moveHistory.pop();
-renderBoard();
-updateStatus();
-return;
-}
 state.selected = to;
 moveHistory.pop();
 renderBoard();
@@ -22893,6 +23666,7 @@ toastEl.classList.add('show');
 window.clearTimeout(toastTimer);
 toastTimer = window.setTimeout(() => toastEl.classList.remove('show'), ms);
 }
+window.showToast = showToast;
 
 // ─────────────────────────────────────────────────────────
 // NOTIFICATION DÉFI ACCEPTÉ — "icqarrew-ik"
@@ -23262,18 +24036,6 @@ captureMode: !!s.captureMode,
 winner: s.winner ?? null,
 highlightedMills: Array.isArray(s.highlightedMills) ? [...s.highlightedMills]: [],
 pendingCaptures: s.pendingCaptures ?? 0,
-consecutivePiece: s.consecutivePiece ? {
-...s.consecutivePiece
-}: {
-1: null,
-2: null
-},
-consecutiveCount: s.consecutiveCount ? {
-...s.consecutiveCount
-}: {
-1: 0,
-2: 0
-},
 kings: (s.kings && typeof s.kings === 'object') ? Object.assign({}, s.kings) : {}
 };
 }
@@ -23787,17 +24549,9 @@ capture: null
 try {
 state = clone(replay.frames[replay.idx]);
 state.selected = null;
-// Les frames minifiées ne contiennent pas ces champs requis par renderBoard()
-// en phase de déplacement. Sans eux, state.consecutivePiece[p] lève une TypeError
-// silencieusement avalée, et le plateau n'est jamais dessiné.
-if (!state.consecutivePiece) state.consecutivePiece = {
-1: null,
-2: null
-};
-if (!state.consecutiveCount) state.consecutiveCount = {
-1: 0,
-2: 0
-};
+// Règle consécutive supprimée — stubs no-op suffisent
+state.consecutivePiece = { 1: null, 2: null };
+state.consecutiveCount = { 1: 0, 2: 0 };
 // Restore kings for Kabylian Draughts replay
 if (cfg().isKabylianDraughts && !state.kings) state.kings = {};
 // Pour la Damma : recalculer les variables globales de tour à partir du frame
@@ -25667,14 +26421,7 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
     // Mettre à jour le SVG des lignes selon le thème actif
     if (typeof ntlataUpdateSvg === 'function') try { ntlataUpdateSvg(); } catch(_) {}
 
-    const blockedIdx = (state.phase === 'move' && !state.captureMode)
-      ? (() => {
-          const p = state.turn;
-          const idx = state.consecutivePiece[p];
-          if (idx === null || state.consecutiveCount[p] < 3) return null;
-          return hasAlternativePiece(p, idx) ? idx : null;
-        })()
-      : null;
+    const blockedIdx = null; // Règle consécutive supprimée
 
     for (let i = 0; i < NT_TOTAL; i++) {
       const cell = document.createElement('div');
@@ -25690,11 +26437,9 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
         const stone = document.createElement('div');
         stone.className = `stone player${state.board[i]}`;
         if (state.selected === i) stone.classList.add('selected');
-        if (i === blockedIdx) stone.classList.add('consecutive-blocked');
         cell.classList.add('filled');
         cell.appendChild(stone);
       }
-      if (i === blockedIdx) cell.classList.add('consecutive-blocked-cell');
       cell.onclick = playable ? () => onCellClick(i) : null;
       boardDiv.appendChild(cell);
     }
@@ -25756,11 +26501,6 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
     if (state.selected === null) {
       if (state.board[i] === state.turn) {
-        if (isConsecutiveBlocked(state.turn, i)) {
-          showStatusError('statusConsecutiveBlocked');
-          moveHistory.pop();
-          return;
-        }
         state.selected = i;
         moveHistory.pop();
         renderBoard();
@@ -25782,14 +26522,6 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
       return;
     }
     if (state.board[to] === state.turn) {
-      if (isConsecutiveBlocked(state.turn, to)) {
-        showStatusError('statusConsecutiveBlocked');
-        state.selected = null;
-        moveHistory.pop();
-        renderBoard();
-        updateStatus();
-        return;
-      }
       state.selected = to;
       moveHistory.pop();
       renderBoard();
@@ -25975,17 +26707,9 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
       1: Number.isFinite(state.captured[1]) ? Math.max(0, state.captured[1] | 0) : 0,
       2: Number.isFinite(state.captured[2]) ? Math.max(0, state.captured[2] | 0) : 0
     };
-
-    if (!state.consecutivePiece || typeof state.consecutivePiece !== 'object') state.consecutivePiece = { 1: null, 2: null };
-    if (!state.consecutiveCount || typeof state.consecutiveCount !== 'object') state.consecutiveCount = { 1: 0, 2: 0 };
-    state.consecutivePiece = {
-      1: Number.isInteger(state.consecutivePiece[1]) && state.consecutivePiece[1] >= 0 && state.consecutivePiece[1] < state.board.length ? state.consecutivePiece[1] : null,
-      2: Number.isInteger(state.consecutivePiece[2]) && state.consecutivePiece[2] >= 0 && state.consecutivePiece[2] < state.board.length ? state.consecutivePiece[2] : null
-    };
-    state.consecutiveCount = {
-      1: Number.isFinite(state.consecutiveCount[1]) ? Math.max(0, state.consecutiveCount[1] | 0) : 0,
-      2: Number.isFinite(state.consecutiveCount[2]) ? Math.max(0, state.consecutiveCount[2] | 0) : 0
-    };
+    // Règle consécutive supprimée — on garde les clés pour rétrocompat saves
+    state.consecutivePiece = { 1: null, 2: null };
+    state.consecutiveCount = { 1: 0, 2: 0 };
 
     state.selected = Number.isInteger(state.selected) && state.selected >= 0 && state.selected < state.board.length
       ? state.selected
@@ -26128,11 +26852,6 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
 
     if (state.selected === null) {
       if (state.board[i] === state.turn) {
-        if (isConsecutiveBlocked(state.turn, i)) {
-          showStatusError('statusConsecutiveBlocked');
-          moveHistory.pop();
-          return;
-        }
         state.selected = i;
         moveHistory.pop();
         renderBoard();
@@ -26154,14 +26873,6 @@ if (e.key === 'Escape' && aboutModal && aboutModal.classList.contains('active'))
       return;
     }
     if (state.board[to] === state.turn) {
-      if (isConsecutiveBlocked(state.turn, to)) {
-        showStatusError('statusConsecutiveBlocked');
-        state.selected = null;
-        moveHistory.pop();
-        renderBoard();
-        updateStatus();
-        return;
-      }
       state.selected = to;
       moveHistory.pop();
       renderBoard();
@@ -26880,8 +27591,13 @@ function getOnlineChatStatusLabel(item) {
 }
 function upsertOnlineChatMessage(entry, options = {}) {
   if (!entry || !entry.id) return null;
-  entry.text = normalizeOnlineChatText(entry.text);
-  if (!entry.text) return null;
+  // Voice messages don't need a text field — only text messages do
+  if (entry.type !== 'voice' && entry.type !== 'spectator-chat') {
+    entry.text = normalizeOnlineChatText(entry.text);
+    if (!entry.text) return null;
+  } else if (!entry.text) {
+    entry.text = entry.type === 'voice' ? '🎤 Message vocal' : '';
+  }
   const id = String(entry.id);
   const idx = onlineChat.messages.findIndex(msg => String(msg.id) === id);
   const merged = idx >= 0 ? { ...onlineChat.messages[idx], ...entry, id } : { ...entry, id };
@@ -26898,11 +27614,21 @@ function upsertOnlineChatMessage(entry, options = {}) {
   if ((idx === -1 || options.forceUnread) && merged.status === 'sent' && !merged.mine && !onlineChat.open && !options.silentUnread) {
     onlineChat.unread += 1;
     renderOnlineChatUnread();
-    try { showChatIncomingPopup(getOnlineChatSenderName(merged), merged.text); } catch(_) {}
+    if (merged.type !== 'voice') {
+      try { showChatIncomingPopup(getOnlineChatSenderName(merged), merged.text); } catch(_) {}
+    }
   }
   renderOnlineChatMessages();
   return merged;
 }
+// Expose for new system modules (VoiceChat, SpectatorChat)
+window.upsertOnlineChatMessage = upsertOnlineChatMessage;
+window.isOnlineChatAvailable   = isOnlineChatAvailable;
+window.onlineChat              = onlineChat;
+window.renderOnlineChatMessages = function() {
+  // Re-exposed after override — proxy to real function
+  try { renderOnlineChatMessages(); } catch(_) {}
+};
 function addOnlineChatMessage(chatPayload, options = {}) {
   if (!chatPayload || !chatPayload.id) return null;
   const id = String(chatPayload.id);
@@ -26961,11 +27687,28 @@ function renderOnlineChatMessages() {
       bubble.appendChild(nameEl);
     }
 
-    // ── Texte du message ──
-    const bodyEl = document.createElement('div');
-    bodyEl.className = 'ocm-body';
-    bodyEl.textContent = item.text;
-    bubble.appendChild(bodyEl);
+    // ── Corps du message : vocal ou texte ──
+    if (item.type === 'voice' && item.audioData) {
+      // Bulle vocale rendue directement — sans dépendre du patch externe patchChatRender
+      var vcRenderer = (typeof VoiceChat !== 'undefined' && VoiceChat.renderVoiceBubble)
+        ? VoiceChat.renderVoiceBubble.bind(VoiceChat)
+        : window._vcRenderBubble;
+      var vcWrap = vcRenderer ? vcRenderer(item, null) : null;
+      if (vcWrap) {
+        bubble.appendChild(vcWrap);
+      } else {
+        // Fallback si VoiceChat pas encore initialisé
+        const fbBody = document.createElement('div');
+        fbBody.className = 'ocm-body';
+        fbBody.textContent = '🎤 Message vocal';
+        bubble.appendChild(fbBody);
+      }
+    } else {
+      const bodyEl = document.createElement('div');
+      bodyEl.className = 'ocm-body';
+      bodyEl.textContent = item.text;
+      bubble.appendChild(bodyEl);
+    }
 
     // ── Footer : heure + statut (uniquement sur le dernier de chaque groupe ou si état spécial) ──
     const next = items[idx + 1];
@@ -27064,8 +27807,9 @@ function setOnlineChatOpen(open) {
   if (next) {
     closeSettingsTrayForChat();
     markOnlineChatRead();
-    // Fermer la bulle popup si ouverte
+    // Fermer la bulle popup si ouverte + arrêter l'audio de notification
     try { const p = document.getElementById('chat-incoming-popup'); if (p) p.hidden = true; clearTimeout(_cipTimer); } catch(_) {}
+    try { _cipStopAudio(); } catch(_) {}
     renderOnlineChatMessages();
     // Scroll forcé après que le panel devient visible
     requestAnimationFrame(() => {
@@ -27089,9 +27833,26 @@ function syncOnlineChatVisibility() {
   }
   renderOnlineChatMessages();
 }
+window.syncOnlineChatVisibility = syncOnlineChatVisibility;
 
 // ── Popup bulle message entrant ──────────────────────────────────────────────
 let _cipTimer = null;
+// Helper : arrêter l'audio de la notification et réinitialiser le bouton
+function _cipStopAudio() {
+  if (window._cipAudio) {
+    try { window._cipAudio.pause(); window._cipAudio.currentTime = 0; } catch(_) {}
+    window._cipAudio = null;
+  }
+  var pb = document.getElementById('cip-play-btn');
+  if (pb) {
+    pb.classList.remove('cip-playing');
+    pb.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+    pb.setAttribute('aria-label', 'Lire le message vocal');
+    pb.hidden = true;
+  }
+  var icon = document.querySelector('#chat-incoming-popup .cip-icon');
+  if (icon) icon.textContent = '💬';
+}
 function showChatIncomingPopup(senderName, text) {
   const popup = document.getElementById('chat-incoming-popup');
   const elSender = document.getElementById('cip-sender');
@@ -27106,6 +27867,9 @@ function showChatIncomingPopup(senderName, text) {
   if (inner) { inner.style.animation = 'none'; requestAnimationFrame(() => { inner.style.animation = ''; }); }
   // Vibration légère
   try { if (navigator.vibrate) navigator.vibrate([40, 20, 60]); } catch(_) {}
+  // Cacher le bouton play (c'est un message texte)
+  const elPlayBtn2 = document.getElementById('cip-play-btn');
+  if (elPlayBtn2) elPlayBtn2.hidden = true;
   // Auto-fermeture après 4.5 s
   clearTimeout(_cipTimer);
   _cipTimer = setTimeout(() => { popup.hidden = true; }, 4500);
@@ -27114,6 +27878,7 @@ function showChatIncomingPopup(senderName, text) {
     elOpen.onclick = () => {
       popup.hidden = true;
       clearTimeout(_cipTimer);
+      try { _cipStopAudio(); } catch(_) {}
       try { setOnlineChatOpen(true); } catch(_) {}
     };
   }
@@ -27127,9 +27892,11 @@ window._onlineChatProcessTick = function(match) {
   var raw = match.get('ephemeralChat');
   if (!Array.isArray(raw)) return;
   var now = Date.now();
-  // Pruner les messages expirés
+  // Pruner les messages expirés — accepter texte ET vocal (audioData)
   var next = raw.filter(function(m) {
-    return m && m.id && m.text && (!m.expiresAt || m.expiresAt > now);
+    return m && m.id
+      && (m.text || m.audioData || m.type === 'voice')
+      && (!m.expiresAt || m.expiresAt > now);
   }).slice(-40);
   var changed = false;
   next.forEach(function(msg) {
@@ -27138,16 +27905,107 @@ window._onlineChatProcessTick = function(match) {
     if (onlineChat.seenIds.has(id)) return;
     var mine = (msg.fromRole != null && online.role != null && Number(msg.fromRole) === Number(online.role)) ||
                (msg.fromId  != null && String(msg.fromId) === String(onlinePlayerId));
-    upsertOnlineChatMessage({
+    var entry = {
       id: id,
-      text: msg.text,
+      type: msg.type || 'text',
+      text: msg.text || (msg.type === 'voice' ? '🎤 Message vocal' : ''),
       senderName: msg.fromName || '',
       senderRole: msg.fromRole != null ? Number(msg.fromRole) : null,
       senderPlayerId: null,
       createdAt: Number(msg.ts || msg.createdAt || Date.now()),
       mine: mine,
       status: 'sent'
-    }, { silentUnread: !!mine, skipSeen: false });
+    };
+    // Champs spécifiques aux messages vocaux
+    if (msg.type === 'voice') {
+      entry.audioData  = msg.audioData  || null;
+      entry.durationMs = msg.durationMs || 1000;
+      entry.waveform   = msg.waveform   || null;
+    }
+    upsertOnlineChatMessage(entry, { silentUnread: !!mine, skipSeen: false });
+    // Popup vocale entrant — avec bouton lecture directe
+    if (!mine && msg.type === 'voice') {
+      try {
+        var popup     = document.getElementById('chat-incoming-popup');
+        var elPlayBtn = document.getElementById('cip-play-btn');
+        var elOpenBtn = document.getElementById('cip-open');
+        if (popup) {
+          var elSender = document.getElementById('cip-sender');
+          var elText   = document.getElementById('cip-text');
+          var cipIcon  = popup.querySelector('.cip-icon');
+          if (cipIcon)  cipIcon.textContent = '🎤';
+          if (elSender) elSender.textContent = msg.fromName || 'Joueur';
+          if (elText)   elText.innerHTML = '<span class="cip-voice-badge"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Message vocal</span>';
+
+          // ── Bouton play : lecture directe depuis la notification ──
+          if (elPlayBtn && msg.audioData) {
+            elPlayBtn.hidden = false;
+            // Réinitialiser l'état (si un audio précédent était en cours)
+            if (window._cipAudio) {
+              try { window._cipAudio.pause(); window._cipAudio.currentTime = 0; } catch(ex) {}
+              window._cipAudio = null;
+            }
+            elPlayBtn.classList.remove('cip-playing');
+            elPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+            elPlayBtn.setAttribute('aria-label', 'Lire le message vocal');
+
+            // Cloner pour supprimer les anciens listeners
+            var newPlayBtn = elPlayBtn.cloneNode(true);
+            elPlayBtn.parentNode.replaceChild(newPlayBtn, elPlayBtn);
+            var _cipPlayBtn = document.getElementById('cip-play-btn');
+
+            _cipPlayBtn.onclick = function(e) {
+              e.stopPropagation();
+              // Si déjà en lecture → stopper
+              if (window._cipAudio && !window._cipAudio.paused) {
+                window._cipAudio.pause();
+                window._cipAudio.currentTime = 0;
+                _cipPlayBtn.classList.remove('cip-playing');
+                _cipPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+                _cipPlayBtn.setAttribute('aria-label', 'Lire le message vocal');
+                return;
+              }
+              // Lancer la lecture
+              var audio = new Audio(msg.audioData);
+              window._cipAudio = audio;
+              _cipPlayBtn.classList.add('cip-playing');
+              _cipPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+              _cipPlayBtn.setAttribute('aria-label', 'Arrêter');
+              audio.play().catch(function() {});
+              // Fermer la popup à la fin de la lecture
+              audio.onended = function() {
+                _cipPlayBtn.classList.remove('cip-playing');
+                _cipPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+                _cipPlayBtn.setAttribute('aria-label', 'Lire le message vocal');
+                clearTimeout(window._cipTimer);
+                window._cipTimer = setTimeout(function() {
+                  var p = document.getElementById('chat-incoming-popup');
+                  if (p) p.hidden = true;
+                  var pi = p && p.querySelector('.cip-icon');
+                  if (pi) pi.textContent = '💬';
+                }, 1200);
+              };
+              // Prolonger l'auto-fermeture pendant la lecture
+              clearTimeout(window._cipTimer);
+            };
+          } else if (elPlayBtn) {
+            elPlayBtn.hidden = true;
+          }
+
+          popup.hidden = false;
+          clearTimeout(window._cipTimer);
+          window._cipTimer = setTimeout(function() {
+            // Ne pas fermer si lecture en cours
+            if (window._cipAudio && !window._cipAudio.paused) return;
+            var p = document.getElementById('chat-incoming-popup');
+            if (p) p.hidden = true;
+            var pi = p && p.querySelector('.cip-icon');
+            if (pi) pi.textContent = '💬';
+          }, 5500);
+          try { if (navigator.vibrate) navigator.vibrate([40, 20, 60]); } catch(_) {}
+        }
+      } catch(_) {}
+    }
     changed = true;
   });
   if (changed) syncOnlineChatVisibility();
@@ -27636,7 +28494,14 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
     }, { passive: true });
     popup.addEventListener('touchend', function(e) {
       sw = false; var dx = e.changedTouches[0].clientX - sx, ci = popup.querySelector('.cip-inner');
-      if (dx > 70) { if (ci) { ci.style.transform = 'translateX(200px)'; ci.style.opacity = '0'; } setTimeout(function() { popup.hidden = true; if (ci) { ci.style.transform = ''; ci.style.opacity = ''; } }, 200); }
+      if (dx > 70) {
+        if (ci) { ci.style.transform = 'translateX(200px)'; ci.style.opacity = '0'; }
+        setTimeout(function() {
+          popup.hidden = true;
+          if (ci) { ci.style.transform = ''; ci.style.opacity = ''; }
+          try { _cipStopAudio(); } catch(_) {}
+        }, 200);
+      }
       else { if (ci) { ci.style.transform = ''; ci.style.opacity = ''; } }
     }, { passive: true });
   }
@@ -27667,6 +28532,1676 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
   setTimeout(patchRender, 400); setTimeout(patchRender, 1400);
 
 })();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     NOUVEAUX SYSTÈMES TIDDAS v12+
+     1. Voice Chat (MediaRecorder push-to-talk)
+     2. Spectateur amélioré (rejoindre salon complet, relève)
+     3. Tournoi à élimination directe + bracket live
+     4. Swipe-to-undo (gestes mobile)
+     5. Reconnexion automatique online
+     6. Chat spectateurs séparé
+     7. Follow player (notifications)
+     ═══════════════════════════════════════════════════════════════════ -->
+<script nonce="tiddas">
+(function() {
+'use strict';
+
+// ─────────────────────────────────────────────────────────────────────
+// 1.  VOICE CHAT — MediaRecorder / Push-to-Talk
+// ─────────────────────────────────────────────────────────────────────
+var VoiceChat = (function() {
+  var _mediaRecorder = null;
+  var _audioChunks   = [];
+  var _stream        = null;
+  var _muted         = false;
+  var _recording     = false;
+  var _holdTimer     = null;
+  var _permState     = 'unknown'; // 'granted'|'denied'|'unknown'
+  var _activeAudio   = null;     // singleton : audio en cours de lecture
+
+  var STORAGE_MUTE   = 'tiddas_voice_muted_v1';
+  var HOLD_THRESHOLD = 180; // ms avant que l'appui soit considéré push-to-talk
+  var MAX_RECORD_MS  = 60000; // 60 secondes maximum
+
+  var fab            = null;
+  var recordingToast = null;
+  var _recordStartTs = 0;    // timestamp début enregistrement (durée exacte)
+  var _autoStopTimer = null; // timer pour stopper automatiquement à MAX_RECORD_MS
+  var _liveTimer     = null; // intervalle pour mettre à jour le compteur affiché
+
+  /* ── Waveform simplifiée ── */
+  function _makeWaveformBars(count) {
+    count = count || 18;
+    var heights = [];
+    for (var i = 0; i < count; i++) {
+      var h = 15 + Math.abs(Math.sin(i * 0.7 + 0.4)) * 65 + Math.random() * 20;
+      heights.push(Math.min(100, Math.round(h)));
+    }
+    return heights;
+  }
+
+  /* ── Durée lisible ── */
+  function _fmtDuration(ms) {
+    var s = Math.round(ms / 1000);
+    var m = Math.floor(s / 60);
+    return m + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  /* ── Mute persisté ── */
+  function _loadMute() {
+    try { _muted = localStorage.getItem(STORAGE_MUTE) === '1'; } catch(_) {}
+  }
+  function _saveMute() {
+    try { localStorage.setItem(STORAGE_MUTE, _muted ? '1' : '0'); } catch(_) {}
+  }
+
+  /* ── Mettre à jour l'icône FAB ── */
+  function _updateFabIcon() {
+    if (!fab) return;
+    if (_muted) fab.classList.add('mic-muted');
+    else        fab.classList.remove('mic-muted');
+  }
+
+  /* ── Obtenir (ou ré-acquérir) le flux micro ── */
+  async function _acquireStream() {
+    // Réutiliser le stream existant s'il est encore actif
+    if (_stream && _stream.active) return true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      _permState = 'denied'; return false;
+    }
+    try {
+      // Libérer l'ancien stream si présent
+      if (_stream) { try { _stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){} }
+      _stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true }
+      });
+      _permState = 'granted';
+      return true;
+    } catch(e) {
+      _permState = 'denied';
+      _stream = null;
+      _fallbackToText();
+      return false;
+    }
+  }
+
+  /* ── Fallback si micro refusé ── */
+  function _fallbackToText() {
+    if (fab) fab.hidden = true;
+    try { showToast('🎤 Microphone refusé — retour au chat texte', 3000); } catch(_) {}
+  }
+
+  /* ── Démarrer enregistrement ── */
+  async function _startRecording() {
+    if (_muted || _recording) return;
+    var ok = await _acquireStream();
+    if (!ok) return;
+    _audioChunks = [];
+    try {
+      var opts = {};
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) opts.mimeType = 'audio/webm;codecs=opus';
+      else if (MediaRecorder.isTypeSupported('audio/webm'))        opts.mimeType = 'audio/webm';
+      _mediaRecorder = new MediaRecorder(_stream, opts);
+    } catch(e) {
+      try { _mediaRecorder = new MediaRecorder(_stream); } catch(e2) { return; }
+    }
+    _mediaRecorder.ondataavailable = function(e) {
+      if (e.data && e.data.size > 0) _audioChunks.push(e.data);
+    };
+    _mediaRecorder.start(100);
+    _recording     = true;
+    _recordStartTs = Date.now();
+    if (fab) fab.classList.add('recording');
+    _showRecordingToast(true);
+    try { if (navigator.vibrate) navigator.vibrate([30, 20, 30]); } catch(_) {}
+
+    // Auto-stop au bout de MAX_RECORD_MS
+    _autoStopTimer = setTimeout(function() {
+      if (_recording) {
+        try { showToast('⏱ Durée max atteinte — message envoyé', 2000); } catch(_) {}
+        _stopRecording();
+      }
+    }, MAX_RECORD_MS);
+  }
+
+  /* ── Arrêter enregistrement + envoyer ── */
+  function _stopRecording() {
+    if (!_recording || !_mediaRecorder) return;
+    _recording = false;
+    clearTimeout(_autoStopTimer);
+    clearInterval(_liveTimer);
+    var durationMs = Date.now() - _recordStartTs; // durée réelle
+    if (fab) fab.classList.remove('recording');
+    _showRecordingToast(false);
+    _mediaRecorder.onstop = function() {
+      if (_audioChunks.length === 0) { _audioChunks = []; return; }
+      var mimeType = _mediaRecorder.mimeType || 'audio/webm';
+      var blob = new Blob(_audioChunks, { type: mimeType });
+      _audioChunks = [];
+      if (blob.size < 500) { try { showToast('Message trop court.', 1400); } catch(_) {} return; }
+      _sendVoiceMessage(blob, durationMs);
+    };
+    try { _mediaRecorder.stop(); } catch(_) {}
+  }
+
+  /* ── Annuler enregistrement (glissement hors du bouton) ── */
+  function _cancelRecording() {
+    if (!_recording || !_mediaRecorder) return;
+    _recording = false;
+    clearTimeout(_autoStopTimer);
+    clearInterval(_liveTimer);
+    _audioChunks = [];
+    if (fab) fab.classList.remove('recording');
+    _showRecordingToast(false);
+    // no-op onstop pour éviter d'envoyer les chunks accumulés
+    _mediaRecorder.onstop = function() {};
+    try { _mediaRecorder.stop(); } catch(_) {}
+  }
+
+  /* ── Toast enregistrement avec timer en direct ── */
+  function _showRecordingToast(show) {
+    if (!recordingToast) recordingToast = document.getElementById('vc-recording-toast');
+    if (!recordingToast) return;
+    var timerEl = document.getElementById('vc-rec-timer');
+    var maxEl   = document.getElementById('vc-rec-max');
+    if (show) {
+      if (timerEl) timerEl.textContent = '0:00';
+      if (maxEl)   maxEl.textContent   = '/ ' + _fmtDuration(MAX_RECORD_MS);
+      recordingToast.classList.add('visible');
+      // Mise à jour du compteur chaque seconde
+      clearInterval(_liveTimer);
+      _liveTimer = setInterval(function() {
+        if (!_recording) { clearInterval(_liveTimer); return; }
+        var elapsed = Date.now() - _recordStartTs;
+        if (timerEl) timerEl.textContent = _fmtDuration(elapsed);
+        // Clignotement rouge quand proche de la limite
+        if (elapsed > MAX_RECORD_MS * 0.8 && recordingToast) {
+          recordingToast.style.background = 'rgba(200,0,0,0.96)';
+        }
+      }, 500);
+    } else {
+      clearInterval(_liveTimer);
+      recordingToast.classList.remove('visible');
+      if (recordingToast) recordingToast.style.background = '';
+    }
+  }
+
+  /* ── Encoder en base64 ── */
+  function _blobToBase64(blob) {
+    return new Promise(function(resolve) {
+      var reader = new FileReader();
+      reader.onloadend = function() { resolve(reader.result); };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  /* ── Envoyer le message vocal via le système de chat existant ── */
+  async function _sendVoiceMessage(blob, durationMs) {
+    if (!window.isOnlineChatAvailable || !window.isOnlineChatAvailable()) {
+      try { showToast('Messagerie vocale disponible uniquement en ligne.', 2200); } catch(_) {}
+      return;
+    }
+    // Durée : valeur exacte mesurée à l'enregistrement, avec garde-fous
+    durationMs = Math.max(400, Math.min(durationMs || Math.round(blob.size / 3200 * 1000), 120000));
+
+    // Vérification taille (limite Back4App ~256KB par champ JSON)
+    if (blob.size > 220000) {
+      try { showToast('⚠️ Message vocal trop long — raccourcissez l\'enregistrement.', 2800); } catch(_) {}
+      return;
+    }
+
+    var base64 = await _blobToBase64(blob);
+    var bars   = _makeWaveformBars(18);
+    var now    = Date.now();
+    var fallbackName = '';
+    try {
+      fallbackName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || 'Joueur';
+    } catch(_) {}
+
+    var msgId = 'vc_' + now.toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+    var chatEntry = {
+      id: msgId,
+      type: 'voice',
+      audioData: base64,
+      durationMs: durationMs,
+      waveform: bars,
+      fromRole: (window.online && window.online.role) || null,
+      fromId:   String((window.onlinePlayerId || '')),
+      fromName: fallbackName,
+      ts: now,
+      expiresAt: now + 3600000 // 1h
+    };
+
+    // Affichage local optimiste
+    try {
+      window.upsertOnlineChatMessage && window.upsertOnlineChatMessage({
+        id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+        waveform: bars, senderName: fallbackName,
+        senderRole: chatEntry.fromRole, senderPlayerId: null,
+        createdAt: now, mine: true, status: 'sending'
+      }, { silentUnread: true, skipSeen: true });
+    } catch(_) {}
+
+    // Envoi Parse/Back4App via le système de chat existant
+    try {
+      var Parse = window.Parse;
+      if (Parse && window.BACK4APP_CLASS && window.online && window.online.matchId) {
+        var q = new Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(window.online.matchId);
+        var existing = m.get('ephemeralChat') || [];
+        existing = existing.filter(function(x) { return x && x.id && (!x.expiresAt || x.expiresAt > Date.now()); });
+        existing = existing.slice(-38); // garder de la place (limite harmonisée)
+        existing.push(chatEntry);
+        m.set('ephemeralChat', existing);
+        await m.save();
+        window.upsertOnlineChatMessage && window.upsertOnlineChatMessage({
+          id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+          waveform: bars, senderName: fallbackName,
+          senderRole: chatEntry.fromRole, senderPlayerId: null,
+          createdAt: now, mine: true, status: 'sent'
+        }, { silentUnread: true, skipSeen: false });
+        window.onlineChat && (window.onlineChat.seenIds) && window.onlineChat.seenIds.add(msgId);
+      }
+    } catch(e) {
+      try {
+        window.upsertOnlineChatMessage && window.upsertOnlineChatMessage({
+          id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+          waveform: bars, senderName: fallbackName,
+          senderRole: chatEntry.fromRole, senderPlayerId: null,
+          createdAt: now, mine: true, status: 'failed'
+        }, { silentUnread: true, skipSeen: true });
+        showToast && showToast('Message vocal non envoyé.', 2000);
+      } catch(_) {}
+    }
+  }
+
+  /* ── Rendre une bulle message vocal (v4) ── */
+  function renderVoiceBubble(item, container) {
+    var wrap = document.createElement('div');
+    wrap.className = 'ocm-voice';
+    wrap.dataset.vcId = item.id;
+
+    // ── Bouton play/pause ──
+    var btn = document.createElement('button');
+    btn.className = 'ocm-voice-play';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Lire le message vocal');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+    wrap.appendChild(btn);
+
+    // ── Colonne centrale : waveform + durée ──
+    var center = document.createElement('div');
+    center.className = 'ocm-voice-center';
+
+    var wf = document.createElement('div');
+    wf.className = 'ocm-voice-waveform';
+    wf.setAttribute('role', 'progressbar');
+    wf.setAttribute('aria-valuemin', '0');
+    wf.setAttribute('aria-valuemax', '100');
+    wf.setAttribute('aria-valuenow', '0');
+    wf.setAttribute('title', 'Cliquer pour avancer/reculer');
+    var bars = item.waveform || _makeWaveformBars(22);
+    bars.forEach(function(h) {
+      var b = document.createElement('div');
+      b.className = 'ocm-voice-bar';
+      b.style.height = h + '%';
+      wf.appendChild(b);
+    });
+
+    // Curseur de progression (ligne verticale)
+    var cursor = document.createElement('div');
+    cursor.className = 'ocm-voice-cursor';
+    wf.appendChild(cursor);
+    center.appendChild(wf);
+
+    var dur = document.createElement('span');
+    dur.className = 'ocm-voice-dur';
+    dur.textContent = _fmtDuration(item.durationMs || 1000);
+    center.appendChild(dur);
+    wrap.appendChild(center);
+
+    // ── Colonne droite : vitesse de lecture ──
+    var right = document.createElement('div');
+    right.className = 'ocm-voice-right';
+    var speedBtn = document.createElement('button');
+    speedBtn.className = 'ocm-voice-speed';
+    speedBtn.type = 'button';
+    speedBtn.textContent = '1×';
+    speedBtn.setAttribute('title', 'Vitesse de lecture');
+    right.appendChild(speedBtn);
+    wrap.appendChild(right);
+
+    // ── Badge "nouveau" (point rouge) ──
+    if (!item.mine && !item._played) {
+      var badge = document.createElement('span');
+      badge.className = 'ocm-voice-new';
+      badge.setAttribute('aria-label', 'Nouveau message vocal');
+      wrap.appendChild(badge);
+    }
+
+    // ── État interne ──
+    var _audio       = null;
+    var _playing     = false;
+    var _barInterval = null;
+    var _speeds      = [1, 1.5, 2];
+    var _speedIdx    = 0;
+
+    function _resetUI() {
+      _playing = false;
+      clearInterval(_barInterval); _barInterval = null;
+      wrap.classList.remove('playing');
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+      btn.setAttribute('aria-label', 'Lire le message vocal');
+      Array.from(wf.querySelectorAll('.ocm-voice-bar')).forEach(function(b) { b.classList.remove('active'); });
+      cursor.style.left = '0%';
+      wf.setAttribute('aria-valuenow', '0');
+      dur.textContent = _fmtDuration(item.durationMs || 1000);
+    }
+
+    // ── Seek : clic sur la waveform ──
+    wf.addEventListener('click', function(e) {
+      if (!_audio || !_audio.duration) return;
+      e.stopPropagation();
+      var rect = wf.getBoundingClientRect();
+      var ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      _audio.currentTime = ratio * _audio.duration;
+    });
+
+    // ── Vitesse de lecture ──
+    speedBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      _speedIdx = (_speedIdx + 1) % _speeds.length;
+      var s = _speeds[_speedIdx];
+      speedBtn.textContent = s + '×';
+      if (_audio) _audio.playbackRate = s;
+    });
+
+    // ── Play / Pause ──
+    btn.addEventListener('click', function() {
+      // Stopper si déjà en lecture
+      if (_playing && _audio) {
+        _audio.pause();
+        _audio.currentTime = 0;
+        _resetUI();
+        return;
+      }
+      if (!item.audioData) return;
+
+      // Stopper tout autre audio en cours (singleton global)
+      if (_activeAudio && _activeAudio !== _audio) {
+        try { _activeAudio.pause(); _activeAudio.currentTime = 0; } catch(ex) {}
+        document.querySelectorAll('.ocm-voice.playing').forEach(function(el) {
+          el.classList.remove('playing');
+          el.querySelectorAll('.ocm-voice-bar').forEach(function(b) { b.classList.remove('active'); });
+          var pb = el.querySelector('.ocm-voice-play');
+          if (pb) {
+            pb.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+            pb.setAttribute('aria-label', 'Lire le message vocal');
+          }
+        });
+      }
+
+      _audio = new Audio(item.audioData);
+      _audio.playbackRate = _speeds[_speedIdx];
+      _activeAudio = _audio;
+      _playing     = true;
+      item._played = true;
+
+      // Retirer le badge "nouveau"
+      var badge2 = wrap.querySelector('.ocm-voice-new');
+      if (badge2) badge2.remove();
+
+      wrap.classList.add('playing');
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+      btn.setAttribute('aria-label', 'Arrêter');
+
+      var barEls   = Array.from(wf.querySelectorAll('.ocm-voice-bar'));
+      var totalDur = item.durationMs || 1000;
+
+      _barInterval = setInterval(function() {
+        if (!_playing || !_audio) { clearInterval(_barInterval); _barInterval = null; return; }
+        var dur_s = _audio.duration || (totalDur / 1000);
+        var prog  = Math.min(1, Math.max(0, _audio.currentTime / dur_s));
+        var activeIdx = Math.floor(prog * barEls.length);
+        barEls.forEach(function(b, i) {
+          if (i < activeIdx) b.classList.add('active');
+          else               b.classList.remove('active');
+        });
+        // Curseur de progression
+        cursor.style.left = (prog * 100).toFixed(1) + '%';
+        wf.setAttribute('aria-valuenow', Math.round(prog * 100));
+        // Compteur
+        var elapsed = Math.round(_audio.currentTime);
+        var total   = Math.round(dur_s);
+        dur.textContent = _fmtDuration(elapsed * 1000) + ' / ' + _fmtDuration(total * 1000);
+      }, 80);
+
+      _audio.onended = function() { _resetUI(); };
+      _audio.onerror = function() { _resetUI(); };
+      _audio.play().catch(function() { _resetUI(); });
+    });
+
+    if (container) container.appendChild(wrap);
+    return wrap;
+  }
+
+  /* ── Initialisation ── */
+  function init() {
+    _loadMute();
+    fab = document.getElementById('voice-chat-fab');
+    recordingToast = document.getElementById('vc-recording-toast');
+    if (!fab) return;
+
+    _updateFabIcon();
+
+    // Long press = record; clic court = toggle mute
+    var _pressStart = 0;
+    var _pressTimer = null;
+    var _didRecord  = false;
+
+    function _onPressStart(e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      _pressStart  = Date.now();
+      _didRecord   = false;
+      _pressTimer  = setTimeout(function() {
+        _didRecord = true;
+        _startRecording();
+      }, HOLD_THRESHOLD);
+    }
+
+    function _onPressEnd(e) {
+      e.preventDefault();
+      clearTimeout(_pressTimer);
+      if (_didRecord) { _stopRecording(); }
+      else if (Date.now() - _pressStart < HOLD_THRESHOLD + 50) {
+        // clic court : toggle mute
+        _muted = !_muted;
+        _saveMute();
+        _updateFabIcon();
+        try { showToast(_muted ? '🔇 Micro coupé' : '🎤 Micro actif', 1400); } catch(_) {}
+      }
+    }
+
+    function _onPressCancel(e) {
+      clearTimeout(_pressTimer);
+      if (_recording) _cancelRecording();
+    }
+
+    fab.addEventListener('mousedown',  _onPressStart);
+    fab.addEventListener('touchstart', _onPressStart, { passive: false });
+    fab.addEventListener('mouseup',    _onPressEnd);
+    fab.addEventListener('touchend',   _onPressEnd);
+    fab.addEventListener('mouseleave', _onPressCancel);
+    fab.addEventListener('touchcancel',_onPressCancel);
+
+    // Exposer au pipeline de réception de messages chat
+    window._vcRenderBubble = renderVoiceBubble;
+  }
+
+  /* ── Afficher/masquer le FAB en fonction du mode ── */
+  function syncVisibility() {
+    var fab2 = document.getElementById('voice-chat-fab');
+    if (!fab2) return;
+    var available = !!(window.isOnlineChatAvailable && window.isOnlineChatAvailable());
+    fab2.hidden = !available || !window.MediaRecorder;
+  }
+
+  return { init: init, syncVisibility: syncVisibility, renderVoiceBubble: renderVoiceBubble };
+})();
+
+// Note: patchChatRender supprimé — le rendu des bulles vocales est désormais intégré
+// directement dans renderOnlineChatMessages() et la réception dans _onlineChatProcessTick().
+
+// Visibilité voice FAB liée au chat
+(function syncVoiceFab() {
+  function check() {
+    VoiceChat.syncVisibility();
+    var origSync = window.syncOnlineChatVisibility;
+    if (typeof origSync === 'function') {
+      window.syncOnlineChatVisibility = function() {
+        origSync();
+        VoiceChat.syncVisibility();
+      };
+    }
+  }
+  setTimeout(check, 1000);
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 2.  SWIPE-TO-UNDO (mobile gesture)
+// ─────────────────────────────────────────────────────────────────────
+(function initSwipeUndo() {
+  var board = document.getElementById('board');
+  if (!board) return;
+  var _sx = 0, _sy = 0, _tracking = false, _threshold = 80;
+  var hint = document.getElementById('swipe-undo-hint');
+
+  function _show() {
+    if (!hint) return;
+    hint.classList.add('visible');
+    clearTimeout(_show._t);
+    _show._t = setTimeout(function() { hint.classList.remove('visible'); }, 600);
+  }
+
+  board.addEventListener('touchstart', function(e) {
+    if (e.touches.length !== 1) { _tracking = false; return; }
+    _sx = e.touches[0].clientX;
+    _sy = e.touches[0].clientY;
+    _tracking = true;
+  }, { passive: true });
+
+  board.addEventListener('touchmove', function(e) {
+    if (!_tracking || e.touches.length !== 1) return;
+    var dx = e.touches[0].clientX - _sx;
+    var dy = Math.abs(e.touches[0].clientY - _sy);
+    if (dy > 40) { _tracking = false; return; }
+    if (dx > _threshold / 2) {
+      if (hint) hint.style.opacity = String(Math.min(1, (dx - 20) / (_threshold - 20)));
+    }
+  }, { passive: true });
+
+  board.addEventListener('touchend', function(e) {
+    if (!_tracking) return;
+    _tracking = false;
+    if (hint) { hint.style.opacity = ''; hint.classList.remove('visible'); }
+    var dx = e.changedTouches[0].clientX - _sx;
+    var dy = Math.abs(e.changedTouches[0].clientY - _sy);
+    if (dx > _threshold && dy < 50) {
+      // Swipe right → undo
+      _show();
+      try {
+        var undoBtn = document.getElementById('undo-btn');
+        if (undoBtn && !undoBtn.disabled) {
+          if (typeof handleUndo === 'function') handleUndo();
+          else undoBtn.click();
+        }
+      } catch(_) {}
+    }
+  }, { passive: true });
+
+  board.addEventListener('touchcancel', function() {
+    _tracking = false;
+    if (hint) { hint.style.opacity = ''; hint.classList.remove('visible'); }
+  }, { passive: true });
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 3.  RECONNEXION AUTOMATIQUE ONLINE
+// ─────────────────────────────────────────────────────────────────────
+var OnlineReconnect = (function() {
+  var _timer      = null;
+  var _attempt    = 0;
+  var _maxAttempts = 6;
+  var _active     = false;
+  var _matchId    = null;
+  var DELAYS = [2000, 4000, 7000, 12000, 20000, 30000];
+
+  var banner = null;
+  var msgEl  = null;
+
+  function _getBanner() {
+    if (!banner) banner = document.getElementById('online-reconnect-banner');
+    if (!msgEl)  msgEl  = document.getElementById('online-reconnect-msg');
+    return banner;
+  }
+
+  function _show(txt) {
+    _getBanner();
+    if (banner) banner.hidden = false;
+    if (msgEl)  msgEl.textContent = txt || 'Reconnexion…';
+  }
+
+  function _hide() {
+    _getBanner();
+    if (banner) banner.hidden = true;
+  }
+
+  function _cancel() {
+    _active = false;
+    _attempt = 0;
+    clearTimeout(_timer);
+    _hide();
+  }
+
+  function _scheduleNext() {
+    if (!_active || _attempt >= _maxAttempts) {
+      _hide();
+      try { showToast('Connexion perdue. Relancer la partie pour rejouer.', 4000); } catch(_) {}
+      return;
+    }
+    var delay = DELAYS[Math.min(_attempt, DELAYS.length - 1)];
+    _show('Reconnexion… tentative ' + (_attempt + 1) + '/' + _maxAttempts);
+    _timer = setTimeout(_tryReconnect, delay);
+  }
+
+  async function _tryReconnect() {
+    if (!_active) return;
+    _attempt++;
+    try {
+      if (!window.Parse || !window.BACK4APP_CLASS || !_matchId) {
+        _scheduleNext(); return;
+      }
+      var q = new Parse.Query(window.BACK4APP_CLASS);
+      var m = await q.get(_matchId);
+      if (!m) { _scheduleNext(); return; }
+      // Restore connected state
+      if (window.online) {
+        window.online.connected = true;
+        window.online.matchId   = _matchId;
+        window.online.fetching  = false;
+      }
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
+      // Apply current match state
+      if (typeof window._processOnlineMatch === 'function') {
+        window._processOnlineMatch(m, true);
+      }
+      // Restart polling
+      if (typeof _startPolling === 'function') {
+        try { _startPolling(); } catch(_) {}
+      }
+      _cancel();
+      _hide();
+      try { showToast('✅ Reconnecté', 1800); } catch(_) {}
+    } catch(e) {
+      _scheduleNext();
+    }
+  }
+
+  function start(matchId) {
+    if (_active) return;
+    _active  = true;
+    _attempt = 0;
+    _matchId = matchId || (window.online && window.online.matchId);
+    _scheduleNext();
+  }
+
+  function init() {
+    var cancelBtn = document.getElementById('online-reconnect-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', _cancel);
+
+    // Patch the polling error path — intercept _pollConsecutiveErrors growth
+    // We hook into _setOnlineStatus calls that indicate network failure
+    var origSetStatus = window._setOnlineStatus;
+    if (typeof origSetStatus === 'function') {
+      window._setOnlineStatus = function(msg) {
+        origSetStatus(msg);
+        // Detect persistent network errors during active online game
+        var networkErrorPatterns = /erreur réseau|network error|connexion|back4app.*permission|vérifie ta connexion/i;
+        if (networkErrorPatterns.test(msg || '')) {
+          var inGame = window.gameMode === 'online' && window.online && window.online.matchId;
+          if (inGame && !_active) {
+            start(window.online && window.online.matchId);
+          }
+        }
+      };
+    }
+
+    // Expose _processOnlineMatch so reconnect can call it
+    window._processOnlineMatch = function(match, forceApply) {
+      try {
+        if (!match || !match.get) return;
+        var payload = match.get('payload');
+        if (payload && payload.state && typeof onlineApplyState === 'function') {
+          onlineApplyState(payload);
+        }
+        if (typeof _applyLobbyStateFromMatch === 'function') {
+          _applyLobbyStateFromMatch(match);
+        }
+        if (typeof _processMatchChatFromArray === 'function') {
+          _processMatchChatFromArray(match);
+        }
+      } catch(_) {}
+    };
+  }
+
+  return { init: init, start: start, cancel: _cancel };
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 4.  SPECTATEUR — rejoindre salon complet, relève joueur, live indicator
+// ─────────────────────────────────────────────────────────────────────
+var SpectatorEnhanced = (function() {
+
+  var _spectateRoomCode = null;
+  var _spectatorRole    = 0; // 0 = spectateur pur
+  var _disconnectedSlot = null; // 1 ou 2
+
+  /* ── Afficher/masquer la carte spectateur ── */
+  function _showSpectateCard(show, code) {
+    var card = document.getElementById('ol-spectate-card');
+    if (!card) return;
+    _spectateRoomCode = code || null;
+    if (show) card.classList.add('visible');
+    else      card.classList.remove('visible');
+  }
+
+  /* ── Rejoindre comme spectateur — implémentation réelle ── */
+  async function joinAsSpectator(roomCode) {
+    var matchId  = window._spectatorPendingMatchId;
+    var code     = roomCode || window._spectatorPendingCode
+                 || ((document.getElementById('online-room-code') || {}).value || '').trim().toUpperCase();
+
+    if (!matchId && !code) {
+      try { showToast('Entrez le code du salon à observer.', 2000); } catch(_) {}
+      return;
+    }
+
+    try {
+      // Résoudre matchId si absent
+      if (!matchId && code && window.Parse && window.BACK4APP_CLASS) {
+        var q2 = new Parse.Query(window.BACK4APP_CLASS);
+        q2.equalTo('code', code.toUpperCase());
+        var res2 = await q2.first();
+        if (!res2) { showToast && showToast('Salon introuvable.', 2000); return; }
+        matchId = res2.id;
+      }
+      if (!matchId) { showToast && showToast('Impossible de trouver le salon.', 2000); return; }
+
+      showToast && showToast('👁 Connexion comme spectateur…', 1800);
+
+      // Configurer online pour mode spectateur (rôle 0 = observateur)
+      if (window.online) {
+        window.online.matchId   = matchId;
+        window.online.room      = code;
+        window.online.role      = 0;
+        window.online.isHost    = false;
+        window.online.connected = true;
+        window.online.ready     = false;
+        window.online.lastSeenRev = -1;
+      }
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
+      window.gameMode = 'spectator';
+
+      // Cacher la carte spectateur, masquer le pre-connect
+      var card3 = document.getElementById('ol-spectate-card');
+      if (card3) card3.classList.remove('visible');
+      var _pc3 = document.getElementById('ol-pre-connect');
+      if (_pc3) _pc3.style.display = 'none';
+      var _sc3 = document.getElementById('online-status');
+      if (_sc3) _sc3.style.display = '';
+
+      // Badge spectateur
+      var badge2 = document.getElementById('spectator-badge');
+      if (badge2) { badge2.classList.add('visible'); }
+
+      // Afficher chat spectateurs
+      SpectatorChat.syncVisibility();
+
+      // Démarrer le polling (réutilise le mécanisme existant)
+      if (typeof _startPolling === 'function') {
+        try { _startPolling(); } catch(_) {}
+      }
+
+      // Charger l'état actuel immédiatement
+      if (window.Parse && window.BACK4APP_CLASS) {
+        var q3 = new Parse.Query(window.BACK4APP_CLASS);
+        var m3 = await q3.get(matchId);
+        var payload3 = m3.get('payload');
+        if (payload3 && payload3.state && typeof onlineApplyState === 'function') {
+          onlineApplyState(payload3);
+          if (typeof showScreen === 'function') showScreen('game-play-area');
+        }
+      }
+
+      // FAB tournoi
+      var tfab = document.getElementById('tournament-fab');
+      if (tfab) tfab.hidden = false;
+
+      showToast && showToast('👁 Mode spectateur actif', 1800);
+      _showTakeoverBtn(false);
+    } catch(e) {
+      showToast && showToast('Impossible de rejoindre comme spectateur : ' + ((e && e.message) || e), 2800);
+    }
+  }
+
+  /* ── Bouton takeover (relève si joueur déconnecté) ── */
+  function _showTakeoverBtn(show, slot) {
+    var btn = document.getElementById('ol-takeover-btn');
+    if (!btn) return;
+    if (show) {
+      _disconnectedSlot = slot;
+      btn.textContent = '⚔️ Prendre la place du joueur ' + (slot === 1 ? '1 (Noir)' : '2 (Blanc)') + ' déconnecté';
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  }
+
+  /* ── Effectuer la relève ── */
+  async function takeover() {
+    if (!_disconnectedSlot) return;
+    try {
+      if (window.online) {
+        window.online.role     = _disconnectedSlot;
+        window.online.playerId = _disconnectedSlot;
+        window.gameMode        = 'online';
+        if (typeof window.humanPlayerId !== 'undefined') window.humanPlayerId = _disconnectedSlot;
+        if (typeof window.aiPlayerId    !== 'undefined') window.aiPlayerId    = 3 - _disconnectedSlot;
+      }
+      var badge = document.getElementById('spectator-badge');
+      if (badge) badge.classList.remove('visible');
+      _showTakeoverBtn(false);
+      showToast && showToast('⚔️ Vous avez pris la partie en main !', 2200);
+      if (typeof renderAll === 'function') renderAll();
+    } catch(e) {
+      showToast && showToast('Impossible de prendre la relève.', 2200);
+    }
+  }
+
+  /* ── Live dot sur le lobby ── */
+  function showLiveDot(show) {
+    var dot = document.getElementById('ol-live-dot');
+    if (dot) dot.style.display = show ? 'inline-flex' : 'none';
+  }
+
+  /* ── Follow player ── */
+  var _followedPlayers = new Set();
+  try {
+    var _fp = JSON.parse(localStorage.getItem('tiddas_followed_v1') || '[]');
+    _fp.forEach(function(n) { _followedPlayers.add(n); });
+  } catch(_) {}
+
+  function _saveFollowed() {
+    try { localStorage.setItem('tiddas_followed_v1', JSON.stringify(Array.from(_followedPlayers))); } catch(_) {}
+  }
+
+  function toggleFollow(playerName, btnEl) {
+    if (!playerName) return;
+    if (_followedPlayers.has(playerName)) {
+      _followedPlayers.delete(playerName);
+      if (btnEl) { btnEl.classList.remove('following'); btnEl.title = 'Suivre ce joueur'; }
+      showToast && showToast('Ne suit plus ' + playerName, 1400);
+    } else {
+      _followedPlayers.add(playerName);
+      if (btnEl) { btnEl.classList.add('following'); btnEl.title = 'Ne plus suivre'; }
+      showToast && showToast('⭐ Vous suivez ' + playerName + ' — notification quand il joue', 2200);
+    }
+    _saveFollowed();
+  }
+
+  function checkFollowedNotify(p1Name, p2Name) {
+    [p1Name, p2Name].forEach(function(name) {
+      if (name && _followedPlayers.has(name)) {
+        showToast && showToast('⭐ ' + name + ' a commencé une partie !', 3000);
+        try { if (navigator.vibrate) navigator.vibrate([60, 30, 60]); } catch(_) {}
+      }
+    });
+  }
+
+  /* ── Initialisation ── */
+  function init() {
+    // Bouton rejoindre comme spectateur
+    var specBtn = document.getElementById('ol-spectate-join-btn');
+    if (specBtn) {
+      specBtn.addEventListener('click', function() {
+        var code = (document.getElementById('online-room-code') || {}).value;
+        joinAsSpectator(code);
+      });
+    }
+
+    // Bouton takeover
+    var takeBtn = document.getElementById('ol-takeover-btn');
+    if (takeBtn) takeBtn.addEventListener('click', takeover);
+
+    // Follow buttons
+    var fp1 = document.getElementById('ol-follow-p1');
+    var fp2 = document.getElementById('ol-follow-p2');
+    if (fp1) fp1.addEventListener('click', function() {
+      var name = (document.getElementById('online-p1-name') || {}).textContent;
+      toggleFollow(name, fp1);
+    });
+    if (fp2) fp2.addEventListener('click', function() {
+      var name = (document.getElementById('online-p2-name') || {}).textContent;
+      toggleFollow(name, fp2);
+    });
+
+    // Afficher carte spectateur quand le salon est complet (2 joueurs déjà présents)
+    // Patcher le handler de connexion existant
+    var origConnect = window.onlineConnectToRoom;
+    if (typeof origConnect === 'function') {
+      window.onlineConnectToRoom = async function(code, opts) {
+        try {
+          return await origConnect(code, opts);
+        } catch(e) {
+          var msg = String(e && (e.message || e));
+          if (/full|complet|2.*joueur/i.test(msg)) {
+            _showSpectateCard(true, code);
+          }
+          throw e;
+        }
+      };
+    }
+
+    // Surveiller déconnexion d'un joueur pour afficher bouton relève
+    var origApply = window.onlineApplyState;
+    if (typeof origApply === 'function') {
+      window.onlineApplyState = function(msg) {
+        origApply(msg);
+        try {
+          var gm = window.gameMode;
+          if (gm === 'spectator') {
+            // Détecter si un joueur est inactif (champ optionnel du state)
+            var p1Active = msg && msg.p1Active !== false;
+            var p2Active = msg && msg.p2Active !== false;
+            if (!p1Active) _showTakeoverBtn(true, 1);
+            else if (!p2Active) _showTakeoverBtn(true, 2);
+            else _showTakeoverBtn(false);
+          }
+          // Live dot si partie en cours
+          showLiveDot(!!(msg && msg.state && msg.state.phase));
+          // Notifier joueurs suivis
+          if (msg && msg.p1Name && msg.p2Name) {
+            checkFollowedNotify(msg.p1Name, msg.p2Name);
+          }
+        } catch(_) {}
+      };
+    }
+
+    // Bouton code input → montrer carte spectateur si salon full
+    var codeInput = document.getElementById('online-room-code');
+    if (codeInput) {
+      codeInput.addEventListener('input', function() {
+        var card = document.getElementById('ol-spectate-card');
+        if (card) card.classList.remove('visible');
+      });
+    }
+  }
+
+  return { init: init, joinAsSpectator: joinAsSpectator, takeover: takeover, showLiveDot: showLiveDot };
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 5.  CHAT SPECTATEURS SÉPARÉ
+// ─────────────────────────────────────────────────────────────────────
+var SpectatorChat = (function() {
+  var _msgs    = [];
+  var _open    = false;
+  var _unread  = 0;
+  var STORAGE  = 'tiddas_spec_chat_v1';
+
+  function _render() {
+    var list = document.getElementById('spec-chat-list');
+    if (!list) return;
+    list.innerHTML = '';
+    _msgs.slice(-60).forEach(function(m) {
+      var div = document.createElement('div');
+      div.className = 'spec-chat-msg';
+      div.innerHTML = '<span class="sc-name">' + _esc(m.name) + '</span>' + _esc(m.text);
+      list.appendChild(div);
+    });
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function _esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function _setOpen(open) {
+    _open = open;
+    var panel = document.getElementById('spectator-chat-panel');
+    var fab   = document.getElementById('spectator-chat-fab');
+    if (panel) panel.hidden = !open;
+    if (fab) {
+      // badge unread
+      fab.textContent = _unread > 0 ? '👁 ' + _unread : '👁';
+    }
+    if (open) { _unread = 0; if (fab) fab.textContent = '👁'; _render(); }
+  }
+
+  function addMessage(name, text) {
+    _msgs.push({ name: name, text: text, ts: Date.now() });
+    if (_msgs.length > 120) _msgs.shift();
+    if (!_open) { _unread++; }
+    _render();
+    var fab = document.getElementById('spectator-chat-fab');
+    if (fab && !_open) fab.textContent = '👁 ' + _unread;
+    // Partager via ephemeralChat avec tag spectateur
+    _sendToServer(name, text);
+  }
+
+  function _sendToServer(name, text) {
+    try {
+      if (!window.Parse || !window.BACK4APP_CLASS || !window.online || !window.online.matchId) return;
+      var now = Date.now();
+      var entry = {
+        id: 'sc_' + now.toString(36) + '_' + Math.random().toString(36).slice(2,6),
+        type: 'spectator-chat',
+        text: text,
+        fromName: name,
+        fromRole: 0,
+        ts: now,
+        expiresAt: now + 1800000
+      };
+      var q = new Parse.Query(window.BACK4APP_CLASS);
+      q.get(window.online.matchId).then(function(m) {
+        var ex = (m.get('ephemeralChat') || []).filter(function(x) { return x && x.id && (!x.expiresAt || x.expiresAt > Date.now()); });
+        ex = ex.slice(-38);
+        ex.push(entry);
+        m.set('ephemeralChat', ex);
+        m.save().catch(function(){});
+      }).catch(function(){});
+    } catch(_) {}
+  }
+
+  function syncVisibility() {
+    var fab   = document.getElementById('spectator-chat-fab');
+    var panel = document.getElementById('spectator-chat-panel');
+    var isSpec = window.gameMode === 'spectator' || !!(window.online && window.online.role === 0);
+    if (fab)   fab.hidden   = !isSpec;
+    if (panel && !isSpec) { panel.hidden = true; _open = false; }
+  }
+
+  function init() {
+    var fab   = document.getElementById('spectator-chat-fab');
+    var panel = document.getElementById('spectator-chat-panel');
+    var closeBtn = document.getElementById('spec-chat-close');
+    var input    = document.getElementById('spec-chat-input');
+    var sendBtn  = document.getElementById('spec-chat-send');
+
+    if (fab)   fab.addEventListener('click', function() { _setOpen(!_open); });
+    if (closeBtn) closeBtn.addEventListener('click', function() { _setOpen(false); });
+
+    function _doSend() {
+      if (!input) return;
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      var name = '';
+      try { name = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || 'Spectateur'; } catch(_) { name = 'Spectateur'; }
+      addMessage(name, text);
+    }
+
+    if (sendBtn) sendBtn.addEventListener('click', _doSend);
+    if (input)   input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); _doSend(); } });
+
+    // Recevoir messages spectateur depuis le serveur
+    var origTick = window._onlineChatProcessTick;
+    // Will be patched by voice module — hook into the existing ticker instead
+    window._specChatInjectMsg = function(msg) {
+      if (!msg || msg.type !== 'spectator-chat') return;
+      var id = String(msg.id);
+      if (_msgs.some(function(m) { return m.id === id; })) return;
+      _msgs.push({ id: id, name: msg.fromName || 'Spectateur', text: msg.text || '', ts: msg.ts || Date.now() });
+      if (!_open) _unread++;
+      _render();
+    };
+
+    syncVisibility();
+  }
+
+  return { init: init, addMessage: addMessage, syncVisibility: syncVisibility };
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 6.  TOURNOI À ÉLIMINATION DIRECTE
+// ─────────────────────────────────────────────────────────────────────
+var Tournament = (function() {
+  var _data = {
+    active: false,
+    id: null,
+    participants: [],
+    bracket: [],
+    currentRound: 0,
+    createdBy: null
+  };
+  var STORAGE = 'tiddas_tournament_v1';
+
+  function _load() {
+    try { var d = JSON.parse(localStorage.getItem(STORAGE) || 'null'); if (d) _data = d; } catch(_) {}
+  }
+  function _save() {
+    try { localStorage.setItem(STORAGE, JSON.stringify(_data)); } catch(_) {}
+  }
+
+  /* ── Générer le bracket depuis liste de participants ── */
+  function _generateBracket(participants) {
+    var ps = participants.slice();
+    // Arrondir à la puissance de 2 supérieure
+    var size = 1;
+    while (size < ps.length) size *= 2;
+    while (ps.length < size) ps.push({ name: 'BYE', id: null });
+    var rounds = [];
+    var current = [];
+    for (var i = 0; i < ps.length; i += 2) {
+      current.push({ p1: ps[i], p2: ps[i+1], winner: null, status: 'pending' });
+    }
+    rounds.push(current);
+    while (current.length > 1) {
+      var next = [];
+      for (var j = 0; j < current.length; j += 2) {
+        next.push({ p1: null, p2: null, winner: null, status: 'pending' });
+      }
+      rounds.push(next);
+      current = next;
+    }
+    return rounds;
+  }
+
+  /* ── Noms des rounds ── */
+  function _roundName(roundIdx, totalRounds) {
+    var remaining = totalRounds - roundIdx;
+    if (remaining === 1) return 'Finale';
+    if (remaining === 2) return 'Demi-finales';
+    if (remaining === 3) return 'Quarts de finale';
+    return 'Tour ' + (roundIdx + 1);
+  }
+
+  /* ── Rendre le bracket ── */
+  function _renderBracket() {
+    var container = document.getElementById('bracket-container');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!_data.bracket || _data.bracket.length === 0) {
+      container.innerHTML = '<div class="tournament-empty">Aucun tournoi actif.<br>Inscrivez des joueurs pour commencer.</div>';
+      return;
+    }
+    _data.bracket.forEach(function(round, roundIdx) {
+      var roundEl = document.createElement('div');
+      roundEl.className = 'bracket-round';
+      var title = document.createElement('div');
+      title.className = 'bracket-round-title';
+      title.textContent = _roundName(roundIdx, _data.bracket.length);
+      roundEl.appendChild(title);
+      round.forEach(function(match, matchIdx) {
+        var matchEl = document.createElement('div');
+        matchEl.className = 'bracket-match' + (match.status === 'live' ? ' live' : '');
+        function _playerRow(player, isWinner, isLoser) {
+          var row = document.createElement('div');
+          row.className = 'bracket-player' + (isWinner ? ' winner' : '') + (isLoser ? ' loser' : '');
+          var avatar = document.createElement('div');
+          avatar.className = 'bracket-player-avatar';
+          avatar.textContent = player && player.name ? player.name.charAt(0).toUpperCase() : '?';
+          var name = document.createElement('span');
+          name.className = 'bracket-player-name';
+          name.textContent = player && player.name ? player.name : '—';
+          var score = document.createElement('span');
+          score.className = 'bracket-player-score';
+          score.textContent = (isWinner ? '✓' : isLoser ? '✗' : '');
+          row.appendChild(avatar); row.appendChild(name); row.appendChild(score);
+          return row;
+        }
+        var p1Win = match.winner && match.p1 && match.winner.id === (match.p1.id);
+        var p2Win = match.winner && match.p2 && match.winner.id === (match.p2.id);
+        matchEl.appendChild(_playerRow(match.p1 || { name: 'TBD' }, p1Win, p2Win && !p1Win));
+        matchEl.appendChild(_playerRow(match.p2 || { name: 'TBD' }, p2Win, p1Win && !p2Win));
+        roundEl.appendChild(matchEl);
+      });
+      container.appendChild(roundEl);
+    });
+  }
+
+  /* ── Rendre participants ── */
+  function _renderParticipants() {
+    var wrap = document.getElementById('tournament-participants');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    _data.participants.forEach(function(p) {
+      var chip = document.createElement('div');
+      chip.className = 'tournament-participant-chip' + (p.ready ? ' ready' : '');
+      chip.textContent = (p.ready ? '✅ ' : '🕐 ') + p.name;
+      wrap.appendChild(chip);
+    });
+    var msg = document.getElementById('tournament-status-msg');
+    if (msg) {
+      if (!_data.active && _data.participants.length < 2) {
+        msg.textContent = 'En attente d\'inscriptions (' + _data.participants.length + ' inscrit(s))';
+      } else if (!_data.active) {
+        msg.textContent = _data.participants.length + ' joueur(s) inscrits — Prêt à démarrer';
+      } else {
+        msg.textContent = '🏆 Tournoi en cours — Tour ' + (_data.currentRound + 1);
+      }
+    }
+  }
+
+  /* ── Inscrire le joueur local ── */
+  function register() {
+    var name = '';
+    try {
+      name = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+             || (document.getElementById('online-your-name') || {}).value
+             || 'Joueur';
+    } catch(_) { name = 'Joueur'; }
+    var id = String(window.onlinePlayerId || Date.now());
+    if (_data.participants.some(function(p) { return p.id === id; })) {
+      showToast && showToast('Déjà inscrit au tournoi.', 1600);
+      return;
+    }
+    _data.participants.push({ id: id, name: name, ready: true });
+    // Régénérer le bracket si 2+ participants
+    if (_data.participants.length >= 2) {
+      _data.bracket = _generateBracket(_data.participants);
+    }
+    _save(); _render(); _renderParticipants();
+    showToast && showToast('✅ Inscrit au tournoi !', 1800);
+    // Partager via Back4App si disponible
+    _syncToServer();
+  }
+
+  /* ── Démarrer le tournoi ── */
+  function start() {
+    if (_data.participants.length < 2) { showToast && showToast('Minimum 2 joueurs.', 1800); return; }
+    _data.active = true;
+    _data.currentRound = 0;
+    _data.bracket = _generateBracket(_data.participants);
+    _save(); _render(); _renderParticipants();
+    showToast && showToast('🏆 Tournoi démarré !', 2000);
+    _syncToServer();
+  }
+
+  /* ── Marquer un vainqueur ── */
+  function setWinner(roundIdx, matchIdx, playerSlot) {
+    var round = _data.bracket[roundIdx];
+    if (!round) return;
+    var match = round[matchIdx];
+    if (!match) return;
+    match.winner = playerSlot === 1 ? match.p1 : match.p2;
+    match.status = 'done';
+    // Avancer le vainqueur dans le prochain round
+    var nextRound = _data.bracket[roundIdx + 1];
+    if (nextRound) {
+      var nextMatch = nextRound[Math.floor(matchIdx / 2)];
+      if (nextMatch) {
+        if (matchIdx % 2 === 0) nextMatch.p1 = match.winner;
+        else                    nextMatch.p2 = match.winner;
+      }
+    }
+    _save(); _render(); _renderParticipants();
+    _syncToServer();
+  }
+
+  /* ── Sync Back4App ── */
+  function _syncToServer() {
+    try {
+      if (!window.Parse || !window.BACK4APP_CLASS || !window.online || !window.online.matchId) return;
+      var q = new Parse.Query(window.BACK4APP_CLASS);
+      q.get(window.online.matchId).then(function(m) {
+        m.set('tournament', JSON.stringify(_data));
+        m.save().catch(function(){});
+      }).catch(function(){});
+    } catch(_) {}
+  }
+
+  /* ── Recevoir update tournoi depuis serveur ── */
+  function applyFromServer(jsonStr) {
+    try {
+      var remote = JSON.parse(jsonStr);
+      if (remote && remote.participants) {
+        _data = remote;
+        _save(); _render(); _renderParticipants();
+      }
+    } catch(_) {}
+  }
+
+  function _render() { _renderBracket(); }
+
+  /* ── Ouvrir / fermer overlay ── */
+  function open() {
+    var overlay = document.getElementById('tournament-overlay');
+    if (overlay) overlay.hidden = false;
+    _render(); _renderParticipants();
+  }
+  function close() {
+    var overlay = document.getElementById('tournament-overlay');
+    if (overlay) overlay.hidden = true;
+  }
+
+  /* ── Initialisation ── */
+  function init() {
+    _load();
+    var closeBtn   = document.getElementById('tournament-close');
+    var regBtn     = document.getElementById('tournament-register-btn');
+    var fab        = document.getElementById('tournament-fab');
+
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (regBtn)   regBtn.addEventListener('click', register);
+    if (fab)      fab.addEventListener('click', open);
+
+    // Afficher fab si en ligne
+    function _syncFab() {
+      if (!fab) return;
+      var inOnline = window.gameMode === 'online' || !!(window.online && window.online.matchId);
+      fab.hidden = !inOnline;
+      var regBtn2 = document.getElementById('tournament-register-btn');
+      if (regBtn2) regBtn2.style.display = inOnline ? '' : 'none';
+    }
+    setTimeout(_syncFab, 1500);
+
+    _render(); _renderParticipants();
+  }
+
+  return { init: init, open: open, close: close, register: register, start: start, setWinner: setWinner, applyFromServer: applyFromServer };
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// 7.  HAPTIC FEEDBACK AMÉLIORÉ (capture, victoire)
+//     (les vibrateGame() existants couvrent déjà move/capture/victory
+//      — on enrichit juste les patterns non encore définis)
+// ─────────────────────────────────────────────────────────────────────
+(function patchVibrate() {
+  var origVibrate = window.vibrateGame;
+  if (typeof origVibrate !== 'function') return;
+  window.vibrateGame = function(type) {
+    // Les patterns existants couvrent capture et victory — on les passe
+    // Ajouter des patterns manquants via fallback direct si la fonction ne les connaît pas
+    try { origVibrate(type); } catch(_) {}
+    // Patterns supplémentaires
+    if (type === 'placement' || type === 'place') {
+      try { if (navigator.vibrate) navigator.vibrate([15]); } catch(_) {}
+    }
+  };
+})();
+
+
+// ─────────────────────────────────────────────────────────────────────
+// BOOT — initialiser tous les modules au DOMContentLoaded
+// ─────────────────────────────────────────────────────────────────────
+function _bootNewSystems() {
+  try { VoiceChat.init(); }        catch(e) { console.warn('[VoiceChat]', e); }
+  try { OnlineReconnect.init(); }  catch(e) { console.warn('[Reconnect]', e); }
+  try { SpectatorEnhanced.init(); }catch(e) { console.warn('[Spectator]', e); }
+  try { SpectatorChat.init(); }    catch(e) { console.warn('[SpecChat]', e); }
+  try { Tournament.init(); }       catch(e) { console.warn('[Tournament]', e); }
+
+  // ── Bouton micro dans la barre de compose du chat ──────────────────────────
+  (function initChatMicBtn() {
+    var btn   = document.getElementById('chat-mic-btn');
+    var toast = document.getElementById('vc-recording-toast');
+    if (!btn) return;
+
+    var _mr         = null;   // MediaRecorder instance
+    var _chunks     = [];
+    var _stream     = null;
+    var _recActive  = false;
+    var _holdTimer  = null;
+    var _autoStop   = null;   // timer auto-stop MAX_REC_MS
+    var _liveTimer  = null;   // timer affichage durée dans toast
+    var _pressTs    = 0;
+    var _recStartTs = 0;
+    var HOLD_MS     = 200;    // délai avant que l'appui devient push-to-talk
+    var MAX_REC_MS  = 60000;  // 60 secondes maximum
+
+    function _isMuted() { return localStorage.getItem('tiddas_voice_muted_v1') === '1'; }
+
+    function _fmtMs(ms) {
+      var s = Math.round(ms / 1000);
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    function _showToast(show) {
+      if (!toast) toast = document.getElementById('vc-recording-toast');
+      if (!toast) return;
+      var timerEl = document.getElementById('vc-rec-timer');
+      var maxEl   = document.getElementById('vc-rec-max');
+      if (show) {
+        if (timerEl) timerEl.textContent = '0:00';
+        if (maxEl)   maxEl.textContent   = '/ ' + _fmtMs(MAX_REC_MS);
+        toast.classList.add('visible');
+        clearInterval(_liveTimer);
+        _liveTimer = setInterval(function() {
+          if (!_recActive) { clearInterval(_liveTimer); return; }
+          var elapsed = Date.now() - _recStartTs;
+          if (timerEl) timerEl.textContent = _fmtMs(elapsed);
+          if (elapsed > MAX_REC_MS * 0.8 && toast) toast.style.background = 'rgba(200,0,0,0.96)';
+        }, 500);
+      } else {
+        clearInterval(_liveTimer);
+        toast.classList.remove('visible');
+        toast.style.background = '';
+      }
+    }
+
+    async function _getStream() {
+      if (_stream && _stream.active) return _stream;
+      // Libérer l'ancien stream
+      if (_stream) { try { _stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){} }
+      _stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 }
+      });
+      return _stream;
+    }
+
+    async function _startRec() {
+      if (_recActive || _isMuted()) return;
+      if (!window.MediaRecorder) { showToast('🎤 MediaRecorder non supporté sur cet appareil.', 2500); return; }
+      try {
+        var stream = await _getStream();
+        _chunks = [];
+        var opts = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) opts.mimeType = 'audio/webm;codecs=opus';
+        else if (MediaRecorder.isTypeSupported('audio/webm'))        opts.mimeType = 'audio/webm';
+        _mr = new MediaRecorder(stream, opts);
+        _mr.ondataavailable = function(e) { if (e.data && e.data.size > 0) _chunks.push(e.data); };
+        _mr.start(100);
+        _recActive  = true;
+        _recStartTs = Date.now();
+        btn.classList.add('recording');
+        _showToast(true);
+        try { if (navigator.vibrate) navigator.vibrate([25, 15, 25]); } catch(_) {}
+        // Auto-stop
+        _autoStop = setTimeout(function() {
+          if (_recActive) {
+            try { showToast('⏱ Durée max atteinte — message envoyé', 2000); } catch(_) {}
+            _stopRec();
+          }
+        }, MAX_REC_MS);
+      } catch(e) {
+        // Permission refusée → fallback texte
+        btn.hidden = true;
+        showToast('🎤 Microphone refusé — utilisez le chat texte.', 3000);
+      }
+    }
+
+    function _stopRec() {
+      if (!_recActive || !_mr) return;
+      _recActive = false;
+      clearTimeout(_autoStop);
+      clearInterval(_liveTimer);
+      var durationMs = Date.now() - _recStartTs; // durée réelle
+      btn.classList.remove('recording');
+      _showToast(false);
+      _mr.onstop = function() {
+        if (_chunks.length === 0) { _chunks = []; return; }
+        var mimeType = _mr.mimeType || 'audio/webm';
+        var blob = new Blob(_chunks, { type: mimeType });
+        _chunks = [];
+        if (blob.size < 500) { showToast('Message trop court.', 1400); return; }
+        _sendVoice(blob, mimeType, durationMs);
+      };
+      try { _mr.stop(); } catch(_) {}
+    }
+
+    function _cancelRec() {
+      if (!_recActive || !_mr) return;
+      _recActive = false;
+      clearTimeout(_autoStop);
+      clearInterval(_liveTimer);
+      _chunks = [];
+      btn.classList.remove('recording');
+      _showToast(false);
+      // no-op onstop pour éviter d'envoyer les chunks accumulés
+      _mr.onstop = function() {};
+      try { _mr.stop(); } catch(_) {}
+    }
+
+    async function _sendVoice(blob, mimeType, durationMs) {
+      if (!window.isOnlineChatAvailable || !window.isOnlineChatAvailable()) {
+        showToast('Messagerie vocale disponible en ligne uniquement.', 2200);
+        return;
+      }
+      // Durée : valeur mesurée, avec garde-fous
+      durationMs = Math.max(400, Math.min(durationMs || Math.round(blob.size / 3200 * 1000), 120000));
+
+      // Vérification taille
+      if (blob.size > 220000) {
+        showToast('⚠️ Message vocal trop long — raccourcissez l\'enregistrement.', 2800);
+        return;
+      }
+
+      // Waveform aléatoire visuelle
+      var bars = Array.from({length: 18}, function(_, i) {
+        return Math.round(15 + Math.abs(Math.sin(i * 0.7 + 0.4)) * 65 + Math.random() * 20);
+      });
+      // Encode base64
+      var base64 = await new Promise(function(resolve) {
+        var r = new FileReader();
+        r.onloadend = function() { resolve(r.result); };
+        r.readAsDataURL(blob);
+      });
+      var now  = Date.now();
+      var name = (window.getOnlinePlayerName && window.getOnlinePlayerName()) || 'Joueur';
+      var msgId = 'vc_' + now.toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+      var entry = {
+        id: msgId, type: 'voice', audioData: base64,
+        durationMs: durationMs, waveform: bars,
+        fromRole: (window.online && window.online.role) || null,
+        fromId:   String(window.onlinePlayerId || ''),
+        fromName: name, ts: now, expiresAt: now + 3600000
+      };
+      // Affichage optimiste local
+      if (window.upsertOnlineChatMessage) {
+        window.upsertOnlineChatMessage({
+          id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+          waveform: bars, senderName: name, senderRole: entry.fromRole,
+          senderPlayerId: null, createdAt: now, mine: true, status: 'sending'
+        }, { silentUnread: true, skipSeen: true });
+      }
+      // Envoi Back4App
+      try {
+        if (window.Parse && window.BACK4APP_CLASS && window.online && window.online.matchId) {
+          var q = new Parse.Query(window.BACK4APP_CLASS);
+          var m = await q.get(window.online.matchId);
+          var ex = (m.get('ephemeralChat') || []).filter(function(x) {
+            return x && x.id && (!x.expiresAt || x.expiresAt > Date.now());
+          }).slice(-38); // limite harmonisée avec VoiceChat FAB
+          ex.push(entry);
+          m.set('ephemeralChat', ex);
+          await m.save();
+          if (window.upsertOnlineChatMessage) {
+            window.onlineChat && window.onlineChat.seenIds && window.onlineChat.seenIds.add(msgId);
+            window.upsertOnlineChatMessage({
+              id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+              waveform: bars, senderName: name, senderRole: entry.fromRole,
+              senderPlayerId: null, createdAt: now, mine: true, status: 'sent'
+            }, { silentUnread: true, skipSeen: false });
+          }
+        }
+      } catch(e) {
+        if (window.upsertOnlineChatMessage) {
+          window.upsertOnlineChatMessage({
+            id: msgId, type: 'voice', audioData: base64, durationMs: durationMs,
+            waveform: bars, senderName: name, senderRole: entry.fromRole,
+            senderPlayerId: null, createdAt: now, mine: true, status: 'failed'
+          }, { silentUnread: true, skipSeen: true });
+        }
+        showToast('Message vocal non envoyé.', 2200);
+      }
+    }
+
+    // ── Gestion appui (souris + tactile) — push-to-talk ────────────────────
+    function _onDown(e) {
+      if (btn.disabled) return;
+      e.preventDefault();
+      _pressTs   = Date.now();
+      _holdTimer = setTimeout(function() { _startRec(); }, HOLD_MS);
+    }
+    function _onUp(e) {
+      e.preventDefault();
+      clearTimeout(_holdTimer);
+      if (_recActive) {
+        _stopRec();
+      } else if (Date.now() - _pressTs < HOLD_MS + 100) {
+        // Clic court → tooltip aide
+        showToast('💡 Maintenez appuyé pour enregistrer, relâchez pour envoyer.', 2800);
+      }
+    }
+    function _onCancel(e) {
+      clearTimeout(_holdTimer);
+      if (_recActive) _cancelRec();
+    }
+
+    btn.addEventListener('mousedown',   _onDown,   { passive: false });
+    btn.addEventListener('touchstart',  _onDown,   { passive: false });
+    btn.addEventListener('mouseup',     _onUp,     { passive: false });
+    btn.addEventListener('touchend',    _onUp,     { passive: false });
+    btn.addEventListener('mouseleave',  _onCancel, { passive: false });
+    btn.addEventListener('touchcancel', _onCancel, { passive: false });
+
+    // ── Afficher/cacher le bouton selon disponibilité du chat + MediaRecorder ──
+    function _syncMicBtn() {
+      var available = !!(window.isOnlineChatAvailable && window.isOnlineChatAvailable());
+      var hasMR     = !!window.MediaRecorder;
+      var muted     = _isMuted();
+      btn.hidden    = !(available && hasMR);
+      btn.disabled  = muted;
+      btn.title     = muted
+        ? 'Micro coupé — activez-le dans les paramètres'
+        : 'Maintenir pour enregistrer un message vocal, relâcher pour envoyer';
+      // Icône selon état mute
+      var icon = document.getElementById('chat-mic-icon');
+      if (icon) {
+        icon.innerHTML = muted
+          ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>'
+          : '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
+      }
+    }
+    // Sync régulier lié au chat visibility
+    var _origSyncChat = window.syncOnlineChatVisibility;
+    if (typeof _origSyncChat === 'function') {
+      window.syncOnlineChatVisibility = function() {
+        _origSyncChat();
+        _syncMicBtn();
+      };
+    }
+    // Sync immédiat et après init
+    _syncMicBtn();
+    setTimeout(_syncMicBtn, 1200);
+    setTimeout(_syncMicBtn, 3000);
+  })();
+
+  // ── Voice mute button dans les paramètres ──
+  var vmBtn  = document.getElementById('voice-mute-btn');
+  var vmIcon = document.getElementById('voice-mute-icon');
+  function _syncVoiceMuteBtn() {
+    var muted = localStorage.getItem('tiddas_voice_muted_v1') === '1';
+    if (vmBtn)  { vmBtn.setAttribute('aria-pressed', String(muted)); vmBtn.title = muted ? 'Micro coupé — cliquer pour activer' : 'Micro actif — cliquer pour couper'; }
+    if (vmIcon) vmIcon.textContent = muted ? '🔇' : '🎤';
+  }
+  if (vmBtn) {
+    _syncVoiceMuteBtn();
+    vmBtn.addEventListener('click', function() {
+      var muted = localStorage.getItem('tiddas_voice_muted_v1') === '1';
+      localStorage.setItem('tiddas_voice_muted_v1', muted ? '0' : '1');
+      _syncVoiceMuteBtn();
+      var vcFab = document.getElementById('voice-chat-fab');
+      if (vcFab) { muted ? vcFab.classList.remove('mic-muted') : vcFab.classList.add('mic-muted'); }
+      try { showToast(muted ? '🎤 Micro activé' : '🔇 Micro coupé', 1400); } catch(_) {}
+    });
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _bootNewSystems);
+} else {
+  setTimeout(_bootNewSystems, 0);
+}
+
+// Exposer pour usage externe / debug
+window.TiddasVoiceChat       = VoiceChat;
+window.TiddasTournament      = Tournament;
+window.TiddasSpectatorChat   = SpectatorChat;
+window.TiddasReconnect       = OnlineReconnect;
+window.TiddasSpectator       = SpectatorEnhanced;
+
+})(); // end IIFE
 </script>
 </body>
 </html>
