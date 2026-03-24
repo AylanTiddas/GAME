@@ -4087,25 +4087,31 @@ transform: translateX(0);
 /* ==================== SPECTATOR MODE ==================== */
 .spectator-badge {
 position: fixed;
-bottom: 1rem;
+bottom: 5.5rem;
 left: 50%;
 transform: translateX(-50%);
-background: rgba(0,0,0,0.7);
-border: 1px solid var(--text-gold);
+background: rgba(0,0,0,0.82);
+border: 1px solid rgba(240,200,80,0.7);
 border-radius: 20px;
-padding: 0.3rem 1rem;
-color: var(--text-gold);
-font-size: 0.85rem;
+padding: 0.3rem 1.1rem;
+color: var(--text-gold,#f0c850);
+font-size: 0.82rem;
 font-family: var(--font-title);
 letter-spacing: 1px;
-z-index: 5;
+z-index: 200;
 display: none;
-animation: fadeIn 0.5s ease;
+animation: fadeIn 0.4s ease;
 pointer-events: none;
+box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+white-space: nowrap;
 }
 .spectator-badge.visible {
 display: block;
 }
+/* Mode spectateur : masquer REJOUER et ABANDON via classe body */
+body.is-spectating #restart,
+body.is-spectating #surrender { display: none !important; }
+body.is-spectating #undo-btn  { opacity: 0.25 !important; pointer-events: none !important; cursor: not-allowed !important; }
 
 /* ==================== SAVE NOTIFICATION ==================== */
 .save-notification {
@@ -4272,6 +4278,8 @@ border-radius: 8px;
 padding: 0.3rem 0.75rem;
 font-size: 0.85rem;
 color: var(--text-gold);
+width: 100%;
+box-sizing: border-box;
 }
 .spectator-controls.visible {
 display: flex;
@@ -14441,7 +14449,7 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
 /* Spectator chat — separate panel */
 #spectator-chat-panel {
   position: fixed;
-  bottom: 7rem;
+  bottom: 1rem;
   left: 1rem;
   width: min(260px,90vw);
   background: rgba(10,6,2,0.92);
@@ -14522,7 +14530,7 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
 }
 #spectator-chat-fab {
   position: fixed;
-  bottom: 9.2rem;
+  bottom: 1rem;
   left: 1rem;
   width: 42px;
   height: 42px;
@@ -14530,7 +14538,7 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
   border: none;
   background: rgba(10,6,2,0.88);
   border: 1px solid rgba(240,200,80,0.2);
-  color: var(--text-muted);
+  color: var(--text-gold,#f0c850);
   font-size: 1.1rem;
   display: flex;
   align-items: center;
@@ -14539,6 +14547,42 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
   z-index: 8900;
 }
 #spectator-chat-fab[hidden] { display: none !important; }
+/* Badge de messages non lus */
+#spectator-chat-fab[data-unread]:not([data-unread=""])::after {
+  content: attr(data-unread);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  background: #e05050;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+#spectator-chat-fab {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(10,6,2,0.88);
+  border: 1px solid rgba(240,200,80,0.2);
+  color: var(--text-gold,#f0c850);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 8900;
+}
 
 /* ══════════════════════════════════════════════════════════════
    TOURNAMENT BRACKET
@@ -15039,15 +15083,16 @@ Patrimoine Amazigh • Idles Amaziɣ
 <!-- Tournament Overlay -->
 <div id="tournament-overlay" hidden role="dialog" aria-modal="true" aria-label="Tournoi">
   <div class="tournament-header">
-    <span class="tournament-title">🏆 Tournoi à élimination directe</span>
+    <span class="tournament-title">🏆 Tournoi — Tableau</span>
     <button class="tournament-close" id="tournament-close">✕ Fermer</button>
   </div>
   <div id="tournament-status-msg" style="color:rgba(240,200,80,0.7);font-size:0.82rem;margin-bottom:0.8rem;text-align:center;"></div>
   <div class="tournament-participants" id="tournament-participants"></div>
-  <div class="bracket-container" id="bracket-container">
-    <div class="tournament-empty">Aucun tournoi actif.<br>Rejoignez ou créez un salon pour s'inscrire.</div>
+  <div class="bracket-container" id="bracket-container"></div>
+  <div style="display:flex;gap:0.6rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;">
+    <button class="tournament-register-btn" id="tournament-register-btn" style="display:none;">S'inscrire au tournoi</button>
+    <button class="tournament-register-btn" id="tournament-start-btn" style="display:none;background:linear-gradient(135deg,#2a7a3a,#3aaa50);color:#fff;">▶ Démarrer le tournoi</button>
   </div>
-  <button class="tournament-register-btn" id="tournament-register-btn" style="display:none;">S'inscrire au tournoi</button>
 </div>
 
 <!-- Tournament FAB -->
@@ -15161,7 +15206,7 @@ Patrimoine Amazigh • Idles Amaziɣ
   <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </span>
 <span data-i18n="playSpectator">Mode Spectateur</span>
-<span data-i18n="playSpectatorDesc">Regardez deux IA s'affronter</span>
+<span data-i18n="playSpectatorDesc">Regardez deux IA s'affronter en local</span>
 </button>
 </div>
 <button class="back-btn" data-i18n="backToVersions" id="back-to-versions-btn">Retour aux versions</button>
@@ -15240,8 +15285,14 @@ Patrimoine Amazigh • Idles Amaziɣ
       <p class="ol-join-hint" data-i18n="onlineJoinHint">Entrez le code de 6 caractères partagé par votre ami</p>
       <!-- Rejoindre comme spectateur si salon complet -->
       <div class="ol-spectate-card" id="ol-spectate-card">
-        <div class="ol-spectate-title">👁 Salon complet — Rejoindre comme spectateur ?</div>
-        <button class="ol-spectate-btn" id="ol-spectate-join-btn" type="button">👁 Regarder la partie</button>
+        <div class="ol-spectate-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Salon complet — Observer la partie en cours ?
+        </div>
+        <button class="ol-spectate-btn" id="ol-spectate-join-btn" type="button">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Rejoindre en spectateur
+        </button>
       </div>
     </div>
   </div>
@@ -15250,7 +15301,7 @@ Patrimoine Amazigh • Idles Amaziɣ
   <div id="online-status" style="display:none;">
 
     <!-- Bouton quitter/modifier le salon -->
-    <button class="ol-quit-btn" id="ol-quit-btn" type="button" onclick="if(typeof onlineDisconnect==='function'){onlineDisconnect();}">
+    <button class="ol-quit-btn" id="ol-quit-btn" type="button">
       ‹ <span data-i18n="onlineQuit">Quitter le salon</span>
     </button>
 
@@ -15326,6 +15377,43 @@ Patrimoine Amazigh • Idles Amaziɣ
   <!-- Récents (compacts) -->
   <div id="online-recent-wrap" style="display:none;">
     <div class="online-recent-list" id="online-recent-list"></div>
+  </div>
+
+  <!-- ── Tournois actifs (section dynamique) ─────────────────────────── -->
+  <div id="ol-tournaments-wrap" style="display:none;">
+    <div class="ol-tourn-header">
+      <span class="ol-tourn-icon" aria-hidden="true">🏆</span>
+      <span class="ol-tourn-title">Tournois actifs</span>
+      <button id="ol-tourn-refresh" class="ol-tourn-refresh-btn" type="button" title="Actualiser">↻</button>
+    </div>
+    <div id="ol-tournaments-list"></div>
+    <div id="ol-tourn-empty" style="display:none;">
+      <span>Aucun tournoi actif pour l'instant.</span>
+      <button id="ol-create-tournament-btn" class="ol-big-btn ol-btn-create" type="button" style="margin-top:8px;">
+        <span class="ol-btn-icon-box" aria-hidden="true">🏆</span>
+        <span class="ol-btn-text-box">
+          <span class="ol-btn-main">Créer un tournoi</span>
+          <span class="ol-btn-sub">Invitez 3+ joueurs</span>
+        </span>
+        <span class="ol-btn-arrow" aria-hidden="true">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Overlay de bracket tournoi ────────────────────────────────── -->
+  <div id="tournament-bracket-overlay" hidden role="dialog" aria-modal="true" aria-label="Bracket du tournoi">
+    <div class="tourn-overlay-inner">
+      <div class="tourn-overlay-head">
+        <span class="tourn-overlay-title" id="tourn-overlay-title">🏆 Tournoi</span>
+        <button id="tourn-overlay-close" type="button" aria-label="Fermer">✕</button>
+      </div>
+      <div class="tourn-participants-row" id="tourn-participants-row"></div>
+      <div id="tournament-container" class="bracket-container"></div>
+      <div class="tourn-overlay-actions">
+        <button id="tourn-watch-btn" class="ol-connect-btn" type="button" style="display:none;">👁 Observer une partie</button>
+        <button id="tourn-join-btn"  class="ol-start-btn"   type="button" style="display:none;">⚔️ Rejoindre comme participant</button>
+      </div>
+    </div>
   </div>
 
   <button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-online-btn" type="button">‹ <span data-i18n="backToModes">Retour</span></button>
@@ -15494,6 +15582,7 @@ Vous jouez avec les&nbsp;:
   <span class="ogb-turn" id="ogb-turn"></span>
   <span id="ogb-stale-warn"></span>
   <button class="ogb-reconnect" id="ogb-reconnect" type="button" data-i18n="ogbReconnect">Reconnecter</button>
+  <button class="ogb-quit" id="ogb-quit-btn" type="button" title="Quitter le salon" style="margin-left:auto;padding:0.18rem 0.55rem;background:rgba(200,60,40,0.18);border:1px solid rgba(200,80,60,0.4);border-radius:5px;color:rgba(255,160,140,0.85);font-size:0.72rem;cursor:pointer;">‹ Quitter</button>
 </div>
 <div class="game-info-display">
 <span id="game-variant-info"></span>
@@ -15529,6 +15618,7 @@ Vous jouez avec les&nbsp;:
 <option data-i18n="speedNormal" selected="" value="700">Normale</option>
 <option data-i18n="speedFast" value="300">Rapide</option>
 </select>
+<button id="spectator-quit-btn" type="button" style="margin-left:auto;padding:0.28rem 0.75rem;background:rgba(200,60,40,0.18);border:1px solid rgba(200,80,60,0.45);border-radius:6px;color:rgba(255,160,140,0.9);font-size:0.78rem;cursor:pointer;white-space:nowrap;" title="Quitter le salon">‹ <span data-i18n="onlineQuit">Quitter</span></button>
 </div>
 <div class="move-history-panel" id="move-history-panel">
 <div class="move-history-title">
@@ -15749,179 +15839,156 @@ Patrimoine Culturel Amazigh • Jeu Traditionnel Kabyle
 <div class="rules-book">
 <button class="rules-close-btn" id="rules-close-btn" title="Fermer">×</button>
 <div class="rules-content" lang="fr">
-<h3 data-i18n="gameRulesTitle">Règles du Jeu</h3>
-<h4 data-i18n="rulesGeneral">Règles Générales de Tiddas (Communes à toutes les variantes) :</h4>
+<h3>Règles du Jeu</h3>
+
 <div class="rules-section">
-<p>
-<strong data-i18n="rulesObjectiveStrong">Objectif :</strong> <span data-i18n="rulesObjective">Dans TIDDEST classique, le but est de réduire l'adversaire à moins de trois pions ou de le bloquer. Dans Tiddest n tlata, le but est de former le premier alignement de 3 pions pendant la phase de déplacement.</span>
-</p>
-<p>
-<strong data-i18n="rulesPiecesStrong">Pions :</strong> <span data-i18n="rulesPieces">Chaque joueur dispose de 10 pions (appelés "cailloux"). Le Joueur 2 (Blanc) commence toujours.</span>
-</p>
-<p>
-<strong data-i18n="rulesPhasesStrong">Phases de Jeu :</strong>
-</p>
-<ul>
-<li><strong data-i18n="rulesPlacementPhaseStrong">Phase de Placement :</strong> <span data-i18n="rulesPlacementPhase">Les joueurs placent à tour de rôle un de leurs pions sur n'importe quelle case vide du plateau. Cette phase continue jusqu'à ce que les 20 pions (10 pour chaque joueur) soient placés.</span></li>
-<li><strong data-i18n="rulesMovePhaseStrong">Phase de Déplacement :</strong> <span data-i18n="rulesMovePhase">Une fois tous les pions placés, les joueurs déplacent à tour de rôle l'un de leurs pions d'une case à la fois vers une case adjacente (horizontalement ou verticalement) qui est vide.</span></li>
-</ul>
-<p>
-<strong data-i18n="rulesMillStrong">Moulin (Alignement) :</strong> <span data-i18n="rulesMill">Former un alignement de <strong>strictement 3 pions</strong> de sa couleur (horizontalement ou verticalement). <strong>Les alignements en diagonale ne sont pas considérés comme des moulins valides.</strong></span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureStrong">Capture :</strong> <span data-i18n="rulesCapture">Lorsqu'un joueur forme un moulin (horizontal ou vertical de 3 pions), il a le droit de "manger" (capturer) un pion adverse.</span>
-</p>
-<p>
-<strong data-i18n="rulesCapturePlacementRestrictionStrong">Alignement de 3 interdit pendant le placement :</strong> <span data-i18n="rulesCapturePlacementRestriction">Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.</span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureAllPiecesStrong">Tous les pions sont capturables :</strong> <span data-i18n="rulesCaptureAllPieces">Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions "protégés".</span>
-</p>
-<p>
-<strong data-i18n="rulesForcedMoveStrong">Règle de déplacement forcé de moulin :</strong> <span data-i18n="rulesForcedMove">En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.</span>
-</p>
+<h4>🏛️ Les Fondements du Tiddas</h4>
+<p>Ce duel stratégique oppose deux camps (les <strong>Blancs ouvrent le jeu</strong>). Chaque participant dispose de <strong>10 ileqqafen</strong> (pions) qu'il doit manœuvrer sur une grille de <strong>25 cases</strong>.</p>
 </div>
-<h4 data-i18n="rulesDifferences">Différences entre les variantes :</h4>
+
 <div class="rules-section">
-<p data-i18n="rulesDifferencesIntro">
-Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :
-</p>
-<p>
-<strong data-i18n="rulesTIDDEST">TIDDEST :</strong>
-</p>
+<h4>🎯 Conditions de Victoire</h4>
+<p>L'issue de la partie dépend du mode choisi :</p>
 <ul>
-<li><strong data-i18n="rulesTIDDESTMovesStrong">Déplacements :</strong> <span data-i18n="rulesTIDDESTMoves">Uniquement horizontaux/verticaux. Les déplacements en diagonale sont interdits.</span></li>
-<li><strong data-i18n="rulesTIDDESTCapturesStrong">Captures :</strong> <span data-i18n="rulesTIDDESTCaptures">Le joueur qui forme le moulin choisit quel pion adverse capturer.</span></li>
-<li><strong data-i18n="rulesTIDDESTWinStrong">Victoire :</strong> <span data-i18n="rulesTIDDESTWin">Normale.</span></li>
-<li><strong data-i18n="rulesTIDDESTNoForcedMoveStrong">Pas de déplacement forcé de moulin :</strong> <span data-i18n="rulesTIDDESTNoForcedMove">La règle du déplacement forcé de moulin ne s'applique pas.</span></li>
+<li><strong>En version Classique :</strong> Vous gagnez dès que votre adversaire est réduit à seulement <strong>2 pions</strong>.</li>
+<li><strong>En version "n tlata"/ Morpion carré:</strong> Le premier à <strong>aligner 3 pions</strong> durant la phase de mouvement l'emporte immédiatement.</li>
 </ul>
-<p>
-<strong data-i18n="rulesBessif">Tiddest n tlata :</strong>
-</p>
+</div>
+
+<div class="rules-section">
+<h4>🎮 Déroulement de la Confrontation</h4>
+<p>La partie progresse selon une chronologie stricte en deux temps :</p>
+<ol>
+<li><strong> Phase de Placement :</strong> Les joueurs occupent tour à tour les emplacements vides jusqu'à ce que les 20 pièces soient posées.<br>
+<em>Règle d'or : Durant cette étape, il est interdit de former une ligne de 3. Aucune capture n'est autorisée avant que tous les effectifs ne soient déployés.</em></li>
+<li><strong> Phase de Déplacement :</strong> Une fois le plateau rempli, les pièces glissent vers une case adjacente libre, uniquement de manière <strong>horizontale ou verticale</strong>.</li>
+</ol>
+</div>
+
+<div class="rules-section">
+<h4>⚔️ La Mécanique de Capture — Le "Moulin"</h4>
+<p>Le cœur du jeu repose sur la création de combinaisons précises pour affaiblir l'adversaire.</p>
 <ul>
-<li><span data-i18n="rulesBessifCombines">Variante sur un carré relié par les diagonales et les médianes : 9 intersections jouables.</span></li>
-<li><strong data-i18n="rulesBessifMovesStrong">Pions :</strong> <span data-i18n="rulesBessifMoves">3 pions par joueur, jamais plus.</span></li>
-<li><strong data-i18n="rulesBessifInverseWinStrong">Placement :</strong> <span data-i18n="rulesBessifInverseWin">Les joueurs placent leurs 3 pions à tour de rôle. Former un alignement pendant cette phase est interdit.</span></li>
-<li><strong data-i18n="rulesBessifOpponentChoosesStrong">Déplacement :</strong> <span data-i18n="rulesBessifOpponentChooses">Ensuite, on déplace un pion vers une intersection adjacente reliée par une ligne du plateau.</span></li>
-<li><strong data-i18n="rulesBessifForcedMoveStrong">Victoire :</strong> <span data-i18n="rulesBessifForcedMove">Le premier joueur qui aligne ses 3 pions horizontalement, verticalement ou en diagonale gagne immédiatement. Il n'y a pas de capture.</span></li>
+<li><strong>Formation de moulin :</strong> Un "moulin" valide consiste en un alignement rectiligne de <strong>3 pions exactement</strong>. Les diagonales ne sont pas comptabilisées pour les prises.</li>
+<li><strong>Le Retrait ou capture de pion :</strong> Chaque nouvel alignement complété vous autorise à retirer du plateau <strong>la pièce ennemie de votre choix</strong>.</li>
+<li><strong>Vulnérabilité :</strong> Personne n'est à l'abri — même un pion faisant partie d'une ligne adverse peut être capturé.</li>
+</ul>
+</div>
+
+<div class="rules-section">
+<h4>🔄 Focus sur les Variantes</h4>
+<p><strong>Le Tiddest Classique</strong><br>
+C'est le mode d'endurance. Les déplacements se limitent aux axes orthogonaux (horizontal/vertical). La victoire s'obtient par épuisement des forces adverses : dès qu'un joueur n'a plus que deux pions, la partie s'achève.</p>
+<p><strong>Le Tiddest n tlata</strong> (Version Rapide)<br>
+Ce format privilégie la vitesse et se joue sur un tracé réduit de <strong>9 intersections</strong>.</p>
+<ul>
+<li><strong>Effectif :</strong> Seulement 3 pions par personne.</li>
+<li><strong>Liberté :</strong> Les mouvements sont autorisés dans toutes les directions, y compris les <strong>diagonales</strong>.</li>
+<li><strong>Finalité :</strong> Il n'y a pas de capture. Le premier à aligner ses 3 unités gagne instantanément la manche.</li>
 </ul>
 </div>
 </div>
 <div class="rules-content" lang="kab">
-<h3 data-i18n="gameRulesTitle">Ilugan n wurar</h3>
-<h4 data-i18n="rulesGeneral">Ilugan s umata n Tiddas :</h4>
+<h3>Ilugan n Tiddas</h3>
+
 <div class="rules-section">
-<p>
-<strong data-i18n="rulesObjectiveStrong">Iswi :</strong> <span data-i18n="rulesObjective">Deg TIDDEST amezwaru, iswi d asider n wexṣim ɣer ddaw n kraḍ n yileqqafen neɣ aḥbas-is. Deg Tiddest n tlata, iswi d atellet amezwaru deg tallit n unaqel.</span>
-</p>
-<p>
-<strong data-i18n="rulesPiecesStrong">Ileqqafen :</strong> <span data-i18n="rulesPieces">Yal amyurar yesɛa 10 n yileqqafen. Amyurar <strong>(Amellal)</strong> yetturar d amezwaru.</span>
-</p>
-<p>
-<strong data-i18n="rulesPhasesStrong">Talliyin n wurar :</strong>
-</p>
-<ul>
-<li><strong data-i18n="rulesPlacementPhaseStrong">Tallit n usrusu :</strong> <span data-i18n="rulesPlacementPhase">Imyuraren srusuyen s nnuba (yiwen/yiwen uleqqaf). Tallit-a tekfa mi rsen i 20 n yileqqafen.</span></li>
-<li><strong data-i18n="rulesMovePhaseStrong">Tallit n unaqel :</strong> <span data-i18n="rulesMovePhase">Mi rsen yakk ileqqafen, imyuraren ad bdun ad ttenqalen ileqqafen ɣer texxamin yexlan yellan ɣer yidis yexlan.</span></li>
-</ul>
-<p>
-<strong data-i18n="rulesMillStrong">Atellet :</strong> <span data-i18n="rulesMill">Asedukkel n <strong>tlata n yileqqafen</strong> kan n yiwen yini (s teɣzi neɣ s tehri).</span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureStrong">Učči :</strong> <span data-i18n="rulesCapture">Ma yesdukkel amyurar tlata ileqqafen, yezmer ad yečč aleqqaf n wexṣim-is.</span>
-</p>
-<p>
-<strong data-i18n="rulesCapturePlacementRestrictionStrong">Yegdel ad tesdukleḍ 3 deg usrusu :</strong> <span data-i18n="rulesCapturePlacementRestriction">Yegdel ad tserseḍ aleqqaf iwakken ad tesdukleḍ tlata. Daymi, ulac Učči deg tallit n usrusu. Učči tettili kan deg tallit n unaqel.</span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureAllPiecesStrong">Akk ileqqafen zemren ad mmeččen :</strong> <span data-i18n="rulesCaptureAllPieces">Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.</span>
-</p>
-<p>
-<strong data-i18n="rulesForcedMoveStrong">Atellet s tmara:</strong> <span data-i18n="rulesForcedMove">Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.</span>
-</p>
+<h4>🏛️ Ilugan n Tiddas</h4>
+<p>Tiddas d amezgun n tkerkas gar sin imyuraren (<strong>Amellal i ibeddun</strong>). Yal yiwen yesɛa <strong>10 n yileqqafen</strong> i d-ittrusun ɣef tkarḍa n <strong>25 n texxamin</strong>.</p>
 </div>
-<h4 data-i18n="rulesDifferences">Amgired gar tewsiyin :</h4>
+
 <div class="rules-section">
-<p data-i18n="rulesDifferencesIntro">
-Yal tawsit tesɛa ilugan-is :
-</p>
-<p>
-<strong data-i18n="rulesTIDDEST">TIDDEST :</strong>
-</p>
+<h4>🎯 Iswi n wurar</h4>
+<p>Snat n tawsiyin i yellan :</p>
 <ul>
-<li><strong data-i18n="rulesTIDDESTMovesStrong">Anaqel :</strong> <span data-i18n="rulesTIDDESTMoves">Kan s teɣzi neɣ s tehri.</span></li>
-<li><strong data-i18n="rulesTIDDESTCapturesStrong">Učči :</strong> <span data-i18n="rulesTIDDESTCaptures">Win yesduklen tlata ad yefren aleqqaf n wexṣim-is ara yečč.</span></li>
-<li><strong data-i18n="rulesTIDDESTWinStrong">Arbaḥ :</strong> <span data-i18n="rulesTIDDESTWin">yerbeḥ win yeččan.</span></li>
-<li><strong data-i18n="rulesTIDDESTNoForcedMoveStrong">Ulac atellet s tmara :</strong> <span data-i18n="rulesTIDDESTNoForcedMove">Ulac amesnakni s tmara deg TIDDEST.</span></li>
+<li><strong>Deg TIDDEST :</strong> Iswi d asdukkel n kraḍ n yileqqafen (atellet) i wakken ad yemmečč uleqqaf n wexṣim, alamma ur yezmir ad itellet (s <strong>2 n ileqqafen</strong> kan).</li>
+<li><strong>Deg Tiddest n tlata :</strong> Win ara d-isdukklen tlata (atellet) d amenzu i irebḥen.</li>
 </ul>
-<p>
-<strong data-i18n="rulesBessif">Tiddest n tlata :</strong>
-</p>
+</div>
+
+<div class="rules-section">
+<h4>🎮 Talliyin n wurar</h4>
+<p>Urar iteddu s snat n talliyin ittemsetbaɛen :</p>
+<ol>
+<li><strong>Tallit n usrusu :</strong> Imyuraren srusuyen ileqqafen-nsen s nnuba (yiwen, yiwen) alamma rsen i 20 meṛṛa.<br>
+<em>⚠️ Agdal : Yegdel ad tesdukkleḍ 3 yileqqafen deg tallit-a. Daymi, ulac Učči uqbel ad bdun ambiwel neɣ anaqel.</em></li>
+<li><strong>Tallit n unaqel :</strong> Mi rsen yakk ileqqafen, imyuraren bdun ad ttenqalen ileqqafen-nsen ɣer texxamin yexlan i d-yezgan deg yidis, tama ufella neɣ n wadda.</li>
+</ol>
+</div>
+
+<div class="rules-section">
+<h4>⚔️ Atellet d Učči</h4>
+<p>Tukksa n uleqqaf n wexṣim teqqen ɣer utellet :</p>
 <ul>
-<li><span data-i18n="rulesBessifCombines">Tameslayt ɣef uzgen i yesɛan tdiwin d izukran : 9 n tneqqiḍin i wurar.</span></li>
-<li><strong data-i18n="rulesBessifMovesStrong">Ileqqafen :</strong> <span data-i18n="rulesBessifMoves">3 n yileqqafen i yal amyurar, war ugar.</span></li>
-<li><strong data-i18n="rulesBessifInverseWinStrong">Usrusu :</strong> <span data-i18n="rulesBessifInverseWin">Imyuraren srusuyen kraḍ yileqqafen s nnuba. Yegdel usdukkel n utellet deg tallit-a.</span></li>
-<li><strong data-i18n="rulesBessifOpponentChoosesStrong">Anaqel :</strong> <span data-i18n="rulesBessifOpponentChooses">Sinna, amyurar ad inaqel yiwen uleqqaf ɣer tneqqiṭ i d-yezgan yid-s s yizirig n telɣa.</span></li>
-<li><strong data-i18n="rulesBessifForcedMoveStrong">Arbaḥ :</strong> <span data-i18n="rulesBessifForcedMove">Win yesdukklen kraḍ n yileqqafen-is s teɣzi, s tehri neɣ s tdiwin yerbeḥ srid. Ulac učči.</span></li>
+<li><strong>Atellet :</strong> D asedukkel n tlata yileqqafen kan n yiwen yini, s teɣzi neɣ s tehri. Atellet s tɣemmaṛ (atellet imalen) ur ittekki ara deg učči.</li>
+<li><strong>Učči :</strong> Ma yesdukkel umyurar tlata yileqqafen, yezmer ad yečč aleqqaf yebɣa n wexṣim-is.</li>
+<li><strong>Aḥraz :</strong> Deg yakk tiwsiyin, ulac aleqqaf i iḥerzen — ula ma llan deg utellet, zemren ad mmeččen.</li>
+</ul>
+</div>
+
+<div class="rules-section">
+<h4>🔄 Amgired gar tewsiyin</h4>
+<p><strong>TIDDEST</strong> (Tawsit n zik)</p>
+<ul>
+<li><strong>Anaqel :</strong> Kan s teɣzi neɣ s tehri (horizontale/verticale).</li>
+<li><strong>Arbaḥ :</strong> Yerbeḥ win yeččan ileqqafen n wexṣim-is alamma ur yezmir ad itellet.</li>
+</ul>
+<p><strong>Tiddest n tlata</strong> (Urar uɣiwel)</p>
+<p>Tawsit-agi tturar ɣef tkarḍa tameẓyant (<strong>9 n tunddar</strong>).</p>
+<ul>
+<li><strong>Ileqqafen :</strong> 3 n yileqqafen kan i yal amyurar.</li>
+<li><strong>Anaqel :</strong> Amyurar ittnaqal aleqqaf ɣer texxamt neɣ tinddert i d-yezgan s idis-is, ula s tɣemmaṛ.</li>
+<li><strong>Arbaḥ :</strong> Win yesdukklen tlata n yileqqafen-is d amenzu (s teɣzi, tehri neɣ tdiwin) yerbeḥ. Ulac učči deg tawsit-a.</li>
 </ul>
 </div>
 </div>
+
 <div class="rules-content" lang="en">
-<h3 data-i18n="gameRulesTitle">Game Rules</h3>
-<h4 data-i18n="rulesGeneral">General Rules of Tiddas (Common to all variants):</h4>
+<h3>Game Rules</h3>
+
 <div class="rules-section">
-<p>
-<strong data-i18n="rulesObjectiveStrong">Objective:</strong> <span data-i18n="rulesObjective">In classic TIDDEST, the aim is to reduce the opponent to fewer than three pieces or block them. In Tiddest n tlata, the aim is to create the first alignment of 3 pieces during the movement phase.</span>
-</p>
-<p>
-<strong data-i18n="rulesPiecesStrong">Pieces:</strong> <span data-i18n="rulesPieces">Each player has 10 pieces (called "stones"). Player 2 (White) always goes first.</span>
-</p>
-<p>
-<strong data-i18n="rulesPhasesStrong">Game Phases:</strong>
-</p>
-<ul>
-<li><strong data-i18n="rulesPlacementPhaseStrong">Placement Phase:</strong> <span data-i18n="rulesPlacementPhase">Players take turns placing one of their pieces on any empty cell of the board. This phase continues until all 20 pieces (10 per player) are placed.</span></li>
-<li><strong data-i18n="rulesMovePhaseStrong">Movement Phase:</strong> <span data-i18n="rulesMovePhase">Once all pieces are placed, players take turns moving one of their pieces one cell at a time to an adjacent empty cell (horizontally or vertically).</span></li>
-</ul>
-<p>
-<strong data-i18n="rulesMillStrong">Mill (Alignment):</strong> <span data-i18n="rulesMill">Forming an alignment of <strong>exactly 3 pieces</strong> of your color (horizontally or vertically). <strong>Diagonal alignments are not valid mills.</strong></span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureStrong">Capture:</strong> <span data-i18n="rulesCapture">When a player forms a mill (3 pieces horizontally or vertically), they may "eat" (capture) one of the opponent's pieces.</span>
-</p>
-<p>
-<strong data-i18n="rulesCapturePlacementRestrictionStrong">3-alignment forbidden during placement:</strong> <span data-i18n="rulesCapturePlacementRestriction">It is forbidden to place a piece in a way that forms a mill of 3 or more pieces. Therefore, <strong>no captures are possible during the placement phase</strong>. Captures are only possible during the movement phase.</span>
-</p>
-<p>
-<strong data-i18n="rulesCaptureAllPiecesStrong">All pieces can be captured:</strong> <span data-i18n="rulesCaptureAllPieces">In all variants of this game, <strong>all pieces can be captured</strong>, even if they are part of a mill. There are no "protected" pieces.</span>
-</p>
-<p>
-<strong data-i18n="rulesForcedMoveStrong">Forced mill move rule:</strong> <span data-i18n="rulesForcedMove">During the movement phase, if a player can form a mill with one of their pieces, they are <strong>required</strong> to do so. If multiple moves allow a mill, the player may choose one.</span>
-</p>
+<h4>🏛️ Foundations of Tiddas</h4>
+<p>This strategic duel pits two players against each other (<strong>White always moves first</strong>). Each participant commands <strong>10 ileqqafen</strong> (pawns) to be maneuvered on a <strong>25-square grid</strong>.</p>
 </div>
-<h4 data-i18n="rulesDifferences">Differences between variants:</h4>
+
 <div class="rules-section">
-<p data-i18n="rulesDifferencesIntro">
-The basic rules apply, but each variant introduces important specifics:
-</p>
-<p>
-<strong data-i18n="rulesTIDDEST">TIDDEST:</strong>
-</p>
+<h4>🎯 Victory Conditions</h4>
+<p>The outcome depends on the chosen mode:</p>
 <ul>
-<li><strong data-i18n="rulesTIDDESTMovesStrong">Moves:</strong> <span data-i18n="rulesTIDDESTMoves">Horizontal/vertical only. Diagonal moves are forbidden.</span></li>
-<li><strong data-i18n="rulesTIDDESTCapturesStrong">Captures:</strong> <span data-i18n="rulesTIDDESTCaptures">The player who forms the mill chooses which opponent piece to capture.</span></li>
-<li><strong data-i18n="rulesTIDDESTWinStrong">Victory:</strong> <span data-i18n="rulesTIDDESTWin">Standard.</span></li>
-<li><strong data-i18n="rulesTIDDESTNoForcedMoveStrong">No forced mill move:</strong> <span data-i18n="rulesTIDDESTNoForcedMove">The forced mill move rule does not apply.</span></li>
+<li><strong>Classic Version:</strong> You win as soon as your opponent is reduced to only <strong>2 units</strong>.</li>
+<li><strong>"n tlata" Version:</strong> The first player to <strong>align 3 pieces</strong> during the movement phase wins instantly.</li>
 </ul>
-<p>
-<strong data-i18n="rulesBessif">Tiddest n tlata:</strong>
-</p>
+</div>
+
+<div class="rules-section">
+<h4>🎮 Gameplay Sequence</h4>
+<p>The game progresses through two strict phases:</p>
+<ol>
+<li><strong>Placement:</strong> Players take turns placing their pawns on empty spots until all 20 pieces are on the board.<br>
+<em>Golden Rule: During this stage, forming a line of 3 is strictly forbidden. No captures can occur until all units are deployed.</em></li>
+<li><strong>Movement:</strong> Once the board is full, pieces slide to an adjacent empty spot (<strong>horizontally or vertically only</strong>).</li>
+</ol>
+</div>
+
+<div class="rules-section">
+<h4>⚔️ Capture Mechanics — The "Mill"</h4>
+<p>Strategy revolves around creating specific combinations to weaken the opponent.</p>
 <ul>
-<li><span data-i18n="rulesBessifCombines">Variant played on a square with diagonals and medians: 9 playable intersections.</span></li>
-<li><strong data-i18n="rulesBessifMovesStrong">Pieces:</strong> <span data-i18n="rulesBessifMoves">3 pieces per player, never more.</span></li>
-<li><strong data-i18n="rulesBessifInverseWinStrong">Placement:</strong> <span data-i18n="rulesBessifInverseWin">Players place their 3 pieces one by one. Making an alignment during this phase is forbidden.</span></li>
-<li><strong data-i18n="rulesBessifOpponentChoosesStrong">Movement:</strong> <span data-i18n="rulesBessifOpponentChooses">Then a player moves one piece to an adjacent intersection connected by a board line.</span></li>
-<li><strong data-i18n="rulesBessifForcedMoveStrong">Victory:</strong> <span data-i18n="rulesBessifForcedMove">The first player to align all 3 pieces horizontally, vertically or diagonally wins immediately. There is no capture.</span></li>
+<li><strong>Formation:</strong> A valid "mill" consists of exactly <strong>3 pawns in a straight line</strong>. Diagonals do not count for captures.</li>
+<li><strong>Removal:</strong> Completing a new alignment grants you the right to remove <strong>any enemy piece of your choice</strong>.</li>
+<li><strong>Vulnerability:</strong> No piece is safe — even a pawn belonging to an opponent's existing line can be captured.</li>
+</ul>
+</div>
+
+<div class="rules-section">
+<h4>🔄 Focus on Variants</h4>
+<p><strong>Classic Tiddest</strong><br>
+An endurance mode. Movements are restricted to orthogonal axes (horizontal/vertical). Victory is achieved by depleting the opponent's forces: once a player has only two pieces left, the game ends.</p>
+<p><strong>Tiddest n tlata</strong> (Fast Version)<br>
+Played on a smaller grid of <strong>9 intersections</strong>.</p>
+<ul>
+<li><strong>Force:</strong> Only 3 pawns per player.</li>
+<li><strong>Freedom:</strong> Movement is allowed in all directions, including <strong>diagonals</strong>.</li>
+<li><strong>Finality:</strong> There are no captures. The first to align their 3 units wins the round immediately.</li>
 </ul>
 </div>
 </div>
@@ -16569,7 +16636,12 @@ function onlineDisconnect() {
     const pc = document.getElementById('ol-pre-connect');
     if (sc) sc.style.display = 'none';
     if (pc) pc.style.display = '';
+    // Toujours réafficher le bouton quitter (au cas où il aurait été masqué)
+    const qb = document.getElementById('ol-quit-btn');
+    if (qb) qb.style.display = '';
   } catch(_) {}
+  // Restaurer les boutons joueur (désactivés en mode spectateur)
+  try { stopSpectatorMode(); } catch(_) {}
 }
 
 // ── In-game online status bar ─────────────────────────────────
@@ -16819,6 +16891,12 @@ function _startPolling() {
         if (window.gameMode === 'spectator') {
           if (!p1Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(1);
           else if (!p2Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(2);
+          // Mettre à jour la position du spectateur dans la file d'attente
+          try {
+            if (window.TiddasSpectator && typeof window.TiddasSpectator.refreshQueuePosition === 'function') {
+              window.TiddasSpectator.refreshQueuePosition(match.get('specQueue') || []);
+            }
+          } catch(_) {}
         }
 
         // Tournament state from server
@@ -16840,7 +16918,24 @@ function _startPolling() {
         }
         const payload = match.get('payload') || null;
         if (payload && payload.state) {
+          const _wasSpectator = (window.gameMode === 'spectator' || (window.online && window.online.role === 0));
           onlineApplyState(payload);
+          if (_wasSpectator) {
+            window.gameMode = 'spectator';
+            var _badge = document.getElementById('spectator-badge');
+            if (_badge && !_badge.classList.contains('visible')) {
+              _badge.textContent = '👁 Spectateur en ligne';
+              _badge.classList.add('visible');
+            }
+            document.body.classList.add('is-spectating');
+            // Désactiver les contrôles joueur
+            var _undo = document.getElementById('undo-btn');
+            var _surr = document.getElementById('surrender');
+            var _rest = document.getElementById('restart');
+            if (_undo) _undo.disabled = true;
+            if (_surr) { _surr.disabled = true; _surr.style.opacity = '0.25'; _surr.style.pointerEvents = 'none'; }
+            if (_rest) { _rest.disabled = true; _rest.style.opacity = '0.25'; _rest.style.pointerEvents = 'none'; }
+          }
           if (typeof showScreen === 'function') showScreen('game-play-area');
         }
       } else {
@@ -16970,19 +17065,48 @@ async function onlineConnectToRoom_Back4App(code, creating) {
         await match.save();
         online.role = 2; online.isHost = false;
       } else {
-        // Room full — offer spectator mode, expose match for spectator join
+        // Salon complet — proposer le mode spectateur
         clearTimeout(_connTimeout);
+        // Masquer le formulaire de connexion, afficher la carte spectateur
         const _pc2 = document.getElementById('ol-pre-connect');
         const _sc2 = document.getElementById('online-status');
-        if (_pc2) _pc2.style.display = '';
-        if (_sc2) _sc2.style.display = 'none';
-        // Store match id for spectator join
+        if (_pc2) _pc2.style.display = 'none';   // masquer tout le formulaire
+        if (_sc2) _sc2.style.display = '';        // montrer le panel connecté
+        // Stocker les infos pour joinAsSpectator
         window._spectatorPendingMatchId = match.id;
         window._spectatorPendingCode    = code;
-        // Show spectate card
+        // Afficher la carte spectateur et le bouton takeover
         const card = document.getElementById('ol-spectate-card');
         if (card) card.classList.add('visible');
-        _setOnlineStatus(t('onlineRoomFull', 'Salon complet (2 joueurs).') + ' Vous pouvez regarder en spectateur.');
+        // Masquer les éléments non pertinents du panel connecté
+        const matchupEl = document.getElementById('online-matchup');
+        const roomcodeRow = document.getElementById('online-roomcode-row');
+        const startBtn = document.getElementById('online-start');
+        const rematch = document.getElementById('online-rematch');
+        if (matchupEl)   matchupEl.style.display   = 'none';
+        if (roomcodeRow) roomcodeRow.style.display  = 'none';
+        if (startBtn)    startBtn.style.display     = 'none';
+        if (rematch)     rematch.style.display      = 'none';
+        // Récupérer les noms des joueurs pour afficher le matchup spectateur
+        try {
+          const _p1n = match.get('p1Name') || 'Joueur 1';
+          const _p2n = match.get('p2Name') || 'Joueur 2';
+          const _p1el = document.getElementById('online-p1-name');
+          const _p2el = document.getElementById('online-p2-name');
+          if (_p1el) _p1el.textContent = _p1n;
+          if (_p2el) _p2el.textContent = _p2n;
+          if (matchupEl) matchupEl.style.display = '';
+        } catch(_) {}
+        _setOnlineStatus(t('onlineRoomFull', 'Salon complet (2 joueurs).') + ' Regardez la partie en spectateur.');
+        // Démarrer le polling immédiatement en mode spectateur pour voir si la partie est en cours
+        window.online = window.online || {};
+        window.online.matchId     = match.id;
+        window.online.room        = code;
+        window.online.role        = 0;
+        window.online.connected   = true;
+        window.online.lastSeenRev = -1;
+        window.gameMode = 'spectator';
+        if (typeof _startPolling === 'function') _startPolling();
         return;
       }
 
@@ -17085,8 +17209,7 @@ function onlineSendState(reason='sync') {
 
 async function onlineStartMatch_Back4App() {
   if (gameMode !== 'online') gameMode = 'online';
-  // Masquer le bouton quitter pendant la partie
-  try { const qb = document.getElementById('ol-quit-btn'); if (qb) qb.style.display = 'none'; } catch(_) {}
+  // Ne pas masquer le bouton quitter (accessible depuis la barre online-game-bar)
   if (!online.connected || !online.matchId) { _setOnlineStatus(t('onlineNoRoomActive', "Pas de salon actif.")); return; }
   if (!online.isHost) { _setOnlineStatus(t('onlineOnlyHostStart', "Seul l’hôte peut lancer la partie.")); return; }
   if (!(await _ensureParseReadyAsync())) { _setOnlineStatus(t('onlineBack4AppNotReady', "Back4App n'est pas prêt.")); return; }
@@ -17711,8 +17834,6 @@ rulesCapturePlacementRestrictionStrong: "Alignement de 3 interdit pendant le pla
 rulesCapturePlacementRestriction: "Il est interdit de placer un pion de manière à former un moulin de 3 pions ou plus. Par conséquent, <strong>aucune capture n'est possible pendant la phase de placement</strong>. Les captures sont uniquement possibles en phase de déplacement.",
 rulesCaptureAllPiecesStrong: "Tous les pions sont capturables :",
 rulesCaptureAllPieces: "Dans toutes les variantes de ce jeu, <strong>tous les pions peuvent être capturés</strong>, même s'ils font partie d'un moulin. Il n'y a pas de pions \"protégés\".",
-rulesForcedMoveStrong: "Règle de déplacement forcé de moulin :",
-rulesForcedMove: "En phase de déplacement, si un joueur a la possibilité de former un moulin avec un de ses pions, il est <strong>obligé</strong> de le faire. Si plusieurs mouvements permettent de former un moulin, le joueur peut choisir l'un d'entre eux.",
 rulesDifferences: "Différences entre les variantes :",
 rulesDifferencesIntro: "Les règles de base s'appliquent, mais chaque variante introduit des spécificités importantes :",
 rulesTIDDEST: "TIDDEST :",
@@ -18145,8 +18266,6 @@ rulesCapturePlacementRestrictionStrong: "Yegdel ad tesdukkleḍ 3 deg usrusu :",
 rulesCapturePlacementRestriction: "Yegdel ad tserseḍ aleqqaf i wakken ad tesdukkleḍ tlata. Daymi, ulac Učči deg tallit n usrusu. Učči yettili kan deg tallit n unaqel.",
 rulesCaptureAllPiecesStrong: "Akk ileqqafen zemren ad mmeččen :",
 rulesCaptureAllPieces: "Deg yakk tiwsiyin, <strong>akk ileqqafen zemren ad mmeččen</strong>, ula ma llan deg utellet.",
-rulesForcedMoveStrong: "atellet s tmara:",
-rulesForcedMove: "Deg tallit n unaqel, ma yella umyurar yezmer ad itellet, ilaq-as ad t-yexdem. Ma yella aṭas n yiberdan, ad yefren yiwen.",
 rulesDifferences: "Amgired gar tewsiyin :",
 rulesDifferencesIntro: "Yal tawsit tesɛa ilugan-is :",
 rulesTIDDEST: "TIDDEST :",
@@ -18598,8 +18717,6 @@ rulesCapturePlacementRestrictionStrong: "3-alignment forbidden during placement:
 rulesCapturePlacementRestriction: "It is forbidden to place a piece in a way that forms a mill of 3 or more pieces. Therefore, <strong>no captures are possible during the placement phase</strong>. Captures are only possible during the movement phase.",
 rulesCaptureAllPiecesStrong: "All pieces can be captured:",
 rulesCaptureAllPieces: "In all variants of this game, <strong>all pieces can be captured</strong>, even if they are part of a mill. There are no \"protected\" pieces.",
-rulesForcedMoveStrong: "Forced mill move rule:",
-rulesForcedMove: "During the movement phase, if a player can form a mill with one of their pieces, they are <strong>required</strong> to do so. If multiple moves allow a mill, the player may choose one.",
 rulesDifferences: "Differences between variants:",
 rulesDifferencesIntro: "The basic rules apply, but each variant introduces important specifics:",
 rulesTIDDEST: "TIDDEST:",
@@ -18966,9 +19083,11 @@ try {
 
 function _applyHardcodedI18n(lang) {
 const tr = translations[lang] || translations['fr'];
-// Spectator badge
+// Spectator badge — ne pas écraser si on est en mode spectateur en ligne ou IA vs IA
 const badge = document.getElementById('spectator-badge');
-if (badge) badge.textContent = tr.spectatorBadgeTxt || '👁 Mode Spectateur';
+if (badge && !badge.classList.contains('visible')) {
+  badge.textContent = tr.spectatorBadgeTxt || '👁 Mode Spectateur';
+}
 // Save notification buttons
 const btnResume = document.getElementById('btn-resume');
 if (btnResume) btnResume.textContent = tr.btnResume || 'Reprendre';
@@ -19270,6 +19389,39 @@ function showWinnerAnimation(message, name, isDefeat) {
 
   // Classe défaite
   winnerOverlay.classList.toggle('wo-defeat', !!isDefeat);
+
+  // Spectateur : masquer replay/restart, afficher seulement Quitter
+  const _isSpec = (window.gameMode === 'spectator' || (window.online && window.online.role === 0));
+  const _woReplay = document.getElementById('winner-replay-button');
+  const _woReplayLast = document.getElementById('winner-replay-last-btn');
+  const _woRow = winnerOverlay.querySelector('.wo-row');
+  const _woMenuBtn = document.getElementById('winner-menu-btn');
+
+  if (_woReplay) _woReplay.style.display = _isSpec ? 'none' : '';
+  if (_woRow)    _woRow.style.display    = _isSpec ? 'none' : '';
+
+  // Bouton "Quitter le salon" dédié aux spectateurs dans l'overlay fin de partie
+  let _woSpecQuit = document.getElementById('wo-spectator-quit-btn');
+  if (_isSpec) {
+    if (!_woSpecQuit) {
+      _woSpecQuit = document.createElement('button');
+      _woSpecQuit.id = 'wo-spectator-quit-btn';
+      _woSpecQuit.className = 'replay-button';
+      _woSpecQuit.style.cssText = 'background:rgba(200,60,40,0.18);border:1px solid rgba(200,80,60,0.5);color:rgba(255,160,140,0.95);margin-top:0.5rem;';
+      _woSpecQuit.textContent = '‹ Quitter le salon';
+      _woSpecQuit.addEventListener('click', function() {
+        hideWinnerAnimation();
+        try { if (typeof onlineDisconnect === 'function') onlineDisconnect(); } catch(_) {}
+        try { stopSpectatorMode(); } catch(_) {}
+        if (typeof showScreen === 'function') showScreen('mode-selection-area');
+      });
+      const _woActions = winnerOverlay.querySelector('.wo-actions');
+      if (_woActions) _woActions.appendChild(_woSpecQuit);
+    }
+    _woSpecQuit.style.display = '';
+  } else {
+    if (_woSpecQuit) _woSpecQuit.style.display = 'none';
+  }
 
   winnerOverlay.classList.add('active');
 }
@@ -20377,6 +20529,12 @@ async function onlineSetRematchReady(isReady) {
 function handleReplayClick() {
   hideWinnerAnimation();
 
+  // Spectateur en ligne : ne peut pas relancer la partie
+  if (window.online && window.online.role === 0) {
+    showToast && showToast('👁 Les spectateurs ne peuvent pas relancer la partie.', 2000);
+    return;
+  }
+
   // Online: stay in the same room
   if (gameMode === 'online' && online && online.connected) {
     // Mark ready for rematch; host will start when both are ready.
@@ -20791,6 +20949,8 @@ playSound('select'); vibrateGame('select');
 
 
 function handleUndo() {
+// Les spectateurs ne peuvent pas annuler
+if (gameMode === 'spectator' || (window.online && window.online.role === 0)) return;
 // Online multiplayer: only act on your turn
 if (gameMode === 'online' && !isMyTurnOnline()) {
   showStatusError('notYourTurn');
@@ -21177,6 +21337,9 @@ endTurn();
 }
 
 function handleSurrender() {
+  // Les spectateurs ne peuvent pas abandonner
+  if (gameMode === 'spectator' || (online && online.role === 0)) return;
+
   // Online multiplayer: only act on your turn
   if (gameMode === 'online' && !isMyTurnOnline()) {
     showStatusError('notYourTurn');
@@ -23547,10 +23710,14 @@ boardPositionHistory = new Map();
 forbiddenBoardPositions = new Set();
 updateGameInfoDisplay();
 showScreen('game-play-area');
-document.getElementById('spectator-badge').classList.add('visible');
+var badge = document.getElementById('spectator-badge');
+if (badge) { badge.textContent = '👁 IA vs IA'; badge.classList.add('visible'); }
 document.getElementById('spectator-controls').classList.add('visible');
+document.body.classList.add('is-spectating');
 document.getElementById('undo-btn').disabled = true;
 document.getElementById('surrender').disabled = true;
+var _sgRestartBtn = document.getElementById('restart');
+if (_sgRestartBtn) { _sgRestartBtn.disabled = true; _sgRestartBtn.style.opacity = '0.25'; _sgRestartBtn.style.pointerEvents = 'none'; }
 renderMoveLog();
 // Damma (Kabylian Draughts) : initialisation spéciale identique à startGame()
 if (cfg().isKabylianDraughts) {
@@ -23573,6 +23740,16 @@ if (cfg().isKabylianDraughts) {
 function stopSpectatorMode() {
 document.getElementById('spectator-badge').classList.remove('visible');
 document.getElementById('spectator-controls').classList.remove('visible');
+document.body.classList.remove('is-spectating');
+// Restaurer les boutons joueur (désactivés en mode spectateur)
+try {
+  var _undo = document.getElementById('undo-btn');
+  var _surr = document.getElementById('surrender');
+  var _rest = document.getElementById('restart');
+  if (_undo) _undo.disabled = false;
+  if (_surr) { _surr.disabled = false; _surr.style.opacity = ''; _surr.style.pointerEvents = ''; }
+  if (_rest) { _rest.disabled = false; _rest.style.opacity = ''; _rest.style.pointerEvents = ''; }
+} catch(_) {}
 }
 
 // ==========================================
@@ -25637,6 +25814,38 @@ if (onlineBtn) {
       };
     }
 
+    // ── Quitter depuis la barre en jeu (joueurs online) ───────
+    const ogbQuit = document.getElementById('ogb-quit-btn');
+    if (ogbQuit) {
+      ogbQuit.onclick = () => {
+        try { if (typeof onlineDisconnect === 'function') onlineDisconnect(); } catch(_) {}
+        try { stopSpectatorMode(); } catch(_) {}
+        if (typeof showScreen === 'function') showScreen('mode-selection-area');
+      };
+    }
+
+    // ── Quitter depuis les contrôles spectateur ────────────────
+    const specQuit = document.getElementById('spectator-quit-btn');
+    if (specQuit) {
+      specQuit.onclick = () => {
+        try { if (typeof onlineDisconnect === 'function') onlineDisconnect(); } catch(_) {}
+        try { stopSpectatorMode(); } catch(_) {}
+        try { if (window.SpectatorChat) SpectatorChat.syncVisibility(); } catch(_) {}
+        if (typeof showScreen === 'function') showScreen('mode-selection-area');
+      };
+    }
+
+    // ── Quitter depuis le bouton principal du lobby ───────────
+    const mainQuit = document.getElementById('ol-quit-btn');
+    if (mainQuit) {
+      // Override inline onclick pour s'assurer qu'on revient bien au menu
+      mainQuit.onclick = () => {
+        try { if (typeof onlineDisconnect === 'function') onlineDisconnect(); } catch(_) {}
+        try { stopSpectatorMode(); } catch(_) {}
+        if (typeof showScreen === 'function') showScreen('mode-selection-area');
+      };
+    }
+
     // Disable actions if not configured
     const __onlineOk = _isBack4AppConfigured();
     if (onlineEls.btnCreate)  onlineEls.btnCreate.disabled  = !__onlineOk;
@@ -27509,8 +27718,11 @@ function getQuickOnlineChatMessages() {
   return Array.isArray(dict.quick) ? dict.quick : ONLINE_CHAT_I18N.fr.quick;
 }
 function isOnlineChatAvailable() {
-  // Seul matchId est requis — connected peut être faux pendant une reconnexion
-  return !!(gameMode === 'online' && online && online.matchId);
+  // Disponible pour joueurs ET spectateurs en ligne (role=0)
+  const isOnline = gameMode === 'online' && online && online.matchId;
+  const isSpectatorOnline = (gameMode === 'spectator' || (online && online.role === 0))
+                           && online && online.matchId;
+  return !!(isOnline || isSpectatorOnline);
 }
 function closeSettingsTrayForChat() {
   try {
@@ -27683,8 +27895,20 @@ function renderOnlineChatMessages() {
     if (isFirstOfGroup && !item.mine) {
       const nameEl = document.createElement('div');
       nameEl.className = 'ocm-name';
-      nameEl.textContent = getOnlineChatSenderName(item);
+      // Badge spectateur si fromRole === 0
+      const senderName = getOnlineChatSenderName(item);
+      nameEl.textContent = (item.senderRole === 0 || item.fromRole === 0) ? '👁 ' + senderName : senderName;
       bubble.appendChild(nameEl);
+    }
+    // Mes messages en tant que spectateur : préfixer le nom
+    if (isFirstOfGroup && item.mine && (gameMode === 'spectator' || (online && online.role === 0))) {
+      const nameEl = document.createElement('div');
+      nameEl.className = 'ocm-name';
+      nameEl.style.textAlign = 'right';
+      nameEl.style.opacity = '0.6';
+      nameEl.style.fontSize = '0.7rem';
+      nameEl.textContent = '👁 Spectateur';
+      bubble.insertBefore(nameEl, bubble.firstChild);
     }
 
     // ── Corps du message : vocal ou texte ──
@@ -28041,13 +28265,22 @@ async function sendOnlineChatMessage(rawText) {
   if (onlineChatEls.input) onlineChatEls.input.value = '';
 
   const now = Date.now();
-  const fallbackName = (online.role === 1 ? player1Name : player2Name) ||
-                       (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || 'Joueur';
+  // Spectateur : utiliser son pseudo, pas le nom du joueur selon le rôle
+  const isSpec = (gameMode === 'spectator' || (online && online.role === 0));
+  let fallbackName;
+  if (isSpec) {
+    fallbackName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+                || (localStorage.getItem('tiddas_online_name_v1') || '').trim()
+                || '👁 Spectateur';
+  } else {
+    fallbackName = (online.role === 1 ? player1Name : player2Name) ||
+                   (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || 'Joueur';
+  }
   const msgId = 'cm_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
   const chatEntry = {
     id: msgId,
     text,
-    fromRole: online.role || null,
+    fromRole: online.role != null ? online.role : (isSpec ? 0 : null),
     fromId: String(onlinePlayerId || ''),
     fromName: normalizeName(
       (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || fallbackName,
@@ -28178,6 +28411,7 @@ onlineApplyState = function(msg) {
   // Restaurer le mode spectateur si c'était le cas avant l'appel
   if (_wasSpectator) {
     window.gameMode = 'spectator';
+    document.body.classList.add('is-spectating');
     var _sbadge = document.getElementById('spectator-badge');
     if (_sbadge) _sbadge.classList.add('visible');
   }
@@ -28188,6 +28422,20 @@ onlineApplyState = function(msg) {
 const __prevOnlineDisconnectForChat = onlineDisconnect;
 onlineDisconnect = function() {
   clearOnlineChatState();
+  // Retirer le spectateur de la file d'attente en cas de déconnexion
+  try {
+    if (window.TiddasSpectator && window.online && window.online.matchId && window.online.role === 0) {
+      var _dname = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+                 || (localStorage.getItem('tiddas_online_name_v1') || '').trim();
+      if (_dname && window.Parse && window.BACK4APP_CLASS) {
+        (new Parse.Query(window.BACK4APP_CLASS)).get(window.online.matchId).then(function(_qmd) {
+          var _qd = (_qmd.get('specQueue') || []).filter(function(e){ return e && e.name !== _dname; });
+          _qmd.set('specQueue', _qd);
+          _qmd.save().catch(function(){});
+        }).catch(function(){});
+      }
+    }
+  } catch(_) {}
   const out = __prevOnlineDisconnectForChat.apply(this, arguments);
   try {
     renderOnlineChatUnread();
@@ -29324,11 +29572,12 @@ var SpectatorEnhanced = (function() {
 
   // Slot du joueur déconnecté que le spectateur peut reprendre (1 ou 2, null = personne)
   var _disconnectedSlot = null;
+  // File d'attente des spectateurs (ordre d'entrée)
+  var _specQueue = [];    // [{name, ts}]
+  var _myQueuePos = -1;  // position dans la file (-1 = pas en file)
 
   /* ── Rejoindre la partie en cours comme spectateur ── */
   async function joinAsSpectator() {
-    // matchId et code sont toujours définis ici : le code principal les stocke
-    // dans _spectatorPendingMatchId/_spectatorPendingCode dès que le salon est plein.
     var matchId = window._spectatorPendingMatchId;
     var code    = window._spectatorPendingCode || '';
 
@@ -29352,62 +29601,128 @@ var SpectatorEnhanced = (function() {
       }
       window.gameMode = 'spectator';
 
-      // UI : masquer pre-connect, montrer status, afficher badge
+      // Enregistrer dans la file d'attente spectateurs (ordre d'entrée)
+      try {
+        var _myName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+                    || (localStorage.getItem('tiddas_online_name_v1') || '').trim()
+                    || 'Spectateur';
+        var _myEntry = { name: _myName, ts: Date.now() };
+        if (window.Parse && window.BACK4APP_CLASS) {
+          var _qm = await (new Parse.Query(window.BACK4APP_CLASS)).get(matchId).catch(function(){return null;});
+          if (_qm) {
+            var _q = (_qm.get('specQueue') || []).filter(function(e){ return e && e.name && e.ts; });
+            // Éviter les doublons (même nom dans les 5 dernières secondes)
+            var _already = _q.some(function(e){ return e.name === _myName && (Date.now() - e.ts) < 5000; });
+            if (!_already) {
+              _q.push(_myEntry);
+              _qm.set('specQueue', _q);
+              _qm.save().catch(function(){});
+              _myQueuePos = _q.length; // position 1-indexée
+            } else {
+              _myQueuePos = _q.findIndex(function(e){ return e.name === _myName; }) + 1;
+            }
+          }
+        }
+      } catch(_qErr) {}
+
+      // UI : masquer pre-connect, masquer la carte, afficher badge spectateur en ligne
       var elPre   = document.getElementById('ol-pre-connect');
       var elSt    = document.getElementById('online-status');
       var elCard  = document.getElementById('ol-spectate-card');
       var elBadge = document.getElementById('spectator-badge');
       if (elPre)   elPre.style.display = 'none';
-      if (elSt)    elSt.style.display  = '';
+      if (elSt)    elSt.style.display  = 'none'; // masqué — on va vers game-play-area
       if (elCard)  elCard.classList.remove('visible');
-      if (elBadge) elBadge.classList.add('visible');
+      if (elBadge) {
+        elBadge.textContent = '👁 Spectateur en ligne';
+        elBadge.classList.add('visible');
+      }
+      document.body.classList.add('is-spectating');
 
       try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
       SpectatorChat.syncVisibility();
 
-      // Lancer le polling (réutilise le mécanisme existant)
+      // Lancer le polling avant de récupérer l'état
       if (typeof _startPolling === 'function') _startPolling();
 
-      // Appliquer l'état courant de la partie immédiatement
+      // Afficher la zone de jeu immédiatement (même si partie pas encore commencée)
+      if (typeof showScreen === 'function') showScreen('game-play-area');
+
+      // Contrôles spectateur (badge + vitesse)
+      var specControls = document.getElementById('spectator-controls');
+      if (specControls) specControls.classList.add('visible');
+
+      // Désactiver les boutons joueur
+      var undoBtn = document.getElementById('undo-btn');
+      var surrenderBtn = document.getElementById('surrender');
+      var restartBtn = document.getElementById('restart');
+      if (undoBtn) undoBtn.disabled = true;
+      if (surrenderBtn) { surrenderBtn.disabled = true; surrenderBtn.style.opacity = '0.25'; surrenderBtn.style.pointerEvents = 'none'; }
+      if (restartBtn) { restartBtn.disabled = true; restartBtn.style.opacity = '0.25'; restartBtn.style.pointerEvents = 'none'; }
+
+      // Appliquer l'état courant de la partie si disponible
       if (window.Parse && window.BACK4APP_CLASS) {
         var q = new Parse.Query(window.BACK4APP_CLASS);
         var m = await q.get(matchId);
         var payload = m.get('payload');
         if (payload && payload.state && typeof onlineApplyState === 'function') {
           onlineApplyState(payload);
-          // onlineApplyState force gameMode='online' — le wrapper le restaurera,
-          // mais on le force ici aussi pour s'assurer que le badge reste visible
+          // Forcer le mode spectateur (onlineApplyState peut le remettre à 'online')
           window.gameMode = 'spectator';
+          document.body.classList.add('is-spectating');
           var elBadge2 = document.getElementById('spectator-badge');
-          if (elBadge2) elBadge2.classList.add('visible');
+          if (elBadge2) {
+            elBadge2.textContent = '👁 Spectateur en ligne';
+            elBadge2.classList.add('visible');
+          }
+          if (undoBtn) undoBtn.disabled = true;
+          if (surrenderBtn) { surrenderBtn.disabled = true; surrenderBtn.style.opacity = '0.25'; surrenderBtn.style.pointerEvents = 'none'; }
+          if (restartBtn) { restartBtn.disabled = true; restartBtn.style.opacity = '0.25'; restartBtn.style.pointerEvents = 'none'; }
+        } else {
+          // Partie pas encore commencée — afficher un message d'attente sur le plateau
+          showToast && showToast('👁 En attente du démarrage de la partie…', 2500);
         }
       }
-      // Toujours afficher la zone de jeu (même si la partie n'a pas encore démarré)
-      if (typeof showScreen === 'function') showScreen('game-play-area');
 
-      // Afficher le FAB tournoi
+      // FAB tournoi
       var tfab = document.getElementById('tournament-fab');
       if (tfab) tfab.hidden = false;
 
       showToast && showToast('👁 Mode spectateur actif', 1800);
-      showTakeoverSlot(null); // s'assurer que le bouton relève est caché
+      if (typeof showTakeoverSlot === 'function') showTakeoverSlot(null);
     } catch(e) {
       showToast && showToast('Impossible de rejoindre : ' + ((e && e.message) || e), 2800);
     }
   }
 
   /* ── Afficher/masquer le bouton de relève d'un joueur déconnecté ──
-     Appelé par le polling principal via window.TiddasSpectator.showTakeoverSlot */
+     Appelé par le polling principal via window.TiddasSpectator.showTakeoverSlot.
+     Le bouton n'est montré qu'au 1er spectateur de la file (ordre d'entrée). */
   function showTakeoverSlot(slot) {
     var btn = document.getElementById('ol-takeover-btn');
     if (!btn) return;
     if (slot) {
       _disconnectedSlot = slot;
-      btn.textContent = '⚔️ Prendre la place du joueur ' + (slot === 1 ? '1 (Noir)' : '2 (Blanc)') + ' déconnecté';
-      btn.classList.add('visible');
+      // N'afficher le bouton que si ce spectateur est le premier de la file
+      var _amFirst = (_myQueuePos <= 1 || _myQueuePos === -1);
+      if (_amFirst) {
+        btn.textContent = '⚔️ Prendre la place du joueur ' + (slot === 1 ? '1 (Noir)' : '2 (Blanc)') + ' déconnecté';
+        btn.classList.add('visible');
+      } else {
+        // Informer le spectateur de sa position dans la file
+        var _posMsg = _myQueuePos > 0 ? ' (file : #' + _myQueuePos + ')' : '';
+        btn.textContent = '⏳ En attente de prise en main' + _posMsg;
+        btn.classList.add('visible');
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'default';
+      }
     } else {
       _disconnectedSlot = null;
       btn.classList.remove('visible');
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.style.cursor = '';
     }
   }
 
@@ -29424,6 +29739,21 @@ var SpectatorEnhanced = (function() {
       if (typeof window.humanPlayerId !== 'undefined') window.humanPlayerId = slot;
       if (typeof window.aiPlayerId    !== 'undefined') window.aiPlayerId    = 3 - slot;
 
+      // Retirer de la file d'attente spectateurs
+      try {
+        var _myName2 = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+                     || (localStorage.getItem('tiddas_online_name_v1') || '').trim()
+                     || 'Spectateur';
+        if (window.Parse && window.BACK4APP_CLASS && window.online && window.online.matchId) {
+          (new Parse.Query(window.BACK4APP_CLASS)).get(window.online.matchId).then(function(_qm2) {
+            var _q2 = (_qm2.get('specQueue') || []).filter(function(e){ return e && e.name !== _myName2; });
+            _qm2.set('specQueue', _q2);
+            _qm2.save().catch(function(){});
+          }).catch(function(){});
+        }
+        _myQueuePos = -1;
+      } catch(_) {}
+
       // Masquer badge spectateur et bouton relève
       var badge = document.getElementById('spectator-badge');
       if (badge) badge.classList.remove('visible');
@@ -29432,6 +29762,9 @@ var SpectatorEnhanced = (function() {
       // Masquer chat spectateurs, relancer le polling joueur
       SpectatorChat.syncVisibility();
       if (typeof _startPolling === 'function') _startPolling();
+
+      // Restaurer les boutons joueur
+      try { stopSpectatorMode(); } catch(_) {}
 
       if (typeof renderAll === 'function') renderAll();
       showToast && showToast('⚔️ Vous avez pris la partie en main !', 2200);
@@ -29510,10 +29843,23 @@ var SpectatorEnhanced = (function() {
     }
   }
 
+  /* ── Rafraîchir la position dans la file depuis les données serveur ── */
+  function refreshQueuePosition(serverQueue) {
+    if (!Array.isArray(serverQueue)) return;
+    try {
+      var myName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
+                 || (localStorage.getItem('tiddas_online_name_v1') || '').trim();
+      if (!myName) return;
+      var idx = serverQueue.findIndex(function(e) { return e && e.name === myName; });
+      _myQueuePos = idx >= 0 ? idx + 1 : -1;
+    } catch(_) {}
+  }
+
   // showTakeoverSlot est exporté car le polling principal l'appelle via window.TiddasSpectator
   return { init: init, joinAsSpectator: joinAsSpectator, takeover: takeover,
            showTakeoverSlot: showTakeoverSlot, showLiveDot: showLiveDot,
-           toggleFollow: toggleFollow, checkFollowedNotify: checkFollowedNotify };
+           toggleFollow: toggleFollow, checkFollowedNotify: checkFollowedNotify,
+           refreshQueuePosition: refreshQueuePosition };
 })();
 
 
@@ -29549,10 +29895,14 @@ var SpectatorChat = (function() {
     var fab   = document.getElementById('spectator-chat-fab');
     if (panel) panel.hidden = !open;
     if (fab) {
-      // badge unread
-      fab.textContent = _unread > 0 ? '👁 ' + _unread : '👁';
+      fab.setAttribute('aria-label', open ? 'Fermer le chat spectateurs' : 'Chat spectateurs' + (_unread > 0 ? ' (' + _unread + ')' : ''));
+      fab.dataset.unread = _unread > 0 && !open ? _unread : '';
     }
-    if (open) { _unread = 0; if (fab) fab.textContent = '👁'; _render(); }
+    if (open) {
+      _unread = 0;
+      if (fab) fab.dataset.unread = '';
+      _render();
+    }
   }
 
   function addMessage(name, text) {
@@ -29561,7 +29911,7 @@ var SpectatorChat = (function() {
     if (!_open) { _unread++; }
     _render();
     var fab = document.getElementById('spectator-chat-fab');
-    if (fab && !_open) fab.textContent = '👁 ' + _unread;
+    if (fab && !_open) fab.dataset.unread = _unread;
     // Partager via ephemeralChat avec tag spectateur
     _sendToServer(name, text);
   }
@@ -29614,7 +29964,16 @@ var SpectatorChat = (function() {
       if (!text) return;
       input.value = '';
       var name = '';
-      try { name = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || 'Spectateur'; } catch(_) { name = 'Spectateur'; }
+      try {
+        // Priorité : 1) input pseudo en ligne, 2) localStorage, 3) fallback 'Spectateur'
+        name = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || '';
+        if (!name) name = (localStorage.getItem('tiddas_online_name_v1') || '').trim();
+        if (!name) {
+          var ni = document.getElementById('online-your-name');
+          if (ni) name = (ni.value || '').trim();
+        }
+        if (!name) name = 'Spectateur';
+      } catch(_) { name = 'Spectateur'; }
       addMessage(name, text);
     }
 
@@ -29700,7 +30059,7 @@ var Tournament = (function() {
     if (!container) return;
     container.innerHTML = '';
     if (!_data.bracket || _data.bracket.length === 0) {
-      container.innerHTML = '<div class="tournament-empty">Aucun tournoi actif.<br>Inscrivez des joueurs pour commencer.</div>';
+      container.innerHTML = '<div class="tournament-empty">Aucun bracket.<br>Inscrivez au moins 2 joueurs pour générer le tableau.</div>';
       return;
     }
     _data.bracket.forEach(function(round, roundIdx) {
@@ -29751,13 +30110,23 @@ var Tournament = (function() {
     });
     var msg = document.getElementById('tournament-status-msg');
     if (msg) {
-      if (!_data.active && _data.participants.length < 2) {
-        msg.textContent = 'En attente d\'inscriptions (' + _data.participants.length + ' inscrit(s))';
+      var n = _data.participants.length;
+      if (!_data.active && n === 0) {
+        msg.textContent = 'Aucun inscrit — commencez par vous inscrire.';
+      } else if (!_data.active && n === 1) {
+        msg.textContent = '1 inscrit — en attente d\'un adversaire.';
       } else if (!_data.active) {
-        msg.textContent = _data.participants.length + ' joueur(s) inscrits — Prêt à démarrer';
+        msg.textContent = n + ' joueurs inscrits — prêt à démarrer.';
       } else {
         msg.textContent = '🏆 Tournoi en cours — Tour ' + (_data.currentRound + 1);
       }
+    }
+    // Afficher le bouton Démarrer si on est le créateur et le tournoi n'est pas encore actif
+    var startBtn = document.getElementById('tournament-start-btn');
+    if (startBtn) {
+      var myId = String(window.onlinePlayerId || '');
+      var isCreator = myId && _data.createdBy === myId;
+      startBtn.style.display = (!_data.active && _data.participants.length >= 2 && isCreator) ? '' : 'none';
     }
   }
 
@@ -29774,14 +30143,19 @@ var Tournament = (function() {
       showToast && showToast('Déjà inscrit au tournoi.', 1600);
       return;
     }
+    // Premier inscrit = créateur du tournoi
+    if (_data.participants.length === 0) {
+      _data.createdBy = id;
+    }
     _data.participants.push({ id: id, name: name, ready: true });
     // Régénérer le bracket si 2+ participants
     if (_data.participants.length >= 2) {
       _data.bracket = _generateBracket(_data.participants);
     }
-    _save(); _render(); _renderParticipants();
+    _save();
+    _render();           // bracket
+    _renderParticipants(); // chips + bouton Démarrer
     showToast && showToast('✅ Inscrit au tournoi !', 1800);
-    // Partager via Back4App si disponible
     _syncToServer();
   }
 
@@ -29858,26 +30232,30 @@ var Tournament = (function() {
     _load();
     var closeBtn   = document.getElementById('tournament-close');
     var regBtn     = document.getElementById('tournament-register-btn');
+    var startBtn   = document.getElementById('tournament-start-btn');
     var fab        = document.getElementById('tournament-fab');
 
-    if (closeBtn) closeBtn.addEventListener('click', close);
-    if (regBtn)   regBtn.addEventListener('click', register);
-    if (fab)      fab.addEventListener('click', open);
+    if (closeBtn)  closeBtn.addEventListener('click', close);
+    if (regBtn)    regBtn.addEventListener('click', register);
+    if (startBtn)  startBtn.addEventListener('click', start);
+    if (fab)       fab.addEventListener('click', open);
 
     // Afficher fab si en ligne
     function _syncFab() {
       if (!fab) return;
       var inOnline = window.gameMode === 'online' || !!(window.online && window.online.matchId);
       fab.hidden = !inOnline;
-      var regBtn2 = document.getElementById('tournament-register-btn');
-      if (regBtn2) regBtn2.style.display = inOnline ? '' : 'none';
+      var regBtn2   = document.getElementById('tournament-register-btn');
+      var startBtn2 = document.getElementById('tournament-start-btn');
+      if (regBtn2)   regBtn2.style.display   = inOnline ? '' : 'none';
+      if (startBtn2) startBtn2.style.display  = inOnline ? '' : 'none';
     }
     setTimeout(_syncFab, 1500);
 
     _render(); _renderParticipants();
   }
 
-  return { init: init, open: open, close: close, register: register, start: start, setWinner: setWinner, applyFromServer: applyFromServer };
+  return { init: init, open: open, close: close, register: register, start: start, setWinner: setWinner, applyFromServer: applyFromServer, _generateBracket: _generateBracket };
 })();
 
 
@@ -30202,6 +30580,1064 @@ window.TiddasReconnect       = OnlineReconnect;
 window.TiddasSpectator       = SpectatorEnhanced;
 
 })(); // end IIFE
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TIDDAS — EXTENSION TOURNOI v1.0
+     • Fonctionnalité 1 : Visibilité des tournois dans le lobby
+     • Fonctionnalité 2 : Transformation salon → tournoi quand >2 joueurs
+     • Fonctionnalité 3 : Observation des parties de tournoi via bracket
+     • Fonctionnalité 4 : Reprise de partie après déconnexion
+     • Fonctionnalité 5 : Chat unifié spectateurs / participants
+     • Fonctionnalité 6 : Corrections techniques (participants, polling)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<style nonce="tiddas">
+/* ── CSS section tournois dans le lobby ─────────────────────── */
+#ol-tournaments-wrap {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(240,200,80,0.06);
+  border: 1px solid rgba(240,200,80,0.22);
+  border-radius: 16px;
+  padding: 14px 16px 12px;
+  margin-top: 4px;
+}
+.ol-tourn-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.ol-tourn-icon  { font-size: 1.1rem; }
+.ol-tourn-title { flex: 1; font: 700 0.88rem/1 var(--font-title,sans-serif); color: var(--text-gold,#f0c850); letter-spacing: .05em; text-transform: uppercase; }
+.ol-tourn-refresh-btn {
+  background: none;
+  border: 1px solid rgba(240,200,80,0.3);
+  color: var(--text-gold,#f0c850);
+  border-radius: 50%;
+  width: 24px; height: 24px;
+  cursor: pointer;
+  font-size: .9rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .3s;
+}
+.ol-tourn-refresh-btn:hover { transform: rotate(180deg); }
+.ol-tourn-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(240,200,80,0.15);
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background .15s, border-color .15s;
+}
+.ol-tourn-card:hover { background: rgba(240,200,80,0.1); border-color: rgba(240,200,80,0.35); }
+.ol-tourn-card-icon  { font-size: 1.4rem; flex-shrink: 0; }
+.ol-tourn-card-body  { flex: 1; min-width: 0; }
+.ol-tourn-card-name  { font: 700 0.87rem/1.2 var(--font-ui,sans-serif); color: var(--text-main,#f5f5f5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ol-tourn-card-meta  { font: 400 0.72rem/1.3 var(--font-ui,sans-serif); color: var(--text-muted,rgba(245,245,245,.65)); margin-top: 2px; }
+.ol-tourn-card-badge { font: 700 0.68rem/1 var(--font-ui,sans-serif); padding: 3px 7px; border-radius: 999px; flex-shrink: 0; }
+.ol-tourn-badge-waiting { background: rgba(240,200,80,0.18); color: #f0c850; border: 1px solid rgba(240,200,80,0.35); }
+.ol-tourn-badge-active  { background: rgba(100,220,120,0.18); color: #6ddc88; border: 1px solid rgba(100,220,120,0.35); }
+.ol-tourn-badge-spec    { background: rgba(100,160,255,0.18); color: #7eb4ff; border: 1px solid rgba(100,160,255,0.3); }
+#ol-tourn-empty { text-align: center; padding: 8px 0 4px; color: var(--text-muted,rgba(245,245,245,.5)); font-size:.82rem; }
+
+/* ── tournament-container dans l'overlay lobby ─────────────── */
+#tournament-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  min-height: 60px;
+}
+
+/* ── Overlay bracket tournoi ────────────────────────────────── */
+#tournament-bracket-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+#tournament-bracket-overlay[hidden] { display: none !important; }
+.tourn-overlay-inner {
+  background: var(--modal-surface, linear-gradient(160deg,#3a2d25 0%,#2a201a 100%));
+  border: 1.5px solid var(--modal-border, rgba(240,200,80,0.4));
+  border-radius: 20px;
+  padding: 20px 22px 18px;
+  width: min(96vw, 600px);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.tourn-overlay-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--modal-border, rgba(240,200,80,0.25));
+}
+.tourn-overlay-title { flex: 1; font: 800 1.1rem/1 var(--font-title,sans-serif); color: var(--modal-heading,#f0c850); }
+#tourn-overlay-close {
+  background: none;
+  border: 1px solid rgba(255,255,255,.15);
+  color: var(--modal-text,rgba(245,245,245,.8));
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-size: .9rem;
+}
+.tourn-participants-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.tourn-participant-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(240,200,80,0.1);
+  border: 1px solid rgba(240,200,80,0.22);
+  color: var(--text-main,#f5f5f5);
+  font: 600 0.78rem/1 var(--font-ui,sans-serif);
+}
+.tourn-participant-chip.me { border-color: rgba(240,200,80,0.55); background: rgba(240,200,80,0.18); }
+.tourn-overlay-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+
+/* ── Banner de notification "tournoi disponible" ─────────────── */
+#tourn-join-notify {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7500;
+  background: linear-gradient(135deg,rgba(40,30,15,.96),rgba(20,15,8,.98));
+  border: 1.5px solid rgba(240,200,80,0.5);
+  border-radius: 16px;
+  padding: 12px 18px;
+  color: var(--text-main,#f5f5f5);
+  font: 600 0.88rem/1.4 var(--font-ui,sans-serif);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(95vw, 420px);
+  animation: tournNotifyIn .35s cubic-bezier(.34,1.4,.64,1);
+}
+#tourn-join-notify[hidden] { display: none !important; }
+@keyframes tournNotifyIn { from { opacity:0; transform: translateX(-50%) translateY(20px) scale(.95); } to { opacity:1; transform: translateX(-50%) translateY(0) scale(1); } }
+.tnb-text { flex: 1; }
+.tnb-btn { background: rgba(240,200,80,0.2); border: 1px solid rgba(240,200,80,0.4); color: #f0c850; border-radius: 8px; padding: 6px 12px; cursor: pointer; font: 700 .8rem/1 var(--font-ui,sans-serif); white-space: nowrap; transition: background .15s; }
+.tnb-btn:hover { background: rgba(240,200,80,0.32); }
+.tnb-close { background: none; border: none; color: rgba(245,245,245,.4); cursor: pointer; font-size: .9rem; flex-shrink: 0; }
+
+/* ── Indicateur reprise de partie ─────────────────────────────── */
+#online-resume-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(100,200,120,0.1);
+  border: 1px solid rgba(100,200,120,0.3);
+  color: var(--text-main,#f5f5f5);
+  font: 600 0.83rem/1.4 var(--font-ui,sans-serif);
+  margin-bottom: 4px;
+}
+#online-resume-banner[hidden] { display: none !important; }
+.orb-icon { font-size: 1.2rem; flex-shrink: 0; }
+.orb-text { flex: 1; }
+.orb-btn  { background: rgba(100,200,120,0.22); border: 1px solid rgba(100,200,120,0.4); color: #6ddc88; border-radius: 8px; padding: 5px 10px; cursor: pointer; font: 700 .78rem/1 var(--font-ui,sans-serif); }
+
+/* ── Thèmes clairs : overrides tournoi ─────────────────────── */
+[data-theme="kabylie"] #ol-tournaments-wrap,
+[data-theme="desert"]  #ol-tournaments-wrap {
+  background: rgba(31,26,18,0.04) !important;
+  border-color: rgba(150,80,10,0.18) !important;
+}
+[data-theme="kabylie"] .ol-tourn-title,
+[data-theme="desert"]  .ol-tourn-title { color: #92400e !important; }
+[data-theme="kabylie"] .ol-tourn-card,
+[data-theme="desert"]  .ol-tourn-card  { background: rgba(255,255,255,0.6) !important; border-color: rgba(150,80,10,0.14) !important; color: #2c1810 !important; }
+[data-theme="kabylie"] .ol-tourn-card-name,
+[data-theme="desert"]  .ol-tourn-card-name { color: #1c1409 !important; }
+</style>
+
+<script nonce="tiddas">
+/* ═══════════════════════════════════════════════════════════════════════
+   TIDDAS TOURNAMENT EXTENSION v1.0
+   Toutes les features en un IIFE autonome, sans modifier le code existant.
+   Compatible : appelle les fonctions globales exposées par l'IIFE principale.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function TiddasTournamentExtension() {
+  'use strict';
+
+  // ─── Helpers internes ───────────────────────────────────────────────
+  var _esc = function(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  };
+  var _t = function(key, fb) {
+    try { return (window.translations && window.translations[window.currentLanguage] && window.translations[window.currentLanguage][key]) || fb || key; } catch(_) { return fb || key; }
+  };
+  var _getMatchId  = function() { return window.online && window.online.matchId; };
+  var _getPlayerId = function() { return window.onlinePlayerId || ''; };
+  var _getPlayerName = function() {
+    try { return (document.getElementById('online-your-name') || {}).value || localStorage.getItem('tiddas_online_name_v1') || 'Joueur'; } catch(_) { return 'Joueur'; }
+  };
+
+  // ─── Constantes ─────────────────────────────────────────────────────
+  var MIN_TOURNAMENT_PLAYERS = 3; // À partir de 3 joueurs → tournoi
+  var TOURNAMENT_POLL_KEY    = 'tiddas_tourn_seen_v1';
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FEATURE 4 — REPRISE DE PARTIE APRÈS DÉCONNEXION
+  // Patch de onlineConnectToRoom_Back4App : si le joueur est déjà p1/p2 et
+  // qu'une partie est en cours, restaurer l'état plutôt que de relancer.
+  // ══════════════════════════════════════════════════════════════════════
+  (function patchReconnectResume() {
+    // On attend que window._startPolling soit disponible (exposé après DOMContentLoaded)
+    // et que onlineConnectToRoom_Back4App soit wrappable.
+    var _origConnect = window.onlineConnectToRoom_Back4App;
+    if (typeof _origConnect !== 'function') {
+      // Réessayer une fois le DOM chargé
+      window.addEventListener('load', function() { patchReconnectResume(); }, { once: true });
+      return;
+    }
+
+    window.onlineConnectToRoom_Back4App = async function(code, creating) {
+      // Appel standard d'abord
+      return _origConnect.apply(this, arguments);
+    };
+
+    // Hook secondaire : après connexion, vérifier si une partie était en cours
+    // On monitore online.matchId + status pour décider de la reprise
+    window._tiddasCheckResume = async function(matchId) {
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var status  = m.get('status') || 'waiting';
+        var p1Id    = m.get('p1Id') || null;
+        var p2Id    = m.get('p2Id') || null;
+        var payload = m.get('payload') || null;
+        var myId    = _getPlayerId();
+        var isActivePlayer = (p1Id === myId || p2Id === myId);
+
+        if (!isActivePlayer) return;
+
+        // ── Cas 1 : partie "finished" → afficher option rematch automatique ──
+        if (status === 'finished') {
+          _showResumeOrRematchBanner(m, 'finished');
+          return;
+        }
+
+        // ── Cas 2 : partie "playing" avec payload → restaurer l'état ──────
+        if (status === 'playing' && payload && payload.state) {
+          var revInDB = Number(m.get('rev') || 0);
+          // Si on a déjà la même rev, c'est que le polling a déjà géré ça
+          if (window.online && window.online.lastSeenRev === revInDB) return;
+
+          _showResumeOrRematchBanner(m, 'playing');
+        }
+      } catch(e) {
+        // silencieux — ne pas bloquer le flux normal
+      }
+    };
+
+    // Patcher _processOnlineMatch pour intégrer le mode spectateur auto
+    var _origProcess = window._processOnlineMatch;
+    window._processOnlineMatch = function(match, forceApply) {
+      if (typeof _origProcess === 'function') _origProcess.apply(this, arguments);
+      // Après application : si p1Id/p2Id !== monId → forcer mode spectateur
+      try {
+        var p1 = match && match.get ? match.get('p1Id') : null;
+        var p2 = match && match.get ? match.get('p2Id') : null;
+        var myId = _getPlayerId();
+        var isPlayer = (p1 === myId || p2 === myId);
+        if (!isPlayer && window.gameMode === 'online') {
+          window.gameMode = 'spectator';
+          document.body.classList.add('is-spectating');
+          var badge = document.getElementById('spectator-badge');
+          if (badge) {
+            badge.textContent = '👁 Spectateur en ligne';
+            badge.classList.add('visible');
+          }
+        }
+      } catch(_) {}
+    };
+
+    // Surveiller les connexions pour vérifier la reprise
+    var _origApplyLobby = window._applyLobbyStateFromMatch;
+    if (typeof _origApplyLobby === 'function') {
+      window._applyLobbyStateFromMatch = function(match) {
+        _origApplyLobby.apply(this, arguments);
+        // Après l'appel original, vérifier si on peut reprendre
+        try {
+          var status = match && match.get ? (match.get('status') || '') : '';
+          var matchId = match && match.id;
+          if ((status === 'playing' || status === 'finished') && matchId) {
+            // N'appeler qu'une seule fois par matchId
+            if (!window._tiddasResumeCheckedFor || window._tiddasResumeCheckedFor !== matchId) {
+              window._tiddasResumeCheckedFor = matchId;
+              window._tiddasCheckResume(matchId);
+            }
+          }
+        } catch(_) {}
+      };
+    }
+  })();
+
+  // ── Afficher le banner "reprendre / revanche" ───────────────────────
+  function _showResumeOrRematchBanner(match, statusType) {
+    var banner = document.getElementById('online-resume-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'online-resume-banner';
+      banner.setAttribute('hidden', '');
+      banner.innerHTML =
+        '<span class="orb-icon">♻️</span>' +
+        '<span class="orb-text" id="orb-text-msg">Partie en cours détectée.</span>' +
+        '<button class="orb-btn" id="orb-resume-btn" type="button">Reprendre</button>';
+      var statusPanel = document.getElementById('online-status');
+      if (statusPanel) statusPanel.insertBefore(banner, statusPanel.firstChild);
+    }
+
+    var msg   = document.getElementById('orb-text-msg');
+    var btn   = document.getElementById('orb-resume-btn');
+
+    if (statusType === 'finished') {
+      if (msg) msg.textContent = 'Partie terminée — revanche automatique disponible.';
+      if (btn) {
+        btn.textContent = 'Revanche';
+        btn.onclick = function() {
+          banner.setAttribute('hidden', '');
+          try {
+            if (typeof window.onlineSetRematchReady === 'function') window.onlineSetRematchReady(true);
+            if (typeof window.showToast === 'function') window.showToast('✅ Prêt pour la revanche !', 2000);
+          } catch(_) {}
+        };
+      }
+    } else {
+      if (msg) msg.textContent = 'Partie en cours — reprendre où vous en étiez ?';
+      if (btn) {
+        btn.textContent = 'Reprendre';
+        btn.onclick = function() {
+          banner.setAttribute('hidden', '');
+          try {
+            var payload = match.get('payload');
+            if (payload && payload.state && typeof window.onlineApplyState === 'function') {
+              window.online.lastSeenRev = Number(match.get('rev') || 0);
+              window.online.suppressSend = false;
+              window.onlineApplyState(payload);
+              if (typeof window.showScreen === 'function') window.showScreen('game-play-area');
+              if (typeof window.showToast === 'function') window.showToast('✅ Partie reprise !', 1800);
+            }
+          } catch(e) {
+            if (typeof window.showToast === 'function') window.showToast('Erreur lors de la reprise.', 2500);
+          }
+        };
+      }
+    }
+
+    banner.removeAttribute('hidden');
+  }
+
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FEATURE 1 + 2 + 3 — TOURNOIS : VISIBILITÉ, CRÉATION, BRACKET
+  // ══════════════════════════════════════════════════════════════════════
+  var TournamentLobby = (function() {
+
+    var _activeTournaments = []; // liste des tournois remontés depuis B4A
+    var _pollTimer         = null;
+    var _lastRefreshAt     = 0;
+    var _seenTournIds      = new Set(); // pour les notifications
+
+    // ── Charger les tournois actifs depuis Back4App ──────────────────
+    async function _fetchActiveTournaments() {
+      if (!window.Parse || !window.BACK4APP_CLASS) return [];
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        q.exists('tournament');
+        q.notEqualTo('tournament', null);
+        q.notEqualTo('tournament', '');
+        q.descending('updatedAt');
+        q.limit(12);
+        var results = await q.find();
+        var list = [];
+        results.forEach(function(m) {
+          try {
+            var tData = JSON.parse(m.get('tournament') || 'null');
+            if (!tData || !tData.participants || tData.participants.length < 2) return;
+            var myId   = _getPlayerId();
+            var amIn   = tData.participants.some(function(p) { return p.id === myId; });
+            var status = m.get('status') || 'waiting';
+            list.push({
+              matchId:      m.id,
+              code:         m.get('code') || '?',
+              name:         tData.name || ('Tournoi ' + m.get('code')),
+              participants: tData.participants || [],
+              active:       tData.active,
+              bracket:      tData.bracket || [],
+              currentRound: tData.currentRound || 0,
+              createdBy:    tData.createdBy || null,
+              matchStatus:  status,
+              amIn:         amIn,
+              raw:          tData
+            });
+          } catch(_) {}
+        });
+        return list;
+      } catch(e) {
+        return [];
+      }
+    }
+
+    // ── Rendre la liste dans le DOM ──────────────────────────────────
+    function _render(list) {
+      var wrap  = document.getElementById('ol-tournaments-wrap');
+      var listEl= document.getElementById('ol-tournaments-list');
+      var emptyEl=document.getElementById('ol-tourn-empty');
+      if (!wrap || !listEl) return;
+
+      listEl.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        wrap.style.display = '';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+      }
+
+      wrap.style.display = '';
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      list.forEach(function(t) {
+        var started     = t.active;
+        var myId        = _getPlayerId();
+        var amPlayer    = t.amIn;
+        var canJoinSpec = started && !amPlayer;
+        var canJoinPart = !started && !amPlayer;
+
+        var badgeClass = started ? 'ol-tourn-badge-active' : 'ol-tourn-badge-waiting';
+        var badgeText  = started ? '🔴 En cours' : '⏳ Inscriptions';
+        if (canJoinSpec) { badgeClass = 'ol-tourn-badge-spec'; badgeText = '👁 Observer'; }
+
+        var card = document.createElement('div');
+        card.className = 'ol-tourn-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', 'Voir le tournoi ' + t.name);
+        card.innerHTML =
+          '<span class="ol-tourn-card-icon" aria-hidden="true">🏆</span>' +
+          '<div class="ol-tourn-card-body">' +
+            '<div class="ol-tourn-card-name">' + _esc(t.name) + '</div>' +
+            '<div class="ol-tourn-card-meta">' +
+              t.participants.length + ' participant(s) · ' + _esc(t.code) +
+              (amPlayer ? ' · <strong style="color:#6ddc88">Inscrit ✓</strong>' : '') +
+            '</div>' +
+          '</div>' +
+          '<span class="ol-tourn-card-badge ' + badgeClass + '">' + badgeText + '</span>';
+
+        var _open = function() { _openBracket(t); };
+        card.addEventListener('click', _open);
+        card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _open(); } });
+        listEl.appendChild(card);
+
+        // Notification si nouveau tournoi non encore vu
+        if (!_seenTournIds.has(t.matchId) && !t.amIn && !t.active) {
+          _seenTournIds.add(t.matchId);
+          _notifyNewTournament(t);
+        }
+      });
+    }
+
+    // ── Notification "nouveau tournoi" ───────────────────────────────
+    function _notifyNewTournament(t) {
+      // Notifier uniquement si on est dans le lobby ou l'écran principal (pas en partie)
+      if (window.gameMode === 'online' && window.currentScreen !== 'online-lobby-area') return;
+      try {
+        var seen = JSON.parse(localStorage.getItem(TOURNAMENT_POLL_KEY) || '[]');
+        if (seen.indexOf(t.matchId) !== -1) return;
+        seen.push(t.matchId);
+        if (seen.length > 30) seen = seen.slice(-15);
+        localStorage.setItem(TOURNAMENT_POLL_KEY, JSON.stringify(seen));
+      } catch(_) {}
+
+      var notify = document.getElementById('tourn-join-notify');
+      if (!notify) {
+        notify = document.createElement('div');
+        notify.id = 'tourn-join-notify';
+        notify.setAttribute('hidden', '');
+        notify.innerHTML =
+          '<span style="font-size:1.4rem;flex-shrink:0">🏆</span>' +
+          '<div class="tnb-text">Nouveau tournoi disponible : <strong id="tnb-name"></strong></div>' +
+          '<button class="tnb-btn" id="tnb-join-btn" type="button">Voir</button>' +
+          '<button class="tnb-close" id="tnb-close-btn" type="button" aria-label="Fermer">✕</button>';
+        document.body.appendChild(notify);
+        document.getElementById('tnb-close-btn').addEventListener('click', function() {
+          notify.setAttribute('hidden', '');
+        });
+      }
+
+      var nameEl = document.getElementById('tnb-name');
+      if (nameEl) nameEl.textContent = t.name;
+      document.getElementById('tnb-join-btn').onclick = function() {
+        notify.setAttribute('hidden', '');
+        _openBracket(t);
+      };
+      notify.removeAttribute('hidden');
+      setTimeout(function() { if (notify) notify.setAttribute('hidden', ''); }, 8000);
+    }
+
+    // ── Ouvrir le bracket overlay ─────────────────────────────────────
+    function _openBracket(t) {
+      var overlay  = document.getElementById('tournament-bracket-overlay');
+      var titleEl  = document.getElementById('tourn-overlay-title');
+      var partRow  = document.getElementById('tourn-participants-row');
+      var container= document.getElementById('tournament-container');
+      var watchBtn = document.getElementById('tourn-watch-btn');
+      var joinBtn  = document.getElementById('tourn-join-btn');
+      if (!overlay) return;
+
+      if (titleEl) titleEl.textContent = '🏆 ' + t.name;
+
+      // Participants
+      if (partRow) {
+        partRow.innerHTML = '';
+        var myId = _getPlayerId();
+        t.participants.forEach(function(p) {
+          var chip = document.createElement('div');
+          chip.className = 'tourn-participant-chip' + (p.id === myId ? ' me' : '');
+          chip.textContent = (p.id === myId ? '🏅 ' : '') + (p.name || '?');
+          partRow.appendChild(chip);
+        });
+      }
+
+      // Bracket (réutilise le rendu de Tournament existant si possible)
+      if (container) {
+        container.innerHTML = '';
+        if (window.TiddasTournament && typeof window.TiddasTournament.applyFromServer === 'function') {
+          window.TiddasTournament.applyFromServer(JSON.stringify(t.raw || t));
+          // Copier le bracket depuis #bracket-container si existe et différent
+          var src = document.getElementById('bracket-container');
+          if (src && src !== container) container.innerHTML = src.innerHTML;
+        } else {
+          _renderBracketInline(t, container);
+        }
+      }
+
+      // Boutons d'action
+      var amIn  = t.amIn;
+      var started = t.active;
+      if (watchBtn) {
+        watchBtn.style.display = started ? '' : 'none';
+        watchBtn.onclick = function() {
+          overlay.setAttribute('hidden', '');
+          _joinAsSpectator(t);
+        };
+      }
+      if (joinBtn) {
+        joinBtn.style.display = (!started && !amIn) ? '' : 'none';
+        joinBtn.onclick = function() {
+          overlay.setAttribute('hidden', '');
+          _joinTournamentAsParticipant(t);
+        };
+      }
+
+      overlay.removeAttribute('hidden');
+    }
+
+    // ── Rendu bracket inline ─────────────────────────────────────────
+    // Réutilise le rendu de Tournament si disponible ; sinon fallback compact.
+    function _renderBracketInline(t, container) {
+      if (!t.bracket || t.bracket.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:1rem;">Bracket non encore généré.</div>';
+        return;
+      }
+      // Utiliser le rendu partagé de Tournament si possible
+      if (window.TiddasTournament && typeof window.TiddasTournament.applyFromServer === 'function') {
+        window.TiddasTournament.applyFromServer(JSON.stringify(t.raw || t));
+        var src = document.getElementById('bracket-container');
+        if (src && src !== container) { container.innerHTML = src.innerHTML; return; }
+      }
+      // Fallback : rendu compact en pur DOM
+      var totalRounds = t.bracket.length;
+      t.bracket.forEach(function(round, ri) {
+        var rName = ri === totalRounds - 1 ? 'Finale' : ri === totalRounds - 2 ? 'Demi-finales' : ri === totalRounds - 3 ? 'Quarts' : 'Tour ' + (ri + 1);
+        var roundEl = document.createElement('div');
+        roundEl.className = 'bracket-round';
+        var titleEl = document.createElement('div');
+        titleEl.className = 'bracket-round-title';
+        titleEl.textContent = rName;
+        roundEl.appendChild(titleEl);
+        round.forEach(function(match) {
+          var mEl = document.createElement('div');
+          mEl.className = 'bracket-match' + (match.status === 'live' ? ' live' : '');
+          var _row = function(p, isWin, isLoss) {
+            var row = document.createElement('div');
+            row.className = 'bracket-player' + (isWin ? ' winner' : '') + (isLoss ? ' loser' : '');
+            var av = document.createElement('div');
+            av.className = 'bracket-player-avatar';
+            av.textContent = (p && p.name) ? p.name.charAt(0).toUpperCase() : '?';
+            var nm = document.createElement('span');
+            nm.className = 'bracket-player-name';
+            nm.textContent = (p && p.name) ? p.name : '—';
+            var sc = document.createElement('span');
+            sc.className = 'bracket-player-score';
+            sc.textContent = isWin ? '✓' : isLoss ? '✗' : '';
+            row.appendChild(av); row.appendChild(nm); row.appendChild(sc);
+            return row;
+          };
+          var p1W = match.winner && match.p1 && match.winner.id === match.p1.id;
+          var p2W = match.winner && match.p2 && match.winner.id === match.p2.id;
+          mEl.appendChild(_row(match.p1 || { name: 'TBD' }, p1W, p2W && !p1W));
+          mEl.appendChild(_row(match.p2 || { name: 'TBD' }, p2W, p1W && !p2W));
+          roundEl.appendChild(mEl);
+        });
+        container.appendChild(roundEl);
+      });
+    }
+
+    // ── Rejoindre comme spectateur ───────────────────────────────────
+    function _joinAsSpectator(t) {
+      window._spectatorPendingMatchId = t.matchId;
+      window._spectatorPendingCode    = t.code;
+      if (window.TiddasSpectator && typeof window.TiddasSpectator.joinAsSpectator === 'function') {
+        window.TiddasSpectator.joinAsSpectator();
+      } else if (typeof window.showToast === 'function') {
+        window.showToast('Connexion spectateur…', 1500);
+      }
+    }
+
+    // ── Rejoindre comme participant ──────────────────────────────────
+    async function _joinTournamentAsParticipant(t) {
+      if (!window.Parse || !window.BACK4APP_CLASS) return;
+      var myId   = _getPlayerId();
+      var myName = _getPlayerName();
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(t.matchId);
+        var tDataStr = m.get('tournament') || 'null';
+        var tData    = JSON.parse(tDataStr);
+        if (!tData) return;
+
+        // Vérifier si déjà inscrit
+        if (tData.participants.some(function(p) { return p.id === myId; })) {
+          if (typeof window.showToast === 'function') window.showToast('Déjà inscrit à ce tournoi.', 1800);
+          return;
+        }
+
+        // Ajouter le participant
+        tData.participants.push({ id: myId, name: myName, ready: true });
+        // Régénérer le bracket
+        if (tData.participants.length >= 2) {
+          tData.bracket = _generateBracket(tData.participants);
+        }
+
+        m.set('tournament', JSON.stringify(tData));
+        // Ajouter aux participants du GameMatch
+        var parts = m.get('participants') || [];
+        if (parts.indexOf(myId) === -1) parts.push(myId);
+        m.set('participants', parts);
+        m.increment('rev', 1);
+        await m.save();
+
+        if (typeof window.showToast === 'function') window.showToast('✅ Inscrit au tournoi !', 2000);
+        try { if (navigator.vibrate) navigator.vibrate([80, 40, 120]); } catch(_) {}
+
+        // Rafraîchir la liste
+        refresh();
+
+        // Si >= MIN_TOURNAMENT_PLAYERS participants, convertir le salon en tournoi
+        if (parts.length >= MIN_TOURNAMENT_PLAYERS) {
+          _notifyTournamentActivation(t.code);
+        }
+      } catch(e) {
+        if (typeof window.showToast === 'function') window.showToast('Erreur lors de l\'inscription.', 2200);
+      }
+    }
+
+    // ── Générer le bracket ───────────────────────────────────────────
+    // Délégué à Tournament (défini plus haut) via window.TiddasTournament,
+    // sinon copie locale de secours.
+    function _generateBracket(participants) {
+      if (window.TiddasTournament && typeof window.TiddasTournament._generateBracket === 'function') {
+        return window.TiddasTournament._generateBracket(participants);
+      }
+      // Secours inline
+      var ps = participants.slice();
+      var size = 1;
+      while (size < ps.length) size *= 2;
+      while (ps.length < size) ps.push({ name: 'BYE', id: null });
+      var rounds = [], current = [];
+      for (var i = 0; i < ps.length; i += 2) current.push({ p1: ps[i], p2: ps[i+1], winner: null, status: 'pending' });
+      rounds.push(current);
+      while (current.length > 1) {
+        var next = [];
+        for (var j = 0; j < current.length; j += 2) next.push({ p1: null, p2: null, winner: null, status: 'pending' });
+        rounds.push(next); current = next;
+      }
+      return rounds;
+    }
+
+    // ── Notification activation tournoi ─────────────────────────────
+    function _notifyTournamentActivation(code) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('🏆 Tournoi activé ! Code : ' + code, 3500);
+      }
+    }
+
+    // ── Actualisation périodique ─────────────────────────────────────
+    async function refresh() {
+      _lastRefreshAt = Date.now();
+      var list = await _fetchActiveTournaments();
+      _activeTournaments = list;
+      _render(list);
+    }
+
+    // ── Démarrer le polling tournois (actif seulement dans le lobby) ─
+    function startPolling() {
+      if (_pollTimer) return;
+      refresh();
+      _pollTimer = setInterval(function() {
+        var lobby = document.getElementById('online-lobby-area');
+        if (lobby && lobby.classList.contains('active')) {
+          if (Date.now() - _lastRefreshAt > 8000) refresh();
+        }
+      }, 10000);
+    }
+
+    function stopPolling() {
+      if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+    }
+
+    // ── Initialisation ───────────────────────────────────────────────
+    function init() {
+      // Fermer overlay
+      var closeBtn = document.getElementById('tourn-overlay-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          var ov = document.getElementById('tournament-bracket-overlay');
+          if (ov) ov.setAttribute('hidden', '');
+        });
+      }
+
+      // Bouton refresh
+      var refreshBtn = document.getElementById('ol-tourn-refresh');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          var icon = refreshBtn;
+          icon.style.transform = 'rotate(360deg)';
+          setTimeout(function() { icon.style.transform = ''; }, 310);
+          refresh();
+        });
+      }
+
+      // Créer tournoi depuis le lobby
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('#ol-create-tournament-btn');
+        if (!btn) return;
+        _createTournamentFromLobby();
+      });
+
+      // Démarrer le polling quand le lobby devient actif
+      var _origShowScreen = window.showScreen;
+      if (typeof _origShowScreen === 'function') {
+        window.showScreen = function(screenId) {
+          var result = _origShowScreen.apply(this, arguments);
+          if (screenId === 'online-lobby-area') {
+            startPolling();
+          } else {
+            // Continuer le poll léger mais ne pas rafraîchir à chaque tick
+          }
+          return result;
+        };
+      }
+
+      // Intégrer le polling des tournois dans le polling Back4App existant
+      // (hook window._onlineChatProcessTick pour aussi traiter le bracket)
+      var _origChatTick = window._onlineChatProcessTick;
+      window._onlineChatProcessTick = function(match) {
+        if (typeof _origChatTick === 'function') _origChatTick.apply(this, arguments);
+        // Synchroniser le bracket en temps réel si en cours de tournoi
+        try {
+          var tStr = match && match.get ? match.get('tournament') : null;
+          if (tStr && window.TiddasTournament) {
+            window.TiddasTournament.applyFromServer(tStr);
+          }
+          // Aussi synchroniser les participants
+          var parts = match && match.get ? match.get('participants') : null;
+          if (parts && Array.isArray(parts) && parts.length >= MIN_TOURNAMENT_PLAYERS) {
+            window._tiddasTournamentParticipants = parts;
+          }
+        } catch(_) {}
+      };
+    }
+
+    // ── Créer un tournoi depuis le lobby ────────────────────────────
+    async function _createTournamentFromLobby() {
+      if (!window.Parse || !window.BACK4APP_CLASS) {
+        if (typeof window.showToast === 'function') window.showToast('Connectez-vous d\'abord à un salon.', 2000);
+        return;
+      }
+      var matchId = _getMatchId();
+      if (!matchId) {
+        if (typeof window.showToast === 'function') window.showToast('Créez ou rejoignez un salon en premier.', 2200);
+        return;
+      }
+      var myId   = _getPlayerId();
+      var myName = _getPlayerName();
+      // Nom par défaut basé sur la date — pas de prompt() bloquant
+      var tName  = 'Tournoi du ' + new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var tData = {
+          active:       false,
+          id:           myId + '_' + Date.now().toString(36),
+          name:         tName,
+          participants: [{ id: myId, name: myName, ready: true }],
+          bracket:      [],
+          currentRound: 0,
+          createdBy:    myId
+        };
+        m.set('tournament', JSON.stringify(tData));
+        m.set('participants', [myId]);
+        m.increment('rev', 1);
+        await m.save();
+        if (typeof window.showToast === 'function') window.showToast('🏆 Tournoi créé ! Partagez le code du salon.', 2800);
+        refresh();
+      } catch(e) {
+        if (typeof window.showToast === 'function') window.showToast('Erreur création tournoi.', 2000);
+      }
+    }
+
+    return { init: init, refresh: refresh, startPolling: startPolling };
+  })();
+
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FEATURE 2 — TRANSFORMATION AUTOMATIQUE SALON → TOURNOI
+  // Quand >2 joueurs s'inscrivent dans participants[], transformer en tournoi
+  // ══════════════════════════════════════════════════════════════════════
+  (function watchParticipantsGrowth() {
+    var _tourneyCreationDone = new Set(); // éviter les doublons
+
+    // Intercepter _applyLobbyStateFromMatch pour détecter >2 participants
+    window._tiddasOnMatchUpdate = function(match) {
+      try {
+        var parts = match.get('participants') || [];
+        var matchId = match.id;
+        if (parts.length < MIN_TOURNAMENT_PLAYERS) return;
+        if (_tourneyCreationDone.has(matchId)) return;
+
+        var tStr = match.get('tournament') || '';
+        var tData = null;
+        try { tData = JSON.parse(tStr || 'null'); } catch(_) {}
+
+        // Pas encore de tournoi créé → créer automatiquement
+        if (!tData || !tData.participants || tData.participants.length < 2) {
+          _tourneyCreationDone.add(matchId);
+          _autoCreateTournamentFromParticipants(match, parts);
+        }
+      } catch(_) {}
+    };
+
+    // Injecter l'appel dans _applyLobbyStateFromMatch si disponible
+    var _origApply = window._applyLobbyStateFromMatch;
+    if (typeof _origApply === 'function') {
+      // Déjà patché dans la section reprise — ajouter un hook léger
+      var _existing = window._applyLobbyStateFromMatch;
+      window._applyLobbyStateFromMatch = function(match) {
+        _existing.apply(this, arguments);
+        try { window._tiddasOnMatchUpdate(match); } catch(_) {}
+      };
+    }
+  })();
+
+  function _autoCreateTournamentFromParticipants(match, participantIds) {
+    if (!window.Parse || !window.BACK4APP_CLASS) return;
+    try {
+      var p1Name = match.get('p1Name') || 'Joueur 1';
+      var p2Name = match.get('p2Name') || 'Joueur 2';
+      var participants = participantIds.map(function(id, idx) {
+        if (id === match.get('p1Id')) return { id: id, name: p1Name, ready: true };
+        if (id === match.get('p2Id')) return { id: id, name: p2Name, ready: true };
+        return { id: id, name: 'Joueur ' + (idx + 1), ready: true };
+      });
+
+      var tData = {
+        active:       false,
+        id:           match.id + '_auto',
+        name:         'Tournoi auto – ' + (match.get('code') || match.id),
+        participants: participants,
+        bracket:      _simpleBracket(participants),
+        currentRound: 0,
+        createdBy:    match.get('p1Id') || ''
+      };
+
+      // Récupérer l'objet Parse existant pour le modifier correctement
+      var q = new window.Parse.Query(window.BACK4APP_CLASS);
+      q.get(match.id).then(function(obj) {
+        obj.set('tournament', JSON.stringify(tData));
+        obj.increment('rev', 1);
+        return obj.save();
+      }).then(function() {
+        if (typeof window.showToast === 'function') {
+          window.showToast('🏆 Tournoi automatiquement créé (' + participants.length + ' participants) !', 3000);
+        }
+        _broadcastTournamentNotification(match.id, tData.name);
+      }).catch(function(){});
+    } catch(e) {}
+  }
+
+  // Délégué à Tournament._generateBracket
+  function _simpleBracket(participants) {
+    if (window.TiddasTournament && typeof window.TiddasTournament._generateBracket === 'function') {
+      return window.TiddasTournament._generateBracket(participants);
+    }
+    // Secours minimal
+    var ps = participants.slice();
+    var size = 1;
+    while (size < ps.length) size *= 2;
+    while (ps.length < size) ps.push({ name: 'BYE', id: null });
+    var rounds = [], current = [];
+    for (var i = 0; i < ps.length; i += 2) current.push({ p1: ps[i], p2: ps[i+1], winner: null, status: 'pending' });
+    rounds.push(current);
+    while (current.length > 1) {
+      var next = [];
+      for (var j = 0; j < current.length; j += 2) next.push({ p1: null, p2: null, winner: null, status: 'pending' });
+      rounds.push(next); current = next;
+    }
+    return rounds;
+  }
+
+  function _broadcastTournamentNotification(matchId, tournName) {
+    try {
+      var q2 = new window.Parse.Query(window.BACK4APP_CLASS);
+      q2.get(matchId).then(function(m) {
+        var ex = (m.get('ephemeralChat') || []).filter(function(x) { return x && x.id && (!x.expiresAt || x.expiresAt > Date.now()); });
+        ex.push({
+          id:        'tourn_' + Date.now().toString(36),
+          type:      'spectator-chat',
+          text:      '🏆 Un tournoi a été créé : "' + tournName + '". Rejoignez en tant que participant !',
+          fromName:  'Système',
+          fromRole:  0,
+          ts:        Date.now(),
+          expiresAt: Date.now() + 1800000
+        });
+        m.set('ephemeralChat', ex.slice(-40));
+        m.save().catch(function(){});
+      }).catch(function(){});
+    } catch(_) {}
+  }
+
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FEATURE 5 — CHAT UNIFIÉ : spectateurs + participants
+  // Rendre le chat accessible à tous dans le salon / tournoi
+  // ══════════════════════════════════════════════════════════════════════
+  (function unifyChat() {
+    // Guard : SpectatorChat peut ne pas être encore exposé si l'ordre de chargement varie
+    if (!window.TiddasSpectatorChat) return;
+
+    // Étendre SpectatorChat.syncVisibility pour aussi montrer le FAB
+    // aux participants en attente dans un tournoi
+    var _origSync = window.TiddasSpectatorChat.syncVisibility;
+    if (typeof _origSync === 'function') {
+      var _newSync = function() {
+        _origSync.apply(this, arguments);
+        // Aussi visible si dans un tournoi en tant que participant en attente
+        var fab   = document.getElementById('spectator-chat-fab');
+        var panel = document.getElementById('spectator-chat-panel');
+        var inTournament = !!(window._tiddasTournamentParticipants &&
+                              window._tiddasTournamentParticipants.indexOf(_getPlayerId()) !== -1);
+        if (inTournament && fab) fab.hidden = false;
+      };
+      window.TiddasSpectatorChat.syncVisibility = _newSync;
+    }
+
+    // Afficher les messages de type 'text' (joueurs actifs) dans le panneau spectateur aussi
+    var _origInject = window._specChatInjectMsg;
+    window._specChatInjectMsg = function(msg) {
+      if (!msg) return;
+      // Accepter 'text' ET 'spectator-chat' pour le panneau unifié
+      if (msg.type !== 'spectator-chat' && msg.type !== 'text') return;
+      if (typeof _origInject === 'function') {
+        var faked = Object.assign({}, msg, { type: 'spectator-chat' });
+        _origInject(faked);
+      }
+    };
+  })();
+
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FEATURE 6 — CORRECTIONS TECHNIQUES
+  // ══════════════════════════════════════════════════════════════════════
+
+  // 6a — Patch onlineApplyState : basculer auto en 'spectator' si role=0
+  (function patchApplyStateRole() {
+    var _origApply = window.onlineApplyState;
+    if (typeof _origApply !== 'function') return;
+    window.onlineApplyState = function(msg) {
+      var result = _origApply.apply(this, arguments);
+      try {
+        // Si role 0 (observateur) et gameMode est 'online', corriger en 'spectator'
+        if (window.online && window.online.role === 0 && window.gameMode === 'online') {
+          window.gameMode = 'spectator';
+        }
+      } catch(_) {}
+      return result;
+    };
+  })();
+
+  // ── Boot ──────────────────────────────────────────────────────────────
+  function _boot() {
+    TournamentLobby.init();
+
+    // Ajouter la section tournois sous les salons récents dans le lobby
+    // (HTML injecté statiquement, juste besoin de l'activer)
+    var wrap = document.getElementById('ol-tournaments-wrap');
+    if (wrap) {
+      // Démarrer le polling si le lobby est déjà actif
+      var lobby = document.getElementById('online-lobby-area');
+      if (lobby && lobby.classList.contains('active')) {
+        TournamentLobby.startPolling();
+      }
+    }
+
+    // Surveiller les clics sur "Jouer en ligne" pour démarrer le polling
+    var onlineBtn = document.getElementById('play-online-btn');
+    if (onlineBtn) {
+      onlineBtn.addEventListener('click', function() {
+        setTimeout(function() { TournamentLobby.startPolling(); }, 400);
+      });
+    }
+
+    // Exposer pour debug
+    window.TiddasTournamentLobby = TournamentLobby;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _boot);
+  } else {
+    setTimeout(_boot, 0);
+  }
+
+})(); // end TiddasTournamentExtension
 </script>
 </body>
 </html>
