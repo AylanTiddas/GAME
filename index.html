@@ -31639,5 +31639,1330 @@ window.TiddasSpectator       = SpectatorEnhanced;
 
 })(); // end TiddasTournamentExtension
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TIDDAS — PATCH PROD v2.0
+     Auteur : refonte complète des 4 axes demandés :
+     1. Tournois : nommage custom, lobby, click-to-join, multi-tables
+     2. Spectateur : adhésion propre, rotation KotH, reprise déco
+     3. Revanche rapide asynchrone (async handshake)
+     4. Reconnexion transparente (seamless resume via localStorage)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<style nonce="tiddas">
+/* ── Modale nom tournoi ───────────────────────────────────────────────── */
+#tpatch-modal-overlay {
+  position: fixed; inset: 0; z-index: 100000;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+#tpatch-modal-overlay.visible { opacity: 1; pointer-events: all; }
+#tpatch-modal {
+  background: linear-gradient(145deg, #2c2318, #1a1208);
+  border: 1.5px solid rgba(240,200,80,0.38);
+  border-radius: 16px;
+  padding: 1.8rem 2rem 1.6rem;
+  max-width: 420px; width: 90vw;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+#tpatch-modal h3 {
+  font-family: var(--font-title, serif);
+  color: var(--text-gold, #f0c850);
+  font-size: 1.15rem; margin: 0;
+  letter-spacing: 0.5px;
+}
+#tpatch-modal p { font-size: 0.85rem; color: rgba(245,225,160,0.65); margin: 0; }
+#tpatch-tourn-name-input {
+  width: 100%; padding: 0.7rem 1rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(240,200,80,0.3);
+  border-radius: 8px; color: #f5f5f5;
+  font-size: 1rem; font-family: var(--font-body, serif);
+  outline: none; transition: border-color 0.18s;
+}
+#tpatch-tourn-name-input:focus { border-color: rgba(240,200,80,0.7); }
+.tpatch-modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; }
+.tpatch-modal-actions button {
+  padding: 0.55rem 1.3rem; border-radius: 22px; border: none;
+  cursor: pointer; font-family: var(--font-title, serif);
+  font-size: 0.9rem; font-weight: 600;
+  transition: transform 0.15s, filter 0.15s;
+}
+.tpatch-modal-actions button:hover { transform: translateY(-1px); filter: brightness(1.1); }
+#tpatch-modal-confirm {
+  background: linear-gradient(135deg, #e8b830, #c89010); color: #1a0f00;
+}
+#tpatch-modal-cancel {
+  background: rgba(255,255,255,0.08); color: rgba(245,245,245,0.7);
+  border: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+/* ── Liste tournois lobby améliorée ─────────────────────────────────── */
+.tpatch-tourn-item {
+  border: 1px solid rgba(240,200,80,0.22);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.55rem;
+  background: rgba(240,200,80,0.04);
+  transition: background 0.18s, border-color 0.18s;
+  cursor: pointer;
+}
+.tpatch-tourn-item:hover {
+  background: rgba(240,200,80,0.10);
+  border-color: rgba(240,200,80,0.45);
+}
+.tpatch-tourn-name {
+  font-family: var(--font-title, serif);
+  color: var(--text-gold, #f0c850);
+  font-size: 0.95rem; font-weight: 600;
+}
+.tpatch-tourn-meta {
+  font-size: 0.78rem; color: rgba(245,225,160,0.55);
+  margin-top: 0.2rem;
+}
+.tpatch-tourn-status {
+  display: inline-block;
+  font-size: 0.72rem; padding: 0.15rem 0.55rem;
+  border-radius: 20px; margin-left: 0.5rem;
+  background: rgba(240,200,80,0.15);
+  color: var(--text-gold, #f0c850);
+}
+.tpatch-tourn-status.live {
+  background: rgba(50,200,100,0.2); color: #5ddd7e;
+}
+
+/* ── Menu multi-tables (picker) ─────────────────────────────────────── */
+#tpatch-table-picker {
+  position: fixed; inset: 0; z-index: 100001;
+  background: rgba(0,0,0,0.78); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+}
+#tpatch-table-picker.visible { display: flex; }
+#tpatch-table-picker-box {
+  background: linear-gradient(145deg, #2c2318, #1a1208);
+  border: 1.5px solid rgba(240,200,80,0.35);
+  border-radius: 14px; padding: 1.6rem 1.8rem 1.4rem;
+  max-width: 400px; width: 90vw; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+#tpatch-table-picker-box h3 {
+  font-family: var(--font-title, serif);
+  color: var(--text-gold, #f0c850);
+  font-size: 1.05rem; margin: 0 0 1rem;
+}
+.tpatch-table-row {
+  padding: 0.65rem 0.9rem; border-radius: 8px;
+  border: 1px solid rgba(240,200,80,0.2);
+  margin-bottom: 0.45rem; cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.88rem; color: rgba(245,245,245,0.88);
+}
+.tpatch-table-row:hover { background: rgba(240,200,80,0.10); }
+#tpatch-table-picker-close {
+  margin-top: 0.8rem; width: 100%;
+  padding: 0.5rem; border-radius: 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(245,245,245,0.6); cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* ── Bouton "Prendre la relève" spectateur ──────────────────────────── */
+#tpatch-takeover-btn {
+  position: fixed; bottom: 5.5rem; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  padding: 0.7rem 1.8rem;
+  background: linear-gradient(135deg, #3aaa50, #2a7a3a);
+  color: #fff; border: none; border-radius: 24px;
+  font-family: var(--font-title, serif); font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  display: none;
+  animation: tpatch-pulse 1.8s ease-in-out infinite;
+}
+@keyframes tpatch-pulse {
+  0%,100% { box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+  50% { box-shadow: 0 6px 32px rgba(58,170,80,0.6), 0 0 0 4px rgba(58,170,80,0.2); }
+}
+
+/* ── Bannière revanche rapide ────────────────────────────────────────── */
+#tpatch-rematch-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9500;
+  background: linear-gradient(135deg, #2c2318, #1a1208);
+  border-bottom: 2px solid rgba(240,200,80,0.45);
+  padding: 0.8rem 1.2rem;
+  display: none; align-items: center; gap: 0.8rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  flex-wrap: wrap;
+}
+#tpatch-rematch-banner.visible { display: flex; }
+#tpatch-rematch-banner span {
+  flex: 1; font-size: 0.9rem; color: rgba(245,225,160,0.85);
+  font-family: var(--font-body, serif);
+}
+#tpatch-rematch-accept-btn {
+  padding: 0.5rem 1.3rem; border-radius: 20px; border: none;
+  background: linear-gradient(135deg, #e8b830, #c89010);
+  color: #1a0f00; font-weight: 700;
+  font-family: var(--font-title, serif); font-size: 0.88rem;
+  cursor: pointer; white-space: nowrap;
+}
+#tpatch-rematch-request-btn {
+  padding: 0.5rem 1.3rem; border-radius: 20px;
+  border: 1px solid rgba(240,200,80,0.45);
+  background: transparent; color: var(--text-gold, #f0c850);
+  font-family: var(--font-title, serif); font-size: 0.88rem;
+  cursor: pointer; white-space: nowrap;
+}
+
+/* ── Bannière reconnexion auto ───────────────────────────────────────── */
+#tpatch-resume-toast {
+  position: fixed; top: 0.8rem; left: 50%; transform: translateX(-50%);
+  z-index: 9600; background: rgba(30,50,30,0.97);
+  border: 1.5px solid rgba(58,170,80,0.6); border-radius: 12px;
+  padding: 0.75rem 1.4rem; display: none; align-items: center; gap: 0.7rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6); max-width: 90vw;
+  white-space: nowrap;
+}
+#tpatch-resume-toast.visible { display: flex; }
+#tpatch-resume-toast span { font-size: 0.88rem; color: rgba(180,240,180,0.92); }
+.tpatch-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2.5px solid rgba(58,170,80,0.3);
+  border-top-color: #3aaa50;
+  animation: tpatch-spin 0.7s linear infinite;
+}
+@keyframes tpatch-spin { to { transform: rotate(360deg); } }
+</style>
+
+<div id="tpatch-modal-overlay">
+  <div id="tpatch-modal">
+    <h3>🏆 Nouveau Tournoi</h3>
+    <p>Donnez un nom mémorable à votre tournoi :</p>
+    <input id="tpatch-tourn-name-input" type="text" maxlength="40"
+           placeholder="Ex : Grand Tournoi Kabyle 2025…" autocomplete="off" />
+    <div class="tpatch-modal-actions">
+      <button id="tpatch-modal-cancel">Annuler</button>
+      <button id="tpatch-modal-confirm">Créer 🏆</button>
+    </div>
+  </div>
+</div>
+
+<div id="tpatch-table-picker">
+  <div id="tpatch-table-picker-box">
+    <h3>⚔️ Choisir une table</h3>
+    <div id="tpatch-table-list"></div>
+    <button id="tpatch-table-picker-close">Fermer</button>
+  </div>
+</div>
+
+<button id="tpatch-takeover-btn" type="button">⚡ Prendre la relève</button>
+
+<div id="tpatch-rematch-banner">
+  <span id="tpatch-rematch-msg">Votre adversaire propose une revanche !</span>
+  <button id="tpatch-rematch-request-btn">🔄 Rejouer</button>
+  <button id="tpatch-rematch-accept-btn">✅ Accepter</button>
+</div>
+
+<div id="tpatch-resume-toast">
+  <div class="tpatch-spinner"></div>
+  <span id="tpatch-resume-msg">Reconnexion en cours…</span>
+</div>
+
+<script nonce="tiddas">
+/* ══════════════════════════════════════════════════════════════════════════
+   TIDDAS PATCH PROD v2.0 — IIFE principale
+   ══════════════════════════════════════════════════════════════════════════ */
+(function TiddasPatchProd() {
+  'use strict';
+
+  // ── Constantes ──────────────────────────────────────────────────────────
+  var LS_RESUME_KEY  = 'tiddas_resume_v2';    // localStorage reconnexion
+  var LS_REMATCH_KEY = 'tiddas_rematch_v2';   // localStorage revanche
+  var POLL_TOURN_MS  = 9000;                  // interval polling tournois
+  var RESUME_RETRY   = 3;                     // tentatives reconnexion auto
+
+  // ── Helpers locaux ──────────────────────────────────────────────────────
+  function _getPlayerId()  { return String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || ''); }
+  function _getPlayerName(){ return (window.getOnlinePlayerName && window.getOnlinePlayerName()) || localStorage.getItem('tiddas_pname_v1') || 'Joueur'; }
+  function _getMatchId()   { return (window.online && window.online.matchId) || null; }
+
+  function _debounce(fn, ms) {
+    var t; return function() { clearTimeout(t); t = setTimeout(fn, ms); };
+  }
+
+  function _toast(msg, ms) {
+    try { window.showToast && window.showToast(msg, ms || 2200); } catch(_) {}
+  }
+
+  function _showEl(el)  { if (el) el.classList.add('visible'); }
+  function _hideEl(el)  { if (el) el.classList.remove('visible'); }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 1. MODALE NOM TOURNOI — Remplace la création silencieuse par une modale
+  // ════════════════════════════════════════════════════════════════════════
+  var TournamentNameModal = (function() {
+    var _overlay = null;
+    var _input   = null;
+    var _resolve = null;
+
+    function _build() {
+      _overlay = document.getElementById('tpatch-modal-overlay');
+      _input   = document.getElementById('tpatch-tourn-name-input');
+      var confirmBtn = document.getElementById('tpatch-modal-confirm');
+      var cancelBtn  = document.getElementById('tpatch-modal-cancel');
+
+      var _submit = function() {
+        var name = (_input.value || '').trim();
+        if (!name) { _input.focus(); return; }
+        _hide();
+        if (_resolve) { _resolve(name); _resolve = null; }
+      };
+
+      confirmBtn.addEventListener('click', _submit);
+      cancelBtn.addEventListener('click', function() {
+        _hide();
+        if (_resolve) { _resolve(null); _resolve = null; }
+      });
+      _input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') _submit();
+        if (e.key === 'Escape') cancelBtn.click();
+      });
+      _overlay.addEventListener('click', function(e) {
+        if (e.target === _overlay) cancelBtn.click();
+      });
+    }
+
+    function _show() {
+      if (!_overlay) _build();
+      // Proposition par défaut
+      var d = new Date();
+      _input.value = 'Tournoi du ' + d.getDate() + '/' + (d.getMonth() + 1);
+      _input.select();
+      _showEl(_overlay);
+      setTimeout(function() { _input && _input.focus(); }, 50);
+      return new Promise(function(resolve) { _resolve = resolve; });
+    }
+
+    function _hide() { _hideEl(_overlay); }
+
+    return { ask: _show };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 2. CRÉATION TOURNOI — Patch de _createTournamentFromLobby avec modale
+  // ════════════════════════════════════════════════════════════════════════
+  function _patchTournamentCreation() {
+    // Remplacer le listener sur #ol-create-tournament-btn
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('#ol-create-tournament-btn');
+      if (!btn) return;
+      e.stopImmediatePropagation(); // court-circuiter l'ancien handler
+
+      (async function() {
+        if (!window.Parse || !window.BACK4APP_CLASS) {
+          _toast('Connectez-vous d\'abord à un salon.', 2200);
+          return;
+        }
+        var matchId = _getMatchId();
+        if (!matchId) {
+          _toast('Créez ou rejoignez un salon en premier.', 2200);
+          return;
+        }
+
+        // Demander le nom via modale (non-bloquant)
+        var tName = await TournamentNameModal.ask();
+        if (!tName) return; // annulé
+
+        var myId   = _getPlayerId();
+        var myName = _getPlayerName();
+
+        try {
+          var q = new window.Parse.Query(window.BACK4APP_CLASS);
+          var m = await q.get(matchId);
+
+          // Vérifier si tournoi déjà présent
+          var existing = null;
+          try { existing = JSON.parse(m.get('tournament') || 'null'); } catch(_) {}
+          if (existing && existing.participants && existing.participants.length > 0) {
+            _toast('Un tournoi existe déjà dans ce salon.', 2000);
+            return;
+          }
+
+          var tData = {
+            active: false,
+            id: myId + '_' + Date.now().toString(36),
+            name: tName,
+            participants: [{ id: myId, name: myName, ready: true }],
+            tables: [],       // multi-tables
+            bracket: [],
+            currentRound: 0,
+            createdBy: myId,
+            createdAt: Date.now()
+          };
+
+          m.set('tournament', JSON.stringify(tData));
+          m.set('participants', [myId]);
+          m.increment('rev', 1);
+          await m.save();
+
+          _toast('🏆 Tournoi "' + tName + '" créé ! Partagez le code.', 3000);
+          TournamentLobbyPatch.refresh();
+        } catch(err) {
+          _toast('Erreur création tournoi : ' + (err.message || ''), 2500);
+        }
+      })();
+    }, true); // capture pour priorité
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 3. LISTE TOURNOIS LOBBY — Click-to-join + multi-tables
+  // ════════════════════════════════════════════════════════════════════════
+  var TablePicker = (function() {
+    var _picker = null;
+    var _list   = null;
+
+    function _build() {
+      _picker = document.getElementById('tpatch-table-picker');
+      _list   = document.getElementById('tpatch-table-list');
+      document.getElementById('tpatch-table-picker-close').addEventListener('click', hide);
+      _picker.addEventListener('click', function(e) {
+        if (e.target === _picker) hide();
+      });
+    }
+
+    function show(tournament) {
+      if (!_picker) _build();
+      _list.innerHTML = '';
+
+      var tables = tournament.tables || [];
+      if (!tables.length) {
+        // Pas de tables actives → rejoindre directement
+        _joinTournamentDirect(tournament);
+        return;
+      }
+
+      tables.forEach(function(table, idx) {
+        var row = document.createElement('div');
+        row.className = 'tpatch-table-row';
+        var p1 = table.p1Name || '?', p2 = table.p2Name || '?';
+        var status = table.status === 'playing' ? '🟢 En cours' : '⏳ En attente';
+        row.innerHTML = '<strong>Table ' + (idx + 1) + '</strong> : ' + p1 + ' vs ' + p2 + ' <span style="opacity:0.6;font-size:0.8em">' + status + '</span>';
+        row.addEventListener('click', function() {
+          hide();
+          _joinTable(tournament, table);
+        });
+        _list.appendChild(row);
+      });
+
+      // Option : rejoindre comme spectateur général
+      var specRow = document.createElement('div');
+      specRow.className = 'tpatch-table-row';
+      specRow.innerHTML = '👁 <em>Observer le tournoi (spectateur libre)</em>';
+      specRow.addEventListener('click', function() {
+        hide();
+        _joinAsSpectator(tournament);
+      });
+      _list.appendChild(specRow);
+
+      _picker.classList.add('visible');
+    }
+
+    function hide() {
+      if (_picker) _picker.classList.remove('visible');
+    }
+
+    return { show: show, hide: hide };
+  })();
+
+  // Rejoindre un tournoi : logique d'aiguillage
+  function _joinTournamentDirect(t) {
+    var myId = _getPlayerId();
+    var isParticipant = t.participants.some(function(p) { return p.id === myId; });
+
+    if (t.tables && t.tables.length > 1) {
+      TablePicker.show(t);
+      return;
+    }
+
+    // Partie en cours et pas participant → spectateur
+    if (t.status === 'playing' && !isParticipant) {
+      _joinAsSpectator(t);
+      return;
+    }
+
+    // Rejoindre comme challengeur
+    _joinAsChallengerOrSpectator(t);
+  }
+
+  function _joinTable(tournament, table) {
+    var myId = _getPlayerId();
+    // Si une place de joueur libre → challenger
+    if (!table.p2Id) {
+      _challengeInTable(tournament, table);
+    } else {
+      // Table pleine → spectateur de cette table
+      _joinAsSpectator(tournament, table.matchId || tournament.matchId);
+    }
+  }
+
+  function _joinAsSpectator(t, specificMatchId) {
+    var code = t.code;
+    window._spectatorPendingMatchId = specificMatchId || t.matchId;
+    window._spectatorPendingCode    = code;
+
+    // Utiliser TiddasSpectator si disponible
+    if (window.TiddasSpectator && typeof window.TiddasSpectator.joinAsSpectator === 'function') {
+      window.TiddasSpectator.joinAsSpectator();
+    } else if (code) {
+      // Fallback : remplir le code et rejoindre
+      var codeInput = document.getElementById('online-room-code');
+      if (codeInput) {
+        codeInput.value = code;
+        codeInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      var specBtn = document.getElementById('ol-spectate-join-btn');
+      if (specBtn) {
+        setTimeout(function() { specBtn.click(); }, 300);
+      } else {
+        // Rejoindre normalement
+        var connectBtn = document.getElementById('online-connect');
+        if (connectBtn && !connectBtn.disabled) setTimeout(function() { connectBtn.click(); }, 300);
+      }
+    }
+    _toast('👁 Connexion spectateur…', 1500);
+  }
+
+  async function _joinAsChallengerOrSpectator(t) {
+    if (!window.Parse || !window.BACK4APP_CLASS) return;
+    try {
+      var q  = new window.Parse.Query(window.BACK4APP_CLASS);
+      var m  = await q.get(t.matchId);
+      var st = m.get('status') || 'waiting';
+      var p2 = m.get('p2Id') || null;
+
+      if (st === 'waiting' && !p2) {
+        // Place disponible : rejoindre comme joueur
+        var code = t.code;
+        var codeInput = document.getElementById('online-room-code');
+        if (codeInput) {
+          codeInput.value = code;
+          codeInput.dispatchEvent(new Event('input', { bubbles: true }));
+          setTimeout(function() {
+            var connectBtn = document.getElementById('online-connect');
+            if (connectBtn && !connectBtn.disabled) connectBtn.click();
+          }, 250);
+        }
+        _toast('⚔️ Rejoindre comme challenger…', 1500);
+      } else {
+        // Partie pleine → spectateur
+        _joinAsSpectator(t);
+      }
+    } catch(err) {
+      _joinAsSpectator(t);
+    }
+  }
+
+  async function _challengeInTable(tournament, table) {
+    _toast('⚔️ Rejoindre la table…', 1500);
+    _joinAsChallengerOrSpectator({ matchId: table.matchId || tournament.matchId, code: table.code || tournament.code });
+  }
+
+  // ── TournamentLobbyPatch : refonte du rendu de liste ─────────────────
+  var TournamentLobbyPatch = (function() {
+    var _timer = null;
+    var _cache = [];
+
+    async function _fetch() {
+      if (!window.Parse || !window.BACK4APP_CLASS) return [];
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        q.exists('tournament');
+        q.notEqualTo('tournament', null);
+        q.descending('updatedAt');
+        q.limit(15);
+        var results = await q.find();
+        var list = [];
+        results.forEach(function(m) {
+          try {
+            var tData = JSON.parse(m.get('tournament') || 'null');
+            if (!tData || !tData.participants || tData.participants.length < 1) return;
+            // Reconstituer les tables depuis l'objet match
+            var tables = tData.tables || [];
+            list.push({
+              matchId:      m.id,
+              code:         m.get('code') || '?',
+              name:         tData.name || ('Tournoi ' + m.get('code')),
+              participants: tData.participants || [],
+              tables:       tables,
+              active:       tData.active,
+              status:       m.get('status') || 'waiting',
+              updatedAt:    m.updatedAt ? m.updatedAt.getTime() : 0
+            });
+          } catch(_) {}
+        });
+        return list;
+      } catch(e) { return []; }
+    }
+
+    function _render(list) {
+      // Chercher le conteneur de liste dans le lobby
+      var container = document.getElementById('ol-tournaments-list')
+                   || document.getElementById('ol-tourn-list')
+                   || _ensureContainer();
+      if (!container) return;
+
+      if (!list || !list.length) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(245,225,160,0.4);font-size:0.82rem;padding:0.6rem 0;">Aucun tournoi actif</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      list.forEach(function(t) {
+        var item = document.createElement('div');
+        item.className = 'tpatch-tourn-item';
+        var statusLabel = t.active ? 'En cours' : (t.status === 'waiting' ? 'En attente' : t.status);
+        var isLive = t.active || t.status === 'playing';
+        var tablesSummary = '';
+        if (t.tables && t.tables.length) {
+          tablesSummary = ' · ' + t.tables.length + ' table' + (t.tables.length > 1 ? 's' : '');
+        }
+        item.innerHTML =
+          '<div class="tpatch-tourn-name">' + _esc(t.name) +
+          '<span class="tpatch-tourn-status' + (isLive ? ' live' : '') + '">' + statusLabel + '</span></div>' +
+          '<div class="tpatch-tourn-meta">' + t.participants.length + ' participant' +
+          (t.participants.length > 1 ? 's' : '') + tablesSummary + ' · Code : ' + _esc(t.code) + '</div>';
+
+        item.addEventListener('click', function() { _onTournamentClick(t); });
+        container.appendChild(item);
+      });
+    }
+
+    function _ensureContainer() {
+      var wrap = document.getElementById('ol-tournaments-wrap');
+      if (!wrap) return null;
+      var existing = wrap.querySelector('.ol-tourn-list, #ol-tournaments-list');
+      if (existing) return existing;
+      var div = document.createElement('div');
+      div.id = 'ol-tournaments-list';
+      wrap.appendChild(div);
+      return div;
+    }
+
+    function _onTournamentClick(t) {
+      _joinTournamentDirect(t);
+    }
+
+    async function refresh() {
+      var list = await _fetch();
+      _cache = list;
+      _render(list);
+    }
+
+    function startPolling() {
+      if (_timer) return;
+      refresh();
+      _timer = setInterval(function() {
+        var lobby = document.getElementById('online-lobby-area');
+        if (lobby && lobby.classList.contains('active')) refresh();
+      }, POLL_TOURN_MS);
+    }
+
+    function stopPolling() {
+      if (_timer) { clearInterval(_timer); _timer = null; }
+    }
+
+    return { refresh: refresh, startPolling: startPolling, stopPolling: stopPolling };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 4. SPECTATEUR — Adhésion propre + rotation KotH
+  // ════════════════════════════════════════════════════════════════════════
+  var SpectatorKoTH = (function() {
+    var _queue        = [];      // file d'attente locale (depuis DB)
+    var _takeoverLock = false;   // anti race-condition
+    var _btn          = null;
+
+    function _getBtn() {
+      if (!_btn) _btn = document.getElementById('tpatch-takeover-btn');
+      return _btn;
+    }
+
+    // Assigner le rôle spectateur correctement et adapter l'UI
+    function applySpectatorRole() {
+      if (typeof window.gameMode !== 'undefined') window.gameMode = 'spectator';
+      document.body.classList.add('is-spectating');
+
+      // Masquer les contrôles de jeu actifs
+      ['undo-btn', 'resign-btn', 'offer-draw-btn'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      // Afficher le chat spectateur
+      var specFab = document.getElementById('spectator-chat-fab');
+      if (specFab) specFab.hidden = false;
+
+      // Afficher badge spectateur
+      var badge = document.getElementById('spectator-badge');
+      if (badge) { badge.textContent = '👁 Spectateur'; badge.classList.add('visible'); }
+
+      _checkQueuePosition();
+    }
+
+    // Vérifier la position dans la file et afficher le bouton si en tête
+    async function _checkQueuePosition() {
+      var matchId = _getMatchId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var specQueue = m.get('spectatorQueue') || [];
+        var myId = _getPlayerId();
+        _queue = specQueue;
+        var myPos = specQueue.indexOf(myId);
+
+        var btn = _getBtn();
+        // Afficher si en tête de file ET une place est libre (joueur disconnected)
+        var p1Connected = m.get('p1Connected') !== false;
+        var p2Connected = m.get('p2Connected') !== false;
+        var hasSlot = !p1Connected || !p2Connected;
+
+        if (btn) {
+          btn.style.display = (myPos === 0 && hasSlot) ? 'block' : 'none';
+        }
+      } catch(_) {}
+    }
+
+    // S'inscrire dans la file spectateur
+    async function enqueue() {
+      var matchId = _getMatchId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      var myId = _getPlayerId();
+      try {
+        // Utilisation d'une opération atomique côté Parse
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var queue = m.get('spectatorQueue') || [];
+        if (queue.indexOf(myId) === -1) {
+          queue.push(myId);
+          m.set('spectatorQueue', queue);
+          await m.save();
+        }
+        _checkQueuePosition();
+      } catch(_) {}
+    }
+
+    // Prendre la relève — avec verrou anti-race-condition
+    async function takeover() {
+      if (_takeoverLock) { _toast('Tentative en cours…', 1200); return; }
+      _takeoverLock = true;
+      var matchId = _getMatchId();
+      var myId    = _getPlayerId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) {
+        _takeoverLock = false; return;
+      }
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        // Utiliser afterSave + contrôle atomique : lire puis écrire
+        var m = await q.get(matchId);
+        var queue = m.get('spectatorQueue') || [];
+        var p1Id  = m.get('p1Id') || null;
+        var p2Id  = m.get('p2Id') || null;
+        var p1Con = m.get('p1Connected') !== false;
+        var p2Con = m.get('p2Connected') !== false;
+
+        // Vérifier qu'on est bien en tête de file
+        if (queue[0] !== myId) {
+          _toast('Un autre spectateur a pris la place.', 2000);
+          _takeoverLock = false;
+          _checkQueuePosition();
+          return;
+        }
+
+        // Vérifier qu'il y a bien une place libre
+        var slotField = null;
+        if (!p1Con && p1Id) slotField = 'p1';
+        else if (!p2Con && p2Id) slotField = 'p2';
+        if (!slotField) {
+          _toast('Aucune place disponible.', 2000);
+          _takeoverLock = false;
+          return;
+        }
+
+        // Prendre la place
+        var myName = _getPlayerName();
+        queue.shift();
+        m.set('spectatorQueue', queue);
+        m.set(slotField + 'Id', myId);
+        m.set(slotField + 'Name', myName);
+        m.set(slotField + 'Connected', true);
+        m.set(slotField + 'Token', myId + '_' + Date.now().toString(36));
+        m.increment('rev', 1);
+        await m.save();
+
+        // Mettre à jour l'état local
+        if (window.online) {
+          window.online.role = (slotField === 'p1') ? 1 : 2;
+          window.online.token = m.get(slotField + 'Token');
+        }
+        window.gameMode = 'online';
+        document.body.classList.remove('is-spectating');
+        var badge = document.getElementById('spectator-badge');
+        if (badge) badge.classList.remove('visible');
+        var btn = _getBtn();
+        if (btn) btn.style.display = 'none';
+
+        // Réafficher les contrôles
+        ['undo-btn', 'resign-btn', 'offer-draw-btn'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.style.display = '';
+        });
+
+        _toast('✅ Vous êtes maintenant joueur !', 2200);
+      } catch(err) {
+        _toast('Erreur prise de relève.', 2000);
+      } finally {
+        _takeoverLock = false;
+      }
+    }
+
+    // Rotation fin de partie — le perdant devient spectateur
+    async function onGameEnd(winnerId) {
+      var matchId = _getMatchId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      var myId  = _getPlayerId();
+      var isWinner = (myId === winnerId);
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var p1Id = m.get('p1Id');
+        var p2Id = m.get('p2Id');
+        var loserId = (p1Id === winnerId) ? p2Id : p1Id;
+        var loserField = (p1Id === loserId) ? 'p1' : 'p2';
+        var queue = m.get('spectatorQueue') || [];
+
+        if (!isWinner && myId === loserId) {
+          // Perdant : aller en queue spectateur
+          if (queue.indexOf(myId) === -1) queue.push(myId);
+          m.set('spectatorQueue', queue);
+          m.set(loserField + 'Connected', false);
+          m.increment('rev', 1);
+          await m.save();
+          applySpectatorRole();
+          _toast('Vous passez spectateur. Le prochain en file prend votre place.', 3000);
+        } else if (isWinner) {
+          // Gagnant : rester, notifier le prochain spectateur
+          var nextSpecId = queue[0];
+          if (nextSpecId) {
+            // Marquer la place perdant comme "libre" pour invitation
+            m.set(loserField + 'Connected', false);
+            m.set('nextChallengerSignal', nextSpecId);
+            m.increment('rev', 1);
+            await m.save();
+          }
+          _toast('🏆 Victoire ! Le prochain challenger arrive…', 2500);
+        }
+      } catch(_) {}
+    }
+
+    // Init du bouton takeover
+    function init() {
+      var btn = _getBtn();
+      if (btn) {
+        btn.addEventListener('click', function() { takeover(); });
+      }
+    }
+
+    return { applySpectatorRole: applySpectatorRole, enqueue: enqueue, onGameEnd: onGameEnd, checkQueue: _checkQueuePosition, init: init };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 5. REVANCHE RAPIDE — Async handshake (A propose → B accepte → go)
+  // ════════════════════════════════════════════════════════════════════════
+  var RematchSystem = (function() {
+    var _banner      = null;
+    var _requestBtn  = null;
+    var _acceptBtn   = null;
+    var _msgEl       = null;
+    var _polling     = null;
+    var _myPending   = false;  // j'ai proposé une revanche
+
+    function _buildBanner() {
+      _banner     = document.getElementById('tpatch-rematch-banner');
+      _requestBtn = document.getElementById('tpatch-rematch-request-btn');
+      _acceptBtn  = document.getElementById('tpatch-rematch-accept-btn');
+      _msgEl      = document.getElementById('tpatch-rematch-msg');
+
+      _requestBtn.addEventListener('click', function() { propose(); });
+      _acceptBtn.addEventListener('click',  function() { accept();  });
+    }
+
+    // Proposer une revanche
+    async function propose() {
+      var matchId = _getMatchId();
+      var myId    = _getPlayerId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      if (_myPending) { _toast('Demande déjà envoyée.', 1500); return; }
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var rmData = m.get('rematch') || {};
+        rmData.requestBy   = myId;
+        rmData.requestedAt = Date.now();
+        rmData.accepted    = false;
+        m.set('rematch', rmData);
+        m.increment('rev', 1);
+        await m.save();
+        _myPending = true;
+        if (_msgEl) _msgEl.textContent = 'Revanche proposée — en attente de l\'adversaire…';
+        if (_requestBtn) { _requestBtn.textContent = '⏳ En attente…'; _requestBtn.disabled = true; }
+        if (_acceptBtn)  _acceptBtn.style.display = 'none';
+        _toast('🔄 Revanche proposée !', 1800);
+        _startRematchPolling();
+      } catch(err) {
+        _toast('Erreur proposition revanche.', 2000);
+      }
+    }
+
+    // Accepter la revanche
+    async function accept() {
+      var matchId = _getMatchId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var rmData = m.get('rematch') || {};
+        rmData.accepted   = true;
+        rmData.acceptedAt = Date.now();
+        m.set('rematch', rmData);
+        // Reset l'état de jeu
+        m.set('status', 'playing');
+        m.set('payload', null);
+        m.set('rev', 0);
+        // Alternance des couleurs
+        var p1 = m.get('p1Id'), p2 = m.get('p2Id');
+        m.set('p1Id', p2); m.set('p1Name', m.get('p2Name'));
+        m.set('p2Id', p1); m.set('p2Name', m.get('p1Name'));
+        await m.save();
+
+        hide();
+        _toast('✅ Revanche ! La partie commence…', 2000);
+        _launchRematch();
+      } catch(err) {
+        _toast('Erreur acceptation revanche.', 2000);
+      }
+    }
+
+    // Lancer la nouvelle partie localement
+    function _launchRematch() {
+      _myPending = false;
+      _stopRematchPolling();
+      try {
+        if (typeof window.initState === 'function' && typeof window.state !== 'undefined') {
+          window.state = window.initState();
+          if (typeof window.renderBoard === 'function') window.renderBoard();
+          if (typeof window.updateUI    === 'function') window.updateUI();
+          if (typeof window.showScreen  === 'function') window.showScreen('game-play-area');
+        }
+      } catch(_) {}
+    }
+
+    // Polling pour détecter si l'adversaire a proposé une revanche
+    function _startRematchPolling() {
+      if (_polling) return;
+      _polling = setInterval(async function() {
+        var matchId = _getMatchId();
+        if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+        try {
+          var q = new window.Parse.Query(window.BACK4APP_CLASS);
+          var m = await q.get(matchId);
+          var rmData = m.get('rematch') || {};
+          var myId   = _getPlayerId();
+
+          // Si mon adversaire a proposé (pas moi)
+          if (rmData.requestBy && rmData.requestBy !== myId && !rmData.accepted && !_myPending) {
+            _showIncomingRequest();
+          }
+
+          // Si ma demande a été acceptée
+          if (_myPending && rmData.accepted) {
+            hide();
+            _launchRematch();
+          }
+
+          // Nettoyage si ancienne demande (> 5 min)
+          if (rmData.requestedAt && Date.now() - rmData.requestedAt > 300000) {
+            _stopRematchPolling();
+          }
+        } catch(_) {}
+      }, 3000);
+    }
+
+    function _stopRematchPolling() {
+      if (_polling) { clearInterval(_polling); _polling = null; }
+    }
+
+    function _showIncomingRequest() {
+      if (!_banner) _buildBanner();
+      if (_msgEl)      _msgEl.textContent   = 'Votre adversaire propose une revanche !';
+      if (_requestBtn) _requestBtn.style.display = 'none';
+      if (_acceptBtn)  _acceptBtn.style.display = '';
+      _showEl(_banner);
+    }
+
+    // Afficher après fin de partie (les deux joueurs voient le bouton "Rejouer")
+    function showAfterGame(iAmWinner) {
+      if (!_banner) _buildBanner();
+      _myPending = false;
+      if (_requestBtn) { _requestBtn.textContent = '🔄 Rejouer'; _requestBtn.disabled = false; _requestBtn.style.display = ''; }
+      if (_acceptBtn)  _acceptBtn.style.display = 'none';
+      if (_msgEl)      _msgEl.textContent = iAmWinner ? '🏆 Victoire ! Proposer une revanche ?' : '😔 Défaite. Rejouer ?';
+      _showEl(_banner);
+      _startRematchPolling();
+    }
+
+    function hide() {
+      if (_banner) _hideEl(_banner);
+      _stopRematchPolling();
+    }
+
+    return { propose: propose, accept: accept, showAfterGame: showAfterGame, hide: hide };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 6. RECONNEXION TRANSPARENTE — Seamless resume via localStorage
+  // ════════════════════════════════════════════════════════════════════════
+  var SeamlessResume = (function() {
+    var _toast_el  = null;
+    var _msg_el    = null;
+    var _retries   = 0;
+
+    function _getToast() {
+      if (!_toast_el) {
+        _toast_el = document.getElementById('tpatch-resume-toast');
+        _msg_el   = document.getElementById('tpatch-resume-msg');
+      }
+      return _toast_el;
+    }
+
+    // Sauvegarder la session avant fermeture
+    function saveSession() {
+      var matchId = _getMatchId();
+      var myId    = _getPlayerId();
+      if (!matchId || !myId) return;
+      var token = (window.online && window.online.token) || null;
+      var role  = (window.online && window.online.role)  || 0;
+      try {
+        localStorage.setItem(LS_RESUME_KEY, JSON.stringify({
+          matchId: matchId,
+          playerId: myId,
+          token: token,
+          role: role,
+          savedAt: Date.now()
+        }));
+      } catch(_) {}
+    }
+
+    // Charger la session sauvegardée
+    function loadSession() {
+      try {
+        var raw = localStorage.getItem(LS_RESUME_KEY);
+        if (!raw) return null;
+        var data = JSON.parse(raw);
+        // Expirer après 24h
+        if (!data || !data.matchId || Date.now() - (data.savedAt || 0) > 86400000) {
+          clearSession();
+          return null;
+        }
+        return data;
+      } catch(_) { return null; }
+    }
+
+    function clearSession() {
+      try { localStorage.removeItem(LS_RESUME_KEY); } catch(_) {}
+    }
+
+    // Tenter la reconnexion automatique au chargement
+    async function attemptAutoResume() {
+      var session = loadSession();
+      if (!session) return false;
+
+      var toast = _getToast();
+      if (_msg_el) _msg_el.textContent = 'Reconnexion à la partie en cours…';
+      if (toast) toast.classList.add('visible');
+
+      _retries = 0;
+      return await _doResume(session);
+    }
+
+    async function _doResume(session) {
+      if (_retries >= RESUME_RETRY) {
+        _hideToast();
+        clearSession();
+        _toast('Reconnexion impossible. Partie perdue.', 3000);
+        return false;
+      }
+      _retries++;
+
+      if (!window.Parse || !window.BACK4APP_CLASS) {
+        // Parse pas encore chargé : réessayer après 1.5s
+        await new Promise(function(r) { setTimeout(r, 1500); });
+        return _doResume(session);
+      }
+
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(session.matchId);
+        var status = m.get('status') || 'waiting';
+        var p1Id   = m.get('p1Id') || null;
+        var p2Id   = m.get('p2Id') || null;
+
+        // Vérifier qu'on est toujours joueur
+        var isPlayer = (p1Id === session.playerId || p2Id === session.playerId);
+        if (!isPlayer || status === 'finished' || status === 'waiting') {
+          _hideToast();
+          clearSession();
+          return false;
+        }
+
+        // Reconstituer window.online
+        var myRole = (p1Id === session.playerId) ? 1 : 2;
+        window.online = window.online || {};
+        window.online.matchId = session.matchId;
+        window.online.role    = myRole;
+        window.online.token   = session.token;
+        window.onlinePlayerId = session.playerId;
+
+        // Marquer comme reconnecté dans la DB
+        var field = (myRole === 1 ? 'p1' : 'p2') + 'Connected';
+        m.set(field, true);
+        m.increment('rev', 1);
+        await m.save();
+
+        // Appliquer l'état du plateau immédiatement
+        var payload = m.get('payload');
+        if (payload && payload.state && typeof window.onlineApplyState === 'function') {
+          window.online.lastSeenRev  = Number(m.get('rev') || 0);
+          window.online.suppressSend = false;
+          window.gameMode = 'online';
+          window.onlineApplyState(payload);
+          if (typeof window.showScreen === 'function') window.showScreen('game-play-area');
+        }
+
+        // Démarrer le polling si ce n'est pas déjà fait
+        if (typeof window._startPolling === 'function' && !window._pollingActive) {
+          window._startPolling(session.matchId);
+        }
+
+        _hideToast();
+        _toast('✅ Reconnecté ! Partie reprise.', 2000);
+        return true;
+      } catch(err) {
+        await new Promise(function(r) { setTimeout(r, 2000); });
+        return _doResume(session);
+      }
+    }
+
+    function _hideToast() {
+      var toast = _getToast();
+      if (toast) toast.classList.remove('visible');
+    }
+
+    return { saveSession: saveSession, loadSession: loadSession, clearSession: clearSession, attemptAutoResume: attemptAutoResume };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 7. HOOKS — Intégration avec le code existant (patches non-destructifs)
+  // ════════════════════════════════════════════════════════════════════════
+
+  function _hookEndGame() {
+    // Intercepter endGame pour déclencher les systèmes revanche + KotH
+    var _origEndGame = window.endGame;
+    if (typeof _origEndGame !== 'function') return;
+
+    window.endGame = function() {
+      var result = _origEndGame.apply(this, arguments);
+      try {
+        var st = window.state;
+        var winner = st && st.winner;
+        var isOnline = window.gameMode === 'online';
+
+        if (isOnline && winner) {
+          var myRole = window.online && window.online.role;
+          var iAmWinner = (myRole === winner);
+
+          // Système de revanche
+          setTimeout(function() { RematchSystem.showAfterGame(iAmWinner); }, 1200);
+
+          // Rotation KotH
+          var winnerId = null;
+          if (window.online && window.online.matchId && window.Parse && window.BACK4APP_CLASS) {
+            (async function() {
+              try {
+                var q = new window.Parse.Query(window.BACK4APP_CLASS);
+                var m = await q.get(window.online.matchId);
+                winnerId = (winner === 1) ? m.get('p1Id') : m.get('p2Id');
+                SpectatorKoTH.onGameEnd(winnerId);
+              } catch(_) {}
+            })();
+          }
+        }
+      } catch(_) {}
+      return result;
+    };
+  }
+
+  function _hookOnlineConnectSuccess() {
+    // Après connexion réussie : sauvegarder la session + gérer le mode spectateur
+    var _orig = window.onlineApplyState;
+    if (typeof _orig !== 'function') return;
+
+    window.onlineApplyState = function(msg) {
+      var result = _orig.apply(this, arguments);
+      try {
+        // Sauvegarder la session à chaque apply
+        SeamlessResume.saveSession();
+
+        // Spectateur : adhésion propre
+        if (window.online && window.online.role === 0) {
+          SpectatorKoTH.applySpectatorRole();
+          SpectatorKoTH.enqueue();
+          SpectatorKoTH.checkQueue();
+        }
+      } catch(_) {}
+      return result;
+    };
+  }
+
+  function _hookShowScreen() {
+    var _orig = window.showScreen;
+    if (typeof _orig !== 'function') return;
+
+    window.showScreen = function(screenId) {
+      var result = _orig.apply(this, arguments);
+      try {
+        if (screenId === 'online-lobby-area') {
+          TournamentLobbyPatch.startPolling();
+        }
+        // Cacher la revanche si on quitte le plateau
+        if (screenId !== 'game-play-area') {
+          RematchSystem.hide();
+        }
+      } catch(_) {}
+      return result;
+    };
+  }
+
+  function _hookBeforeUnload() {
+    // Sauvegarder la session avant fermeture de page
+    window.addEventListener('beforeunload', function() {
+      try { SeamlessResume.saveSession(); } catch(_) {}
+    });
+    // Aussi sur pagehide (iOS)
+    window.addEventListener('pagehide', function() {
+      try { SeamlessResume.saveSession(); } catch(_) {}
+    });
+    // Sauvegarde périodique en cours de partie
+    setInterval(function() {
+      if (window.gameMode === 'online' && _getMatchId()) {
+        try { SeamlessResume.saveSession(); } catch(_) {}
+      }
+    }, 30000);
+  }
+
+  // Surveiller nextChallengerSignal pour l'afficher au bon spectateur
+  function _pollNextChallengerSignal() {
+    setInterval(async function() {
+      var matchId = _getMatchId();
+      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
+      if (window.gameMode !== 'spectator') return;
+      try {
+        var q = new window.Parse.Query(window.BACK4APP_CLASS);
+        var m = await q.get(matchId);
+        var signal = m.get('nextChallengerSignal');
+        var myId   = _getPlayerId();
+        if (signal === myId) {
+          var btn = document.getElementById('tpatch-takeover-btn');
+          if (btn) btn.style.display = 'block';
+          // Effacer le signal
+          m.unset('nextChallengerSignal');
+          await m.save();
+        }
+      } catch(_) {}
+    }, 4000);
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 8. UTILITAIRES
+  // ════════════════════════════════════════════════════════════════════════
+  function _esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 9. BOOT — Initialisation différée robuste
+  // ════════════════════════════════════════════════════════════════════════
+  function _boot() {
+    // Init composants UI
+    SpectatorKoTH.init();
+
+    // Hooks non-destructifs (attendre que les fonctions cibles soient définies)
+    var _hookAttempts = 0;
+    var _hookInterval = setInterval(function() {
+      _hookAttempts++;
+      var allReady = typeof window.endGame          === 'function'
+                  && typeof window.onlineApplyState === 'function'
+                  && typeof window.showScreen       === 'function';
+
+      if (allReady || _hookAttempts > 30) {
+        clearInterval(_hookInterval);
+        _hookEndGame();
+        _hookOnlineConnectSuccess();
+        _hookShowScreen();
+      }
+    }, 300);
+
+    // Hooks immédiats (n'ont pas besoin de fonctions cibles)
+    _patchTournamentCreation();
+    _hookBeforeUnload();
+    _pollNextChallengerSignal();
+
+    // Polling tournois si lobby déjà actif
+    var lobby = document.getElementById('online-lobby-area');
+    if (lobby && lobby.classList.contains('active')) {
+      TournamentLobbyPatch.startPolling();
+    }
+
+    // Reconnexion automatique — attendre Parse + 1s
+    setTimeout(function() {
+      SeamlessResume.attemptAutoResume();
+    }, 1200);
+
+    // Exposer pour debug & tests
+    window.TiddasPatch = {
+      TournamentNameModal:  TournamentNameModal,
+      TournamentLobbyPatch: TournamentLobbyPatch,
+      TablePicker:          TablePicker,
+      SpectatorKoTH:        SpectatorKoTH,
+      RematchSystem:        RematchSystem,
+      SeamlessResume:       SeamlessResume
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _boot);
+  } else {
+    setTimeout(_boot, 0);
+  }
+
+})(); // end TiddasPatchProd
+</script>
 </body>
 </html>
