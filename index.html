@@ -4314,16 +4314,6 @@ scroll-behavior: auto !important;
 }
 }
 /* Debug overlay (runtime errors, rejections, logs) */
-/* Confetti canvas (removed) */
-#confetti-canvas-unused {
-position: fixed;
-inset: 0;
-pointer-events: none;
-z-index: 2500;
-width: 100%;
-height: 100%;
-}
-
 
 /* =====================================================================
    DESIGN REFRESH v4 — Ergonomie + lisibilité + graphisme modernisé
@@ -6019,6 +6009,29 @@ body.replay-active .replay-badge {
   font-size: 0.68rem; color: rgba(245,245,245,0.28);
   text-align: center; font-family: var(--font-ui,sans-serif);
   margin: -2px 0 0; letter-spacing: 0.01em;
+}
+.ol-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+  margin-top: 0.35rem;
+}
+.ol-ghost-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(240,200,80,0.18);
+  color: rgba(245,245,245,0.72);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  font-family: var(--font-ui,sans-serif);
+  font-size: 0.75rem;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.ol-ghost-btn:hover {
+  background: rgba(240,200,80,0.12);
+  border-color: rgba(240,200,80,0.4);
+  transform: translateY(-1px);
 }
 
 /* ── Quit/modify connected room ── */
@@ -12605,6 +12618,22 @@ html[data-theme="desert"] body .ol-code-input {
 [data-theme="desert"]  .ol-join-title { color: #7c4a0a !important; }
 [data-theme="kabylie"] .ol-join-hint,
 [data-theme="desert"]  .ol-join-hint { color: rgba(31,26,18,0.38) !important; }
+[data-theme="kabylie"] .ol-ghost-btn,
+[data-theme="desert"]  .ol-ghost-btn {
+  background: rgba(150,80,10,0.08) !important;
+  border-color: rgba(150,80,10,0.28) !important;
+  color: #6f3f0a !important;
+  box-shadow: 0 1px 6px rgba(150,80,10,0.10) !important;
+  font-weight: 600;
+}
+[data-theme="kabylie"] .ol-ghost-btn:hover,
+[data-theme="kabylie"] .ol-ghost-btn:focus-visible,
+[data-theme="desert"]  .ol-ghost-btn:hover,
+[data-theme="desert"]  .ol-ghost-btn:focus-visible {
+  background: rgba(150,80,10,0.14) !important;
+  border-color: rgba(150,80,10,0.45) !important;
+  color: #5b3208 !important;
+}
 [data-theme="kabylie"] .ol-join-row .ol-code-input,
 [data-theme="desert"]  .ol-join-row .ol-code-input {
   background: rgba(255,255,255,0.9) !important;
@@ -14447,142 +14476,7 @@ html[data-theme="modern"]  .ocm.them .ocm-body { background: rgba(255,255,255,0.
 .ol-takeover-btn:hover { background: rgba(200,120,0,0.4); }
 
 /* Spectator chat — separate panel */
-#spectator-chat-panel {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  width: min(260px,90vw);
-  background: rgba(10,6,2,0.92);
-  border: 1px solid rgba(240,200,80,0.22);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  z-index: 8900;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  overflow: hidden;
-}
-#spectator-chat-panel[hidden] { display: none !important; }
-.spec-chat-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.4rem 0.7rem;
-  background: rgba(240,200,80,0.07);
-  border-bottom: 1px solid rgba(240,200,80,0.12);
-}
-.spec-chat-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--text-gold,#f0c850);
-}
-.spec-chat-close {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 0;
-  line-height: 1;
-}
-.spec-chat-list {
-  flex: 1;
-  max-height: 160px;
-  overflow-y: auto;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-.spec-chat-msg {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-.spec-chat-msg .sc-name {
-  font-weight: 700;
-  color: var(--text-gold,#f0c850);
-  margin-right: 0.3em;
-}
-.spec-chat-compose {
-  display: flex;
-  gap: 0.3rem;
-  padding: 0.4rem 0.5rem;
-  border-top: 1px solid rgba(240,200,80,0.1);
-}
-.spec-chat-input {
-  flex: 1;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(240,200,80,0.15);
-  border-radius: 6px;
-  color: var(--text-main);
-  font-size: 0.75rem;
-  padding: 0.3rem 0.5rem;
-  outline: none;
-}
-.spec-chat-send {
-  background: rgba(240,200,80,0.15);
-  border: none;
-  border-radius: 6px;
-  color: var(--text-gold,#f0c850);
-  font-size: 0.8rem;
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-}
-#spectator-chat-fab {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(10,6,2,0.88);
-  border: 1px solid rgba(240,200,80,0.2);
-  color: var(--text-gold,#f0c850);
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 8900;
-}
-#spectator-chat-fab[hidden] { display: none !important; }
-/* Badge de messages non lus */
-#spectator-chat-fab[data-unread]:not([data-unread=""])::after {
-  content: attr(data-unread);
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 17px;
-  height: 17px;
-  border-radius: 999px;
-  background: #e05050;
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  line-height: 1;
-}
-#spectator-chat-fab {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(10,6,2,0.88);
-  border: 1px solid rgba(240,200,80,0.2);
-  color: var(--text-gold,#f0c850);
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 8900;
-}
+/* spectator-chat supprimé — spectateurs utilisent la messagerie principale */
 
 /* ══════════════════════════════════════════════════════════════
    TOURNAMENT BRACKET
@@ -15004,6 +14898,10 @@ Patrimoine Amazigh • Idles Amaziɣ
 <span class="stray-icon">⬇️</span>
 <span class="stray-item-label" data-i18n="installApp">Installer</span>
 </button>
+<button aria-label="Micro" aria-pressed="false" class="toolbar-btn stray-item" id="voice-mute-btn" title="Activer ou couper le micro">
+<span class="stray-icon" id="voice-mute-icon">🎤</span>
+<span class="stray-item-label">Micro</span>
+</button>
 </div>
 </div>
 </div>
@@ -15056,19 +14954,6 @@ Patrimoine Amazigh • Idles Amaziɣ
   <span class="vc-rec-max" id="vc-rec-max">/ 1:00</span>
 </div>
 
-<!-- Spectator Chat Panel (séparé des joueurs) -->
-<div id="spectator-chat-panel" hidden aria-label="Chat spectateurs">
-  <div class="spec-chat-head">
-    <span class="spec-chat-title">👁 Chat spectateurs</span>
-    <button class="spec-chat-close" id="spec-chat-close" aria-label="Fermer">✕</button>
-  </div>
-  <div class="spec-chat-list" id="spec-chat-list"></div>
-  <div class="spec-chat-compose">
-    <input class="spec-chat-input" id="spec-chat-input" type="text" maxlength="80" placeholder="Message spectateurs…" autocomplete="off" />
-    <button class="spec-chat-send" id="spec-chat-send" type="button">↑</button>
-  </div>
-</div>
-<button id="spectator-chat-fab" hidden title="Chat spectateurs" aria-label="Chat spectateurs">👁</button>
 
 <!-- Online Reconnect Banner -->
 <div id="online-reconnect-banner" hidden role="alert">
@@ -15119,7 +15004,6 @@ Patrimoine Amazigh • Idles Amaziɣ
 <h2 data-i18n="chooseVersion">Choisir la version du jeu :</h2>
 <div class="famille-grid">
 
-  <!-- ══ FAMILLE 1 : TIDDAS ══ -->
   <div class="famille-card" id="famille-tiddas">
     <div class="famille-header">
       <span class="famille-icon">ⵣ⚜</span>
@@ -15143,7 +15027,6 @@ Patrimoine Amazigh • Idles Amaziɣ
     </button>
   </div>
 
-  <!-- ══ FAMILLE 2 : Damma KABYLE ══ -->
   <div class="famille-card" id="famille-damma">
     <div class="famille-header">
       <span class="famille-icon">ⵣ♔</span>
@@ -15251,7 +15134,6 @@ Patrimoine Amazigh • Idles Amaziɣ
   </div>
   <p class="ol-variant-guest-note" id="ol-variant-guest-note" data-i18n="onlineVariantGuestNote">La variante est choisie par l'hôte</p>
 
-  <!-- Actions principales — masquées après connexion -->
   <div id="ol-pre-connect">
     <button class="ol-big-btn ol-btn-create" id="online-create-room" type="button">
       <span class="ol-btn-icon-box" aria-hidden="true">🏠</span>
@@ -15264,7 +15146,6 @@ Patrimoine Amazigh • Idles Amaziɣ
 
     <div class="ol-divider-or" aria-hidden="true"><span data-i18n="onlineOr">ou</span></div>
 
-    <!-- Rejoindre un salon — card -->
     <div class="ol-join-card">
       <div class="ol-join-header">
         <span class="ol-join-icon" aria-hidden="true">🔗</span>
@@ -15283,7 +15164,10 @@ Patrimoine Amazigh • Idles Amaziɣ
         </button>
       </div>
       <p class="ol-join-hint" data-i18n="onlineJoinHint">Entrez le code de 6 caractères partagé par votre ami</p>
-      <!-- Rejoindre comme spectateur si salon complet -->
+      <div class="ol-quick-actions">
+        <button class="ol-ghost-btn" id="online-rejoin-last" type="button" style="display:none;" data-i18n="onlineRejoinLast">Rejoindre le dernier salon</button>
+        <button class="ol-ghost-btn" id="online-recent-toggle" type="button" style="display:none;" data-i18n="onlineRecentRooms" aria-expanded="false" aria-controls="online-recent-wrap">Salons récents</button>
+      </div>
       <div class="ol-spectate-card" id="ol-spectate-card">
         <div class="ol-spectate-title">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -15297,22 +15181,18 @@ Patrimoine Amazigh • Idles Amaziɣ
     </div>
   </div>
 
-  <!-- Panel connecté -->
   <div id="online-status" style="display:none;">
 
-    <!-- Bouton quitter/modifier le salon -->
     <button class="ol-quit-btn" id="ol-quit-btn" type="button">
       ‹ <span data-i18n="onlineQuit">Quitter le salon</span>
     </button>
 
-    <!-- Ligne de statut -->
     <div class="ol-status-line">
       <span class="ol-dot" id="ol-status-dot"></span>
       <span id="online-status-text">—</span>
       <span class="ol-live-dot" id="ol-live-dot" style="display:none;">EN DIRECT</span>
     </div>
 
-    <!-- Matchup joueurs -->
     <div class="ol-matchup" id="online-matchup" style="display:none;">
       <div class="ol-player-chip">
         <div class="ol-player-avatar">J1</div>
@@ -15326,10 +15206,8 @@ Patrimoine Amazigh • Idles Amaziɣ
         <button class="ol-follow-btn" id="ol-follow-p2" title="Suivre ce joueur">⭐</button>
       </div>
     </div>
-    <!-- Takeover si spectateur et joueur déconnecté -->
     <button class="ol-takeover-btn" id="ol-takeover-btn" type="button">⚔️ Prendre la place du joueur déconnecté</button>
 
-    <!-- Code + partage -->
     <div id="online-roomcode-row" style="display:none;">
       <div class="ol-code-card">
         <div class="ol-code-info">
@@ -15351,7 +15229,6 @@ Patrimoine Amazigh • Idles Amaziɣ
       </button>
     </div>
 
-    <!-- Revanche -->
     <div id="online-rematch" style="display:none;">
       <div class="ol-rematch-row">
         <span class="ol-rematch-chip" id="online-rm1-chip">J1</span>
@@ -15361,7 +15238,6 @@ Patrimoine Amazigh • Idles Amaziɣ
       <button class="ol-rematch-btn" id="online-rematch-ready-btn" type="button" data-i18n="onlineReadyRematch">Je suis prêt</button>
     </div>
 
-    <!-- Countdown + Lancer -->
     <div id="online-autostart-banner">
       <span>⚔️ <span data-i18n="onlineAutoStartIn">Partie dans</span></span>
       <span class="autostart-count" id="autostart-count">3</span>
@@ -15374,12 +15250,10 @@ Patrimoine Amazigh • Idles Amaziɣ
 
   </div><!-- /online-status -->
 
-  <!-- Récents (compacts) -->
   <div id="online-recent-wrap" style="display:none;">
     <div class="online-recent-list" id="online-recent-list"></div>
   </div>
 
-  <!-- ── Tournois actifs (section dynamique) ─────────────────────────── -->
   <div id="ol-tournaments-wrap" style="display:none;">
     <div class="ol-tourn-header">
       <span class="ol-tourn-icon" aria-hidden="true">🏆</span>
@@ -15400,7 +15274,6 @@ Patrimoine Amazigh • Idles Amaziɣ
     </div>
   </div>
 
-  <!-- ── Overlay de bracket tournoi ────────────────────────────────── -->
   <div id="tournament-bracket-overlay" hidden role="dialog" aria-modal="true" aria-label="Bracket du tournoi">
     <div class="tourn-overlay-inner">
       <div class="tourn-overlay-head">
@@ -15418,7 +15291,6 @@ Patrimoine Amazigh • Idles Amaziɣ
 
   <button class="back-btn" data-i18n="backToModes" id="back-to-modes-from-online-btn" type="button">‹ <span data-i18n="backToModes">Retour</span></button>
 
-  <!-- IDs fantômes pour compat JS -->
   <span id="ol-p1-slot" style="display:none"></span>
   <span id="ol-p2-slot" style="display:none"></span>
   <span id="online-start-desc" style="display:none"></span>
@@ -16108,133 +15980,6 @@ Astuce : sur iPhone/iPad, utilisez “Partager” → “Sur l'écran d'accueil�
 
   <div id="ephemeral-message-bubble" aria-live="polite" aria-atomic="true"></div>
   <script nonce="tiddas">
-/*!
- * ============================================================
- *  TIDDAS – Production build (refactored)
- * ============================================================
- *
- * CHANGELOG vs version précédente
- * ─────────────────────────────────
- * SUPPRIMÉ :
- *   - Bloc legacy "Replace any leftover font-awesome tags" (DOM querySelectorAll)
- *     → aucun <i class="fa-*"> dans le HTML final, code mort supprimé.
- *   - La map fa-* DOM est orpheline ; la map dans __resolveIconEmoji() est conservée
- *     car elle sert aux classes passées via showEphemeralBubbleMessage().
- *
- * REFACTORISÉ :
- *   - Les monkey-patches (renderAll, onCellClick, handleUndo, startGame, startSpectatorGame,
- *     endGame, handleSurrender) sont conservés tels quels MAIS encapsulés dans un
- *     try/catch global et annotés ; suppression prévue lors d'une prochaine réécriture
- *     du GameCore avec hooks explicites.
- *   - updateLanguage monkey-patch : identique, annoté.
- *   - Parse SDK : chargement lazy depuis unpkg conservé ; un flag ONLINE_ENABLED permet
- *     de désactiver le mode online au démarrage (offline-first).
- *   - CSP : unpkg conservé dans script-src (requis pour le lazy-load Parse).
- *     Pour un déploiement 100 % offline, passer ONLINE_ENABLED = false ci-dessous
- *     → unpkg ne sera jamais appelé et la CSP peut être durcie manuellement.
- *
- * OPTIMISÉ :
- *   - Bloc fa-* DOM legacy supprimé (réduit légèrement la taille + 1 querySelectorAll évité).
- *   - Flag DEBUG ajouté (false en prod) pour couper les logs de débogage futurs.
- *
- * SÉCURITÉ :
- *   - Les clés Back4App sont isolées dans la section CONFIG ci-dessous.
- *   - Aucune Master Key dans ce fichier.
- *
- * ─────────────────────────────────────────────────────────────
- *  BUILD NOTES — comment configurer et déployer
- * ─────────────────────────────────────────────────────────────
- *
- *  1. REMPLACER LES CLÉS BACK4APP
- *     Chercher le bloc « ══ CONFIG ══ » dans le JS (environ ligne 30 du script).
- *     Remplacer BACK4APP_APP_ID et BACK4APP_JS_KEY par vos propres clés.
- *     Trouvez-les dans Back4App → App Settings → Security & Keys → JavaScript Key.
- *     NE METTEZ JAMAIS la Master Key ici.
- *
- *  2. DÉSACTIVER LE MODE ONLINE (déploiement offline pur)
- *     Dans le bloc CONFIG, passer :
- *         const ONLINE_ENABLED = false;
- *     → Le bouton "Multijoueur" sera désactivé avec un message UI clair.
- *     → La dépendance unpkg ne sera jamais chargée.
- *     → Vous pouvez retirer https://unpkg.com de la CSP manuellement.
- *
- *  3. ACTIVER LE MODE DEBUG
- *     Dans le bloc CONFIG, passer :
- *         const DEBUG = true;
- *     → Active console.debug dans certains modules (futur usage).
- *
- *  4. DÉPLOIEMENT
- *     Ce fichier est self-contained. Ouvrir directement dans un navigateur ou
- *     servir depuis n'importe quel hébergeur statique (GitHub Pages, Netlify, etc.).
- *     Aucun build tool requis.
- *
- * ============================================================
- */
-/*!
- * ╔══════════════════════════════════════════════════════════════════════════╗
- * ║  TIDDAS — Production Build v3  (refactored, zero-monkey-patch)          ║
- * ╚══════════════════════════════════════════════════════════════════════════╝
- *
- * ── CHANGELOG vs version précédente ────────────────────────────────────────
- *
- * SUPPRIMÉ :
- *   §1.1  Bloc legacy DOM fa-* replacement (querySelectorAll 'i[class*=fa-]')
- *         → aucun <i class="fa-*"> dans le HTML; code mort supprimé.
- *   §1.3  Double map fa-* → emoji; une seule définition conservée (__resolveIconEmoji).
- *   §2    Tous les blocs monkey-patch (renderAll, onCellClick, handleUndo,
- *         startGame, startSpectatorGame, endGame, handleSurrender,
- *         showEphemeralBubbleMessage, updateLanguage) → logique intégrée
- *         directement dans les fonctions originales.
- *
- * REFACTORISÉ :
- *   §2    renderAll() : attachBoardA11yOnce + delta/session + applyA11y +
- *         pushReplayFrame + applyHighlightsAndHints intégrés directement.
- *   §2    onCellClick() : guard replay.active intégré en tête.
- *   §2    handleUndo() : rewind replay timeline intégré en fin.
- *   §2    startGame() : resetReplayAndSession() appelé en tête.
- *   §2    startSpectatorGame() : session.active=false + reset replay intégré.
- *   §2    endGame() : pushReplayFrame + finalizeSessionAndStats +
- *         persistLastReplay + refreshReplayButtons intégrés en tête.
- *   §2    handleSurrender() : même logique (idempotent via session.active guard).
- *   §2    showEphemeralBubbleMessage() : comptage mills intégré en tête.
- *   §2    updateLanguage() : applyNewI18nAttrs + renderStats + updateReplayMeta
- *         intégrés en fin de fonction.
- *   §7.3  :has() CSS fallback : classe .has-active ajoutée/retirée par JS
- *         sur .famille-card lors du clic sur .variant-btn.
- *   §4.3  Polling race condition fixée : flag online.fetching empêche les
- *         appels Back4App concurrents.
- *
- * OPTIMISÉ :
- *   §8.5  Fonction dbg() : tous les console.log/warn/error filtrés par DEBUG.
- *
- * SÉCURISÉ :
- *   §4.1  ONLINE_ENABLED flag : bouton désactivé proprement si false.
- *   §6.5  Noms de joueurs : déjà sanitisés via sanitizeHTML() / normalizeName().
- *
- * ── BUILD NOTES ─────────────────────────────────────────────────────────────
- *
- *  1. CLÉS BACK4APP
- *     Chercher "══ CONFIG ══" dans le JS (env. ligne 30 du <script>).
- *     Remplacer BACK4APP_APP_ID et BACK4APP_JS_KEY.
- *     Ne jamais mettre la Master Key ici.
- *
- *  2. DÉSACTIVER LE MODE ONLINE (offline pur)
- *     const ONLINE_ENABLED = false;
- *     → bouton désactivé, aucun appel réseau, pas de crash.
- *     → retirer https://unpkg.com de la CSP manuellement.
- *
- *  3. MODE DEBUG
- *     const DEBUG = true;
- *     → active dbg() logs dans la console.
- *
- *  4. DÉPLOIEMENT
- *     Fichier HTML autonome — aucun outil de build requis.
- *     Hébergement statique (GitHub Pages, Netlify, etc.).
- * ══════════════════════════════════════════════════════════════════════════
- */
-
-/* ===== TIDDAS - Script consolidé (refactorisé) ===== */
-
 // ============================================================
 // Micro-interactions pointer glow (IIFE isolée)
 // ============================================================
@@ -16276,7 +16021,6 @@ clientX: last.x, clientY: last.y
 passive: true
 });
 
-// [LEGACY REMOVED] fa-* DOM replacement block — no <i class="fa-*"> in HTML.
 })();
 
 // ============================================================
@@ -16309,6 +16053,20 @@ const BACK4APP_JS_KEY     = "8Xl9kHkCUOLKXPEE6ILABX3hyBvEatUIHRUnwhQ8"; // ← r
 const BACK4APP_SERVER_URL = "https://parseapi.back4app.com";              // URL API par défaut
 const BACK4APP_CLASS      = "GameMatch"; // Nom de la class/table Back4App
 window.BACK4APP_CLASS = BACK4APP_CLASS;
+
+// ── Online room code policy ───────────────────────────────
+const ONLINE_ROOM_CODE_LENGTH = 6;
+const ONLINE_ROOM_CODE_LEGACY_LENGTH = 4;
+function normalizeOnlineRoomCode(value) {
+  return String(value || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, ONLINE_ROOM_CODE_LENGTH);
+}
+function isValidOnlineRoomCode(value) {
+  const code = normalizeOnlineRoomCode(value);
+  return code.length === ONLINE_ROOM_CODE_LENGTH || code.length === ONLINE_ROOM_CODE_LEGACY_LENGTH;
+}
 
 // ╚══════════════════════════════════════════════════════════╝
 // ══ FIN CONFIG ══
@@ -16480,12 +16238,10 @@ function renderRecentOnlineRooms() {
           inputCode.value = r.code;
           inputCode.dispatchEvent(new Event('input'));
         }
-        // Close recent panel, open join panel, then auto-connect
-        const joinPanel = document.getElementById('online-join-panel');
         const recentPanel = document.getElementById('online-recent-wrap');
-        if (joinPanel) joinPanel.classList.add('open');
-        if (recentPanel) recentPanel.classList.remove('open');
-        // Trigger connection after short delay
+        const recentToggle = document.getElementById('online-recent-toggle');
+        if (recentPanel) recentPanel.style.display = 'none';
+        if (recentToggle) recentToggle.setAttribute('aria-expanded', 'false');
         setTimeout(() => { try { onlineConnectToRoom(r.code, false); } catch(_) {} }, 200);
       };
       list.appendChild(btn);
@@ -16530,7 +16286,7 @@ window.getOnlinePlayerName = function() {
 
 const onlineEls = {
   area: null, statusText: null, roomCodeRow: null, roomCode: null,
-  btnCreate: null, btnJoin: null, joinPanel: null, inputCode: null,
+  btnCreate: null, inputCode: null,
   btnConnect: null, btnStart: null, btnCopy: null, btnCopyLink: null, btnShareLink: null, btnBack: null,
   inputName: null, p1Name: null, p2Name: null,
   recentWrap: null, recentList: null, btnRejoinLast: null
@@ -16605,7 +16361,7 @@ function _setOnlineStatus(msg) {
   window._setOnlineStatus = _setOnlineStatus;
 }
 function _show(el, yes) { if (!el) return; el.style.display = yes ? '' : 'none'; }
-function _randCode(len=4) {
+function _randCode(len=ONLINE_ROOM_CODE_LENGTH) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let out = '';
   for (let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
@@ -16614,6 +16370,14 @@ function _randCode(len=4) {
 
 function onlineDisconnect() {
   if (online.pollTimer) { clearInterval(online.pollTimer); online.pollTimer = 0; }
+  try {
+    if (typeof window._cancelOnlineAutostartCountdown === 'function') {
+      window._cancelOnlineAutostartCountdown(true);
+    }
+  } catch(_) {}
+  // P2-A : Fermer la subscription LiveQuery si active
+  if (typeof window._stopLiveQuery === 'function') { try { window._stopLiveQuery(); } catch(_) {} }
+  window.__tiddasDirectJoinHint = null;
   // Cancel any pending debounced send
   if (_onlineSendDebounceTimer) { clearTimeout(_onlineSendDebounceTimer); _onlineSendDebounceTimer = null; }
   online.matchId = null;
@@ -16639,9 +16403,23 @@ function onlineDisconnect() {
     // Toujours réafficher le bouton quitter (au cas où il aurait été masqué)
     const qb = document.getElementById('ol-quit-btn');
     if (qb) qb.style.display = '';
+    const specCard = document.getElementById('ol-spectate-card');
+    if (specCard) specCard.classList.remove('visible');
+    const takeBtn = document.getElementById('ol-takeover-btn');
+    if (takeBtn) takeBtn.classList.remove('visible');
+    const vg = document.getElementById('ol-variant-grid');
+    if (vg) vg.querySelectorAll('.ol-vbtn').forEach(function(btn) { btn.style.pointerEvents = ''; });
+    window._spectatorPendingMatchId = null;
+    window._spectatorPendingCode = '';
   } catch(_) {}
   // Restaurer les boutons joueur (désactivés en mode spectateur)
   try { stopSpectatorMode(); } catch(_) {}
+  // P2-B : reset du flag enqueue pour la prochaine session spectateur
+  window._spectatorEnqueueDone = false;
+  // P3-A : arrêter le heartbeat
+  if (window.TiddasPatch && window.TiddasPatch.Heartbeat) {
+    try { window.TiddasPatch.Heartbeat.stop(); } catch(_) {}
+  }
 }
 
 // ── In-game online status bar ─────────────────────────────────
@@ -16702,8 +16480,25 @@ function _updateOnlineGameBar() {
 }
 
 async function _fetchMatchByCode(code) {
+  const normalizedCode = String(code || '').trim().toUpperCase();
+  const directHint = window.__tiddasDirectJoinHint;
+  if (
+    directHint &&
+    directHint.matchId &&
+    String(directHint.code || '').trim().toUpperCase() === normalizedCode &&
+    Date.now() - Number(directHint.ts || 0) < 10000
+  ) {
+    try {
+      const hinted = await _fetchMatchById(directHint.matchId);
+      if (hinted && String(hinted.get('code') || '').trim().toUpperCase() === normalizedCode) {
+        window.__tiddasDirectJoinHint = null;
+        return hinted;
+      }
+    } catch(_) {}
+    window.__tiddasDirectJoinHint = null;
+  }
   const q = new Parse.Query(BACK4APP_CLASS);
-  q.equalTo('code', code);
+  q.equalTo('code', normalizedCode);
   q.descending('createdAt');
   return await q.first();
 }
@@ -16736,6 +16531,11 @@ function _applyLobbyStateFromMatch(match) {
   try { if (typeof window._checkChallengeAccepted === 'function') window._checkChallengeAccepted(match); } catch(_) {}
 
   online.ready = !!(p1 && p2);
+  try {
+    if (typeof window._syncOnlineAutostartState === 'function') {
+      window._syncOnlineAutostartState(match);
+    }
+  } catch(_) {}
 
   // Rematch readiness flags (persisted in room)
   const rm1 = !!match.get('rm1');
@@ -16814,13 +16614,15 @@ function _applyLobbyStateFromMatch(match) {
 
 
 
-// ── Adaptive polling ─────────────────────────────────────────
+// ── Adaptive polling (fallback si LiveQuery indisponible) ────
 const _POLL_FAST_MS  = 900;
 const _POLL_SLOW_MS  = 2500;
 const _POLL_SLOW_AFTER_N_EMPTY = 6; // N polls lobby vide avant slow
 let _pollNoChangeCount     = 0;
 let _pollCurrentInterval   = _POLL_FAST_MS;
 let _pollConsecutiveErrors = 0;
+// P2-A : référence à la subscription LiveQuery active
+let _liveQuerySub = null;
 
 // ─── Fonctions chat (portée IIFE — accessible depuis tick) ───────────────────
 const _ONLINE_CHAT_TTL_MS    = 600000; // 10 min
@@ -16832,7 +16634,7 @@ function _pruneChatArray(items) {
     .filter(function(m) {
       // Keep text messages AND voice messages AND spectator-chat messages
       return m && m.id
-        && (m.text || m.audioData || m.type === 'spectator-chat' || m.type === 'voice')
+        && (m.text || m.audioData || m.type === 'voice')
         && (!m.expiresAt || m.expiresAt > now);
     })
     .slice(-_ONLINE_CHAT_MAX_ITEMS);
@@ -16872,8 +16674,9 @@ function _startPolling() {
         var rawChat = match.get('ephemeralChat');
         if (Array.isArray(rawChat)) {
           rawChat.forEach(function(msg) {
-            if (msg && msg.type === 'spectator-chat' && window._specChatInjectMsg) {
-              window._specChatInjectMsg(msg);
+            // spectator-chat redirigé vers la messagerie principale
+            if (msg && msg.type === 'spectator-chat' && window._onlineChatInjectMsg) {
+              window._onlineChatInjectMsg && window._onlineChatInjectMsg(msg);
             }
           });
         }
@@ -16894,7 +16697,7 @@ function _startPolling() {
           // Mettre à jour la position du spectateur dans la file d'attente
           try {
             if (window.TiddasSpectator && typeof window.TiddasSpectator.refreshQueuePosition === 'function') {
-              window.TiddasSpectator.refreshQueuePosition(match.get('specQueue') || []);
+              window.TiddasSpectator.refreshQueuePosition(match.get('specQueue') || match.get('spectatorQueue') || []);
             }
           } catch(_) {}
         }
@@ -16977,9 +16780,94 @@ function _startPolling() {
     }
   };
 
-  online.pollTimer = setInterval(tick, _pollCurrentInterval);
+  // P2-A : Tenter Parse LiveQuery (WebSocket) en premier
+  var _liveQueryStarted = false;
+  try {
+    if (window.Parse && window.Parse.LiveQuery && online.matchId) {
+      var _lqQuery = new window.Parse.Query(window.BACK4APP_CLASS);
+      _lqQuery.equalTo('objectId', online.matchId);
+      window.Parse.LiveQuery.on('error', function() { /* géré par fallback */ });
+      _lqQuery.subscribe().then(function(sub) {
+        _liveQuerySub = sub;
+        _liveQueryStarted = true;
+
+        sub.on('update', function(match) {
+          // Même logique que tick() mais déclenchée sur push serveur
+          online.fetching = true;
+          try {
+            _lastPeerRevTs = Date.now();
+            _pollConsecutiveErrors = 0;
+            _applyLobbyStateFromMatch(match);
+            try { _processMatchChatFromArray(match); } catch(_) {}
+            try {
+              var rawChat = match.get('ephemeralChat');
+              if (Array.isArray(rawChat)) {
+                rawChat.forEach(function(msg) {
+                  // spectator-chat redirigé vers messagerie principale
+                  if (msg && msg.type === 'spectator-chat' && window._onlineChatInjectMsg) {
+                    window._onlineChatInjectMsg && window._onlineChatInjectMsg(msg);
+                  }
+                });
+              }
+            } catch(_) {}
+            try {
+              var matchStatus = match.get('status') || 'waiting';
+              var liveDotEl = document.getElementById('ol-live-dot');
+              if (liveDotEl) liveDotEl.style.display = (matchStatus === 'playing') ? 'inline-flex' : 'none';
+              var tournData = match.get('tournament');
+              if (tournData && window.TiddasTournament) window.TiddasTournament.applyFromServer(tournData);
+            } catch(_) {}
+            var rev = Number(match.get('rev') || 0);
+            if (rev !== online.lastSeenRev) {
+              online.lastSeenRev = rev;
+              var payload = match.get('payload') || null;
+              if (payload && payload.state) {
+                var _wasSpec = (window.gameMode === 'spectator' || (window.online && window.online.role === 0));
+                onlineApplyState(payload);
+                if (_wasSpec) {
+                  window.gameMode = 'spectator';
+                  var _badge = document.getElementById('spectator-badge');
+                  if (_badge && !_badge.classList.contains('visible')) {
+                    _badge.textContent = '👁 Spectateur en ligne'; _badge.classList.add('visible');
+                  }
+                  document.body.classList.add('is-spectating');
+                  ['undo-btn', 'surrender', 'restart'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) { el.disabled = true; el.style.opacity = '0.25'; el.style.pointerEvents = 'none'; }
+                  });
+                }
+                if (typeof showScreen === 'function') showScreen('game-play-area');
+              }
+            }
+          } catch(_) {}
+          finally {
+            online.fetching = false;
+            try { _updateOnlineGameBar(); } catch(_) {}
+          }
+        });
+
+        sub.on('error', function() {
+          // LiveQuery tombé → basculer sur polling HTTP
+          _liveQuerySub = null; _liveQueryStarted = false;
+          if (!online.pollTimer) online.pollTimer = setInterval(tick, _pollCurrentInterval);
+        });
+
+      }).catch(function() {
+        // subscribe() échoué → fallback polling
+        if (!online.pollTimer) online.pollTimer = setInterval(tick, _pollCurrentInterval);
+      });
+    }
+  } catch(_) { /* Parse.LiveQuery absent → fallback */ }
+
+  // Fallback polling HTTP si LiveQuery non disponible ou non encore confirmé
+  if (!_liveQueryStarted) {
+    online.pollTimer = setInterval(tick, _pollCurrentInterval);
+  }
   // Expose for spectator and reconnect modules
   window._startPolling = _startPolling;
+  window._stopLiveQuery = function() {
+    if (_liveQuerySub) { try { _liveQuerySub.unsubscribe(); } catch(_) {} _liveQuerySub = null; }
+  };
 }
 
 async function onlineConnectToRoom_Back4App(code, creating) {
@@ -19151,7 +19039,7 @@ if (oCopy) {
   oCopy.title = lbl;
 }
 // online-invite-toggle aria-label
-const oInvite = document.getElementById('online-invite-toggle');
+const oInvite = document.getElementById('chal-share-smart');
 if (oInvite) {
   const lbl = tr.onlineInviteBtn || '📤 Inviter un ami';
   oInvite.setAttribute('aria-label', lbl);
@@ -19426,7 +19314,6 @@ function showWinnerAnimation(message, name, isDefeat) {
   winnerOverlay.classList.add('active');
 }
 
-function _spawnWoParticles() {} // removed
 
 function hideWinnerAnimation() {
 stopSpectatorMode();
@@ -20535,24 +20422,10 @@ function handleReplayClick() {
     return;
   }
 
-  // Online: stay in the same room
+  // Online : déléguer intégralement à RematchSystem (P1-C)
   if (gameMode === 'online' && online && online.connected) {
-    // Mark ready for rematch; host will start when both are ready.
-    onlineSetRematchReady(true);
-    // Go back to online lobby UI (without leaving the room)
-    try { showScreen('online-lobby-area'); } catch(_) {}
-    _setOnlineStatus(t('onlineRematchReadyToast'));
-    // If host, try auto-start when both players are ready (will be checked by lobby polling)
-    if (online.isHost) {
-      // Attempt immediate start if already both ready (best-effort; polling also handles it)
-      (async () => {
-        try {
-          const match = await _fetchMatchById(online.matchId);
-          const rm1 = !!match.get('rm1');
-          const rm2 = !!match.get('rm2');
-          if (rm1 && rm2) onlineStartMatch_Back4App();
-        } catch(_) {}
-      })();
+    if (window.TiddasPatch && window.TiddasPatch.RematchSystem) {
+      window.TiddasPatch.RematchSystem.propose();
     }
     return;
   }
@@ -25212,7 +25085,7 @@ splash.classList.add('hidden');
 setTimeout(() => {
 splash.style.display = 'none';
 // Focus first interactive element
-const firstBtn = document.querySelector('.version-card');
+const firstBtn = document.querySelector('.variant-btn, #play-online-btn, .option-btn, .toolbar-btn, #settings-fab');
 if (firstBtn) firstBtn.focus();
 },
 480);
@@ -25543,9 +25416,9 @@ function _tryAutoJoinFromUrl() {
   _autoJoinDone = true;
   try {
     const params = new URLSearchParams(window.location.search);
-    const roomParam = (params.get('room') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const roomParam = normalizeOnlineRoomCode(params.get('room') || '');
     const challengerName = (() => { try { return decodeURIComponent(params.get('challenger') || '').trim(); } catch(_) { return ''; } })();
-    if (!roomParam) return;
+    if (!isValidOnlineRoomCode(roomParam)) return;
     // Clean URL
     try { history.replaceState({}, '', window.location.pathname); } catch(_) {}
     // Navigate to online lobby
@@ -25558,9 +25431,6 @@ function _tryAutoJoinFromUrl() {
       try {
         const inp = document.getElementById('online-room-code');
         if (inp) { inp.value = roomParam; inp.dispatchEvent(new Event('input')); }
-        const jp = document.getElementById('online-join-panel');
-        if (jp) jp.classList.add('open');
-
         const savedName = (() => { try { return localStorage.getItem('tiddas_online_name_v1') || ''; } catch(_) { return ''; } })();
         if (savedName) {
           // Name known → show brief toast and connect immediately
@@ -25658,8 +25528,6 @@ if (onlineBtn) {
     onlineEls.roomCodeRow = document.getElementById('online-roomcode-row');
     onlineEls.roomCode    = document.getElementById('online-roomcode');
     onlineEls.btnCreate   = document.getElementById('online-create-room');
-    onlineEls.btnJoin     = document.getElementById('online-join-room');
-    onlineEls.joinPanel   = document.getElementById('online-join-panel');
     onlineEls.inputCode   = document.getElementById('online-room-code');
     onlineEls.btnConnect  = document.getElementById('online-connect');
     onlineEls.btnStart    = document.getElementById('online-start');
@@ -25676,8 +25544,7 @@ if (onlineBtn) {
 
     const rematchReadyBtn = document.getElementById('online-rematch-ready-btn');
     if (rematchReadyBtn) {
-      rematchReadyBtn.addEventListener('click', async () => {
-        // Toggle ready state for current slot
+      rematchReadyBtn.onclick = async () => {
         try {
           const match = await _fetchMatchById(online.matchId);
           const rm1 = !!match.get('rm1');
@@ -25685,7 +25552,7 @@ if (onlineBtn) {
           const current = (online.role === 1) ? rm1 : rm2;
           await onlineSetRematchReady(!current);
         } catch(_) {}
-      });
+      };
     }
 
     // Status global text element
@@ -25710,24 +25577,19 @@ if (onlineBtn) {
       if (preConnect)  preConnect.style.display  = yes ? 'none' : '';
     };
 
-    // Helpers accordion
-    const _openAccordion  = (id) => { const el = document.getElementById(id); if (el) el.classList.add('open'); };
-    const _closeAccordion = (id) => { const el = document.getElementById(id); if (el) el.classList.remove('open'); };
-    const _closeAllAccordions = () => {
-      ['online-create-panel','online-join-panel','online-recent-wrap'].forEach(_closeAccordion);
-    };
-
     // Code input validation
     const _validateCode = () => {
-      const v = (onlineEls.inputCode?.value || '').trim();
+      const v = normalizeOnlineRoomCode(onlineEls.inputCode?.value || '');
+      if (onlineEls.inputCode && onlineEls.inputCode.value !== v) onlineEls.inputCode.value = v;
+      const valid = isValidOnlineRoomCode(v);
       if (onlineEls.inputCode) {
-        onlineEls.inputCode.classList.toggle('input-valid', v.length >= 4);
-        onlineEls.inputCode.classList.toggle('input-error', v.length > 0 && v.length < 4);
+        onlineEls.inputCode.classList.toggle('input-valid', valid);
+        onlineEls.inputCode.classList.toggle('input-error', v.length > 0 && !valid);
       }
-      if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = v.length < 4;
+      if (onlineEls.btnConnect) onlineEls.btnConnect.disabled = !valid;
     };
     if (onlineEls.inputCode) {
-      onlineEls.inputCode.addEventListener('input', _validateCode);
+      onlineEls.inputCode.oninput = _validateCode;
       _validateCode();
     }
 
@@ -25743,14 +25605,14 @@ if (onlineBtn) {
         setTimeout(() => { _backHandled = false; }, 600);
         onlineDisconnect(); showScreen('mode-selection-area');
       };
-      onlineEls.btnBack.addEventListener('pointerdown', () => {
+      onlineEls.btnBack.onpointerdown = () => {
         onlineEls.btnBack.style.transform = 'scale(0.95)';
-      }, { passive: true });
-      onlineEls.btnBack.addEventListener('pointerup', _doBack, { passive: false });
-      onlineEls.btnBack.addEventListener('pointercancel', () => {
+      };
+      onlineEls.btnBack.onpointerup = _doBack;
+      onlineEls.btnBack.onpointercancel = () => {
         _backHandled = false;
         if (onlineEls.btnBack) onlineEls.btnBack.style.transform = '';
-      }, { passive: true });
+      };
       onlineEls.btnBack.style.touchAction = 'manipulation';
     }
 
@@ -25770,7 +25632,6 @@ if (onlineBtn) {
     _syncVariantPickerVisibility();
 
     if (variantGrid) {
-      // Mark current variant as selected
       const _refreshVariantBtns = () => {
         variantGrid.querySelectorAll('.ol-vbtn').forEach(btn => {
           btn.classList.toggle('selected', btn.dataset.variant === variant);
@@ -25778,12 +25639,12 @@ if (onlineBtn) {
       };
       _refreshVariantBtns();
 
-      variantGrid.addEventListener('click', (e) => {
+      variantGrid.onclick = (e) => {
         const btn = e.target.closest('.ol-vbtn');
-        if (!btn || online.connected) return; // locked once connected
+        if (!btn || online.connected) return;
         variant = btn.dataset.variant;
         _refreshVariantBtns();
-      });
+      };
     }
 
     // ── Copy code from in-game bar ────────────────────────────
@@ -25830,7 +25691,7 @@ if (onlineBtn) {
       specQuit.onclick = () => {
         try { if (typeof onlineDisconnect === 'function') onlineDisconnect(); } catch(_) {}
         try { stopSpectatorMode(); } catch(_) {}
-        try { if (window.SpectatorChat) SpectatorChat.syncVisibility(); } catch(_) {}
+        // SpectatorChat.syncVisibility() supprimé
         if (typeof showScreen === 'function') showScreen('mode-selection-area');
       };
     }
@@ -25860,7 +25721,7 @@ if (onlineBtn) {
           Notification.requestPermission();
         }
       } catch(_) {}
-      const code = _randCode(4);
+      const code = _randCode(ONLINE_ROOM_CODE_LENGTH);
       _showStatusCard(true);
       // Lock variant picker once creating
       if (variantGrid) variantGrid.querySelectorAll('.ol-vbtn').forEach(b => b.style.pointerEvents = 'none');
@@ -25870,8 +25731,8 @@ if (onlineBtn) {
 
     // ── REJOINDRE — entrée code inline, connecte dès 4 chars + Enter/clic ──
     if (onlineEls.btnConnect) onlineEls.btnConnect.onclick = () => {
-      const code = (onlineEls.inputCode?.value || '').trim().toUpperCase();
-      if (code.length < 4) {
+      const code = normalizeOnlineRoomCode(onlineEls.inputCode?.value || '');
+      if (!isValidOnlineRoomCode(code)) {
         if (onlineEls.inputCode) onlineEls.inputCode.classList.add('input-error');
         return;
       }
@@ -25880,14 +25741,13 @@ if (onlineBtn) {
       onlineConnectToRoom(code, false);
     };
 
-    // Enter key in code input
     if (onlineEls.inputCode) {
-      onlineEls.inputCode.addEventListener('keydown', (e) => {
+      onlineEls.inputCode.onkeydown = (e) => {
         if (e.key === 'Enter') {
-          const code = (onlineEls.inputCode.value || '').trim().toUpperCase();
-          if (code.length >= 4) { _showStatusCard(true); onlineConnectToRoom(code, false); }
+          const code = normalizeOnlineRoomCode(onlineEls.inputCode.value || '');
+          if (isValidOnlineRoomCode(code)) { _showStatusCard(true); onlineConnectToRoom(code, false); }
         }
-      });
+      };
     }
 
     // ── Rejoindre dernier salon ──────────────────────────────
@@ -25896,7 +25756,7 @@ if (onlineBtn) {
       if (onlineEls.btnRejoinLast) {
         _show(onlineEls.btnRejoinLast, !!(lastRoom && lastRoom.code));
         onlineEls.btnRejoinLast.onclick = () => {
-          const c = String(lastRoom?.code || '').trim().toUpperCase();
+          const c = normalizeOnlineRoomCode(lastRoom?.code || '');
           if (!c) return;
           _showStatusCard(true);
           onlineConnectToRoom(c, false);
@@ -25910,13 +25770,14 @@ if (onlineBtn) {
       const recentToggleBtn = document.getElementById('online-recent-toggle');
       if (recentToggleBtn) {
         const rooms = loadRecentOnlineRooms();
-        recentToggleBtn.style.display = rooms.length > 0 ? '' : 'none';
+        const hasRooms = rooms.length > 0;
+        recentToggleBtn.style.display = hasRooms ? '' : 'none';
         recentToggleBtn.onclick = () => {
           const wrap = document.getElementById('online-recent-wrap');
-          if (wrap) {
-            const showing = wrap.style.display !== 'none';
-            wrap.style.display = showing ? 'none' : '';
-          }
+          if (!wrap) return;
+          const showing = wrap.style.display !== 'none';
+          wrap.style.display = showing ? 'none' : '';
+          recentToggleBtn.setAttribute('aria-expanded', showing ? 'false' : 'true');
         };
       }
     } catch(_) {}
@@ -26013,6 +25874,24 @@ if (onlineBtn) {
       if (banner) banner.classList.remove('visible');
     }
 
+    window._cancelOnlineAutostartCountdown = function(resetCancelFlag) {
+      _cancelAutoCountdown();
+      if (resetCancelFlag) _autostartCancelled = false;
+    };
+
+    window._syncOnlineAutostartState = function(match) {
+      try {
+        const status = match && match.get ? (match.get('status') || 'waiting') : 'waiting';
+        const p1 = match && match.get ? match.get('p1Id') : null;
+        const p2 = match && match.get ? match.get('p2Id') : null;
+        const shouldCount = !!(online && online.isHost && p1 && p2 && status === 'ready');
+        if (!shouldCount) {
+          _cancelAutoCountdown();
+          _autostartCancelled = false;
+        }
+      } catch(_) {}
+    };
+
     // ── Polling : détecter quand le défi est accepté (joueur 2 rejoint) ──
     let _challengeNotifShown = false;
     let _prevP2Name = null;
@@ -26063,7 +25942,7 @@ if (onlineBtn) {
       const savedName = localStorage.getItem('tiddas_online_name_v1') || '';
       if (onlineEls.inputName && !onlineEls.inputName.value) onlineEls.inputName.value = savedName;
       if (onlineEls.inputName) {
-        onlineEls.inputName.addEventListener('input', () => {
+        onlineEls.inputName.oninput = () => {
           const n = (onlineEls.inputName.value || '').trim();
           try { localStorage.setItem('tiddas_online_name_v1', n); } catch(_) {}
           // If there's a code in the join field and user just typed their name → auto-connect
@@ -26072,7 +25951,7 @@ if (onlineBtn) {
             // Don't auto-connect on every keystroke — only if coming from URL auto-join
 
           }
-        });
+        };
       }
     } catch(_) {}
   });
@@ -28427,10 +28306,18 @@ onlineDisconnect = function() {
     if (window.TiddasSpectator && window.online && window.online.matchId && window.online.role === 0) {
       var _dname = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
                  || (localStorage.getItem('tiddas_online_name_v1') || '').trim();
-      if (_dname && window.Parse && window.BACK4APP_CLASS) {
+      var _did = String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || '');
+      if ((_dname || _did) && window.Parse && window.BACK4APP_CLASS) {
         (new Parse.Query(window.BACK4APP_CLASS)).get(window.online.matchId).then(function(_qmd) {
           var _qd = (_qmd.get('specQueue') || []).filter(function(e){ return e && e.name !== _dname; });
+          var _sq = (_qmd.get('spectatorQueue') || []).filter(function(e){
+            if (e == null) return false;
+            if (typeof e === 'string' || typeof e === 'number') return String(e) !== _did;
+            if (e && e.id != null) return String(e.id) !== _did;
+            return true;
+          });
           _qmd.set('specQueue', _qd);
+          _qmd.set('spectatorQueue', _sq);
           _qmd.save().catch(function(){});
         }).catch(function(){});
       }
@@ -28680,8 +28567,6 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
 })();
 </script>
 
-</body>
-</html>
 
 <script>
 /* ── TIDDAS v25 — comportement chat ── */
@@ -29606,20 +29491,33 @@ var SpectatorEnhanced = (function() {
         var _myName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
                     || (localStorage.getItem('tiddas_online_name_v1') || '').trim()
                     || 'Spectateur';
+        var _myId = String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || '');
         var _myEntry = { name: _myName, ts: Date.now() };
         if (window.Parse && window.BACK4APP_CLASS) {
           var _qm = await (new Parse.Query(window.BACK4APP_CLASS)).get(matchId).catch(function(){return null;});
           if (_qm) {
             var _q = (_qm.get('specQueue') || []).filter(function(e){ return e && e.name && e.ts; });
+            var _sq = (_qm.get('spectatorQueue') || []).filter(function(e){ return e != null; }).map(function(e) {
+              return (typeof e === 'string' || typeof e === 'number') ? String(e) : (e && e.id != null ? String(e.id) : null);
+            }).filter(Boolean);
             // Éviter les doublons (même nom dans les 5 dernières secondes)
             var _already = _q.some(function(e){ return e.name === _myName && (Date.now() - e.ts) < 5000; });
             if (!_already) {
               _q.push(_myEntry);
               _qm.set('specQueue', _q);
+              if (_myId && _sq.indexOf(_myId) === -1) {
+                _sq.push(_myId);
+                _qm.set('spectatorQueue', _sq);
+              }
               _qm.save().catch(function(){});
               _myQueuePos = _q.length; // position 1-indexée
             } else {
               _myQueuePos = _q.findIndex(function(e){ return e.name === _myName; }) + 1;
+              if (_myId && _sq.indexOf(_myId) === -1) {
+                _sq.push(_myId);
+                _qm.set('spectatorQueue', _sq);
+                _qm.save().catch(function(){});
+              }
             }
           }
         }
@@ -29640,7 +29538,7 @@ var SpectatorEnhanced = (function() {
       document.body.classList.add('is-spectating');
 
       try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
-      SpectatorChat.syncVisibility();
+      // SpectatorChat.syncVisibility() supprimé
 
       // Lancer le polling avant de récupérer l'état
       if (typeof _startPolling === 'function') _startPolling();
@@ -29744,10 +29642,18 @@ var SpectatorEnhanced = (function() {
         var _myName2 = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
                      || (localStorage.getItem('tiddas_online_name_v1') || '').trim()
                      || 'Spectateur';
+        var _myId2 = String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || '');
         if (window.Parse && window.BACK4APP_CLASS && window.online && window.online.matchId) {
           (new Parse.Query(window.BACK4APP_CLASS)).get(window.online.matchId).then(function(_qm2) {
             var _q2 = (_qm2.get('specQueue') || []).filter(function(e){ return e && e.name !== _myName2; });
+            var _sq2 = (_qm2.get('spectatorQueue') || []).filter(function(e){
+              if (e == null) return false;
+              if (typeof e === 'string' || typeof e === 'number') return String(e) !== _myId2;
+              if (e && e.id != null) return String(e.id) !== _myId2;
+              return true;
+            });
             _qm2.set('specQueue', _q2);
+            _qm2.set('spectatorQueue', _sq2);
             _qm2.save().catch(function(){});
           }).catch(function(){});
         }
@@ -29759,8 +29665,8 @@ var SpectatorEnhanced = (function() {
       if (badge) badge.classList.remove('visible');
       showTakeoverSlot(null);
 
-      // Masquer chat spectateurs, relancer le polling joueur
-      SpectatorChat.syncVisibility();
+      // Revenir au chat principal, relancer le polling joueur
+      try { if (typeof syncOnlineChatVisibility === 'function') syncOnlineChatVisibility(); } catch(_) {}
       if (typeof _startPolling === 'function') _startPolling();
 
       // Restaurer les boutons joueur
@@ -29849,8 +29755,14 @@ var SpectatorEnhanced = (function() {
     try {
       var myName = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '')
                  || (localStorage.getItem('tiddas_online_name_v1') || '').trim();
-      if (!myName) return;
-      var idx = serverQueue.findIndex(function(e) { return e && e.name === myName; });
+      var myId = String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || '');
+      if (!myName && !myId) return;
+      var idx = serverQueue.findIndex(function(e) {
+        if (e == null) return false;
+        if (typeof e === 'string' || typeof e === 'number') return !!myId && String(e) === myId;
+        if (e && e.id != null) return !!myId && String(e.id) === myId;
+        return !!myName && e && e.name === myName;
+      });
       _myQueuePos = idx >= 0 ? idx + 1 : -1;
     } catch(_) {}
   }
@@ -29866,137 +29778,9 @@ var SpectatorEnhanced = (function() {
 // ─────────────────────────────────────────────────────────────────────
 // 5.  CHAT SPECTATEURS SÉPARÉ
 // ─────────────────────────────────────────────────────────────────────
-var SpectatorChat = (function() {
-  var _msgs    = [];
-  var _open    = false;
-  var _unread  = 0;
-  var STORAGE  = 'tiddas_spec_chat_v1';
 
-  function _render() {
-    var list = document.getElementById('spec-chat-list');
-    if (!list) return;
-    list.innerHTML = '';
-    _msgs.slice(-60).forEach(function(m) {
-      var div = document.createElement('div');
-      div.className = 'spec-chat-msg';
-      div.innerHTML = '<span class="sc-name">' + _esc(m.name) + '</span>' + _esc(m.text);
-      list.appendChild(div);
-    });
-    list.scrollTop = list.scrollHeight;
-  }
+// SpectatorChat supprimé — spectateurs utilisent la messagerie principale
 
-  function _esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  function _setOpen(open) {
-    _open = open;
-    var panel = document.getElementById('spectator-chat-panel');
-    var fab   = document.getElementById('spectator-chat-fab');
-    if (panel) panel.hidden = !open;
-    if (fab) {
-      fab.setAttribute('aria-label', open ? 'Fermer le chat spectateurs' : 'Chat spectateurs' + (_unread > 0 ? ' (' + _unread + ')' : ''));
-      fab.dataset.unread = _unread > 0 && !open ? _unread : '';
-    }
-    if (open) {
-      _unread = 0;
-      if (fab) fab.dataset.unread = '';
-      _render();
-    }
-  }
-
-  function addMessage(name, text) {
-    _msgs.push({ name: name, text: text, ts: Date.now() });
-    if (_msgs.length > 120) _msgs.shift();
-    if (!_open) { _unread++; }
-    _render();
-    var fab = document.getElementById('spectator-chat-fab');
-    if (fab && !_open) fab.dataset.unread = _unread;
-    // Partager via ephemeralChat avec tag spectateur
-    _sendToServer(name, text);
-  }
-
-  function _sendToServer(name, text) {
-    try {
-      if (!window.Parse || !window.BACK4APP_CLASS || !window.online || !window.online.matchId) return;
-      var now = Date.now();
-      var entry = {
-        id: 'sc_' + now.toString(36) + '_' + Math.random().toString(36).slice(2,6),
-        type: 'spectator-chat',
-        text: text,
-        fromName: name,
-        fromRole: 0,
-        ts: now,
-        expiresAt: now + 1800000
-      };
-      var q = new Parse.Query(window.BACK4APP_CLASS);
-      q.get(window.online.matchId).then(function(m) {
-        var ex = (m.get('ephemeralChat') || []).filter(function(x) { return x && x.id && (!x.expiresAt || x.expiresAt > Date.now()); });
-        ex = ex.slice(-38);
-        ex.push(entry);
-        m.set('ephemeralChat', ex);
-        m.save().catch(function(){});
-      }).catch(function(){});
-    } catch(_) {}
-  }
-
-  function syncVisibility() {
-    var fab   = document.getElementById('spectator-chat-fab');
-    var panel = document.getElementById('spectator-chat-panel');
-    var isSpec = window.gameMode === 'spectator' || !!(window.online && window.online.role === 0);
-    if (fab)   fab.hidden   = !isSpec;
-    if (panel && !isSpec) { panel.hidden = true; _open = false; }
-  }
-
-  function init() {
-    var fab   = document.getElementById('spectator-chat-fab');
-    var panel = document.getElementById('spectator-chat-panel');
-    var closeBtn = document.getElementById('spec-chat-close');
-    var input    = document.getElementById('spec-chat-input');
-    var sendBtn  = document.getElementById('spec-chat-send');
-
-    if (fab)   fab.addEventListener('click', function() { _setOpen(!_open); });
-    if (closeBtn) closeBtn.addEventListener('click', function() { _setOpen(false); });
-
-    function _doSend() {
-      if (!input) return;
-      var text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      var name = '';
-      try {
-        // Priorité : 1) input pseudo en ligne, 2) localStorage, 3) fallback 'Spectateur'
-        name = (typeof getOnlinePlayerName === 'function' ? getOnlinePlayerName() : '') || '';
-        if (!name) name = (localStorage.getItem('tiddas_online_name_v1') || '').trim();
-        if (!name) {
-          var ni = document.getElementById('online-your-name');
-          if (ni) name = (ni.value || '').trim();
-        }
-        if (!name) name = 'Spectateur';
-      } catch(_) { name = 'Spectateur'; }
-      addMessage(name, text);
-    }
-
-    if (sendBtn) sendBtn.addEventListener('click', _doSend);
-    if (input)   input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); _doSend(); } });
-
-    // Recevoir messages spectateur depuis le serveur
-    var origTick = window._onlineChatProcessTick;
-    // Will be patched by voice module — hook into the existing ticker instead
-    window._specChatInjectMsg = function(msg) {
-      if (!msg || msg.type !== 'spectator-chat') return;
-      var id = String(msg.id);
-      if (_msgs.some(function(m) { return m.id === id; })) return;
-      _msgs.push({ id: id, name: msg.fromName || 'Spectateur', text: msg.text || '', ts: msg.ts || Date.now() });
-      if (!_open) _unread++;
-      _render();
-    };
-
-    syncVisibility();
-  }
-
-  return { init: init, addMessage: addMessage, syncVisibility: syncVisibility };
-})();
 
 
 // ─────────────────────────────────────────────────────────────────────
@@ -30286,7 +30070,7 @@ function _bootNewSystems() {
   try { VoiceChat.init(); }        catch(e) { console.warn('[VoiceChat]', e); }
   try { OnlineReconnect.init(); }  catch(e) { console.warn('[Reconnect]', e); }
   try { SpectatorEnhanced.init(); }catch(e) { console.warn('[Spectator]', e); }
-  try { SpectatorChat.init(); }    catch(e) { console.warn('[SpecChat]', e); }
+  // SpectatorChat.init() supprimé
   try { Tournament.init(); }       catch(e) { console.warn('[Tournament]', e); }
 
   // ── Bouton micro dans la barre de compose du chat ──────────────────────────
@@ -30575,7 +30359,7 @@ if (document.readyState === 'loading') {
 // Exposer pour usage externe / debug
 window.TiddasVoiceChat       = VoiceChat;
 window.TiddasTournament      = Tournament;
-window.TiddasSpectatorChat   = SpectatorChat;
+// TiddasSpectatorChat supprimé
 window.TiddasReconnect       = OnlineReconnect;
 window.TiddasSpectator       = SpectatorEnhanced;
 
@@ -30776,11 +30560,6 @@ window.TiddasSpectator       = SpectatorEnhanced;
 </style>
 
 <script nonce="tiddas">
-/* ═══════════════════════════════════════════════════════════════════════
-   TIDDAS TOURNAMENT EXTENSION v1.0
-   Toutes les features en un IIFE autonome, sans modifier le code existant.
-   Compatible : appelle les fonctions globales exposées par l'IIFE principale.
-   ═══════════════════════════════════════════════════════════════════════ */
 (function TiddasTournamentExtension() {
   'use strict';
 
@@ -31082,18 +30861,20 @@ window.TiddasSpectator       = SpectatorEnhanced;
         notify.setAttribute('hidden', '');
         notify.innerHTML =
           '<span style="font-size:1.4rem;flex-shrink:0">🏆</span>' +
-          '<div class="tnb-text">Nouveau tournoi disponible : <strong id="tnb-name"></strong></div>' +
-          '<button class="tnb-btn" id="tnb-join-btn" type="button">Voir</button>' +
-          '<button class="tnb-close" id="tnb-close-btn" type="button" aria-label="Fermer">✕</button>';
+          '<div class="tnb-text">Nouveau tournoi disponible : <strong data-role="tnb-name"></strong></div>' +
+          '<button class="tnb-btn" data-role="tnb-join-btn" type="button">Voir</button>' +
+          '<button class="tnb-close" data-role="tnb-close-btn" type="button" aria-label="Fermer">✕</button>';
         document.body.appendChild(notify);
-        document.getElementById('tnb-close-btn').addEventListener('click', function() {
+        var closeBtn = notify.querySelector('[data-role="tnb-close-btn"]');
+        if (closeBtn) closeBtn.addEventListener('click', function() {
           notify.setAttribute('hidden', '');
         });
       }
 
-      var nameEl = document.getElementById('tnb-name');
+      var nameEl = notify.querySelector('[data-role="tnb-name"]');
       if (nameEl) nameEl.textContent = t.name;
-      document.getElementById('tnb-join-btn').onclick = function() {
+      var joinBtn = notify.querySelector('[data-role="tnb-join-btn"]');
+      if (joinBtn) joinBtn.onclick = function() {
         notify.setAttribute('hidden', '');
         _openBracket(t);
       };
@@ -31352,18 +31133,18 @@ window.TiddasSpectator       = SpectatorEnhanced;
         _createTournamentFromLobby();
       });
 
-      // Démarrer le polling quand le lobby devient actif
-      var _origShowScreen = window.showScreen;
-      if (typeof _origShowScreen === 'function') {
-        window.showScreen = function(screenId) {
-          var result = _origShowScreen.apply(this, arguments);
-          if (screenId === 'online-lobby-area') {
-            startPolling();
-          } else {
-            // Continuer le poll léger mais ne pas rafraîchir à chaque tick
-          }
-          return result;
-        };
+      // P1-B : abonnement EventBus au lieu de wrapper direct sur window.showScreen
+      if (window.TiddasBus) {
+        window.TiddasBus.on('showScreen', function(screenId) {
+          if (screenId === 'online-lobby-area') startPolling();
+        });
+      } else {
+        // Fallback si TiddasBus n'est pas encore chargé : s'enregistrer après DOMContentLoaded
+        document.addEventListener('tiddas:busReady', function() {
+          window.TiddasBus.on('showScreen', function(screenId) {
+            if (screenId === 'online-lobby-area') startPolling();
+          });
+        }, { once: true });
       }
 
       // Intégrer le polling des tournois dans le polling Back4App existant
@@ -31546,63 +31327,25 @@ window.TiddasSpectator       = SpectatorEnhanced;
   }
 
 
-  // ══════════════════════════════════════════════════════════════════════
-  // FEATURE 5 — CHAT UNIFIÉ : spectateurs + participants
-  // Rendre le chat accessible à tous dans le salon / tournoi
-  // ══════════════════════════════════════════════════════════════════════
-  (function unifyChat() {
-    // Guard : SpectatorChat peut ne pas être encore exposé si l'ordre de chargement varie
-    if (!window.TiddasSpectatorChat) return;
 
-    // Étendre SpectatorChat.syncVisibility pour aussi montrer le FAB
-    // aux participants en attente dans un tournoi
-    var _origSync = window.TiddasSpectatorChat.syncVisibility;
-    if (typeof _origSync === 'function') {
-      var _newSync = function() {
-        _origSync.apply(this, arguments);
-        // Aussi visible si dans un tournoi en tant que participant en attente
-        var fab   = document.getElementById('spectator-chat-fab');
-        var panel = document.getElementById('spectator-chat-panel');
-        var inTournament = !!(window._tiddasTournamentParticipants &&
-                              window._tiddasTournamentParticipants.indexOf(_getPlayerId()) !== -1);
-        if (inTournament && fab) fab.hidden = false;
-      };
-      window.TiddasSpectatorChat.syncVisibility = _newSync;
-    }
+  // unifyChat supprimé — SpectatorChat n'existe plus
 
-    // Afficher les messages de type 'text' (joueurs actifs) dans le panneau spectateur aussi
-    var _origInject = window._specChatInjectMsg;
-    window._specChatInjectMsg = function(msg) {
-      if (!msg) return;
-      // Accepter 'text' ET 'spectator-chat' pour le panneau unifié
-      if (msg.type !== 'spectator-chat' && msg.type !== 'text') return;
-      if (typeof _origInject === 'function') {
-        var faked = Object.assign({}, msg, { type: 'spectator-chat' });
-        _origInject(faked);
-      }
-    };
-  })();
 
 
   // ══════════════════════════════════════════════════════════════════════
   // FEATURE 6 — CORRECTIONS TECHNIQUES
   // ══════════════════════════════════════════════════════════════════════
 
-  // 6a — Patch onlineApplyState : basculer auto en 'spectator' si role=0
-  (function patchApplyStateRole() {
-    var _origApply = window.onlineApplyState;
-    if (typeof _origApply !== 'function') return;
-    window.onlineApplyState = function(msg) {
-      var result = _origApply.apply(this, arguments);
+  // P1-B 6a — Correction rôle spectateur via TiddasBus (sans wrap onlineApplyState)
+  document.addEventListener('tiddas:busReady', function() {
+    window.TiddasBus.on('applyState', function() {
       try {
-        // Si role 0 (observateur) et gameMode est 'online', corriger en 'spectator'
         if (window.online && window.online.role === 0 && window.gameMode === 'online') {
           window.gameMode = 'spectator';
         }
       } catch(_) {}
-      return result;
-    };
-  })();
+    });
+  }, { once: true });
 
   // ── Boot ──────────────────────────────────────────────────────────────
   function _boot() {
@@ -31872,393 +31615,495 @@ window.TiddasSpectator       = SpectatorEnhanced;
 </div>
 
 <script nonce="tiddas">
-/* ══════════════════════════════════════════════════════════════════════════
-   TIDDAS PATCH PROD v2.0 — IIFE principale
-   ══════════════════════════════════════════════════════════════════════════ */
 (function TiddasPatchProd() {
   'use strict';
 
   // ── Constantes ──────────────────────────────────────────────────────────
-  var LS_RESUME_KEY  = 'tiddas_resume_v2';    // localStorage reconnexion
-  var LS_REMATCH_KEY = 'tiddas_rematch_v2';   // localStorage revanche
-  var POLL_TOURN_MS  = 9000;                  // interval polling tournois
-  var RESUME_RETRY   = 3;                     // tentatives reconnexion auto
+  var LS_RESUME_KEY  = 'tiddas_resume_v3';
+  var POLL_TOURN_MS  = 9000;
+  var RESUME_MAX_AGE = 86400000;
+  var REMATCH_TTL    = 300000;
+  var TOURN_SEEN_KEY = 'tiddas_tourn_seen_v1';
 
-  // ── Helpers locaux ──────────────────────────────────────────────────────
-  function _getPlayerId()  { return String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || ''); }
-  function _getPlayerName(){ return (window.getOnlinePlayerName && window.getOnlinePlayerName()) || localStorage.getItem('tiddas_pname_v1') || 'Joueur'; }
-  function _getMatchId()   { return (window.online && window.online.matchId) || null; }
-
-  function _debounce(fn, ms) {
-    var t; return function() { clearTimeout(t); t = setTimeout(fn, ms); };
+  // ── Helpers ─────────────────────────────────────────────────────────────
+  function _pid()   { return String(window.onlinePlayerId || localStorage.getItem('tiddas_pid_v1') || ''); }
+  function _pname() { return (window.getOnlinePlayerName && window.getOnlinePlayerName()) || localStorage.getItem('tiddas_pname_v1') || 'Joueur'; }
+  function _mid()   { return (window.online && window.online.matchId) || null; }
+  function _esc(s)  { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function _toast(msg, ms) { try { window.showToast && window.showToast(msg, ms || 2200); } catch(_) {} }
+  function _parseReady() { return !!(window.Parse && window.BACK4APP_CLASS); }
+  function _getMatch(id) { return new window.Parse.Query(window.BACK4APP_CLASS).get(id); }
+  function _isSpectator() {
+    return window.gameMode === 'spectator' || !!(window.online && window.online.role === 0);
   }
-
-  function _toast(msg, ms) {
-    try { window.showToast && window.showToast(msg, ms || 2200); } catch(_) {}
-  }
-
-  function _showEl(el)  { if (el) el.classList.add('visible'); }
-  function _hideEl(el)  { if (el) el.classList.remove('visible'); }
 
   // ════════════════════════════════════════════════════════════════════════
-  // 1. MODALE NOM TOURNOI — Remplace la création silencieuse par une modale
+  // FIX 1 — DOUBLE CHAT SPECTATEURS
+  //
+  // Cause : isOnlineChatAvailable() retourne true pour role=0, donc
+  // Spectateurs : la messagerie principale reste accessible (specFab supprimé).
+  // ════════════════════════════════════════════════════════════════════════
+  function _fixDoubleChatSpectator() {
+    // SpectatorChat a été supprimé : les spectateurs utilisent désormais la messagerie principale.
+    var _origIsAvail = window.isOnlineChatAvailable;
+    if (typeof _origIsAvail === 'function') {
+      window.isOnlineChatAvailable = function() {
+        var hasMatch = !!(window.online && window.online.matchId);
+        var playerOnline = window.gameMode === 'online' && hasMatch;
+        var spectatorOnline = _isSpectator() && hasMatch;
+        return !!(playerOnline || spectatorOnline);
+      };
+    }
+
+    var _origSync = window.syncOnlineChatVisibility;
+    if (typeof _origSync === 'function') {
+      window.syncOnlineChatVisibility = function() {
+        _origSync.apply(this, arguments);
+        try {
+          if (window.TiddasVoiceChat && typeof window.TiddasVoiceChat.syncVisibility === 'function') {
+            window.TiddasVoiceChat.syncVisibility();
+          }
+        } catch(_) {}
+      };
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // FIX 2 — SPECTATOR-CONTROLS : supprimer le label dupliqué
+  //
+  // .spectator-controls affiche déjà "Vitesse" + "Quitter".
+  // Le badge .spectator-badge flottant indique déjà le mode.
+  // On supprime le texte "SPECTATEUR EN LIGNE" qui apparaît en doublon
+  // via l'ogb-role dans la barre online-game-bar.
+  // ════════════════════════════════════════════════════════════════════════
+  function _fixSpectatorBadgeDuplicate() {
+    // Patcher _updateOnlineGameBar pour ne pas écrire "Spectateur" dans ogb-role
+    var _origUpdateBar = window._updateOnlineGameBar;
+    if (typeof _origUpdateBar === 'function') {
+      window._updateOnlineGameBar = function() {
+        _origUpdateBar.apply(this, arguments);
+        if (_isSpectator()) {
+          // Vider ogb-role pour éviter le doublon avec spectator-badge
+          var roleEl = document.getElementById('ogb-role');
+          if (roleEl) roleEl.textContent = '';
+          // S'assurer que le badge flottant est visible
+          var badge = document.getElementById('spectator-badge');
+          if (badge && !badge.classList.contains('visible')) {
+            badge.textContent = '👁 Spectateur';
+            badge.classList.add('visible');
+          }
+        }
+      };
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // FIX 3 — REJOINDRE UN TOURNOI/SALON COMME JOUEUR
+  //
+  // Problèmes actuels :
+  // a) status='playing' + p2=null → la logique existante redirige vers spectateur
+  //    alors qu'une place est libre (ex: après KotH takeover ou p2 déconnecté)
+  // b) Depuis la liste tournois, le flux passe par fillInput+click qui déclenche
+  //    un double connexion (lobby → input change event → connect)
+  //
+  // Fix : connexion directe par matchId sans passer par le formulaire code
+  // ════════════════════════════════════════════════════════════════════════
+  function _joinRoomDirectly(matchId, code) {
+    var normalizedCode = String(code || '').trim().toUpperCase();
+    if (!matchId || !normalizedCode) return;
+
+    // Hinte le match exact pour éviter une nouvelle recherche approximative par code.
+    window.__tiddasDirectJoinHint = { matchId: matchId, code: normalizedCode, ts: Date.now() };
+
+    var codeInput = document.getElementById('online-room-code');
+    if (codeInput) codeInput.value = normalizedCode;
+
+    if (_joinRoomDirectly._busy) return;
+    _joinRoomDirectly._busy = true;
+    function _release() {
+      setTimeout(function() { _joinRoomDirectly._busy = false; }, 600);
+    }
+
+    var connectFn = (typeof window.onlineConnectToRoom_Back4App === 'function')
+      ? window.onlineConnectToRoom_Back4App
+      : ((typeof window.onlineConnectToRoom === 'function') ? window.onlineConnectToRoom : null);
+
+    if (connectFn) {
+      setTimeout(function() {
+        try {
+          connectFn(normalizedCode, false);
+        } catch(e) {
+          _toast('Erreur connexion : ' + (e.message || ''), 2500);
+        } finally {
+          _release();
+        }
+      }, 120);
+    } else {
+      _release();
+    }
+
+    try {
+      var preConnect = document.getElementById('ol-pre-connect');
+      var statusPanel = document.getElementById('online-status');
+      if (preConnect) preConnect.style.display = 'none';
+      if (statusPanel) statusPanel.style.display = '';
+      if (typeof window.showScreen === 'function') window.showScreen('online-lobby-area');
+    } catch(_) {}
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 1. MODALE NOM TOURNOI
   // ════════════════════════════════════════════════════════════════════════
   var TournamentNameModal = (function() {
-    var _overlay = null;
-    var _input   = null;
-    var _resolve = null;
+    var _overlay = null, _input = null, _resolve = null;
 
     function _build() {
       _overlay = document.getElementById('tpatch-modal-overlay');
       _input   = document.getElementById('tpatch-tourn-name-input');
-      var confirmBtn = document.getElementById('tpatch-modal-confirm');
-      var cancelBtn  = document.getElementById('tpatch-modal-cancel');
-
-      var _submit = function() {
-        var name = (_input.value || '').trim();
-        if (!name) { _input.focus(); return; }
-        _hide();
-        if (_resolve) { _resolve(name); _resolve = null; }
-      };
-
-      confirmBtn.addEventListener('click', _submit);
-      cancelBtn.addEventListener('click', function() {
-        _hide();
+      var ok   = document.getElementById('tpatch-modal-confirm');
+      var no   = document.getElementById('tpatch-modal-cancel');
+      function _submit() {
+        var v = (_input.value || '').trim();
+        if (!v) { _input.focus(); return; }
+        _overlay.classList.remove('visible');
+        if (_resolve) { _resolve(v); _resolve = null; }
+      }
+      function _cancel() {
+        _overlay.classList.remove('visible');
         if (_resolve) { _resolve(null); _resolve = null; }
-      });
+      }
+      ok.addEventListener('click', _submit);
+      no.addEventListener('click', _cancel);
       _input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') _submit();
-        if (e.key === 'Escape') cancelBtn.click();
+        if (e.key === 'Escape') _cancel();
       });
-      _overlay.addEventListener('click', function(e) {
-        if (e.target === _overlay) cancelBtn.click();
-      });
+      _overlay.addEventListener('click', function(e) { if (e.target === _overlay) _cancel(); });
     }
 
-    function _show() {
+    function ask() {
       if (!_overlay) _build();
-      // Proposition par défaut
       var d = new Date();
       _input.value = 'Tournoi du ' + d.getDate() + '/' + (d.getMonth() + 1);
       _input.select();
-      _showEl(_overlay);
+      _overlay.classList.add('visible');
       setTimeout(function() { _input && _input.focus(); }, 50);
       return new Promise(function(resolve) { _resolve = resolve; });
     }
 
-    function _hide() { _hideEl(_overlay); }
-
-    return { ask: _show };
+    return { ask: ask };
   })();
 
   // ════════════════════════════════════════════════════════════════════════
-  // 2. CRÉATION TOURNOI — Patch de _createTournamentFromLobby avec modale
+  // 2. CRÉATION TOURNOI — capture phase
   // ════════════════════════════════════════════════════════════════════════
   function _patchTournamentCreation() {
-    // Remplacer le listener sur #ol-create-tournament-btn
     document.addEventListener('click', function(e) {
       var btn = e.target.closest('#ol-create-tournament-btn');
       if (!btn) return;
-      e.stopImmediatePropagation(); // court-circuiter l'ancien handler
+      e.stopImmediatePropagation();
+      e.preventDefault();
 
       (async function() {
-        if (!window.Parse || !window.BACK4APP_CLASS) {
-          _toast('Connectez-vous d\'abord à un salon.', 2200);
-          return;
-        }
-        var matchId = _getMatchId();
-        if (!matchId) {
-          _toast('Créez ou rejoignez un salon en premier.', 2200);
-          return;
-        }
+        if (!_parseReady()) { _toast('Connectez-vous d\'abord à un salon.', 2200); return; }
+        var matchId = _mid();
+        if (!matchId) { _toast('Créez ou rejoignez un salon en premier.', 2200); return; }
 
-        // Demander le nom via modale (non-bloquant)
         var tName = await TournamentNameModal.ask();
-        if (!tName) return; // annulé
+        if (!tName) return;
 
-        var myId   = _getPlayerId();
-        var myName = _getPlayerName();
-
+        var myId = _pid(), myName = _pname();
         try {
-          var q = new window.Parse.Query(window.BACK4APP_CLASS);
-          var m = await q.get(matchId);
-
-          // Vérifier si tournoi déjà présent
+          var m = await _getMatch(matchId);
           var existing = null;
           try { existing = JSON.parse(m.get('tournament') || 'null'); } catch(_) {}
           if (existing && existing.participants && existing.participants.length > 0) {
-            _toast('Un tournoi existe déjà dans ce salon.', 2000);
-            return;
+            _toast('Un tournoi existe déjà dans ce salon.', 2000); return;
           }
-
           var tData = {
-            active: false,
-            id: myId + '_' + Date.now().toString(36),
-            name: tName,
+            active: false, id: myId + '_' + Date.now().toString(36), name: tName,
             participants: [{ id: myId, name: myName, ready: true }],
-            tables: [],       // multi-tables
-            bracket: [],
-            currentRound: 0,
-            createdBy: myId,
-            createdAt: Date.now()
+            tables: [], bracket: [], currentRound: 0, createdBy: myId, createdAt: Date.now()
           };
-
           m.set('tournament', JSON.stringify(tData));
           m.set('participants', [myId]);
           m.increment('rev', 1);
           await m.save();
-
           _toast('🏆 Tournoi "' + tName + '" créé ! Partagez le code.', 3000);
           TournamentLobbyPatch.refresh();
         } catch(err) {
-          _toast('Erreur création tournoi : ' + (err.message || ''), 2500);
+          _toast('Erreur création : ' + (err.message || ''), 2500);
         }
       })();
-    }, true); // capture pour priorité
+    }, true);
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  // 3. LISTE TOURNOIS LOBBY — Click-to-join + multi-tables
+  // 3. LISTE TOURNOIS — Source unique + click-to-join direct + multi-tables
   // ════════════════════════════════════════════════════════════════════════
+
   var TablePicker = (function() {
-    var _picker = null;
-    var _list   = null;
+    var _el = null, _list = null;
 
     function _build() {
-      _picker = document.getElementById('tpatch-table-picker');
-      _list   = document.getElementById('tpatch-table-list');
+      _el   = document.getElementById('tpatch-table-picker');
+      _list = document.getElementById('tpatch-table-list');
       document.getElementById('tpatch-table-picker-close').addEventListener('click', hide);
-      _picker.addEventListener('click', function(e) {
-        if (e.target === _picker) hide();
-      });
+      _el.addEventListener('click', function(e) { if (e.target === _el) hide(); });
     }
 
     function show(tournament) {
-      if (!_picker) _build();
+      if (!_el) _build();
       _list.innerHTML = '';
-
       var tables = tournament.tables || [];
-      if (!tables.length) {
-        // Pas de tables actives → rejoindre directement
-        _joinTournamentDirect(tournament);
-        return;
-      }
+      if (!tables.length) { _joinTournamentDirect(tournament); return; }
 
       tables.forEach(function(table, idx) {
         var row = document.createElement('div');
         row.className = 'tpatch-table-row';
-        var p1 = table.p1Name || '?', p2 = table.p2Name || '?';
-        var status = table.status === 'playing' ? '🟢 En cours' : '⏳ En attente';
-        row.innerHTML = '<strong>Table ' + (idx + 1) + '</strong> : ' + p1 + ' vs ' + p2 + ' <span style="opacity:0.6;font-size:0.8em">' + status + '</span>';
-        row.addEventListener('click', function() {
-          hide();
-          _joinTable(tournament, table);
-        });
+        var p1 = _esc(table.p1Name || '?'), p2 = _esc(table.p2Name || '?');
+        var st = table.status === 'playing'
+          ? '<span style="color:#6ddc88">● En cours</span>'
+          : '<span style="color:rgba(245,225,160,0.5)">○ En attente</span>';
+        row.innerHTML = '<strong>Table ' + (idx+1) + '</strong> — ' + p1 + ' vs ' + p2 + ' ' + st;
+        row.addEventListener('click', (function(t) {
+          return function() { hide(); _joinTable(tournament, t); };
+        })(table));
         _list.appendChild(row);
       });
 
-      // Option : rejoindre comme spectateur général
       var specRow = document.createElement('div');
       specRow.className = 'tpatch-table-row';
+      specRow.style.cssText = 'border-top:1px solid rgba(240,200,80,0.15);margin-top:0.4rem;';
       specRow.innerHTML = '👁 <em>Observer le tournoi (spectateur libre)</em>';
-      specRow.addEventListener('click', function() {
-        hide();
-        _joinAsSpectator(tournament);
-      });
+      specRow.addEventListener('click', function() { hide(); _joinAsSpectator(tournament); });
       _list.appendChild(specRow);
-
-      _picker.classList.add('visible');
+      _el.classList.add('visible');
     }
 
-    function hide() {
-      if (_picker) _picker.classList.remove('visible');
-    }
-
+    function hide() { if (_el) _el.classList.remove('visible'); }
     return { show: show, hide: hide };
   })();
 
-  // Rejoindre un tournoi : logique d'aiguillage
+  // Aiguillage principal — clic sur une carte tournoi
   function _joinTournamentDirect(t) {
-    var myId = _getPlayerId();
-    var isParticipant = t.participants.some(function(p) { return p.id === myId; });
+    var myId = _pid();
+    var isMember = t.participants && t.participants.some(function(p) { return p.id === myId; });
 
-    if (t.tables && t.tables.length > 1) {
-      TablePicker.show(t);
-      return;
+    // Plusieurs tables → picker
+    if (t.tables && t.tables.length > 1) { TablePicker.show(t); return; }
+
+    // Tournoi en cours et pas inscrit → spectateur direct
+    if ((t.active || t.status === 'playing') && !isMember) {
+      _joinAsSpectator(t); return;
     }
 
-    // Partie en cours et pas participant → spectateur
-    if (t.status === 'playing' && !isParticipant) {
-      _joinAsSpectator(t);
-      return;
-    }
-
-    // Rejoindre comme challengeur
+    // Sinon tenter de rejoindre comme joueur
     _joinAsChallengerOrSpectator(t);
   }
 
   function _joinTable(tournament, table) {
-    var myId = _getPlayerId();
-    // Si une place de joueur libre → challenger
-    if (!table.p2Id) {
-      _challengeInTable(tournament, table);
+    var mid = table.matchId || tournament.matchId;
+    var code = table.code || tournament.code;
+    if (!table.p2Id || table.p2Id === _pid()) {
+      _joinRoomDirectly(mid, code);
     } else {
-      // Table pleine → spectateur de cette table
-      _joinAsSpectator(tournament, table.matchId || tournament.matchId);
+      _joinAsSpectator(tournament, mid);
     }
   }
 
+  // Rejoindre comme spectateur — utilise le système SpectatorEnhanced existant
   function _joinAsSpectator(t, specificMatchId) {
-    var code = t.code;
     window._spectatorPendingMatchId = specificMatchId || t.matchId;
-    window._spectatorPendingCode    = code;
-
-    // Utiliser TiddasSpectator si disponible
+    window._spectatorPendingCode    = t.code;
     if (window.TiddasSpectator && typeof window.TiddasSpectator.joinAsSpectator === 'function') {
       window.TiddasSpectator.joinAsSpectator();
-    } else if (code) {
-      // Fallback : remplir le code et rejoindre
-      var codeInput = document.getElementById('online-room-code');
-      if (codeInput) {
-        codeInput.value = code;
-        codeInput.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-      var specBtn = document.getElementById('ol-spectate-join-btn');
-      if (specBtn) {
-        setTimeout(function() { specBtn.click(); }, 300);
-      } else {
-        // Rejoindre normalement
-        var connectBtn = document.getElementById('online-connect');
-        if (connectBtn && !connectBtn.disabled) setTimeout(function() { connectBtn.click(); }, 300);
-      }
+    } else {
+      _joinRoomDirectly(specificMatchId || t.matchId, t.code);
     }
     _toast('👁 Connexion spectateur…', 1500);
   }
 
+  // Rejoindre comme challenger — vérifie si une place est libre
   async function _joinAsChallengerOrSpectator(t) {
-    if (!window.Parse || !window.BACK4APP_CLASS) return;
+    if (!_parseReady()) { _joinRoomDirectly(t.matchId, t.code); return; }
     try {
-      var q  = new window.Parse.Query(window.BACK4APP_CLASS);
-      var m  = await q.get(t.matchId);
+      var m  = await _getMatch(t.matchId);
       var st = m.get('status') || 'waiting';
+      var p1 = m.get('p1Id') || null;
       var p2 = m.get('p2Id') || null;
+      var myId = _pid();
 
-      if (st === 'waiting' && !p2) {
-        // Place disponible : rejoindre comme joueur
-        var code = t.code;
-        var codeInput = document.getElementById('online-room-code');
-        if (codeInput) {
-          codeInput.value = code;
-          codeInput.dispatchEvent(new Event('input', { bubbles: true }));
-          setTimeout(function() {
-            var connectBtn = document.getElementById('online-connect');
-            if (connectBtn && !connectBtn.disabled) connectBtn.click();
-          }, 250);
-        }
+      // Place disponible (p2 absent) quelle que soit le statut (waiting, ready, playing)
+      // Un joueur peut rejoindre même si la partie est en cours (ex: après KotH)
+      if (!p2 || p2 === myId) {
+        _joinRoomDirectly(t.matchId, t.code);
         _toast('⚔️ Rejoindre comme challenger…', 1500);
+      } else if (!p1 || p1 === myId) {
+        _joinRoomDirectly(t.matchId, t.code);
       } else {
-        // Partie pleine → spectateur
+        // Salon complet → spectateur
         _joinAsSpectator(t);
       }
-    } catch(err) {
-      _joinAsSpectator(t);
+    } catch(_) {
+      _joinRoomDirectly(t.matchId, t.code);
     }
   }
 
-  async function _challengeInTable(tournament, table) {
-    _toast('⚔️ Rejoindre la table…', 1500);
-    _joinAsChallengerOrSpectator({ matchId: table.matchId || tournament.matchId, code: table.code || tournament.code });
-  }
-
-  // ── TournamentLobbyPatch : refonte du rendu de liste ─────────────────
+  // ── TournamentLobbyPatch — SOURCE UNIQUE DE RENDU ────────────────────
   var TournamentLobbyPatch = (function() {
-    var _timer = null;
-    var _cache = [];
+    var _timer      = null;
+    var _cache      = [];
+    var _seenIds    = new Set();
+    var _rendering  = false;
+    var _pendingRefresh = false;
 
     async function _fetch() {
-      if (!window.Parse || !window.BACK4APP_CLASS) return [];
+      if (!_parseReady()) return [];
       try {
         var q = new window.Parse.Query(window.BACK4APP_CLASS);
         q.exists('tournament');
         q.notEqualTo('tournament', null);
+        // P2-B : exclure les tournois terminés et ceux non mis à jour depuis 24h
+        q.notEqualTo('status', 'finished');
+        var _24hAgo = new Date(Date.now() - 86400000);
+        q.greaterThan('updatedAt', _24hAgo);
         q.descending('updatedAt');
         q.limit(15);
         var results = await q.find();
         var list = [];
+        var myId = _pid();
         results.forEach(function(m) {
           try {
             var tData = JSON.parse(m.get('tournament') || 'null');
-            if (!tData || !tData.participants || tData.participants.length < 1) return;
-            // Reconstituer les tables depuis l'objet match
-            var tables = tData.tables || [];
+            if (!tData || !tData.participants || !tData.participants.length) return;
+            var amIn = tData.participants.some(function(p) { return p.id === myId; });
             list.push({
               matchId:      m.id,
               code:         m.get('code') || '?',
               name:         tData.name || ('Tournoi ' + m.get('code')),
               participants: tData.participants || [],
-              tables:       tables,
-              active:       tData.active,
+              tables:       tData.tables || [],
+              active:       !!tData.active,
               status:       m.get('status') || 'waiting',
-              updatedAt:    m.updatedAt ? m.updatedAt.getTime() : 0
+              amIn:         amIn
             });
           } catch(_) {}
         });
         return list;
-      } catch(e) { return []; }
+      } catch(_) { return []; }
     }
 
     function _render(list) {
-      // Chercher le conteneur de liste dans le lobby
-      var container = document.getElementById('ol-tournaments-list')
-                   || document.getElementById('ol-tourn-list')
-                   || _ensureContainer();
-      if (!container) return;
+      var wrap    = document.getElementById('ol-tournaments-wrap');
+      var listEl  = document.getElementById('ol-tournaments-list');
+      var emptyEl = document.getElementById('ol-tourn-empty');
+      if (!wrap || !listEl) return;
+
+      // Toujours visible
+      wrap.style.display = '';
 
       if (!list || !list.length) {
-        container.innerHTML = '<div style="text-align:center;color:rgba(245,225,160,0.4);font-size:0.82rem;padding:0.6rem 0;">Aucun tournoi actif</div>';
+        listEl.innerHTML = '';
+        if (emptyEl) emptyEl.style.display = '';
         return;
       }
 
-      container.innerHTML = '';
-      list.forEach(function(t) {
-        var item = document.createElement('div');
-        item.className = 'tpatch-tourn-item';
-        var statusLabel = t.active ? 'En cours' : (t.status === 'waiting' ? 'En attente' : t.status);
-        var isLive = t.active || t.status === 'playing';
-        var tablesSummary = '';
-        if (t.tables && t.tables.length) {
-          tablesSummary = ' · ' + t.tables.length + ' table' + (t.tables.length > 1 ? 's' : '');
-        }
-        item.innerHTML =
-          '<div class="tpatch-tourn-name">' + _esc(t.name) +
-          '<span class="tpatch-tourn-status' + (isLive ? ' live' : '') + '">' + statusLabel + '</span></div>' +
-          '<div class="tpatch-tourn-meta">' + t.participants.length + ' participant' +
-          (t.participants.length > 1 ? 's' : '') + tablesSummary + ' · Code : ' + _esc(t.code) + '</div>';
+      if (emptyEl) emptyEl.style.display = 'none';
+      listEl.innerHTML = '';
 
-        item.addEventListener('click', function() { _onTournamentClick(t); });
-        container.appendChild(item);
+      list.forEach(function(t) {
+        var started = t.active || t.status === 'playing';
+        var canSpec = started && !t.amIn;
+
+        var badgeClass = started ? 'ol-tourn-badge-active' : 'ol-tourn-badge-waiting';
+        var badgeText  = started ? '🔴 En cours' : '⏳ Inscriptions';
+        if (canSpec)  { badgeClass = 'ol-tourn-badge-spec';   badgeText  = '👁 Observer'; }
+        if (t.amIn)   { badgeClass = 'ol-tourn-badge-active'; }
+
+        var tablesMeta = (t.tables && t.tables.length)
+          ? ' · ' + t.tables.length + ' table' + (t.tables.length > 1 ? 's' : '') : '';
+
+        var card = document.createElement('div');
+        card.className = 'ol-tourn-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', 'Rejoindre le tournoi ' + _esc(t.name));
+        card.innerHTML =
+          '<span class="ol-tourn-card-icon" aria-hidden="true">🏆</span>' +
+          '<div class="ol-tourn-card-body">' +
+            '<div class="ol-tourn-card-name">' + _esc(t.name) + '</div>' +
+            '<div class="ol-tourn-card-meta">' +
+              t.participants.length + ' participant' + (t.participants.length > 1 ? 's' : '') +
+              tablesMeta + ' · ' + _esc(t.code) +
+              (t.amIn ? ' · <strong style="color:#6ddc88">Inscrit ✓</strong>' : '') +
+            '</div>' +
+          '</div>' +
+          '<span class="ol-tourn-card-badge ' + badgeClass + '">' + badgeText + '</span>';
+
+        card.addEventListener('click', (function(tt) {
+          return function() { _joinTournamentDirect(tt); };
+        })(t));
+        card.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+        });
+        listEl.appendChild(card);
+
+        // Notification nouveau tournoi (dédupliquée)
+        if (!_seenIds.has(t.matchId) && !t.amIn && !t.active) {
+          _seenIds.add(t.matchId);
+          _notifyNew(t);
+        }
       });
     }
 
-    function _ensureContainer() {
-      var wrap = document.getElementById('ol-tournaments-wrap');
-      if (!wrap) return null;
-      var existing = wrap.querySelector('.ol-tourn-list, #ol-tournaments-list');
-      if (existing) return existing;
-      var div = document.createElement('div');
-      div.id = 'ol-tournaments-list';
-      wrap.appendChild(div);
-      return div;
+    function _notifyNew(t) {
+      try {
+        var seen = JSON.parse(localStorage.getItem(TOURN_SEEN_KEY) || '[]');
+        if (seen.indexOf(t.matchId) !== -1) return;
+        seen.push(t.matchId);
+        if (seen.length > 30) seen = seen.slice(-15);
+        localStorage.setItem(TOURN_SEEN_KEY, JSON.stringify(seen));
+      } catch(_) {}
+
+      var notify = document.getElementById('tourn-join-notify');
+      if (!notify) {
+        notify = document.createElement('div');
+        notify.id = 'tourn-join-notify';
+        notify.setAttribute('hidden', '');
+        notify.innerHTML =
+          '<span style="font-size:1.4rem;flex-shrink:0">🏆</span>' +
+          '<div class="tnb-text">Nouveau tournoi : <strong data-role="tnb-name"></strong></div>' +
+          '<button class="tnb-btn" data-role="tnb-join-btn" type="button">Rejoindre</button>' +
+          '<button class="tnb-close" data-role="tnb-close-btn" type="button" aria-label="Fermer">✕</button>';
+        document.body.appendChild(notify);
+        var closeBtn = notify.querySelector('[data-role="tnb-close-btn"]');
+        if (closeBtn) closeBtn.addEventListener('click', function() {
+          notify.setAttribute('hidden', '');
+        });
+      }
+      var nameEl = notify.querySelector('[data-role="tnb-name"]');
+      if (nameEl) nameEl.textContent = t.name;
+      var joinBtn = notify.querySelector('[data-role="tnb-join-btn"]');
+      if (joinBtn) joinBtn.onclick = function() {
+        notify.setAttribute('hidden', '');
+        _joinTournamentDirect(t);
+      };
+      notify.removeAttribute('hidden');
+      setTimeout(function() { if (notify) notify.setAttribute('hidden', ''); }, 8000);
     }
 
-    function _onTournamentClick(t) {
-      _joinTournamentDirect(t);
-    }
-
+    // Refresh avec verrou anti-doublon
     async function refresh() {
-      var list = await _fetch();
-      _cache = list;
-      _render(list);
+      if (_rendering) { _pendingRefresh = true; return; }
+      _rendering = true; _pendingRefresh = false;
+      try {
+        var list = await _fetch();
+        _cache = list;
+        _render(list);
+      } catch(_) {}
+      _rendering = false;
+      if (_pendingRefresh) { _pendingRefresh = false; setTimeout(refresh, 50); }
     }
 
     function startPolling() {
@@ -32266,7 +32111,8 @@ window.TiddasSpectator       = SpectatorEnhanced;
       refresh();
       _timer = setInterval(function() {
         var lobby = document.getElementById('online-lobby-area');
-        if (lobby && lobby.classList.contains('active')) refresh();
+        var isActive = lobby && (lobby.classList.contains('active') || lobby.style.display !== 'none');
+        if (isActive) refresh();
       }, POLL_TOURN_MS);
     }
 
@@ -32277,682 +32123,812 @@ window.TiddasSpectator       = SpectatorEnhanced;
     return { refresh: refresh, startPolling: startPolling, stopPolling: stopPolling };
   })();
 
+  // Neutraliser TournamentLobby legacy (double rendu)
+  function _neutralizeLegacyTournamentLobby() {
+    var _attempts = 0;
+    var _iv = setInterval(function() {
+      _attempts++;
+      var lobby = window.TiddasTournamentLobby;
+      if (lobby || _attempts > 40) {
+        clearInterval(_iv);
+        if (lobby) {
+          try { lobby.stopPolling && lobby.stopPolling(); } catch(_) {}
+          lobby.refresh = function() {};
+          lobby.startPolling = function() {};
+        }
+        // Reconnecter le bouton refresh au nouveau module
+        var refreshBtn = document.getElementById('ol-tourn-refresh');
+        if (refreshBtn) {
+          var newBtn = refreshBtn.cloneNode(true);
+          refreshBtn.parentNode.replaceChild(newBtn, refreshBtn);
+          newBtn.addEventListener('click', function() {
+            newBtn.style.transform = 'rotate(360deg)';
+            setTimeout(function() { newBtn.style.transform = ''; }, 310);
+            TournamentLobbyPatch.refresh();
+          });
+        }
+      }
+    }, 300);
+  }
+
   // ════════════════════════════════════════════════════════════════════════
-  // 4. SPECTATEUR — Adhésion propre + rotation KotH
+  // 4. SPECTATEUR KoTH — File d'attente + rotation + takeover
+  //    Utilise p1Active / p2Active (cohérent avec le polling principal)
   // ════════════════════════════════════════════════════════════════════════
   var SpectatorKoTH = (function() {
-    var _queue        = [];      // file d'attente locale (depuis DB)
-    var _takeoverLock = false;   // anti race-condition
-    var _btn          = null;
+    var _lock = false, _btn = null;
 
     function _getBtn() {
       if (!_btn) _btn = document.getElementById('tpatch-takeover-btn');
       return _btn;
     }
 
-    // Assigner le rôle spectateur correctement et adapter l'UI
     function applySpectatorRole() {
       if (typeof window.gameMode !== 'undefined') window.gameMode = 'spectator';
       document.body.classList.add('is-spectating');
-
-      // Masquer les contrôles de jeu actifs
-      ['undo-btn', 'resign-btn', 'offer-draw-btn'].forEach(function(id) {
+      ['undo-btn', 'surrender', 'restart'].forEach(function(id) {
         var el = document.getElementById(id);
-        if (el) el.style.display = 'none';
+        if (el) { el.disabled = true; el.style.opacity = '0.25'; el.style.pointerEvents = 'none'; }
       });
 
-      // Afficher le chat spectateur
-      var specFab = document.getElementById('spectator-chat-fab');
-      if (specFab) specFab.hidden = false;
+      // Spectateur : garder le chat joueurs accessible (messagerie principale)
+      // Le panneau spectateur séparé a été supprimé — spectateurs écrivent dans la messagerie
 
-      // Afficher badge spectateur
+      var scb = document.getElementById('spectator-controls');
+      if (scb) scb.classList.add('visible');
       var badge = document.getElementById('spectator-badge');
       if (badge) { badge.textContent = '👁 Spectateur'; badge.classList.add('visible'); }
-
-      _checkQueuePosition();
+      // Effacer le ogb-role pour éviter le doublon
+      var ogbRole = document.getElementById('ogb-role');
+      if (ogbRole) ogbRole.textContent = '';
     }
 
-    // Vérifier la position dans la file et afficher le bouton si en tête
-    async function _checkQueuePosition() {
-      var matchId = _getMatchId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-      try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
-        var specQueue = m.get('spectatorQueue') || [];
-        var myId = _getPlayerId();
-        _queue = specQueue;
-        var myPos = specQueue.indexOf(myId);
-
-        var btn = _getBtn();
-        // Afficher si en tête de file ET une place est libre (joueur disconnected)
-        var p1Connected = m.get('p1Connected') !== false;
-        var p2Connected = m.get('p2Connected') !== false;
-        var hasSlot = !p1Connected || !p2Connected;
-
-        if (btn) {
-          btn.style.display = (myPos === 0 && hasSlot) ? 'block' : 'none';
-        }
-      } catch(_) {}
+    function _restorePlayerRole() {
+      document.body.classList.remove('is-spectating');
+      ['undo-btn', 'surrender', 'restart'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.disabled = false; el.style.opacity = ''; el.style.pointerEvents = ''; }
+      });
+      // spectator-chat-fab supprimé
+      var scb = document.getElementById('spectator-controls');
+      if (scb) scb.classList.remove('visible');
+      var badge = document.getElementById('spectator-badge');
+      if (badge) badge.classList.remove('visible');
+      var btn = _getBtn();
+      if (btn) btn.style.display = 'none';
+      // Réafficher chat joueurs
+      try { if (typeof window.syncOnlineChatVisibility === 'function') window.syncOnlineChatVisibility(); } catch(_) {}
     }
 
-    // S'inscrire dans la file spectateur
     async function enqueue() {
-      var matchId = _getMatchId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-      var myId = _getPlayerId();
+      var matchId = _mid(), myId = _pid();
+      if (!matchId || !myId || !_parseReady()) return;
+      // P2-B : guard — une seule écriture en base par session spectateur
+      if (window._spectatorEnqueueDone) { checkQueue(); return; }
       try {
-        // Utilisation d'une opération atomique côté Parse
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
+        var m = await _getMatch(matchId);
         var queue = m.get('spectatorQueue') || [];
         if (queue.indexOf(myId) === -1) {
-          queue.push(myId);
-          m.set('spectatorQueue', queue);
-          await m.save();
+          queue.push(myId); m.set('spectatorQueue', queue); await m.save();
+          window._spectatorEnqueueDone = true;
+        } else {
+          window._spectatorEnqueueDone = true; // déjà dans la queue
         }
-        _checkQueuePosition();
+        checkQueue();
       } catch(_) {}
     }
 
-    // Prendre la relève — avec verrou anti-race-condition
+    async function checkQueue() {
+      var matchId = _mid(), myId = _pid();
+      if (!matchId || !myId || !_parseReady()) return;
+      try {
+        var m        = await _getMatch(matchId);
+        var queue    = m.get('spectatorQueue') || [];
+        var p1Active = m.get('p1Active') !== false;
+        var p2Active = m.get('p2Active') !== false;
+        var hasSlot  = !p1Active || !p2Active;
+        var myPos    = queue.indexOf(myId);
+        var btn      = _getBtn();
+        if (!btn) return;
+
+        if (myPos === 0 && hasSlot) {
+          var slotLabel = !p1Active ? '1 (Noir)' : '2 (Blanc)';
+          btn.textContent = '⚡ Prendre la place du joueur ' + slotLabel;
+          btn.style.display = 'block'; btn.disabled = false; btn.style.opacity = '';
+        } else if (myPos > 0) {
+          btn.textContent = '⏳ File d\'attente : #' + (myPos + 1);
+          btn.style.display = 'block'; btn.disabled = true; btn.style.opacity = '0.5';
+        } else {
+          btn.style.display = 'none';
+        }
+      } catch(_) {}
+    }
+
     async function takeover() {
-      if (_takeoverLock) { _toast('Tentative en cours…', 1200); return; }
-      _takeoverLock = true;
-      var matchId = _getMatchId();
-      var myId    = _getPlayerId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) {
-        _takeoverLock = false; return;
-      }
+      if (_lock) { _toast('Tentative déjà en cours…', 1200); return; }
+      _lock = true;
+      var matchId = _mid(), myId = _pid(), myName = _pname();
+      if (!matchId || !myId || !_parseReady()) { _lock = false; return; }
 
       try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        // Utiliser afterSave + contrôle atomique : lire puis écrire
-        var m = await q.get(matchId);
-        var queue = m.get('spectatorQueue') || [];
-        var p1Id  = m.get('p1Id') || null;
-        var p2Id  = m.get('p2Id') || null;
-        var p1Con = m.get('p1Connected') !== false;
-        var p2Con = m.get('p2Connected') !== false;
+        var m        = await _getMatch(matchId);
+        var queue    = m.get('spectatorQueue') || [];
+        var p1Active = m.get('p1Active') !== false;
+        var p2Active = m.get('p2Active') !== false;
 
-        // Vérifier qu'on est bien en tête de file
         if (queue[0] !== myId) {
-          _toast('Un autre spectateur a pris la place.', 2000);
-          _takeoverLock = false;
-          _checkQueuePosition();
-          return;
+          _toast('Un autre spectateur vous a devancé.', 2200); checkQueue(); return;
         }
+        var slot = (!p1Active && m.get('p1Id')) ? 1 : ((!p2Active && m.get('p2Id')) ? 2 : null);
+        if (!slot) { _toast('Aucune place disponible.', 2000); checkQueue(); return; }
 
-        // Vérifier qu'il y a bien une place libre
-        var slotField = null;
-        if (!p1Con && p1Id) slotField = 'p1';
-        else if (!p2Con && p2Id) slotField = 'p2';
-        if (!slotField) {
-          _toast('Aucune place disponible.', 2000);
-          _takeoverLock = false;
-          return;
-        }
-
-        // Prendre la place
-        var myName = _getPlayerName();
         queue.shift();
         m.set('spectatorQueue', queue);
-        m.set(slotField + 'Id', myId);
-        m.set(slotField + 'Name', myName);
-        m.set(slotField + 'Connected', true);
-        m.set(slotField + 'Token', myId + '_' + Date.now().toString(36));
+        m.set('p' + slot + 'Id',     myId);
+        m.set('p' + slot + 'Name',   myName);
+        m.set('p' + slot + 'Active', true);
         m.increment('rev', 1);
         await m.save();
 
-        // Mettre à jour l'état local
         if (window.online) {
-          window.online.role = (slotField === 'p1') ? 1 : 2;
-          window.online.token = m.get(slotField + 'Token');
+          window.online.role = slot; window.online.isHost = (slot === 1); window.online.connected = true;
         }
-        window.gameMode = 'online';
-        document.body.classList.remove('is-spectating');
-        var badge = document.getElementById('spectator-badge');
-        if (badge) badge.classList.remove('visible');
-        var btn = _getBtn();
-        if (btn) btn.style.display = 'none';
-
-        // Réafficher les contrôles
-        ['undo-btn', 'resign-btn', 'offer-draw-btn'].forEach(function(id) {
-          var el = document.getElementById(id);
-          if (el) el.style.display = '';
-        });
-
-        _toast('✅ Vous êtes maintenant joueur !', 2200);
+        window.gameMode = 'online'; window.onlinePlayerId = myId;
+        _restorePlayerRole();
+        _toast('✅ Vous êtes maintenant Joueur ' + slot + ' !', 2200);
+        try { if (navigator.vibrate) navigator.vibrate([80, 40, 120]); } catch(_) {}
       } catch(err) {
-        _toast('Erreur prise de relève.', 2000);
-      } finally {
-        _takeoverLock = false;
-      }
+        _toast('Erreur prise de relève. Réessayez.', 2200);
+      } finally { _lock = false; }
     }
 
-    // Rotation fin de partie — le perdant devient spectateur
     async function onGameEnd(winnerId) {
-      var matchId = _getMatchId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-      var myId  = _getPlayerId();
-      var isWinner = (myId === winnerId);
+      var matchId = _mid(), myId = _pid();
+      if (!matchId || !myId || !_parseReady()) return;
 
       try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
-        var p1Id = m.get('p1Id');
-        var p2Id = m.get('p2Id');
+        var m      = await _getMatch(matchId);
+        var p1Id   = m.get('p1Id') || null, p2Id = m.get('p2Id') || null;
         var loserId = (p1Id === winnerId) ? p2Id : p1Id;
-        var loserField = (p1Id === loserId) ? 'p1' : 'p2';
-        var queue = m.get('spectatorQueue') || [];
+        var lField  = (p1Id === loserId) ? 'p1' : 'p2';
 
-        if (!isWinner && myId === loserId) {
-          // Perdant : aller en queue spectateur
-          if (queue.indexOf(myId) === -1) queue.push(myId);
-          m.set('spectatorQueue', queue);
-          m.set(loserField + 'Connected', false);
+        if (myId === loserId) {
+          // ── PERDANT : mise à jour locale uniquement (pas d'écriture DB)
+          // Le vainqueur est le seul écrivain pour éviter la race condition.
+          applySpectatorRole();
+          _toast('Vous passez spectateur. Le prochain challenger arrive.', 3000);
+          // Rejoindre la file d'attente après un court délai (le vainqueur aura sauvé d'abord)
+          setTimeout(function() {
+            if (_parseReady() && _mid()) {
+              (async function() {
+                try {
+                  var m2 = await _getMatch(_mid());
+                  var queue = m2.get('spectatorQueue') || [];
+                  if (queue.indexOf(myId) === -1) {
+                    queue.push(myId);
+                    m2.set('spectatorQueue', queue);
+                    m2.increment('rev', 1);
+                    await m2.save();
+                  }
+                  window._spectatorEnqueueDone = true;
+                  checkQueue();
+                } catch(_) {}
+              })();
+            }
+          }, 800);
+
+        } else if (myId === winnerId) {
+          // ── VAINQUEUR : seul écrivain — marque le slot perdant + signale le prochain
+          var queue = m.get('spectatorQueue') || [];
+          var nextSpec = queue[0];
+          m.set(lField + 'Active', false);
+          if (nextSpec) m.set('nextChallengerSignal', nextSpec);
           m.increment('rev', 1);
           await m.save();
-          applySpectatorRole();
-          _toast('Vous passez spectateur. Le prochain en file prend votre place.', 3000);
-        } else if (isWinner) {
-          // Gagnant : rester, notifier le prochain spectateur
-          var nextSpecId = queue[0];
-          if (nextSpecId) {
-            // Marquer la place perdant comme "libre" pour invitation
-            m.set(loserField + 'Connected', false);
-            m.set('nextChallengerSignal', nextSpecId);
-            m.increment('rev', 1);
-            await m.save();
-          }
-          _toast('🏆 Victoire ! Le prochain challenger arrive…', 2500);
+          _toast(nextSpec
+            ? '🏆 Victoire ! Le prochain challenger va arriver.'
+            : '🏆 Victoire !', 2500);
         }
       } catch(_) {}
     }
 
-    // Init du bouton takeover
     function init() {
       var btn = _getBtn();
-      if (btn) {
-        btn.addEventListener('click', function() { takeover(); });
-      }
+      if (btn) btn.addEventListener('click', function() { takeover(); });
     }
 
-    return { applySpectatorRole: applySpectatorRole, enqueue: enqueue, onGameEnd: onGameEnd, checkQueue: _checkQueuePosition, init: init };
+    return { applySpectatorRole: applySpectatorRole, enqueue: enqueue, checkQueue: checkQueue, onGameEnd: onGameEnd, init: init };
   })();
 
-  // ════════════════════════════════════════════════════════════════════════
-  // 5. REVANCHE RAPIDE — Async handshake (A propose → B accepte → go)
-  // ════════════════════════════════════════════════════════════════════════
-  var RematchSystem = (function() {
-    var _banner      = null;
-    var _requestBtn  = null;
-    var _acceptBtn   = null;
-    var _msgEl       = null;
-    var _polling     = null;
-    var _myPending   = false;  // j'ai proposé une revanche
-
-    function _buildBanner() {
-      _banner     = document.getElementById('tpatch-rematch-banner');
-      _requestBtn = document.getElementById('tpatch-rematch-request-btn');
-      _acceptBtn  = document.getElementById('tpatch-rematch-accept-btn');
-      _msgEl      = document.getElementById('tpatch-rematch-msg');
-
-      _requestBtn.addEventListener('click', function() { propose(); });
-      _acceptBtn.addEventListener('click',  function() { accept();  });
-    }
-
-    // Proposer une revanche
-    async function propose() {
-      var matchId = _getMatchId();
-      var myId    = _getPlayerId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-      if (_myPending) { _toast('Demande déjà envoyée.', 1500); return; }
-
-      try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
-        var rmData = m.get('rematch') || {};
-        rmData.requestBy   = myId;
-        rmData.requestedAt = Date.now();
-        rmData.accepted    = false;
-        m.set('rematch', rmData);
-        m.increment('rev', 1);
-        await m.save();
-        _myPending = true;
-        if (_msgEl) _msgEl.textContent = 'Revanche proposée — en attente de l\'adversaire…';
-        if (_requestBtn) { _requestBtn.textContent = '⏳ En attente…'; _requestBtn.disabled = true; }
-        if (_acceptBtn)  _acceptBtn.style.display = 'none';
-        _toast('🔄 Revanche proposée !', 1800);
-        _startRematchPolling();
-      } catch(err) {
-        _toast('Erreur proposition revanche.', 2000);
-      }
-    }
-
-    // Accepter la revanche
-    async function accept() {
-      var matchId = _getMatchId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-
-      try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
-        var rmData = m.get('rematch') || {};
-        rmData.accepted   = true;
-        rmData.acceptedAt = Date.now();
-        m.set('rematch', rmData);
-        // Reset l'état de jeu
-        m.set('status', 'playing');
-        m.set('payload', null);
-        m.set('rev', 0);
-        // Alternance des couleurs
-        var p1 = m.get('p1Id'), p2 = m.get('p2Id');
-        m.set('p1Id', p2); m.set('p1Name', m.get('p2Name'));
-        m.set('p2Id', p1); m.set('p2Name', m.get('p1Name'));
-        await m.save();
-
-        hide();
-        _toast('✅ Revanche ! La partie commence…', 2000);
-        _launchRematch();
-      } catch(err) {
-        _toast('Erreur acceptation revanche.', 2000);
-      }
-    }
-
-    // Lancer la nouvelle partie localement
-    function _launchRematch() {
-      _myPending = false;
-      _stopRematchPolling();
-      try {
-        if (typeof window.initState === 'function' && typeof window.state !== 'undefined') {
-          window.state = window.initState();
-          if (typeof window.renderBoard === 'function') window.renderBoard();
-          if (typeof window.updateUI    === 'function') window.updateUI();
-          if (typeof window.showScreen  === 'function') window.showScreen('game-play-area');
-        }
-      } catch(_) {}
-    }
-
-    // Polling pour détecter si l'adversaire a proposé une revanche
-    function _startRematchPolling() {
-      if (_polling) return;
-      _polling = setInterval(async function() {
-        var matchId = _getMatchId();
-        if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-        try {
-          var q = new window.Parse.Query(window.BACK4APP_CLASS);
-          var m = await q.get(matchId);
-          var rmData = m.get('rematch') || {};
-          var myId   = _getPlayerId();
-
-          // Si mon adversaire a proposé (pas moi)
-          if (rmData.requestBy && rmData.requestBy !== myId && !rmData.accepted && !_myPending) {
-            _showIncomingRequest();
-          }
-
-          // Si ma demande a été acceptée
-          if (_myPending && rmData.accepted) {
-            hide();
-            _launchRematch();
-          }
-
-          // Nettoyage si ancienne demande (> 5 min)
-          if (rmData.requestedAt && Date.now() - rmData.requestedAt > 300000) {
-            _stopRematchPolling();
-          }
-        } catch(_) {}
-      }, 3000);
-    }
-
-    function _stopRematchPolling() {
-      if (_polling) { clearInterval(_polling); _polling = null; }
-    }
-
-    function _showIncomingRequest() {
-      if (!_banner) _buildBanner();
-      if (_msgEl)      _msgEl.textContent   = 'Votre adversaire propose une revanche !';
-      if (_requestBtn) _requestBtn.style.display = 'none';
-      if (_acceptBtn)  _acceptBtn.style.display = '';
-      _showEl(_banner);
-    }
-
-    // Afficher après fin de partie (les deux joueurs voient le bouton "Rejouer")
-    function showAfterGame(iAmWinner) {
-      if (!_banner) _buildBanner();
-      _myPending = false;
-      if (_requestBtn) { _requestBtn.textContent = '🔄 Rejouer'; _requestBtn.disabled = false; _requestBtn.style.display = ''; }
-      if (_acceptBtn)  _acceptBtn.style.display = 'none';
-      if (_msgEl)      _msgEl.textContent = iAmWinner ? '🏆 Victoire ! Proposer une revanche ?' : '😔 Défaite. Rejouer ?';
-      _showEl(_banner);
-      _startRematchPolling();
-    }
-
-    function hide() {
-      if (_banner) _hideEl(_banner);
-      _stopRematchPolling();
-    }
-
-    return { propose: propose, accept: accept, showAfterGame: showAfterGame, hide: hide };
-  })();
-
-  // ════════════════════════════════════════════════════════════════════════
-  // 6. RECONNEXION TRANSPARENTE — Seamless resume via localStorage
-  // ════════════════════════════════════════════════════════════════════════
-  var SeamlessResume = (function() {
-    var _toast_el  = null;
-    var _msg_el    = null;
-    var _retries   = 0;
-
-    function _getToast() {
-      if (!_toast_el) {
-        _toast_el = document.getElementById('tpatch-resume-toast');
-        _msg_el   = document.getElementById('tpatch-resume-msg');
-      }
-      return _toast_el;
-    }
-
-    // Sauvegarder la session avant fermeture
-    function saveSession() {
-      var matchId = _getMatchId();
-      var myId    = _getPlayerId();
-      if (!matchId || !myId) return;
-      var token = (window.online && window.online.token) || null;
-      var role  = (window.online && window.online.role)  || 0;
-      try {
-        localStorage.setItem(LS_RESUME_KEY, JSON.stringify({
-          matchId: matchId,
-          playerId: myId,
-          token: token,
-          role: role,
-          savedAt: Date.now()
-        }));
-      } catch(_) {}
-    }
-
-    // Charger la session sauvegardée
-    function loadSession() {
-      try {
-        var raw = localStorage.getItem(LS_RESUME_KEY);
-        if (!raw) return null;
-        var data = JSON.parse(raw);
-        // Expirer après 24h
-        if (!data || !data.matchId || Date.now() - (data.savedAt || 0) > 86400000) {
-          clearSession();
-          return null;
-        }
-        return data;
-      } catch(_) { return null; }
-    }
-
-    function clearSession() {
-      try { localStorage.removeItem(LS_RESUME_KEY); } catch(_) {}
-    }
-
-    // Tenter la reconnexion automatique au chargement
-    async function attemptAutoResume() {
-      var session = loadSession();
-      if (!session) return false;
-
-      var toast = _getToast();
-      if (_msg_el) _msg_el.textContent = 'Reconnexion à la partie en cours…';
-      if (toast) toast.classList.add('visible');
-
-      _retries = 0;
-      return await _doResume(session);
-    }
-
-    async function _doResume(session) {
-      if (_retries >= RESUME_RETRY) {
-        _hideToast();
-        clearSession();
-        _toast('Reconnexion impossible. Partie perdue.', 3000);
-        return false;
-      }
-      _retries++;
-
-      if (!window.Parse || !window.BACK4APP_CLASS) {
-        // Parse pas encore chargé : réessayer après 1.5s
-        await new Promise(function(r) { setTimeout(r, 1500); });
-        return _doResume(session);
-      }
-
-      try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(session.matchId);
-        var status = m.get('status') || 'waiting';
-        var p1Id   = m.get('p1Id') || null;
-        var p2Id   = m.get('p2Id') || null;
-
-        // Vérifier qu'on est toujours joueur
-        var isPlayer = (p1Id === session.playerId || p2Id === session.playerId);
-        if (!isPlayer || status === 'finished' || status === 'waiting') {
-          _hideToast();
-          clearSession();
-          return false;
-        }
-
-        // Reconstituer window.online
-        var myRole = (p1Id === session.playerId) ? 1 : 2;
-        window.online = window.online || {};
-        window.online.matchId = session.matchId;
-        window.online.role    = myRole;
-        window.online.token   = session.token;
-        window.onlinePlayerId = session.playerId;
-
-        // Marquer comme reconnecté dans la DB
-        var field = (myRole === 1 ? 'p1' : 'p2') + 'Connected';
-        m.set(field, true);
-        m.increment('rev', 1);
-        await m.save();
-
-        // Appliquer l'état du plateau immédiatement
-        var payload = m.get('payload');
-        if (payload && payload.state && typeof window.onlineApplyState === 'function') {
-          window.online.lastSeenRev  = Number(m.get('rev') || 0);
-          window.online.suppressSend = false;
-          window.gameMode = 'online';
-          window.onlineApplyState(payload);
-          if (typeof window.showScreen === 'function') window.showScreen('game-play-area');
-        }
-
-        // Démarrer le polling si ce n'est pas déjà fait
-        if (typeof window._startPolling === 'function' && !window._pollingActive) {
-          window._startPolling(session.matchId);
-        }
-
-        _hideToast();
-        _toast('✅ Reconnecté ! Partie reprise.', 2000);
-        return true;
-      } catch(err) {
-        await new Promise(function(r) { setTimeout(r, 2000); });
-        return _doResume(session);
-      }
-    }
-
-    function _hideToast() {
-      var toast = _getToast();
-      if (toast) toast.classList.remove('visible');
-    }
-
-    return { saveSession: saveSession, loadSession: loadSession, clearSession: clearSession, attemptAutoResume: attemptAutoResume };
-  })();
-
-  // ════════════════════════════════════════════════════════════════════════
-  // 7. HOOKS — Intégration avec le code existant (patches non-destructifs)
-  // ════════════════════════════════════════════════════════════════════════
-
-  function _hookEndGame() {
-    // Intercepter endGame pour déclencher les systèmes revanche + KotH
-    var _origEndGame = window.endGame;
-    if (typeof _origEndGame !== 'function') return;
-
-    window.endGame = function() {
-      var result = _origEndGame.apply(this, arguments);
-      try {
-        var st = window.state;
-        var winner = st && st.winner;
-        var isOnline = window.gameMode === 'online';
-
-        if (isOnline && winner) {
-          var myRole = window.online && window.online.role;
-          var iAmWinner = (myRole === winner);
-
-          // Système de revanche
-          setTimeout(function() { RematchSystem.showAfterGame(iAmWinner); }, 1200);
-
-          // Rotation KotH
-          var winnerId = null;
-          if (window.online && window.online.matchId && window.Parse && window.BACK4APP_CLASS) {
-            (async function() {
-              try {
-                var q = new window.Parse.Query(window.BACK4APP_CLASS);
-                var m = await q.get(window.online.matchId);
-                winnerId = (winner === 1) ? m.get('p1Id') : m.get('p2Id');
-                SpectatorKoTH.onGameEnd(winnerId);
-              } catch(_) {}
-            })();
-          }
-        }
-      } catch(_) {}
-      return result;
-    };
-  }
-
-  function _hookOnlineConnectSuccess() {
-    // Après connexion réussie : sauvegarder la session + gérer le mode spectateur
-    var _orig = window.onlineApplyState;
-    if (typeof _orig !== 'function') return;
-
-    window.onlineApplyState = function(msg) {
-      var result = _orig.apply(this, arguments);
-      try {
-        // Sauvegarder la session à chaque apply
-        SeamlessResume.saveSession();
-
-        // Spectateur : adhésion propre
-        if (window.online && window.online.role === 0) {
-          SpectatorKoTH.applySpectatorRole();
-          SpectatorKoTH.enqueue();
-          SpectatorKoTH.checkQueue();
-        }
-      } catch(_) {}
-      return result;
-    };
-  }
-
-  function _hookShowScreen() {
-    var _orig = window.showScreen;
-    if (typeof _orig !== 'function') return;
-
-    window.showScreen = function(screenId) {
-      var result = _orig.apply(this, arguments);
-      try {
-        if (screenId === 'online-lobby-area') {
-          TournamentLobbyPatch.startPolling();
-        }
-        // Cacher la revanche si on quitte le plateau
-        if (screenId !== 'game-play-area') {
-          RematchSystem.hide();
-        }
-      } catch(_) {}
-      return result;
-    };
-  }
-
-  function _hookBeforeUnload() {
-    // Sauvegarder la session avant fermeture de page
-    window.addEventListener('beforeunload', function() {
-      try { SeamlessResume.saveSession(); } catch(_) {}
-    });
-    // Aussi sur pagehide (iOS)
-    window.addEventListener('pagehide', function() {
-      try { SeamlessResume.saveSession(); } catch(_) {}
-    });
-    // Sauvegarde périodique en cours de partie
-    setInterval(function() {
-      if (window.gameMode === 'online' && _getMatchId()) {
-        try { SeamlessResume.saveSession(); } catch(_) {}
-      }
-    }, 30000);
-  }
-
-  // Surveiller nextChallengerSignal pour l'afficher au bon spectateur
   function _pollNextChallengerSignal() {
     setInterval(async function() {
-      var matchId = _getMatchId();
-      if (!matchId || !window.Parse || !window.BACK4APP_CLASS) return;
-      if (window.gameMode !== 'spectator') return;
+      if (!_mid() || !_parseReady() || !_isSpectator()) return;
+      var myId = _pid();
       try {
-        var q = new window.Parse.Query(window.BACK4APP_CLASS);
-        var m = await q.get(matchId);
+        var m = await _getMatch(_mid());
         var signal = m.get('nextChallengerSignal');
-        var myId   = _getPlayerId();
         if (signal === myId) {
-          var btn = document.getElementById('tpatch-takeover-btn');
-          if (btn) btn.style.display = 'block';
-          // Effacer le signal
-          m.unset('nextChallengerSignal');
-          await m.save();
+          m.unset('nextChallengerSignal'); await m.save();
+          SpectatorKoTH.checkQueue();
+          _toast('⚔️ Votre tour ! Prenez la place du perdant.', 3000);
         }
       } catch(_) {}
     }, 4000);
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  // 8. UTILITAIRES
+  // 5. REVANCHE RAPIDE
   // ════════════════════════════════════════════════════════════════════════
-  function _esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  var RematchSystem = (function() {
+    var _banner = null, _reqBtn = null, _accBtn = null, _msgEl = null;
+    var _pollTimer = null, _myPending = false, _shown = false;
+
+    function _build() {
+      _banner = document.getElementById('tpatch-rematch-banner');
+      _reqBtn = document.getElementById('tpatch-rematch-request-btn');
+      _accBtn = document.getElementById('tpatch-rematch-accept-btn');
+      _msgEl  = document.getElementById('tpatch-rematch-msg');
+      if (_reqBtn) _reqBtn.addEventListener('click', function() { propose(); });
+      if (_accBtn) _accBtn.addEventListener('click', function() { accept(); });
+    }
+
+    async function propose() {
+      var matchId = _mid(), myId = _pid();
+      if (!matchId || !_parseReady()) return;
+      if (_myPending) { _toast('Demande déjà envoyée.', 1500); return; }
+      try {
+        var m = await _getMatch(matchId);
+        // ── Bug 3 fix (préventif) : écraser toute trace de rematch stale avant d'écrire la demande
+        m.set('rematch', { requestBy: myId, requestedAt: Date.now(), accepted: false });
+        m.increment('rev', 1);
+        await m.save();
+        _myPending = true;
+        if (_msgEl)  _msgEl.textContent = 'Revanche proposée — en attente de l\'adversaire…';
+        if (_reqBtn) { _reqBtn.textContent = '⏳ En attente…'; _reqBtn.disabled = true; }
+        if (_accBtn) _accBtn.style.display = 'none';
+        _toast('🔄 Revanche proposée !', 1800);
+        _startPoll();
+      } catch(_) { _toast('Erreur proposition.', 2000); }
+    }
+
+    async function accept() {
+      var matchId = _mid();
+      if (!matchId || !_parseReady()) return;
+      try {
+        var m  = await _getMatch(matchId);
+        var rm = m.get('rematch') || {};
+        rm.accepted   = true;
+        rm.acceptedAt = Date.now();
+        m.set('rematch', rm);
+        m.set('status', 'ready');
+        m.set('rm1', false);
+        m.set('rm2', false);
+        // ── Bug 1 fix : NE PAS permuter p1Id/p2Id ici.
+        // L'alternance est gérée exclusivement par onlineStartMatch_Back4App()
+        // via gameId/swapColors. Toute inversion ici crée un double-swap.
+        m.increment('rev', 1);
+        await m.save();
+        hide();
+        _toast('✅ Revanche acceptée !', 2000);
+        _myPending = false;
+        _stopPoll();
+        // ── Bug 2 fix : si JE suis l'hôte (p1/isHost), je lance immédiatement.
+        // L'hôte ayant stoppé son poll via _stopPoll(), il ne repassera pas dans _startPoll.
+        if (window.online && window.online.isHost) {
+          if (typeof window.onlineStartMatch_Back4App === 'function') {
+            try { await window.onlineStartMatch_Back4App(); } catch(_) {}
+          }
+        }
+        // Si je suis le guest, l'hôte (qui poll via _startPoll) détectera rm.accepted et lancera.
+      } catch(_) { _toast('Erreur acceptation.', 2000); }
+    }
+
+    function _startPoll() {
+      if (_pollTimer) return;
+      _pollTimer = setInterval(async function() {
+        var matchId = _mid();
+        if (!matchId || !_parseReady()) return;
+        try {
+          var m   = await _getMatch(matchId);
+          var rm  = m.get('rematch') || {};
+          var myId = _pid();
+
+          // ── Bug 3 fix (anti-stale) : ignorer un champ rematch d'une partie précédente.
+          // Si accepted est déjà true au moment où on démarre le poll (reliquat d'une
+          // ancienne revanche), on le nettoie et on ignore sans lancer de partie.
+          if (rm.accepted && !_myPending) {
+            m.unset('rematch');
+            m.increment('rev', 1);
+            try { await m.save(); } catch(_) {}
+            return;
+          }
+
+          // Afficher la bannière "incoming" si l'adversaire a proposé (et pas moi)
+          if (rm.requestBy && rm.requestBy !== myId && !rm.accepted && !_myPending) {
+            _showIncoming();
+          }
+
+          // Hôte : détecter rm.accepted et lancer la partie
+          // Bug 2 fix : l'hôte qui a lui-même appelé accept() est déjà sorti du poll.
+          // Ce chemin sert uniquement quand c'est le GUEST qui a accepté.
+          if (_myPending && rm.accepted) {
+            hide(); _myPending = false; _stopPoll();
+            // Nettoyer le champ rematch en DB pour éviter qu'il soit stale à la prochaine revanche
+            try {
+              var mClean = await _getMatch(matchId);
+              mClean.unset('rematch');
+              mClean.increment('rev', 1);
+              await mClean.save();
+            } catch(_) {}
+            if (window.online && window.online.isHost) {
+              if (typeof window.onlineStartMatch_Back4App === 'function') {
+                try { await window.onlineStartMatch_Back4App(); } catch(_) {}
+              }
+            }
+          }
+
+          // TTL : expirer les demandes trop anciennes
+          if (rm.requestedAt && Date.now() - rm.requestedAt > REMATCH_TTL) {
+            _stopPoll(); _myPending = false; if (_shown) hide();
+          }
+        } catch(_) {}
+      }, 3000);
+    }
+
+    function _stopPoll() { if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; } }
+
+    function _showIncoming() {
+      if (!_banner) _build();
+      if (_msgEl)  _msgEl.textContent = 'Votre adversaire propose une revanche !';
+      if (_reqBtn) _reqBtn.style.display = 'none';
+      if (_accBtn) _accBtn.style.display = '';
+      _banner.classList.add('visible'); _shown = true;
+    }
+
+    function showAfterGame(iAmWinner) {
+      if (!_banner) _build();
+      _myPending = false; _shown = true;
+      if (_reqBtn) { _reqBtn.textContent = iAmWinner ? '🔄 Proposer la revanche' : '🔄 Demander la revanche'; _reqBtn.disabled = false; _reqBtn.style.display = ''; }
+      if (_accBtn) _accBtn.style.display = 'none';
+      if (_msgEl)  _msgEl.textContent = iAmWinner ? '🏆 Victoire ! Proposer une revanche ?' : '😔 Défaite. Demander une revanche ?';
+      _banner.classList.add('visible'); _startPoll();
+    }
+
+    function hide() {
+      if (_banner) _banner.classList.remove('visible');
+      _stopPoll(); _shown = false;
+    }
+
+    return { propose: propose, accept: accept, showAfterGame: showAfterGame, hide: hide };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // P3-A : HEARTBEAT — présence joueur (écriture lastPing / détection > 30s)
+  // ════════════════════════════════════════════════════════════════════════
+  var Heartbeat = (function() {
+    var _pingTimer    = null;
+    var _watchTimer   = null;
+    var PING_INTERVAL = 15000;  // écrire toutes les 15s
+    var DEAD_THRESHOLD = 30000; // partenaire mort si > 30s sans ping
+
+    function _myPingField() {
+      if (!window.online) return null;
+      return 'p' + (window.online.role || 1) + 'LastPing';
+    }
+    function _peerPingField() {
+      if (!window.online) return null;
+      var peerRole = (window.online.role === 1) ? 2 : 1;
+      return 'p' + peerRole + 'LastPing';
+    }
+
+    async function _writePing() {
+      var matchId = _mid(), field = _myPingField();
+      if (!matchId || !field || !_parseReady()) return;
+      if (window.gameMode !== 'online' || !window.online || !window.online.connected) return;
+      try {
+        var m = new window.Parse.Object(window.BACK4APP_CLASS);
+        m.id = matchId;
+        m.set(field, Date.now());
+        await m.save(null, { useMasterKey: false });
+      } catch(_) {}
+    }
+
+    async function _checkPeer() {
+      var matchId = _mid(), peerField = _peerPingField();
+      if (!matchId || !peerField || !_parseReady()) return;
+      if (window.gameMode !== 'online' || !window.online || !window.online.connected) return;
+      try {
+        var m = await _getMatch(matchId);
+        var peerPing = m.get(peerField);
+        if (!peerPing) return; // partenaire n'a pas encore pingé
+        var elapsed = Date.now() - peerPing;
+        if (elapsed > DEAD_THRESHOLD) {
+          // Partenaire inactif depuis > 30s → afficher avertissement
+          var staleWarn = document.getElementById('ogb-stale-warn');
+          if (staleWarn) staleWarn.style.display = '';
+          _toast('⚠️ Connexion partenaire perdue (' + Math.round(elapsed / 1000) + 's)', 3000);
+        } else {
+          var staleWarn = document.getElementById('ogb-stale-warn');
+          if (staleWarn) staleWarn.style.display = 'none';
+        }
+      } catch(_) {}
+    }
+
+    function start() {
+      stop();
+      _writePing(); // ping immédiat au lancement
+      _pingTimer  = setInterval(_writePing,  PING_INTERVAL);
+      _watchTimer = setInterval(_checkPeer,  PING_INTERVAL + 5000); // décalé de 5s
+    }
+
+    function stop() {
+      if (_pingTimer)  { clearInterval(_pingTimer);  _pingTimer  = null; }
+      if (_watchTimer) { clearInterval(_watchTimer); _watchTimer = null; }
+    }
+
+    return { start: start, stop: stop };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 6. RECONNEXION TRANSPARENTE
+  // ════════════════════════════════════════════════════════════════════════
+  var SeamlessResume = (function() {
+    var _toastEl = null, _msgEl = null;
+
+    function _getToast() {
+      if (!_toastEl) { _toastEl = document.getElementById('tpatch-resume-toast'); _msgEl = document.getElementById('tpatch-resume-msg'); }
+      return _toastEl;
+    }
+
+    function saveSession() {
+      var matchId = _mid(), myId = _pid();
+      if (!matchId || !myId) return;
+      try {
+        localStorage.setItem(LS_RESUME_KEY, JSON.stringify({
+          v: 3, matchId: matchId, playerId: myId,
+          role: (window.online && window.online.role) || 0,
+          code: (window.online && window.online.room) || '', savedAt: Date.now()
+        }));
+      } catch(_) {}
+    }
+
+    function clearSession() { try { localStorage.removeItem(LS_RESUME_KEY); } catch(_) {} }
+
+    function _load() {
+      try {
+        var raw = localStorage.getItem(LS_RESUME_KEY);
+        if (!raw) return null;
+        var d = JSON.parse(raw);
+        if (!d || d.v !== 3 || !d.matchId) return null;
+        if (Date.now() - (d.savedAt || 0) > RESUME_MAX_AGE) { clearSession(); return null; }
+        return d;
+      } catch(_) { return null; }
+    }
+
+    async function attemptAutoResume() {
+      if (window.online && window.online.connected && window.online.matchId) return false;
+      if (window.gameMode && window.gameMode !== 'menu' && window.gameMode !== '') return false;
+
+      var session = _load();
+      if (!session) return false;
+
+      var t = _getToast();
+      if (_msgEl) _msgEl.textContent = 'Reconnexion à la partie en cours…';
+      if (t) t.classList.add('visible');
+
+      var ready = _parseReady();
+      if (!ready && typeof _ensureParseReadyAsync === 'function') {
+        try { ready = await _ensureParseReadyAsync(); } catch(_) { ready = _parseReady(); }
+      }
+      var waited = 0;
+      while (!ready && waited < 4000) {
+        await new Promise(function(r) { setTimeout(r, 400); });
+        waited += 400;
+        ready = _parseReady();
+      }
+      if (!ready) { if (t) t.classList.remove('visible'); return false; }
+
+      try {
+        var m      = await _getMatch(session.matchId);
+        var status = m.get('status') || 'waiting';
+        var p1Id   = m.get('p1Id') || null, p2Id = m.get('p2Id') || null;
+        var isPlayer = (p1Id === session.playerId || p2Id === session.playerId);
+
+        // P3-B : 'ready' = lobby avec 2 joueurs connectés → reconnexion autorisée
+        // Seuls 'finished' et 'waiting' invalident la session
+        if (!isPlayer || status === 'finished' || status === 'waiting') {
+          if (t) t.classList.remove('visible'); clearSession(); return false;
+        }
+
+        var myRole = (p1Id === session.playerId) ? 1 : 2;
+        window.online = window.online || {};
+        Object.assign(window.online, { matchId: session.matchId, room: session.code || '', role: myRole, isHost: myRole === 1, connected: true, ready: true, suppressSend: true });
+        window.onlinePlayerId = session.playerId;
+        window.gameMode = 'online';
+
+        m.set('p' + myRole + 'Active', true); m.increment('rev', 1); await m.save();
+
+        var payload = m.get('payload');
+        window.online.lastSeenRev = Number(m.get('rev') || 0);
+        if (status === 'ready') {
+          // P3-B : Le joueur revient dans le lobby — pas encore de partie lancée
+          if (typeof window.showScreen === 'function') window.showScreen('online-lobby-area');
+        } else if (payload && payload.state && typeof window.onlineApplyState === 'function') {
+          window.onlineApplyState(payload);
+          if (typeof window.showScreen === 'function') window.showScreen('game-play-area');
+        }
+
+        window.online.suppressSend = false;
+        if (typeof window._startPolling === 'function') try { window._startPolling(); } catch(_) {}
+        if (t) t.classList.remove('visible');
+        var resumeMsg = (status === 'ready') ? '✅ Reconnecté au salon !' : '✅ Reconnecté ! Partie reprise.';
+        _toast(resumeMsg, 2200);
+        return true;
+      } catch(_) {
+        if (t) t.classList.remove('visible');
+        return false;
+      }
+    }
+
+    return { saveSession: saveSession, clearSession: clearSession, attemptAutoResume: attemptAutoResume };
+  })();
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 7. HOOKS
+  // ════════════════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════════════
+  // P1-B : TiddasBus — EventBus interne (remplace les wrappers en cascade)
+  // Tous les modules s'abonnent via .on() ; les fonctions natives émettent
+  // via .emit() en fin d'exécution, sans jamais être wrappées.
+  // ════════════════════════════════════════════════════════════════════════
+  (function _installTiddasBus() {
+    if (window.TiddasBus) return; // déjà installé
+    var _listeners = {};
+    window.TiddasBus = {
+      on: function(event, fn) {
+        if (!_listeners[event]) _listeners[event] = [];
+        _listeners[event].push(fn);
+      },
+      off: function(event, fn) {
+        if (!_listeners[event]) return;
+        _listeners[event] = _listeners[event].filter(function(f) { return f !== fn; });
+      },
+      emit: function(event) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        (_listeners[event] || []).forEach(function(fn) {
+          try { fn.apply(null, args); } catch(e) { /* isolé */ }
+        });
+      }
+    };
+    // Signaler la disponibilité du bus aux modules déjà chargés (TournamentExtension)
+    document.dispatchEvent(new Event('tiddas:busReady'));
+  })();
+
+  // ── Hook unique endGame : émet l'événement, pas de chaîne de wrappers ──
+  function _hookEndGame() {
+    var _orig = window.endGame;
+    if (typeof _orig !== 'function') return;
+    window.endGame = function() {
+      var result = _orig.apply(this, arguments);
+      try {
+        var winner = window.state && window.state.winner;
+        window.TiddasBus.emit('endGame', winner);
+      } catch(_) {}
+      return result;
+    };
+  }
+
+  // ── Hook unique onlineApplyState : émet, sans re-wrapper ──
+  function _hookOnlineApplyState() {
+    var _orig = window.onlineApplyState;
+    if (typeof _orig !== 'function') return;
+    window.onlineApplyState = function(msg) {
+      var result = _orig.apply(this, arguments);
+      try { window.TiddasBus.emit('applyState', msg); } catch(_) {}
+      return result;
+    };
+  }
+
+  // ── Hook unique showScreen : émet, sans re-wrapper ──
+  function _hookShowScreen() {
+    var _orig = window.showScreen;
+    if (typeof _orig !== 'function') return;
+    window.showScreen = function(screenId) {
+      var result = _orig.apply(this, arguments);
+      try { window.TiddasBus.emit('showScreen', screenId); } catch(_) {}
+      return result;
+    };
+  }
+
+  function _hookApplyLobbyState() {
+    var _orig = window._applyLobbyStateFromMatch;
+    if (typeof _orig !== 'function') return;
+    window._applyLobbyStateFromMatch = function(match) {
+      _orig.apply(this, arguments);
+      try { window.TiddasBus.emit('lobbyStateApplied', match); } catch(_) {}
+    };
+  }
+
+  // ── Abonnements PatchProd aux événements du bus ────────────────────────
+  function _registerBusListeners() {
+    var bus = window.TiddasBus;
+
+    // endGame → RematchSystem + SpectatorKoTH
+    bus.on('endGame', function(winner) {
+      if (window.gameMode === 'online' && winner && window.online && window.online.role > 0) {
+        var iAmWin = (window.online.role === winner);
+
+        if (_parseReady() && _mid()) {
+          (async function() {
+            try {
+              var m = await _getMatch(_mid());
+              var winnerId = (winner === 1) ? m.get('p1Id') : m.get('p2Id');
+
+              // ── Bug 5 fix : n'afficher RematchSystem QUE si la file KoTH est vide.
+              // Si des spectateurs attendent, la rotation KoTH prend le dessus :
+              // le vainqueur reste, le perdant devient spectateur, le prochain challenger arrive.
+              // Afficher RematchSystem dans ce cas créerait une confusion UX (deux flux en parallèle).
+              var specQueue = m.get('spectatorQueue') || [];
+              var kothActive = specQueue.length > 0;
+
+              if (!kothActive) {
+                // Pas de file d'attente → revanche classique entre les deux joueurs
+                setTimeout(function() { RematchSystem.showAfterGame(iAmWin); }, 1200);
+              } else {
+                // File KoTH non-vide → rotation : masquer RematchSystem, activer KoTH
+                RematchSystem.hide();
+              }
+
+              // SpectatorKoTH gère la rotation dans tous les cas (gagnant ≠ perdant)
+              SpectatorKoTH.onGameEnd(winnerId);
+            } catch(_) {}
+          })();
+        } else if (!_mid()) {
+          // Fallback hors-ligne : pas de DB à consulter, afficher RematchSystem directement
+          setTimeout(function() { RematchSystem.showAfterGame(iAmWin); }, 1200);
+        }
+      }
+    });
+
+    // applyState → SeamlessResume + SpectatorKoTH + Heartbeat (P3-A)
+    bus.on('applyState', function(msg) {
+      if (window.gameMode === 'online' && _mid()) {
+        SeamlessResume.saveSession();
+        // P3-A : démarrer le heartbeat dès que la partie est active
+        if (window.online && window.online.role > 0) Heartbeat.start();
+      }
+      if (_isSpectator()) {
+        SpectatorKoTH.applySpectatorRole();
+        // enqueue() gère lui-même son flag d'écriture pour ne pas bloquer la première insertion en base.
+        if (!window._spectatorEnqueueDone) {
+          SpectatorKoTH.enqueue();
+        }
+        SpectatorKoTH.checkQueue();
+      }
+    });
+
+    // showScreen → TournamentLobbyPatch + RematchSystem + chat
+    bus.on('showScreen', function(screenId) {
+      if (screenId === 'online-lobby-area') {
+        TournamentLobbyPatch.startPolling();
+        TournamentLobbyPatch.refresh();
+      } else {
+        TournamentLobbyPatch.stopPolling();
+      }
+      if (screenId !== 'game-play-area') {
+        RematchSystem.hide();
+        Heartbeat.stop();
+      }
+      if (typeof window.syncOnlineChatVisibility === 'function') {
+        setTimeout(window.syncOnlineChatVisibility, 50);
+      }
+    });
+
+    // lobbyStateApplied → masquer le widget rematch legacy si fini
+    bus.on('lobbyStateApplied', function(match) {
+      if (match && match.get && match.get('status') === 'finished') {
+        var rw = document.getElementById('online-rematch');
+        if (rw) rw.style.display = 'none';
+      }
+    });
+  }
+
+  function _hookBeforeUnload() {
+    window.addEventListener('beforeunload', function() { try { SeamlessResume.saveSession(); } catch(_) {} });
+    window.addEventListener('pagehide',      function() { try { SeamlessResume.saveSession(); } catch(_) {} });
+    setInterval(function() {
+      if (window.gameMode === 'online' && _mid()) try { SeamlessResume.saveSession(); } catch(_) {}
+    }, 30000);
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  // 9. BOOT — Initialisation différée robuste
+  // 8. CSS COMPLÉMENTAIRE
+  // ════════════════════════════════════════════════════════════════════════
+  function _ensureExtraCSS() {
+    if (document.getElementById('tpatch-extra-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'tpatch-extra-styles';
+    style.textContent = [
+      /* Spinner reconnexion */
+      '.tpatch-spinner{width:18px;height:18px;border:2px solid rgba(180,240,180,0.3);',
+      'border-top-color:rgba(180,240,180,0.9);border-radius:50%;',
+      'animation:tpatch-spin .7s linear infinite;flex-shrink:0}',
+      '@keyframes tpatch-spin{to{transform:rotate(360deg)}}',
+
+      /* Masquer bannière "Reprendre" legacy */
+
+      /* Masquer ancien double-chip "Je suis prêt" en fin de partie */
+      '#online-rematch .ol-rematch-btn{display:none!important}',
+
+      /* Spectateurs gardent accès à la messagerie principale (specFab supprimé) */
+
+      /* Empêcher le ogb-role d'afficher "SPECTATEUR EN LIGNE" en doublon avec le badge */
+      'body.is-spectating .ogb-role{display:none!important}',
+
+      /* Notification nouveau tournoi */
+      '#tourn-join-notify{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);',
+      'display:none;align-items:center;gap:.7rem;background:rgba(10,6,2,.94);',
+      'border:1px solid rgba(240,200,80,.35);border-radius:10px;padding:.6rem .9rem;',
+      'z-index:20000;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:90vw;}',
+      '#tourn-join-notify:not([hidden]){display:flex}',
+      '.tnb-text{font-size:.82rem;color:rgba(245,225,160,.9);flex:1}',
+      '.tnb-btn{background:rgba(240,200,80,.18);border:1px solid rgba(240,200,80,.4);',
+      'color:#f0c850;border-radius:6px;padding:.25rem .7rem;font-size:.78rem;cursor:pointer}',
+      '.tnb-close{background:none;border:none;color:rgba(245,245,245,.5);font-size:.9rem;',
+      'cursor:pointer;padding:.1rem .3rem;line-height:1}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 9. BOOT
   // ════════════════════════════════════════════════════════════════════════
   function _boot() {
-    // Init composants UI
+    _ensureExtraCSS();
     SpectatorKoTH.init();
-
-    // Hooks non-destructifs (attendre que les fonctions cibles soient définies)
-    var _hookAttempts = 0;
-    var _hookInterval = setInterval(function() {
-      _hookAttempts++;
-      var allReady = typeof window.endGame          === 'function'
-                  && typeof window.onlineApplyState === 'function'
-                  && typeof window.showScreen       === 'function';
-
-      if (allReady || _hookAttempts > 30) {
-        clearInterval(_hookInterval);
-        _hookEndGame();
-        _hookOnlineConnectSuccess();
-        _hookShowScreen();
-      }
-    }, 300);
-
-    // Hooks immédiats (n'ont pas besoin de fonctions cibles)
     _patchTournamentCreation();
     _hookBeforeUnload();
     _pollNextChallengerSignal();
+    _neutralizeLegacyTournamentLobby();
 
-    // Polling tournois si lobby déjà actif
+    // Hooks différés
+    var _attempts = 0;
+    var _hookInterval = setInterval(function() {
+      _attempts++;
+      var ready = typeof window.endGame                   === 'function'
+               && typeof window.onlineApplyState          === 'function'
+               && typeof window.showScreen                === 'function'
+               && typeof window._applyLobbyStateFromMatch === 'function';
+
+      if (ready || _attempts > 40) {
+        clearInterval(_hookInterval);
+        _hookEndGame();
+        _hookOnlineApplyState();
+        _hookShowScreen();
+        _hookApplyLobbyState();
+        _registerBusListeners();
+        _fixDoubleChatSpectator();
+        _fixSpectatorBadgeDuplicate();
+      }
+    }, 250);
+
+    // Polling tournois si lobby actif
     var lobby = document.getElementById('online-lobby-area');
-    if (lobby && lobby.classList.contains('active')) {
+    if (lobby && (lobby.classList.contains('active') || lobby.style.display !== 'none')) {
       TournamentLobbyPatch.startPolling();
     }
 
-    // Reconnexion automatique — attendre Parse + 1s
-    setTimeout(function() {
-      SeamlessResume.attemptAutoResume();
-    }, 1200);
+    // Reconnexion auto
+    setTimeout(function() { SeamlessResume.attemptAutoResume(); }, 1500);
 
-    // Exposer pour debug & tests
     window.TiddasPatch = {
       TournamentNameModal:  TournamentNameModal,
       TournamentLobbyPatch: TournamentLobbyPatch,
       TablePicker:          TablePicker,
       SpectatorKoTH:        SpectatorKoTH,
       RematchSystem:        RematchSystem,
-      SeamlessResume:       SeamlessResume
+      SeamlessResume:       SeamlessResume,
+      Heartbeat:            Heartbeat      // P3-A
     };
   }
 
@@ -32962,7 +32938,7 @@ window.TiddasSpectator       = SpectatorEnhanced;
     setTimeout(_boot, 0);
   }
 
-})(); // end TiddasPatchProd
+})(); // end TiddasPatchProd v3.2
 </script>
 </body>
 </html>
