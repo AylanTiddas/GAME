@@ -16048,8 +16048,8 @@ const ONLINE_ENABLED = true;
 // ── Back4App (Online Multiplayer) ─────────────────────────
 // Obtenir ces clés dans Back4App → App Settings → Security & Keys
 // NE PAS mettre la Master Key ici.
-const BACK4APP_APP_ID     = "RPjLzl5f7CvgQwnmf39GRgUcV3obZhNexhO0rwbj"; // ← remplacer
-const BACK4APP_JS_KEY     = "8Xl9kHkCUOLKXPEE6ILABX3hyBvEatUIHRUnwhQ8"; // ← remplacer (JS Key)
+const BACK4APP_APP_ID     = "HNFUjKRVKecH7BCRgxJ6qsInm6paFeDzQchUcHH8"; // ← remplacer
+const BACK4APP_JS_KEY     = "yaDloLtSqIlMFYzZTQaNyIs3vwJX5JjkClgkQM1t"; // ← remplacer (JS Key)
 const BACK4APP_SERVER_URL = "https://parseapi.back4app.com";              // URL API par défaut
 const BACK4APP_CLASS      = "GameMatch"; // Nom de la class/table Back4App
 window.BACK4APP_CLASS = BACK4APP_CLASS;
@@ -32939,6 +32939,2743 @@ window.TiddasSpectator       = SpectatorEnhanced;
   }
 
 })(); // end TiddasPatchProd v3.2
+</script>
+
+<script>
+(function(){
+  'use strict';
+  if (window.__TIDDAS_ONLINE_HARDENING_V1__) return;
+  window.__TIDDAS_ONLINE_HARDENING_V1__ = true;
+
+  function dbg(){ try { if (window.DEBUG) console.debug('[Tiddas/Hardening]', ...arguments); } catch(_) {} }
+  function now(){ return Date.now(); }
+  function toJSON(v){ try { return JSON.stringify(v); } catch(_) { return String(v); } }
+
+  const hard = {
+    sessionId: 0,
+    connectBusy: false,
+    createBusy: false,
+    joinBusy: false,
+    startBusy: false,
+    rematchBusy: false,
+    disconnectBusy: false,
+    lastAppliedSig: '',
+    lastAppliedRev: -1,
+    lastAppliedGameId: -1,
+    outgoingBusy: false,
+    outgoingQueued: null,
+    reconnectTimer: 0,
+    installTs: now(),
+    lastNetOkTs: now()
+  };
+  window.__tiddasOnlineHardening = hard;
+
+  function roomOfPayload(payload){
+    try { return String(payload?.room || window.online?.room || ''); } catch(_) { return ''; }
+  }
+  function revOfPayload(payload){
+    try { return Number(payload?.meta?.rev ?? payload?.rev ?? window.online?.lastSeenRev ?? -1); } catch(_) { return -1; }
+  }
+  function gameIdOfPayload(payload){
+    try {
+      const meta = payload && payload.meta ? payload.meta : null;
+      const direct = meta && Number.isFinite(Number(meta.gameId)) ? Number(meta.gameId) : NaN;
+      if (Number.isFinite(direct)) return direct;
+      const st = payload && payload.state ? payload.state : null;
+      const nested = st && Number.isFinite(Number(st.gameId)) ? Number(st.gameId) : NaN;
+      if (Number.isFinite(nested)) return nested;
+      const onlineGameId = Number(window.online?.gameId);
+      return Number.isFinite(onlineGameId) ? onlineGameId : 0;
+    } catch(_) { return 0; }
+  }
+  function stateSig(payload){
+    const state = payload && payload.state ? payload.state : null;
+    const meta = payload && payload.meta ? payload.meta : null;
+    return [
+      roomOfPayload(payload),
+      gameIdOfPayload(payload),
+      revOfPayload(payload),
+      meta && meta.at ? Number(meta.at) : 0,
+      toJSON(state)
+    ].join('||');
+  }
+  function sameRoom(payload){
+    const payloadRoom = roomOfPayload(payload);
+    const currentRoom = String(window.online?.room || '');
+    return !payloadRoom || !currentRoom || payloadRoom === currentRoom;
+  }
+  function newerOrEqualGame(payload){
+    const gid = gameIdOfPayload(payload);
+    return gid >= Number(hard.lastAppliedGameId || -1);
+  }
+  function markApplied(payload){
+    hard.lastAppliedSig = stateSig(payload);
+    hard.lastAppliedRev = Math.max(hard.lastAppliedRev, revOfPayload(payload));
+    hard.lastAppliedGameId = Math.max(hard.lastAppliedGameId, gameIdOfPayload(payload));
+    hard.lastNetOkTs = now();
+  }
+  function resetSession(reason){
+    hard.sessionId += 1;
+    hard.lastAppliedSig = '';
+    hard.lastAppliedRev = -1;
+    hard.lastAppliedGameId = -1;
+    hard.outgoingQueued = null;
+    hard.outgoingBusy = false;
+    dbg('resetSession', reason, hard.sessionId);
+  }
+
+  const originalDisconnect = window.onlineDisconnect;
+  if (typeof originalDisconnect === 'function') {
+    window.onlineDisconnect = function(){
+      if (hard.disconnectBusy) return;
+      hard.disconnectBusy = true;
+      resetSession('disconnect');
+      try { return originalDisconnect.apply(this, arguments); }
+      finally { hard.disconnectBusy = false; }
+    };
+  }
+
+  const originalApplyState = window.onlineApplyState;
+  if (typeof originalApplyState === 'function') {
+    window.onlineApplyState = function(payload){
+      try {
+        if (!payload || !payload.state) return;
+        if (!sameRoom(payload)) {
+          dbg('drop payload from another room', roomOfPayload(payload), window.online?.room);
+          return;
+        }
+        if (!newerOrEqualGame(payload)) {
+          dbg('drop stale payload (older gameId)', gameIdOfPayload(payload), hard.lastAppliedGameId);
+          return;
+        }
+        const sig = stateSig(payload);
+        if (sig === hard.lastAppliedSig) {
+          dbg('skip duplicate payload');
+          return;
+        }
+        const payloadRev = revOfPayload(payload);
+        const payloadGameId = gameIdOfPayload(payload);
+        const currentLastSeen = Number(window.online?.lastSeenRev ?? -1);
+        const sameGame = payloadGameId === hard.lastAppliedGameId;
+        if (sameGame && payloadRev >= 0 && hard.lastAppliedRev >= 0 && payloadRev < hard.lastAppliedRev) {
+          dbg('drop old payload by rev', payloadRev, hard.lastAppliedRev);
+          return;
+        }
+        if (sameGame && payloadRev >= 0 && currentLastSeen >= 0 && payloadRev < currentLastSeen) {
+          dbg('drop old payload by online.lastSeenRev', payloadRev, currentLastSeen);
+          return;
+        }
+        const result = originalApplyState.apply(this, arguments);
+        markApplied(payload);
+        return result;
+      } catch (err) {
+        console.warn('[Tiddas/Hardening] onlineApplyState wrapper error', err);
+        return originalApplyState.apply(this, arguments);
+      }
+    };
+  }
+
+  const originalConnect = window.onlineConnectToRoom_Back4App;
+  if (typeof originalConnect === 'function') {
+    window.onlineConnectToRoom_Back4App = async function(code, creating){
+      if (creating && hard.createBusy) return;
+      if (!creating && hard.joinBusy) return;
+      if (creating) hard.createBusy = true; else hard.joinBusy = true;
+      const mySession = ++hard.sessionId;
+      hard.lastAppliedSig = '';
+      hard.lastAppliedRev = -1;
+      hard.lastAppliedGameId = -1;
+      try {
+        const result = await originalConnect.apply(this, arguments);
+        if (mySession !== hard.sessionId) return result;
+        try {
+          if (window.online?.connected && window.online?.matchId && window.Parse && window.BACK4APP_CLASS) {
+            const q = new window.Parse.Query(window.BACK4APP_CLASS);
+            const match = await q.get(window.online.matchId);
+            const rev = Number(match.get('rev') || 0);
+            const payload = match.get('payload') || null;
+            window.online.lastSeenRev = rev;
+            hard.lastAppliedRev = rev;
+            hard.lastAppliedGameId = Number(match.get('gameId') || gameIdOfPayload(payload) || 0);
+            if (payload && payload.state) markApplied(payload);
+            dbg('post-connect sync ok', window.online.room, rev, hard.lastAppliedGameId);
+          }
+        } catch (syncErr) {
+          console.warn('[Tiddas/Hardening] post-connect sync failed', syncErr);
+        }
+        return result;
+      } finally {
+        hard.createBusy = false;
+        hard.joinBusy = false;
+      }
+    };
+  }
+
+  const originalDoSendState = window._doSendState;
+  if (typeof originalDoSendState === 'function') {
+    window._doSendState = function(reason){
+      const normalizedReason = String(reason || 'sync');
+      hard.outgoingQueued = normalizedReason;
+      if (hard.outgoingBusy) return;
+      hard.outgoingBusy = true;
+      const flush = () => {
+        const next = hard.outgoingQueued;
+        hard.outgoingQueued = null;
+        if (!next) {
+          hard.outgoingBusy = false;
+          return;
+        }
+        Promise.resolve().then(() => originalDoSendState.call(this, next)).catch((err) => {
+          console.warn('[Tiddas/Hardening] send failed', err);
+        }).finally(() => {
+          setTimeout(flush, 80);
+        });
+      };
+      flush();
+    };
+  }
+
+  function wrapBusyButton(fnName, key){
+    const original = window[fnName];
+    if (typeof original !== 'function') return;
+    window[fnName] = async function(){
+      if (hard[key]) return;
+      hard[key] = true;
+      try { return await original.apply(this, arguments); }
+      finally { setTimeout(() => { hard[key] = false; }, 250); }
+    };
+  }
+  wrapBusyButton('onlineStartGame', 'startBusy');
+  wrapBusyButton('onlineToggleRematchReady', 'rematchBusy');
+
+  function setButtonState(id, busy, text){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (busy) {
+      if (!el.dataset.originalHtml) el.dataset.originalHtml = el.innerHTML;
+      el.disabled = true;
+      if (text) el.innerHTML = text;
+      el.setAttribute('aria-busy', 'true');
+      el.classList.add('is-busy');
+    } else {
+      el.disabled = false;
+      if (el.dataset.originalHtml) el.innerHTML = el.dataset.originalHtml;
+      el.removeAttribute('aria-busy');
+      el.classList.remove('is-busy');
+    }
+  }
+
+  function refreshBusyUi(){
+    setButtonState('online-create-room', hard.createBusy, '⏳ Création…');
+    setButtonState('online-connect', hard.joinBusy, '⏳');
+    setButtonState('online-start', hard.startBusy, '⏳ Démarrage…');
+    setButtonState('online-rematch-ready-btn', hard.rematchBusy, '⏳');
+  }
+  setInterval(refreshBusyUi, 120);
+
+  function scheduleReconnect(){
+    if (hard.reconnectTimer) return;
+    hard.reconnectTimer = window.setTimeout(async () => {
+      hard.reconnectTimer = 0;
+      try {
+        const online = window.online || {};
+        if (!online.connected || !online.room) return;
+        if (document.visibilityState === 'hidden') return;
+        if (typeof window.onlineReconnect !== 'function' && typeof window.onlineConnectToRoom_Back4App !== 'function') return;
+        const idleMs = now() - Math.max(hard.lastNetOkTs, window._lastPeerRevTs || 0, hard.installTs);
+        if (idleMs < 45000) return;
+        if (typeof window._setOnlineStatus === 'function') {
+          window._setOnlineStatus('Reconnexion préventive…');
+        }
+        if (typeof window.onlineReconnect === 'function') {
+          await window.onlineReconnect();
+        } else if (window.online.room) {
+          await window.onlineConnectToRoom_Back4App(window.online.room, false);
+        }
+      } catch (err) {
+        console.warn('[Tiddas/Hardening] reconnect attempt failed', err);
+      }
+    }, 1500);
+  }
+
+  window.addEventListener('online', scheduleReconnect);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') scheduleReconnect();
+  });
+
+  const style = document.createElement('style');
+  style.id = 'tiddas-online-hardening-style';
+  style.textContent = `
+    .is-busy{opacity:.78;pointer-events:none;filter:saturate(.85)}
+    button[aria-busy="true"]{cursor:progress!important}
+  `;
+  document.head.appendChild(style);
+
+  dbg('online hardening installed');
+})();
+</script>
+
+
+<script>
+(function(){
+  'use strict';
+  if (window.__TIDDAS_ONLINE_HARDENING_V1B__) return;
+  window.__TIDDAS_ONLINE_HARDENING_V1B__ = true;
+  const hard = window.__tiddasOnlineHardening || {};
+  function wrapBusy(fnName, key){
+    const original = window[fnName];
+    if (typeof original !== 'function') return;
+    window[fnName] = async function(){
+      if (hard[key]) return;
+      hard[key] = true;
+      try { return await original.apply(this, arguments); }
+      finally { setTimeout(() => { hard[key] = false; }, 250); }
+    };
+  }
+  wrapBusy('onlineStartMatch_Back4App', 'startBusy');
+  wrapBusy('onlineSetRematchReady', 'rematchBusy');
+})();
+</script>
+
+
+<script nonce="tiddas">
+(function(){
+  if (window.__tiddasOnlineLifecyclePatchV2) return;
+  window.__tiddasOnlineLifecyclePatchV2 = true;
+
+  function _olHashBoard(board) {
+    try {
+      if (!Array.isArray(board)) return 'no-board';
+      let out = '';
+      for (let i = 0; i < board.length; i++) out += String(board[i] == null ? '.' : board[i]);
+      return out;
+    } catch(_) { return 'hash-error'; }
+  }
+  function _olPayloadKey(msg) {
+    try {
+      const meta = msg && msg.meta ? msg.meta : {};
+      const s = msg && msg.state ? msg.state : {};
+      return [
+        String(msg && msg.room || window.online && window.online.room || ''),
+        String(meta.gameId != null ? meta.gameId : ''),
+        String(meta.at != null ? meta.at : ''),
+        String(meta.turn != null ? meta.turn : s.turn != null ? s.turn : ''),
+        String(s.phase || ''),
+        String(s.winner || ''),
+        _olHashBoard(s.board)
+      ].join('|');
+    } catch(_) { return 'payload-key-error'; }
+  }
+  function _olSnapshot() {
+    const o = window.online || {};
+    return { seq: Number(o._sessionSeq || 0), matchId: o.matchId || null, room: o.room || null };
+  }
+  function _olIsCurrent(snapshot) {
+    const o = window.online || {};
+    return !!snapshot && Number(o._sessionSeq || 0) === Number(snapshot.seq || 0) && (o.matchId || null) === (snapshot.matchId || null) && (o.room || null) === (snapshot.room || null);
+  }
+  function _olEnsureState() {
+    if (!window.online) window.online = {};
+    const o = window.online;
+    if (!o._actionLocks) o._actionLocks = Object.create(null);
+    if (typeof o._sessionSeq !== 'number') o._sessionSeq = 0;
+    if (typeof o._lastAppliedPayloadKey !== 'string') o._lastAppliedPayloadKey = '';
+    if (typeof o._lastSentStateKey !== 'string') o._lastSentStateKey = '';
+    if (typeof o._sessionStartedAt !== 'number') o._sessionStartedAt = Date.now();
+    return o;
+  }
+  function _olSetButtonsBusy(map, busy) {
+    try {
+      Object.keys(map || {}).forEach(function(key) {
+        const btn = map[key];
+        if (!btn) return;
+        if (busy) {
+          btn.dataset.olPrevDisabled = btn.disabled ? '1' : '0';
+          btn.disabled = true;
+          btn.setAttribute('aria-busy', 'true');
+          btn.classList.add('is-busy');
+        } else {
+          const prev = btn.dataset.olPrevDisabled === '1';
+          btn.disabled = prev;
+          btn.removeAttribute('aria-busy');
+          btn.classList.remove('is-busy');
+          delete btn.dataset.olPrevDisabled;
+        }
+      });
+    } catch(_) {}
+  }
+  async function _olRunLocked(lockName, btns, fn) {
+    const o = _olEnsureState();
+    if (o._actionLocks[lockName]) return false;
+    o._actionLocks[lockName] = true;
+    _olSetButtonsBusy(btns, true);
+    try { return await fn(); }
+    finally {
+      o._actionLocks[lockName] = false;
+      _olSetButtonsBusy(btns, false);
+    }
+  }
+
+  _olEnsureState();
+
+  const __origDisconnect = window.onlineDisconnect;
+  if (typeof __origDisconnect === 'function') {
+    window.onlineDisconnect = function() {
+      const o = _olEnsureState();
+      o._sessionSeq = Number(o._sessionSeq || 0) + 1;
+      o._sessionStartedAt = Date.now();
+      o._lastAppliedPayloadKey = '';
+      o._lastSentStateKey = '';
+      o._pollEpoch = 0;
+      try { if (o._reconnectOnVisibleTimer) { clearTimeout(o._reconnectOnVisibleTimer); o._reconnectOnVisibleTimer = 0; } } catch(_) {}
+      try { if (o._visibilityDebounceTimer) { clearTimeout(o._visibilityDebounceTimer); o._visibilityDebounceTimer = 0; } } catch(_) {}
+      try { if (o._actionLocks) Object.keys(o._actionLocks).forEach(function(k){ o._actionLocks[k] = false; }); } catch(_) {}
+      return __origDisconnect.apply(this, arguments);
+    };
+  }
+
+  const __origApplyLobbyState = window._applyLobbyStateFromMatch;
+  if (typeof __origApplyLobbyState === 'function') {
+    window._applyLobbyStateFromMatch = function(match) {
+      const o = _olEnsureState();
+      if (!o.connected || !o.matchId || !match) return;
+      if (match.id && String(match.id) !== String(o.matchId)) return;
+      return __origApplyLobbyState.apply(this, arguments);
+    };
+  }
+
+  const __origOnlineApplyState = window.onlineApplyState;
+  if (typeof __origOnlineApplyState === 'function') {
+    window.onlineApplyState = function(msg) {
+      const o = _olEnsureState();
+      if (!msg || !msg.state) return;
+      if (!o.connected && window.gameMode !== 'spectator') return;
+      if (msg.room && o.room && String(msg.room) !== String(o.room)) return;
+      const incomingGameId = Number(msg && msg.meta && msg.meta.gameId != null ? msg.meta.gameId : o.gameId || 0);
+      const currentGameId = Number(o.gameId || 0);
+      if (!Number.isNaN(incomingGameId) && incomingGameId < currentGameId) return;
+      const key = _olPayloadKey(msg);
+      if (key && key === o._lastAppliedPayloadKey) return;
+      o._lastAppliedPayloadKey = key;
+      try {
+        if (msg.state) {
+          if (!Array.isArray(msg.state.board)) msg.state.board = [];
+          if (!Array.isArray(msg.state.highlightedMills)) msg.state.highlightedMills = [];
+          if (!Array.isArray(msg.state.lastMove)) msg.state.lastMove = [];
+        }
+      } catch(_) {}
+      return __origOnlineApplyState.apply(this, arguments);
+    };
+  }
+
+  const __origOnlineSendState = window.onlineSendState;
+  if (typeof __origOnlineSendState === 'function') {
+    window.onlineSendState = function(reason) {
+      const o = _olEnsureState();
+      if (!o.connected || !o.matchId || o.suppressSend) return;
+      try {
+        const s = window.state || {};
+        const key = [
+          String(reason || 'sync'),
+          String(o.room || ''),
+          String(o.gameId || 0),
+          String(s.turn != null ? s.turn : ''),
+          String(s.phase || ''),
+          String(s.winner || ''),
+          _olHashBoard(s.board)
+        ].join('|');
+        if (key === o._lastSentStateKey && reason !== 'start' && reason !== 'surrender' && reason !== 'replay') return;
+        o._lastSentStateKey = key;
+      } catch(_) {}
+      return __origOnlineSendState.apply(this, arguments);
+    };
+  }
+
+  const __origConnect = window.onlineConnectToRoom_Back4App;
+  if (typeof __origConnect === 'function') {
+    window.onlineConnectToRoom_Back4App = async function(code, creating) {
+      const btns = {
+        create: window.onlineEls && window.onlineEls.btnCreate,
+        connect: window.onlineEls && window.onlineEls.btnConnect,
+        start: window.onlineEls && window.onlineEls.btnStart
+      };
+      return _olRunLocked('connect', btns, async function() {
+        const o = _olEnsureState();
+        o._sessionSeq = Number(o._sessionSeq || 0) + 1;
+        o._sessionStartedAt = Date.now();
+        o._lastAppliedPayloadKey = '';
+        o._lastSentStateKey = '';
+        return await __origConnect.apply(this, arguments);
+      });
+    };
+  }
+
+  const __origStart = window.onlineStartMatch_Back4App;
+  if (typeof __origStart === 'function') {
+    window.onlineStartMatch_Back4App = async function() {
+      const btns = { start: window.onlineEls && window.onlineEls.btnStart };
+      return _olRunLocked('start', btns, async function() {
+        const snap = _olSnapshot();
+        const res = await __origStart.apply(this, arguments);
+        if (!_olIsCurrent(snap)) return false;
+        return res;
+      });
+    };
+  }
+
+  const __origRematch = window.onlineSetRematchReady;
+  if (typeof __origRematch === 'function') {
+    window.onlineSetRematchReady = async function(isReady) {
+      const btn = document.getElementById('online-rematch-ready-btn');
+      return _olRunLocked('rematch', { rematch: btn }, async function() {
+        const snap = _olSnapshot();
+        const res = await __origRematch.apply(this, arguments);
+        if (!_olIsCurrent(snap)) return false;
+        return res;
+      });
+    };
+  }
+
+  const __origStartPolling = window._startPolling;
+  window._startPolling = function() {
+    const o = _olEnsureState();
+    if (o.pollTimer || !o.connected || !o.matchId) return;
+    o._pollEpoch = Number(o._pollEpoch || 0) + 1;
+    const myEpoch = o._pollEpoch;
+    const mySnapshot = _olSnapshot();
+    _pollNoChangeCount = 0;
+    _pollCurrentInterval = _POLL_FAST_MS;
+    _pollConsecutiveErrors = 0;
+
+    function _isAlive() {
+      return _olIsCurrent(mySnapshot) && (window.online && Number(window.online._pollEpoch || 0) === myEpoch);
+    }
+    function _reschedule(ms) {
+      if (!_isAlive()) return;
+      if (window.online && window.online.pollTimer) clearInterval(window.online.pollTimer);
+      _pollCurrentInterval = ms;
+      window.online.pollTimer = setInterval(tick, ms);
+    }
+
+    const tick = async function() {
+      if (!_isAlive()) return;
+      if (!window.online.connected || !window.online.matchId) return;
+      if (window.online.fetching) return;
+      window.online.fetching = true;
+      const activeMatchId = window.online.matchId;
+      try {
+        const match = await _fetchMatchById(activeMatchId);
+        if (!_isAlive()) return;
+        if (!match || (match.id && String(match.id) !== String(window.online.matchId || ''))) return;
+
+        _lastPeerRevTs = Date.now();
+        _pollConsecutiveErrors = 0;
+
+        try { window._applyLobbyStateFromMatch && window._applyLobbyStateFromMatch(match); } catch(_) {}
+        try { _processMatchChatFromArray(match); } catch (_) {}
+
+        try {
+          var rawChat = match.get('ephemeralChat');
+          if (Array.isArray(rawChat)) {
+            rawChat.forEach(function(msg) {
+              if (msg && msg.type === 'spectator-chat' && window._onlineChatInjectMsg) {
+                window._onlineChatInjectMsg && window._onlineChatInjectMsg(msg);
+              }
+            });
+          }
+        } catch(_) {}
+
+        try {
+          var matchStatus = match.get('status') || 'waiting';
+          var liveDotEl = document.getElementById('ol-live-dot');
+          if (liveDotEl) liveDotEl.style.display = (matchStatus === 'playing') ? 'inline-flex' : 'none';
+
+          var p1Active = match.get('p1Active') !== false;
+          var p2Active = match.get('p2Active') !== false;
+          if (window.gameMode === 'spectator') {
+            if (!p1Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(1);
+            else if (!p2Active && window.TiddasSpectator) window.TiddasSpectator.showTakeoverSlot && window.TiddasSpectator.showTakeoverSlot(2);
+            try {
+              if (window.TiddasSpectator && typeof window.TiddasSpectator.refreshQueuePosition === 'function') {
+                window.TiddasSpectator.refreshQueuePosition(match.get('specQueue') || match.get('spectatorQueue') || []);
+              }
+            } catch(_) {}
+          }
+
+          var tournData = match.get('tournament');
+          if (tournData && window.TiddasTournament) {
+            window.TiddasTournament.applyFromServer(tournData);
+          }
+        } catch(_) {}
+
+        const rev = Number(match.get('rev') || 0);
+        if (rev !== Number(window.online.lastSeenRev || -1)) {
+          window.online.lastSeenRev = rev;
+          _pollNoChangeCount = 0;
+          if (_pollCurrentInterval !== _POLL_FAST_MS) _reschedule(_POLL_FAST_MS);
+          const payload = match.get('payload') || null;
+          if (payload && payload.state && _isAlive()) {
+            const _wasSpectator = (window.gameMode === 'spectator' || (window.online && window.online.role === 0));
+            window.onlineApplyState && window.onlineApplyState(payload);
+            if (_wasSpectator && _isAlive()) {
+              window.gameMode = 'spectator';
+              var _badge = document.getElementById('spectator-badge');
+              if (_badge && !_badge.classList.contains('visible')) {
+                _badge.textContent = '👁 Spectateur en ligne';
+                _badge.classList.add('visible');
+              }
+              document.body.classList.add('is-spectating');
+              var _undo = document.getElementById('undo-btn');
+              var _surr = document.getElementById('surrender');
+              var _rest = document.getElementById('restart');
+              if (_undo) _undo.disabled = true;
+              if (_surr) { _surr.disabled = true; _surr.style.opacity = '0.25'; _surr.style.pointerEvents = 'none'; }
+              if (_rest) { _rest.disabled = true; _rest.style.opacity = '0.25'; _rest.style.pointerEvents = 'none'; }
+            }
+            if (_isAlive() && typeof showScreen === 'function') showScreen('game-play-area');
+          }
+        } else {
+          _pollNoChangeCount++;
+          const isOnlineActive = gameMode === 'online' && window.online.connected && window.online.matchId;
+          const hasGameStarted = isOnlineActive && state && (state.phase || state.winner);
+          const bothReady = isOnlineActive && window.online.ready;
+          const canSlowDown = !hasGameStarted && !bothReady;
+          if (canSlowDown && _pollNoChangeCount >= _POLL_SLOW_AFTER_N_EMPTY && _pollCurrentInterval !== _POLL_SLOW_MS) {
+            _reschedule(_POLL_SLOW_MS);
+          }
+          if ((hasGameStarted || bothReady) && _pollCurrentInterval !== _POLL_FAST_MS) {
+            _pollNoChangeCount = 0;
+            _reschedule(_POLL_FAST_MS);
+          }
+        }
+      } catch (e) {
+        if (!_isAlive()) return;
+        _pollConsecutiveErrors++;
+        if (_pollConsecutiveErrors >= 3) {
+          _setOnlineStatus(t('onlineNetworkError', "Erreur réseau Back4App. Vérifie les permissions (CLP) et ta connexion."));
+        }
+        const backoff = Math.min(6000, _POLL_FAST_MS * Math.pow(2, Math.min(_pollConsecutiveErrors - 1, 3)));
+        if (_pollCurrentInterval !== backoff) _reschedule(backoff);
+      } finally {
+        if (_isAlive()) {
+          window.online.fetching = false;
+          try { _updateOnlineGameBar(); } catch (_) {}
+        } else if (window.online) {
+          window.online.fetching = false;
+        }
+      }
+    };
+
+    try {
+      if (window.Parse && window.Parse.LiveQuery && window.online.matchId) {
+        var _lqQuery = new window.Parse.Query(window.BACK4APP_CLASS);
+        _lqQuery.equalTo('objectId', window.online.matchId);
+        window.Parse.LiveQuery.on('error', function() {});
+        _lqQuery.subscribe().then(function(sub) {
+          if (!_isAlive()) {
+            try { sub.unsubscribe && sub.unsubscribe(); } catch(_) {}
+            return;
+          }
+          _liveQuerySub = sub;
+          sub.on('update', function(match) {
+            if (!_isAlive()) return;
+            try {
+              window.online.fetching = true;
+              _lastPeerRevTs = Date.now();
+              _pollConsecutiveErrors = 0;
+              try { window._applyLobbyStateFromMatch && window._applyLobbyStateFromMatch(match); } catch(_) {}
+              try { _processMatchChatFromArray(match); } catch(_) {}
+              try {
+                var rawChat = match.get('ephemeralChat');
+                if (Array.isArray(rawChat)) {
+                  rawChat.forEach(function(msg) {
+                    if (msg && msg.type === 'spectator-chat' && window._onlineChatInjectMsg) {
+                      window._onlineChatInjectMsg && window._onlineChatInjectMsg(msg);
+                    }
+                  });
+                }
+              } catch(_) {}
+              try {
+                var matchStatus = match.get('status') || 'waiting';
+                var liveDotEl = document.getElementById('ol-live-dot');
+                if (liveDotEl) liveDotEl.style.display = (matchStatus === 'playing') ? 'inline-flex' : 'none';
+                var tournData = match.get('tournament');
+                if (tournData && window.TiddasTournament) {
+                  window.TiddasTournament.applyFromServer(tournData);
+                }
+              } catch(_) {}
+              var rev = Number(match.get('rev') || 0);
+              if (rev !== Number(window.online.lastSeenRev || -1)) {
+                window.online.lastSeenRev = rev;
+                var payload = match.get('payload') || null;
+                if (payload && payload.state && _isAlive()) {
+                  window.onlineApplyState && window.onlineApplyState(payload);
+                  if (typeof showScreen === 'function') showScreen('game-play-area');
+                }
+              }
+            } catch(_) {
+            } finally {
+              if (window.online) window.online.fetching = false;
+              try { _updateOnlineGameBar(); } catch(_) {}
+            }
+          });
+        }).catch(function() {
+          if (_isAlive()) _reschedule(_POLL_FAST_MS);
+        });
+      } else {
+        _reschedule(_POLL_FAST_MS);
+      }
+    } catch(_) {
+      _reschedule(_POLL_FAST_MS);
+    }
+
+    tick();
+  };
+
+  function _reconnectIfNeeded() {
+    try {
+      const o = _olEnsureState();
+      if (!o.connected || !o.room || !o.matchId) return;
+      if (document.hidden) return;
+      if (o._actionLocks && (o._actionLocks.connect || o._actionLocks.start || o._actionLocks.rematch)) return;
+      if (!o._reconnectOnVisibleTimer) {
+        o._reconnectOnVisibleTimer = setTimeout(function() {
+          o._reconnectOnVisibleTimer = 0;
+          try {
+            if (o.connected && o.matchId && !o.pollTimer && typeof window._startPolling === 'function') {
+              window._startPolling();
+            }
+          } catch(_) {}
+        }, 250);
+      }
+    } catch(_) {}
+  }
+
+  window.addEventListener('visibilitychange', _reconnectIfNeeded, { passive: true });
+  window.addEventListener('pageshow', _reconnectIfNeeded, { passive: true });
+
+  try {
+    const style = document.createElement('style');
+    style.setAttribute('nonce', 'tiddas');
+    style.textContent = '.is-busy{opacity:.72;pointer-events:none;filter:saturate(.85)}';
+    document.head.appendChild(style);
+  } catch(_) {}
+})();
+</script>
+
+
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  if (window.__TIDDAS_ONLINE_PROD_V2__) return;
+  window.__TIDDAS_ONLINE_PROD_V2__ = true;
+
+  const PHASE = Object.freeze({
+    IDLE: 'idle',
+    CONNECTING: 'connecting',
+    LOBBY: 'lobby',
+    READY: 'ready',
+    STARTING: 'starting',
+    PLAYING: 'playing',
+    FINISHED: 'finished',
+    SPECTATING: 'spectating',
+    RECONNECTING: 'reconnecting',
+    ERROR: 'error'
+  });
+
+  const runtime = {
+    phase: PHASE.IDLE,
+    sessionSeq: 0,
+    requestSeq: 0,
+    transportToken: null,
+    pollBusy: false,
+    pollTimer: 0,
+    pollPending: false,
+    liveSub: null,
+    liveMatchId: '',
+    lastRev: -1,
+    lastGameId: -1,
+    lastMetaAt: 0,
+    lastPayloadKey: '',
+    lastServerStatus: '',
+    lastNetOkTs: Date.now(),
+    lastError: '',
+    lastAutoStartKey: '',
+    reconnectTimer: 0,
+    reconnectMutedUntil: 0,
+    internalDisconnect: false,
+    locks: {
+      connect: false,
+      start: false,
+      rematch: false,
+      reconnect: false,
+      disconnect: false
+    },
+    logs: [],
+    errorStreak: 0,
+    presenceMode: 'stopped',
+    presenceStartedAt: 0,
+    presenceMatchId: '',
+    presenceRole: 0,
+    presenceLastPingTs: 0,
+    presenceLastActive: false
+  };
+
+  const MAX_LOGS = 400;
+  const POLL_MS = {
+    lobbyFast: 1200,
+    lobbySlow: 2800,
+    playing: 1000,
+    spectating: 1000,
+    finished: 1600,
+    hidden: 3500,
+    backoffMax: 8000
+  };
+
+  function safeNow() { return Date.now(); }
+  function onlineState() { window.online = window.online || {}; return window.online; }
+  function getRoom() { return String(onlineState().room || ''); }
+  function getMatchId() { return String(onlineState().matchId || ''); }
+  function getRole() { return Number(onlineState().role || 0); }
+  function isPlayer() { return getRole() === 1 || getRole() === 2; }
+  function isHost() { return !!onlineState().isHost && getRole() === 1; }
+  function isSpectator() { return getRole() === 0 || window.gameMode === 'spectator'; }
+  function isConnected() { return !!onlineState().connected && !!getMatchId(); }
+  function parseReady() {
+    return !!(window.Parse && window.BACK4APP_CLASS && typeof window.Parse.Query === 'function');
+  }
+  async function ensureParseReady() {
+    if (typeof window._ensureParseReadyAsync === 'function') return !!(await window._ensureParseReadyAsync());
+    if (typeof _ensureParseReadyAsync === 'function') return !!(await _ensureParseReadyAsync());
+    return parseReady();
+  }
+  function safeT(key, fallback) {
+    try {
+      if (typeof window.t === 'function') return window.t(key, fallback);
+      if (typeof t === 'function') return t(key, fallback);
+    } catch (_) {}
+    return fallback;
+  }
+  function safeShowScreen(id) {
+    try {
+      if (typeof window.showScreen === 'function') return window.showScreen(id);
+      if (typeof showScreen === 'function') return showScreen(id);
+    } catch (_) {}
+  }
+  function safeSetStatus(msg) {
+    try {
+      if (typeof window._setOnlineStatus === 'function') return window._setOnlineStatus(msg);
+      if (typeof _setOnlineStatus === 'function') return _setOnlineStatus(msg);
+    } catch (_) {}
+    try {
+      const text = document.getElementById('online-status-text');
+      if (text) text.textContent = msg || '—';
+      const glob = document.getElementById('online-status-global');
+      if (glob) glob.textContent = msg || '';
+    } catch (_) {}
+  }
+  function log(level, event, data) {
+    const entry = {
+      ts: new Date().toISOString(),
+      level: level,
+      event: event,
+      phase: runtime.phase,
+      room: getRoom(),
+      matchId: getMatchId(),
+      data: data || null
+    };
+    runtime.logs.push(entry);
+    if (runtime.logs.length > MAX_LOGS) runtime.logs.shift();
+    try {
+      if (level === 'error') console.error('[Tiddas/OnlineProdV2]', event, data || '');
+      else if (level === 'warn') console.warn('[Tiddas/OnlineProdV2]', event, data || '');
+      else if (window.DEBUG) console.debug('[Tiddas/OnlineProdV2]', event, data || '');
+    } catch (_) {}
+  }
+
+  function boardHash(board) {
+    if (!Array.isArray(board)) return '0';
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < board.length; i++) {
+      const v = Number(board[i] || 0) & 0xff;
+      h ^= v;
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(36);
+  }
+
+  function inferGameId(match, payload) {
+    try {
+      const direct = payload && payload.meta && payload.meta.gameId;
+      if (direct != null && Number.isFinite(Number(direct))) return Number(direct);
+    } catch (_) {}
+    try {
+      if (match && typeof match.get === 'function') {
+        const v = match.get('gameId');
+        if (v != null && Number.isFinite(Number(v))) return Number(v);
+      }
+    } catch (_) {}
+    try {
+      const current = Number(onlineState().gameId || 0);
+      if (Number.isFinite(current)) return current;
+    } catch (_) {}
+    return 0;
+  }
+
+  function inferMetaAt(payload) {
+    try {
+      const at = payload && payload.meta && payload.meta.at;
+      if (at != null && Number.isFinite(Number(at))) return Number(at);
+    } catch (_) {}
+    return 0;
+  }
+
+  function payloadKey(match, payload, rev) {
+    const state = payload && payload.state ? payload.state : null;
+    return [
+      match && match.id ? String(match.id) : getMatchId(),
+      getRoom(),
+      String(inferGameId(match, payload)),
+      String(Number(rev || 0)),
+      String(inferMetaAt(payload)),
+      state ? boardHash(state.board) : 'none',
+      state && state.turn != null ? String(state.turn) : '',
+      state && state.phase ? String(state.phase) : '',
+      state && state.winner != null ? String(state.winner) : ''
+    ].join('|');
+  }
+
+  function beginSession(reason) {
+    runtime.sessionSeq += 1;
+    runtime.requestSeq = 0;
+    runtime.transportToken = null;
+    runtime.lastRev = -1;
+    runtime.lastGameId = -1;
+    runtime.lastMetaAt = 0;
+    runtime.lastPayloadKey = '';
+    runtime.lastServerStatus = '';
+    runtime.lastError = '';
+    runtime.lastAutoStartKey = '';
+    runtime.pollPending = false;
+    runtime.errorStreak = 0;
+    runtime.presenceLastPingTs = 0;
+    runtime.presenceLastActive = false;
+    if (runtime.reconnectTimer) { clearTimeout(runtime.reconnectTimer); runtime.reconnectTimer = 0; }
+    stopRealtime('beginSession:' + reason);
+    try { Presence.stop('begin-session'); } catch (_) {}
+    log('info', 'session.begin', { reason: reason, sessionSeq: runtime.sessionSeq });
+    return makeToken(reason);
+  }
+
+  function makeToken(name) {
+    return {
+      name: String(name || 'token'),
+      sessionSeq: runtime.sessionSeq,
+      requestSeq: ++runtime.requestSeq,
+      room: getRoom(),
+      matchId: getMatchId(),
+      createdAt: safeNow()
+    };
+  }
+
+  function isTokenCurrent(token, strictMatch) {
+    if (!token) return true;
+    if (token.sessionSeq !== runtime.sessionSeq) return false;
+    if (strictMatch) {
+      if (token.room && token.room !== getRoom()) return false;
+      if (token.matchId && token.matchId !== getMatchId()) return false;
+    }
+    return true;
+  }
+
+  function transition(next, reason, explicitMsg) {
+    const prev = runtime.phase;
+    runtime.phase = next;
+    if (prev !== next) log('info', 'phase', { from: prev, to: next, reason: reason || '' });
+    UI.syncStatus(explicitMsg || '', next);
+    UI.syncButtons();
+  }
+
+  const UI = {
+    syncStatus: function(explicitMsg, phaseOverride) {
+      const phase = phaseOverride || runtime.phase;
+      const card = document.getElementById('online-status');
+      if (card) card.setAttribute('data-ol-phase', phase);
+      let msg = explicitMsg || '';
+      if (!msg) {
+        if (phase === PHASE.CONNECTING) msg = safeT('onlineConnectingRoom', 'Connexion au salon…');
+        else if (phase === PHASE.RECONNECTING) msg = 'Reconnexion en cours…';
+        else if (phase === PHASE.STARTING) msg = safeT('onlineStartOK', 'Lancement de la partie…');
+        else if (phase === PHASE.SPECTATING) msg = 'Mode spectateur — lecture seule.';
+        else if (phase === PHASE.PLAYING) msg = safeT('onlineStatusPlayingHost', 'Partie en cours.');
+        else if (phase === PHASE.FINISHED) msg = safeT('onlineRematchWaitReady', 'Partie terminée — revanche disponible.');
+        else if (phase === PHASE.READY) msg = safeT('onlineStatusTwoPlayersHost', '2 joueurs connectés. Prêt au lancement.');
+        else if (phase === PHASE.LOBBY) msg = safeT('onlineStatusCreatedHost', 'Salon prêt. En attente du second joueur…');
+        else if (phase === PHASE.ERROR) msg = runtime.lastError || 'Erreur en ligne.';
+      }
+      safeSetStatus(msg || '—');
+      const reconnMsg = document.getElementById('online-reconnect-msg');
+      if (reconnMsg && phase === PHASE.RECONNECTING) reconnMsg.textContent = msg || 'Reconnexion en cours…';
+    },
+    syncButtons: function() {
+      const connectBtn = document.getElementById('online-connect');
+      const createBtn = document.getElementById('online-create-room');
+      const startBtn = document.getElementById('online-start');
+      const rmBtn = document.getElementById('online-rematch-ready-btn');
+      const reconnectBtn = document.getElementById('ogb-reconnect');
+
+      const lockOnly = function(el, busy) {
+        if (!el) return;
+        if (busy) {
+          if (!('prodPrevDisabled' in el.dataset)) el.dataset.prodPrevDisabled = el.disabled ? '1' : '0';
+          el.disabled = true;
+        } else if ('prodPrevDisabled' in el.dataset) {
+          el.disabled = el.dataset.prodPrevDisabled === '1';
+          delete el.dataset.prodPrevDisabled;
+        }
+      };
+
+      lockOnly(createBtn, !!runtime.locks.connect);
+      lockOnly(connectBtn, !!runtime.locks.connect);
+      lockOnly(reconnectBtn, !!runtime.locks.reconnect || !!runtime.locks.connect);
+
+      if (startBtn) {
+        const allowStart = isConnected() && isPlayer() && isHost() && !runtime.locks.start && (runtime.phase === PHASE.READY || runtime.phase === PHASE.FINISHED || runtime.phase === PHASE.LOBBY);
+        startBtn.disabled = !allowStart;
+      }
+      if (rmBtn) rmBtn.disabled = !isConnected() || !isPlayer() || runtime.phase !== PHASE.FINISHED || !!runtime.locks.rematch;
+
+      if (isSpectator()) this.ensureSpectatorReadOnly();
+      else this.clearSpectatorReadOnly();
+    },
+    ensureSpectatorReadOnly: function() {
+      document.body.classList.add('is-spectating');
+      const badge = document.getElementById('spectator-badge');
+      if (badge) {
+        badge.textContent = '👁 Spectateur en ligne';
+        badge.classList.add('visible');
+      }
+      const specControls = document.getElementById('spectator-controls');
+      if (specControls) specControls.classList.add('visible');
+      const undoBtn = document.getElementById('undo-btn');
+      const surrenderBtn = document.getElementById('surrender');
+      const restartBtn = document.getElementById('restart');
+      if (undoBtn) undoBtn.disabled = true;
+      if (surrenderBtn) { surrenderBtn.disabled = true; surrenderBtn.style.opacity = '0.25'; surrenderBtn.style.pointerEvents = 'none'; }
+      if (restartBtn) { restartBtn.disabled = true; restartBtn.style.opacity = '0.25'; restartBtn.style.pointerEvents = 'none'; }
+      const rematch = document.getElementById('online-rematch');
+      if (rematch) rematch.style.display = 'none';
+    },
+    clearSpectatorReadOnly: function() {
+      if (isPlayer()) document.body.classList.remove('is-spectating');
+      const badge = document.getElementById('spectator-badge');
+      if (badge && isPlayer()) badge.classList.remove('visible');
+      const specControls = document.getElementById('spectator-controls');
+      if (specControls && isPlayer()) specControls.classList.remove('visible');
+      const surrenderBtn = document.getElementById('surrender');
+      const restartBtn = document.getElementById('restart');
+      if (surrenderBtn) { surrenderBtn.style.opacity = ''; surrenderBtn.style.pointerEvents = ''; }
+      if (restartBtn) { restartBtn.style.opacity = ''; restartBtn.style.pointerEvents = ''; }
+    },
+    clear: function() {
+      const card = document.getElementById('online-status');
+      if (card) card.removeAttribute('data-ol-phase');
+      this.hideReconnectBanner();
+      this.hideRematchBanner();
+      document.body.classList.remove('is-spectating');
+      const badge = document.getElementById('spectator-badge');
+      if (badge) badge.classList.remove('visible');
+      const specControls = document.getElementById('spectator-controls');
+      if (specControls) specControls.classList.remove('visible');
+      const liveDotEl = document.getElementById('ol-live-dot');
+      if (liveDotEl) liveDotEl.style.display = 'none';
+      const staleWarn = document.getElementById('ogb-stale-warn');
+      if (staleWarn) { staleWarn.textContent = ''; staleWarn.classList.remove('visible'); }
+      this.clearSpectatorReadOnly();
+    },
+    showReconnectBanner: function(msg) {
+      const banner = document.getElementById('online-reconnect-banner');
+      const text = document.getElementById('online-reconnect-msg');
+      if (text) text.textContent = msg || 'Reconnexion en cours…';
+      if (banner) banner.hidden = false;
+    },
+    hideReconnectBanner: function() {
+      const banner = document.getElementById('online-reconnect-banner');
+      if (banner) banner.hidden = true;
+    },
+    syncRematchUi: function(match) {
+      const finished = !!(match && typeof match.get === 'function' && (match.get('status') || '') === 'finished');
+      const rm1 = !!(match && typeof match.get === 'function' && match.get('rm1'));
+      const rm2 = !!(match && typeof match.get === 'function' && match.get('rm2'));
+      const wrap = document.getElementById('online-rematch');
+      const chip1 = document.getElementById('online-rm1-chip');
+      const chip2 = document.getElementById('online-rm2-chip');
+      const btn = document.getElementById('online-rematch-ready-btn');
+      const mine = getRole() === 1 ? rm1 : getRole() === 2 ? rm2 : false;
+      const peer = getRole() === 1 ? rm2 : getRole() === 2 ? rm1 : false;
+
+      if (chip1) chip1.classList.toggle('ready', rm1);
+      if (chip2) chip2.classList.toggle('ready', rm2);
+      if (wrap) wrap.style.display = (finished && isPlayer()) ? '' : 'none';
+      if (btn) {
+        btn.style.display = (finished && isPlayer()) ? '' : 'none';
+        btn.classList.toggle('active', !!mine);
+        btn.textContent = mine ? 'Prêt pour la revanche ✓' : safeT('onlineReadyRematch', 'Je suis prêt');
+      }
+
+      const banner = document.getElementById('tpatch-rematch-banner');
+      const msgEl = document.getElementById('tpatch-rematch-msg');
+      const reqBtn = document.getElementById('tpatch-rematch-request-btn');
+      const accBtn = document.getElementById('tpatch-rematch-accept-btn');
+
+      if (!banner) return;
+      if (!finished || !isPlayer()) {
+        banner.classList.remove('visible');
+        return;
+      }
+
+      banner.classList.add('visible');
+      if (reqBtn) {
+        reqBtn.style.display = '';
+        reqBtn.disabled = !!runtime.locks.rematch;
+        reqBtn.textContent = mine ? 'Annuler ma disponibilité' : '🔄 Je suis prêt';
+        reqBtn.onclick = function() {
+          if (typeof window.onlineSetRematchReady === 'function') window.onlineSetRematchReady(!mine);
+        };
+      }
+      if (accBtn) {
+        accBtn.style.display = 'none';
+        accBtn.onclick = null;
+      }
+      if (msgEl) {
+        if (mine && peer) msgEl.textContent = isHost() ? 'Deux joueurs prêts — lancement de la revanche…' : 'Deux joueurs prêts — attente du lancement par l’hôte…';
+        else if (mine) msgEl.textContent = 'Tu es prêt. En attente de l’adversaire…';
+        else if (peer) msgEl.textContent = 'L’adversaire est prêt. Clique pour confirmer la revanche.';
+        else msgEl.textContent = 'Partie terminée. Clique quand tu es prêt pour la revanche.';
+      }
+    },
+    hideRematchBanner: function() {
+      const banner = document.getElementById('tpatch-rematch-banner');
+      if (banner) banner.classList.remove('visible');
+    }
+  };
+
+  const Presence = {
+    timer: 0,
+    start: function(reason) {
+      if (!isConnected() || !isPlayer()) return;
+      const matchId = getMatchId();
+      const role = getRole();
+      const sameSession = !!this.timer && runtime.presenceMode === 'active' && runtime.presenceMatchId === matchId && runtime.presenceRole === role;
+      if (!sameSession) {
+        this.stop('restart');
+        runtime.presenceMode = 'active';
+        runtime.presenceStartedAt = Date.now();
+        runtime.presenceMatchId = matchId;
+        runtime.presenceRole = role;
+        this.ping(true, reason || 'start');
+        this.timer = window.setInterval(() => { this.ping(true, 'interval'); }, 15000);
+      } else if ((Date.now() - Number(runtime.presenceLastPingTs || 0)) > 12000) {
+        this.ping(true, reason || 'refresh');
+      }
+    },
+    stop: function(reason, markInactive) {
+      if (this.timer) { clearInterval(this.timer); this.timer = 0; }
+      const canMarkInactive = !!markInactive && isConnected() && isPlayer() && !!getMatchId() && getMatchId() === runtime.presenceMatchId && getRole() === runtime.presenceRole;
+      runtime.presenceMode = 'stopped';
+      runtime.presenceStartedAt = 0;
+      if (canMarkInactive) this.ping(false, reason || 'stop');
+      runtime.presenceMatchId = '';
+      runtime.presenceRole = 0;
+    },
+    ping: async function(active, reason) {
+      if (!parseReady()) return false;
+      const matchId = getMatchId();
+      const role = getRole();
+      if (!matchId || !role || role < 1 || role > 2) return false;
+      const nowTs = Date.now();
+      if (!!active && runtime.presenceLastActive === true && (nowTs - Number(runtime.presenceLastPingTs || 0)) < 5000 && reason !== 'start' && reason !== 'refresh') return true;
+      try {
+        const obj = new window.Parse.Object(window.BACK4APP_CLASS);
+        obj.id = matchId;
+        obj.set('p' + role + 'LastPing', nowTs);
+        obj.set('p' + role + 'Active', !!active);
+        await obj.save();
+        runtime.presenceLastPingTs = nowTs;
+        runtime.presenceLastActive = !!active;
+        log('debug', 'presence.ping', { active: !!active, reason: reason || '' });
+        return true;
+      } catch (err) {
+        log('warn', 'presence.ping.failed', { reason: reason || '', err: String(err && err.message || err) });
+        return false;
+      }
+    }
+  };
+
+  const Transport = {
+    stop: function(reason) {
+      stopRealtime(reason || 'transport.stop');
+    },
+    start: function(reason) {
+      if (!isConnected()) return;
+      stopRealtime(reason || 'transport.start');
+      const token = makeToken(reason || 'transport');
+      runtime.transportToken = token;
+      this.startLiveHints(token);
+      this.bump('start', token);
+    },
+    bump: function(reason, token) {
+      const activeToken = token || runtime.transportToken;
+      if (!activeToken || !isTokenCurrent(activeToken, true)) return;
+      if (runtime.pollBusy) {
+        runtime.pollPending = true;
+        return;
+      }
+      if (runtime.pollTimer) clearTimeout(runtime.pollTimer);
+      runtime.pollTimer = window.setTimeout(() => { this.pump(reason || 'tick', activeToken); }, 0);
+      onlineState().pollTimer = runtime.pollTimer;
+    },
+    pump: async function(reason, token) {
+      if (!isTokenCurrent(token, true)) return;
+      await this.syncNow(reason || 'tick', token);
+      if (!isTokenCurrent(token, true)) return;
+      if (runtime.pollPending) {
+        runtime.pollPending = false;
+        return this.bump('pending', token);
+      }
+      const delay = this.computeDelay();
+      if (runtime.pollTimer) clearTimeout(runtime.pollTimer);
+      runtime.pollTimer = window.setTimeout(() => { this.pump('loop', token); }, delay);
+      onlineState().pollTimer = runtime.pollTimer;
+    },
+    computeDelay: function() {
+      if (document.hidden) return POLL_MS.hidden;
+      if (runtime.phase === PHASE.PLAYING) return POLL_MS.playing;
+      if (runtime.phase === PHASE.SPECTATING) return POLL_MS.spectating;
+      if (runtime.phase === PHASE.STARTING) return 900;
+      if (runtime.phase === PHASE.FINISHED) return POLL_MS.finished;
+      if (runtime.phase === PHASE.READY) return POLL_MS.lobbyFast;
+      return POLL_MS.lobbySlow;
+    },
+    syncNow: async function(source, token) {
+      if (!isConnected()) return false;
+      if (runtime.pollBusy) return false;
+      if (!parseReady()) {
+        const ok = await ensureParseReady();
+        if (!ok) return false;
+      }
+      const matchId = getMatchId();
+      if (!matchId) return false;
+      const activeToken = token || runtime.transportToken || makeToken('sync');
+      runtime.pollBusy = true;
+      try {
+        const q = new window.Parse.Query(window.BACK4APP_CLASS);
+        const match = await q.get(matchId);
+        if (!isTokenCurrent(activeToken, true)) return false;
+        runtime.lastNetOkTs = Date.now();
+        try { if (typeof _lastPeerRevTs !== 'undefined') _lastPeerRevTs = Date.now(); } catch (_) {}
+        await this.processMatch(match, { source: source || 'sync', token: activeToken });
+        return true;
+      } catch (err) {
+        runtime.errorStreak = Number(runtime.errorStreak || 0) + 1;
+        runtime.lastError = safeT('onlineNetworkError', 'Erreur réseau Back4App. Vérifie les permissions (CLP) et ta connexion.');
+        log('warn', 'sync.failed', { source: source || '', err: String(err && err.message || err), streak: runtime.errorStreak });
+        if (runtime.errorStreak >= 2) {
+          transition(PHASE.RECONNECTING, 'sync-error', runtime.lastError);
+          UI.showReconnectBanner(runtime.lastError);
+          Reconnect.schedule('sync-error');
+        }
+        return false;
+      } finally {
+        runtime.pollBusy = false;
+        try { if (typeof _updateOnlineGameBar === 'function') _updateOnlineGameBar(); } catch (_) {}
+      }
+    },
+    processMatch: async function(match, meta) {
+      if (!match) return;
+      if (match.id && getMatchId() && String(match.id) !== getMatchId()) {
+        log('debug', 'match.ignored.foreign', { incoming: String(match.id), current: getMatchId() });
+        return;
+      }
+
+      const status = String(match.get('status') || 'waiting');
+      runtime.lastServerStatus = status;
+      runtime.errorStreak = 0;
+      runtime.lastError = '';
+
+      try {
+        if (typeof window._applyLobbyStateFromMatch === 'function') window._applyLobbyStateFromMatch(match);
+        else if (typeof _applyLobbyStateFromMatch === 'function') _applyLobbyStateFromMatch(match);
+      } catch (err) {
+        log('warn', 'lobby.apply.failed', { err: String(err && err.message || err) });
+      }
+
+      if (isSpectator()) transition(PHASE.SPECTATING, meta && meta.source || status);
+      else if (status === 'finished') transition(PHASE.FINISHED, meta && meta.source || status);
+      else if (status === 'playing') transition(PHASE.PLAYING, meta && meta.source || status);
+      else if (status === 'ready') transition(PHASE.READY, meta && meta.source || status);
+      else transition(PHASE.LOBBY, meta && meta.source || status);
+
+      try {
+        const liveDotEl = document.getElementById('ol-live-dot');
+        if (liveDotEl) liveDotEl.style.display = (status === 'playing') ? 'inline-flex' : 'none';
+      } catch (_) {}
+
+      try {
+        const p1Active = match.get('p1Active') !== false;
+        const p2Active = match.get('p2Active') !== false;
+        if (isSpectator() && window.TiddasSpectator) {
+          if (!p1Active && window.TiddasSpectator.showTakeoverSlot) window.TiddasSpectator.showTakeoverSlot(1);
+          else if (!p2Active && window.TiddasSpectator.showTakeoverSlot) window.TiddasSpectator.showTakeoverSlot(2);
+          if (typeof window.TiddasSpectator.refreshQueuePosition === 'function') {
+            window.TiddasSpectator.refreshQueuePosition(match.get('specQueue') || match.get('spectatorQueue') || []);
+          }
+        }
+      } catch (_) {}
+
+      try {
+        const tournData = match.get('tournament');
+        if (tournData && window.TiddasTournament && typeof window.TiddasTournament.applyFromServer === 'function') {
+          window.TiddasTournament.applyFromServer(tournData);
+        }
+      } catch (_) {}
+
+      try {
+        if (typeof _processMatchChatFromArray === 'function') _processMatchChatFromArray(match);
+      } catch (_) {}
+
+      try {
+        const rawChat = match.get('ephemeralChat');
+        if (Array.isArray(rawChat) && window._onlineChatInjectMsg) {
+          rawChat.forEach(function(msg) {
+            if (msg && msg.type === 'spectator-chat') window._onlineChatInjectMsg(msg);
+          });
+        }
+      } catch (_) {}
+
+      const rev = Number(match.get('rev') || 0);
+      const payload = match.get('payload') || null;
+      const gameId = inferGameId(match, payload);
+      const metaAt = inferMetaAt(payload);
+      const key = payload && payload.state ? payloadKey(match, payload, rev) : '';
+      const isNewerGame = gameId > runtime.lastGameId;
+      const isSameGame = gameId === runtime.lastGameId;
+      const isNewerRev = isSameGame ? rev > runtime.lastRev : true;
+      const isNewerAt = isSameGame ? (rev === runtime.lastRev ? metaAt > runtime.lastMetaAt : true) : true;
+      const isDuplicate = !!key && key === runtime.lastPayloadKey;
+
+      if (payload && payload.state && !isDuplicate && (isNewerGame || (isSameGame && (isNewerRev || isNewerAt)))) {
+        log('debug', 'payload.apply', { rev: rev, gameId: gameId, source: meta && meta.source || '' });
+        if (typeof window.onlineApplyState === 'function') window.onlineApplyState(payload);
+        else if (typeof onlineApplyState === 'function') onlineApplyState(payload);
+        runtime.lastPayloadKey = key;
+        runtime.lastMetaAt = Math.max(runtime.lastMetaAt, metaAt);
+      } else if (payload && payload.state && isDuplicate) {
+        log('debug', 'payload.skip.duplicate', { rev: rev, gameId: gameId });
+      } else if (payload && payload.state) {
+        log('debug', 'payload.skip.stale', { rev: rev, gameId: gameId, lastRev: runtime.lastRev, lastGameId: runtime.lastGameId });
+      }
+
+      runtime.lastRev = Math.max(runtime.lastRev, rev);
+      runtime.lastGameId = Math.max(runtime.lastGameId, gameId);
+      runtime.lastMetaAt = Math.max(runtime.lastMetaAt, metaAt);
+      onlineState().lastSeenRev = Math.max(Number(onlineState().lastSeenRev || -1), rev);
+
+      if (status === 'playing' || status === 'finished' || isSpectator()) {
+        safeShowScreen('game-play-area');
+      }
+
+      if (isSpectator()) UI.ensureSpectatorReadOnly();
+      else UI.clearSpectatorReadOnly();
+      UI.syncRematchUi(match);
+
+      if (isConnected() && isPlayer()) Presence.start('match:' + status);
+      else Presence.stop('match:' + status);
+
+      try {
+        if (window.TiddasPatch && window.TiddasPatch.SeamlessResume && typeof window.TiddasPatch.SeamlessResume.saveSession === 'function' && isPlayer()) {
+          window.TiddasPatch.SeamlessResume.saveSession();
+        }
+      } catch (_) {}
+
+      if (status === 'finished' && isPlayer()) await Rematch.maybeAutoStart(match);
+      else runtime.lastAutoStartKey = '';
+
+      UI.syncStatus('', runtime.phase);
+      UI.syncButtons();
+      UI.hideReconnectBanner();
+    },
+    startLiveHints: function(token) {
+      this.stopLiveHints();
+      if (!parseReady() || !getMatchId() || !(window.Parse && window.Parse.LiveQuery)) return;
+      try {
+        const q = new window.Parse.Query(window.BACK4APP_CLASS);
+        q.equalTo('objectId', getMatchId());
+        q.subscribe().then((sub) => {
+          if (!isTokenCurrent(token, true)) {
+            try { if (sub && sub.unsubscribe) sub.unsubscribe(); } catch (_) {}
+            return;
+          }
+          runtime.liveSub = sub;
+          runtime.liveMatchId = getMatchId();
+          ['update', 'create', 'enter', 'leave'].forEach((evt) => {
+            try { sub.on(evt, () => { this.bump('live:' + evt, token); }); } catch (_) {}
+          });
+          try { sub.on('close', () => { this.bump('live:close', token); }); } catch (_) {}
+          log('debug', 'live.hint.started', { matchId: getMatchId() });
+        }).catch((err) => {
+          log('warn', 'live.hint.failed', { err: String(err && err.message || err) });
+        });
+      } catch (err) {
+        log('warn', 'live.hint.error', { err: String(err && err.message || err) });
+      }
+    },
+    stopLiveHints: function() {
+      if (runtime.liveSub) {
+        try { if (runtime.liveSub.unsubscribe) runtime.liveSub.unsubscribe(); } catch (_) {}
+      }
+      runtime.liveSub = null;
+      runtime.liveMatchId = '';
+    }
+  };
+
+  function stopRealtime(reason) {
+    if (runtime.pollTimer) { clearTimeout(runtime.pollTimer); runtime.pollTimer = 0; }
+    onlineState().pollTimer = 0;
+    Transport.stopLiveHints();
+    runtime.pollBusy = false;
+    runtime.pollPending = false;
+    log('debug', 'transport.stop', { reason: reason || '' });
+  }
+
+  const Reconnect = {
+    schedule: function(reason) {
+      if (!isConnected() || !getRoom()) return;
+      if (runtime.reconnectTimer) return;
+      if (Date.now() < runtime.reconnectMutedUntil) return;
+      if (runtime.phase === PHASE.CONNECTING || runtime.phase === PHASE.STARTING) return;
+      if (runtime.locks.connect || runtime.locks.start || runtime.locks.rematch || runtime.locks.disconnect) return;
+      runtime.reconnectTimer = window.setTimeout(async () => {
+        runtime.reconnectTimer = 0;
+        await this.run(reason || 'scheduled');
+      }, 350);
+    },
+    run: async function(reason) {
+      if (!isConnected() || !getRoom()) return false;
+      let peerTs = 0;
+      try { if (typeof _lastPeerRevTs !== 'undefined') peerTs = Number(_lastPeerRevTs || 0); } catch (_) { peerTs = 0; }
+      const staleFor = Date.now() - Math.max(runtime.lastNetOkTs || 0, peerTs || 0);
+      if (reason !== 'manual' && staleFor < 30000 && runtime.pollTimer) {
+        Transport.start('transport-recover');
+        UI.hideReconnectBanner();
+        return true;
+      }
+      return runLocked('reconnect', async () => {
+        transition(PHASE.RECONNECTING, reason || 'reconnect', 'Reconnexion en cours…');
+        UI.showReconnectBanner('Reconnexion au salon ' + (getRoom() || '')); 
+        log('info', 'reconnect.begin', { reason: reason || '' });
+        try {
+          if (typeof window.onlineConnectToRoom_Back4App === 'function') {
+            await window.onlineConnectToRoom_Back4App(getRoom(), false);
+            UI.hideReconnectBanner();
+            return true;
+          }
+        } catch (err) {
+          runtime.lastError = 'Échec de reconnexion : ' + String(err && err.message || err);
+          transition(PHASE.ERROR, 'reconnect-failed', runtime.lastError);
+          log('error', 'reconnect.failed', { err: String(err && err.message || err) });
+        }
+        return false;
+      });
+    },
+    mute: function(ms) {
+      runtime.reconnectMutedUntil = Date.now() + Math.max(0, Number(ms || 0));
+      UI.hideReconnectBanner();
+      log('info', 'reconnect.muted', { until: runtime.reconnectMutedUntil });
+    }
+  };
+
+  const Rematch = {
+    async setReady(isReady) {
+      return runLocked('rematch', async () => {
+        if (!isConnected() || !isPlayer() || !getMatchId()) return false;
+        if (!(await ensureParseReady())) return false;
+        const token = makeToken('rematch');
+        const role = getRole();
+        const field = role === 1 ? 'rm1' : 'rm2';
+        const matchId = getMatchId();
+        const expectedGameId = Number(runtime.lastGameId || onlineState().gameId || 0);
+        const q = new window.Parse.Query(window.BACK4APP_CLASS);
+        const live = await q.get(matchId);
+        if (!isTokenCurrent(token, true)) return false;
+        const liveStatus = String(live.get('status') || 'waiting');
+        const liveGameId = Number(live.get('gameId') || 0);
+        if (liveStatus !== 'finished' || (expectedGameId > 0 && liveGameId > 0 && liveGameId !== expectedGameId)) {
+          log('warn', 'rematch.reject.stale', { ready: !!isReady, expectedGameId: expectedGameId, liveGameId: liveGameId, liveStatus: liveStatus });
+          await Transport.syncNow('rematch-stale-guard', token);
+          return false;
+        }
+        live.set(field, !!isReady);
+        live.unset('rematch');
+        live.increment('rev', 1);
+        await live.save();
+        log('info', 'rematch.setReady', { role: role, ready: !!isReady, gameId: liveGameId || expectedGameId });
+        if (!isTokenCurrent(token, true)) return false;
+        await Transport.syncNow('rematch-toggle', token);
+        return true;
+      });
+    },
+    async maybeAutoStart(match) {
+      if (!match || !isHost() || !isPlayer()) return false;
+      const status = String(match.get('status') || 'waiting');
+      const rm1 = !!match.get('rm1');
+      const rm2 = !!match.get('rm2');
+      if (status !== 'finished' || !(rm1 && rm2)) return false;
+      const key = [String(match.id || ''), String(Number(match.get('rev') || 0)), String(inferGameId(match, match.get('payload') || null))].join('|');
+      if (runtime.lastAutoStartKey === key) return false;
+      runtime.lastAutoStartKey = key;
+      log('info', 'rematch.autostart', { key: key });
+      if (typeof window.onlineStartMatch_Back4App === 'function') {
+        await window.onlineStartMatch_Back4App();
+        return true;
+      }
+      return false;
+    },
+    patchLegacyBanner: function() {
+      const rs = window.TiddasPatch && window.TiddasPatch.RematchSystem;
+      if (!rs || rs.__onlineProdPatched) return;
+      rs.__onlineProdPatched = true;
+      rs.propose = () => this.setReady(true);
+      rs.accept = () => this.setReady(true);
+      rs.hide = () => UI.hideRematchBanner();
+      rs.showAfterGame = () => {
+        const fakeMatch = {
+          get: function(k) {
+            if (k === 'status') return 'finished';
+            if (k === 'rm1') return !!(getRole() === 1 && false);
+            if (k === 'rm2') return !!(getRole() === 2 && false);
+            return null;
+          }
+        };
+        UI.syncRematchUi(fakeMatch);
+      };
+      const reqBtn = document.getElementById('tpatch-rematch-request-btn');
+      if (reqBtn) reqBtn.onclick = () => this.setReady(true);
+      const accBtn = document.getElementById('tpatch-rematch-accept-btn');
+      if (accBtn) accBtn.onclick = () => this.setReady(true);
+    }
+  };
+
+  async function runLocked(name, fn) {
+    if (runtime.locks[name]) {
+      log('debug', 'lock.skip', { name: name });
+      return false;
+    }
+    runtime.locks[name] = true;
+    UI.syncButtons();
+    try {
+      return await fn();
+    } finally {
+      runtime.locks[name] = false;
+      UI.syncButtons();
+    }
+  }
+
+  const base = {
+    disconnect: window.onlineDisconnect,
+    connect: window.onlineConnectToRoom_Back4App,
+    start: window.onlineStartMatch_Back4App,
+    sendState: window.onlineSendState,
+    applyState: window.onlineApplyState
+  };
+
+  if (typeof base.disconnect === 'function') {
+    window.onlineDisconnect = function() {
+      if (runtime.internalDisconnect) {
+        return base.disconnect.apply(this, arguments);
+      }
+      const snapshot = { matchId: getMatchId(), role: getRole() };
+      if (runtime.reconnectTimer) { clearTimeout(runtime.reconnectTimer); runtime.reconnectTimer = 0; }
+      runtime.reconnectMutedUntil = 0;
+      if (snapshot.matchId && snapshot.role > 0) {
+        Presence.ping(false, 'disconnect');
+      }
+      try {
+        if (window.TiddasPatch && window.TiddasPatch.SeamlessResume && typeof window.TiddasPatch.SeamlessResume.clearSession === 'function') {
+          window.TiddasPatch.SeamlessResume.clearSession();
+        }
+      } catch (_) {}
+      beginSession('disconnect');
+      transition(PHASE.IDLE, 'disconnect', 'Déconnecté.');
+      UI.clear();
+      Presence.stop('disconnect-local');
+      return base.disconnect.apply(this, arguments);
+    };
+  }
+
+  if (typeof base.applyState === 'function') {
+    window.onlineApplyState = function(payload) {
+      if (!payload || !payload.state) return;
+      if (payload.room && getRoom() && String(payload.room) !== getRoom()) {
+        log('debug', 'apply.drop.room', { incoming: payload.room, current: getRoom() });
+        return;
+      }
+      const inferred = inferGameId(null, payload);
+      if (Number.isFinite(inferred) && inferred < runtime.lastGameId) {
+        log('debug', 'apply.drop.oldGame', { incoming: inferred, current: runtime.lastGameId });
+        return;
+      }
+      const incomingRev = Number((((payload.meta && payload.meta.rev != null) ? payload.meta.rev : (payload.rev != null ? payload.rev : onlineState().lastSeenRev)) || 0));
+      const incomingAt = inferMetaAt(payload);
+      const incomingKey = payloadKey(null, payload, incomingRev);
+      const sameGame = Number.isFinite(inferred) && inferred === runtime.lastGameId;
+      if (sameGame && incomingRev < runtime.lastRev) {
+        log('debug', 'apply.drop.oldRev', { incomingRev: incomingRev, currentRev: runtime.lastRev });
+        return;
+      }
+      if (sameGame && incomingRev === runtime.lastRev && incomingAt && incomingAt < runtime.lastMetaAt) {
+        log('debug', 'apply.drop.oldMetaAt', { incomingAt: incomingAt, currentAt: runtime.lastMetaAt });
+        return;
+      }
+      if (incomingKey && incomingKey === runtime.lastPayloadKey) {
+        log('debug', 'apply.drop.duplicate', { key: incomingKey });
+        return;
+      }
+      const result = base.applyState.apply(this, arguments);
+      runtime.lastPayloadKey = incomingKey || runtime.lastPayloadKey;
+      if (Number.isFinite(inferred)) runtime.lastGameId = Math.max(runtime.lastGameId, inferred);
+      runtime.lastRev = Math.max(runtime.lastRev, incomingRev);
+      runtime.lastMetaAt = Math.max(runtime.lastMetaAt, incomingAt);
+      if (isSpectator()) UI.ensureSpectatorReadOnly();
+      return result;
+    };
+  }
+
+  if (typeof base.sendState === 'function') {
+    window.onlineSendState = function(reason) {
+      if (!isConnected() || !isPlayer()) return;
+      if (runtime.phase === PHASE.CONNECTING || runtime.phase === PHASE.RECONNECTING) return;
+      return base.sendState.apply(this, arguments);
+    };
+  }
+
+  if (typeof base.connect === 'function') {
+    window.onlineConnectToRoom_Back4App = async function(code, creating) {
+      return runLocked('connect', async () => {
+        beginSession(creating ? 'create-room' : 'join-room');
+        transition(PHASE.CONNECTING, creating ? 'create' : 'join', creating ? 'Création du salon…' : 'Connexion au salon…');
+        runtime.internalDisconnect = true;
+        const token = makeToken(creating ? 'create' : 'join');
+        try {
+          const result = await base.connect.apply(this, arguments);
+          if (!isTokenCurrent(token)) return false;
+          runtime.internalDisconnect = false;
+          if (!isConnected()) {
+            transition(PHASE.ERROR, 'connect-no-session', 'Connexion incomplète.');
+            return false;
+          }
+          stopRealtime('post-connect-rebind');
+          runtime.lastNetOkTs = Date.now();
+          if (isSpectator()) transition(PHASE.SPECTATING, 'connect-spectator');
+          else transition(PHASE.LOBBY, 'connect-success');
+          await Transport.syncNow('post-connect', token);
+          if (!isTokenCurrent(token, true)) return false;
+          Transport.start('post-connect');
+          if (isPlayer()) Presence.start();
+          try {
+            if (window.TiddasPatch && window.TiddasPatch.SeamlessResume && typeof window.TiddasPatch.SeamlessResume.saveSession === 'function') {
+              window.TiddasPatch.SeamlessResume.saveSession();
+            }
+          } catch (_) {}
+          return result;
+        } catch (err) {
+          runtime.internalDisconnect = false;
+          runtime.lastError = 'Erreur de connexion : ' + String(err && err.message || err);
+          transition(PHASE.ERROR, 'connect-failed', runtime.lastError);
+          log('error', 'connect.failed', { err: String(err && err.message || err), code: String(code || '') });
+          throw err;
+        } finally {
+          runtime.internalDisconnect = false;
+        }
+      });
+    };
+  }
+
+  if (typeof base.start === 'function') {
+    window.onlineStartMatch_Back4App = async function() {
+      return runLocked('start', async () => {
+        if (!isConnected() || !isPlayer() || !isHost()) return false;
+        const token = makeToken('start');
+        transition(PHASE.STARTING, 'start-click', 'Lancement de la partie…');
+        const result = await base.start.apply(this, arguments);
+        if (!isTokenCurrent(token, true)) return false;
+        await Transport.syncNow('post-start', token);
+        if (!isTokenCurrent(token, true)) return false;
+        Transport.start('post-start');
+        Presence.start();
+        return result;
+      });
+    };
+  }
+
+  window.onlineSetRematchReady = async function(isReady) {
+    return Rematch.setReady(!!isReady);
+  };
+
+  window._startPolling = function() {
+    if (!isConnected()) return;
+    Transport.start('legacy-startPolling');
+  };
+
+  window._stopLiveQuery = function() {
+    stopRealtime('legacy-stopLiveQuery');
+  };
+
+  window.onlineReconnect = function() {
+    return Reconnect.run('manual');
+  };
+
+  function patchPresenceHooks() {
+    try {
+      if (window.TiddasPatch && window.TiddasPatch.Heartbeat) {
+        window.TiddasPatch.Heartbeat.start = function() { Presence.start(); };
+        window.TiddasPatch.Heartbeat.stop = function() { Presence.stop(); };
+      }
+    } catch (_) {}
+  }
+
+  function patchResumeHooks() {
+    try {
+      const sr = window.TiddasPatch && window.TiddasPatch.SeamlessResume;
+      if (!sr || sr.__onlineProdPatched) return;
+      sr.__onlineProdPatched = true;
+      const baseAttempt = sr.attemptAutoResume;
+      if (typeof baseAttempt === 'function') {
+        sr.attemptAutoResume = async function() {
+          beginSession('auto-resume');
+          transition(PHASE.RECONNECTING, 'auto-resume', 'Reconnexion à la partie en cours…');
+          const ok = await baseAttempt.apply(this, arguments);
+          if (ok && isConnected()) {
+            stopRealtime('auto-resume-rebind');
+            await Transport.syncNow('auto-resume');
+            if (isConnected()) Transport.start('auto-resume');
+          } else if (!isConnected()) {
+            transition(PHASE.IDLE, 'auto-resume-empty');
+            UI.hideReconnectBanner();
+          }
+          return ok;
+        };
+      }
+    } catch (err) {
+      log('warn', 'resume.patch.failed', { err: String(err && err.message || err) });
+    }
+  }
+
+  function patchReconnectButtons() {
+    const ogbReconn = document.getElementById('ogb-reconnect');
+    if (ogbReconn) ogbReconn.onclick = () => { Reconnect.run('manual-button'); };
+    const cancelBtn = document.getElementById('online-reconnect-cancel');
+    if (cancelBtn) cancelBtn.onclick = () => { Reconnect.mute(60000); };
+  }
+
+  function patchLifecycle() {
+    window.addEventListener('online', () => { Reconnect.schedule('browser-online'); }, { passive: true });
+    window.addEventListener('pageshow', () => {
+      if (isConnected() && !runtime.pollTimer) Transport.start('pageshow');
+      if (isConnected()) Reconnect.schedule('pageshow');
+    }, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      if (isConnected() && !runtime.pollTimer) Transport.start('visible');
+      Reconnect.schedule('visible');
+    }, { passive: true });
+    window.addEventListener('beforeunload', () => {
+      if (isConnected() && isPlayer()) Presence.ping(false, 'beforeunload');
+    });
+  }
+
+  function installStyles() {
+    if (document.getElementById('tiddas-online-prod-v2-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'tiddas-online-prod-v2-styles';
+    style.setAttribute('nonce', 'tiddas');
+    style.textContent = [
+      '#online-status[data-ol-phase="reconnecting"]{border-color:rgba(99,164,255,0.65)!important;box-shadow:0 0 0 1px rgba(99,164,255,0.2),inset 0 0 15px rgba(0,0,0,0.45)!important}',
+      '#online-status[data-ol-phase="error"]{border-color:rgba(255,77,77,0.85)!important;box-shadow:0 0 0 1px rgba(255,77,77,0.25),inset 0 0 15px rgba(0,0,0,0.45)!important}',
+      '#online-status[data-ol-phase="playing"],#online-status[data-ol-phase="ready"]{border-color:rgba(240,200,80,0.65)!important}',
+      '#tpatch-rematch-request-btn.ol-ready{box-shadow:0 0 0 2px rgba(240,200,80,0.35) inset}',
+      '#online-reconnect-banner{backdrop-filter:blur(6px)}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  function installPublicApi() {
+    window.TiddasOnlineProd = {
+      PHASE: PHASE,
+      runtime: runtime,
+      dumpLogs: function() { return runtime.logs.slice(); },
+      clearLogs: function() { runtime.logs.length = 0; },
+      syncNow: function() { return Transport.syncNow('manual-api'); },
+      reconnect: function() { return Reconnect.run('manual-api'); },
+      transition: transition,
+      beginSession: beginSession,
+      presence: Presence,
+      rematch: Rematch
+    };
+  }
+
+  function install() {
+    installStyles();
+    patchPresenceHooks();
+    patchResumeHooks();
+    patchReconnectButtons();
+    patchLifecycle();
+    Rematch.patchLegacyBanner();
+    installPublicApi();
+    UI.syncButtons();
+    if (isConnected()) {
+      Transport.start('install-recover');
+    }
+    log('info', 'install.complete', { sessionSeq: runtime.sessionSeq });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', install, { once: true });
+  } else {
+    install();
+  }
+})();
+
+</script>
+<style nonce="tiddas">
+#ol-tourn-stats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+#ol-tourn-stats:empty{display:none}
+.ol-tourn-stat{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(240,200,80,.18);background:rgba(255,255,255,.04);color:rgba(255,255,255,.82);font:700 .72rem/1 var(--font-ui,sans-serif)}
+.ol-tourn-stat.is-live{border-color:rgba(90,220,120,.3);color:#8ef0a6;background:rgba(70,180,95,.14)}
+.ol-tourn-stat.is-current{border-color:rgba(240,200,80,.42);color:#f3d36c;background:rgba(240,200,80,.12)}
+.ol-tourn-stat.is-finished{border-color:rgba(120,170,255,.28);color:#9fc0ff;background:rgba(90,130,255,.1)}
+.ol-tourn-refresh-btn.is-spinning{transform:rotate(360deg)}
+.ol-tourn-card-final{display:grid;gap:10px;padding:14px 14px 12px;margin-bottom:10px}
+.ol-tourn-card-final.is-current{border-color:rgba(240,200,80,.45);box-shadow:0 0 0 1px rgba(240,200,80,.14),inset 0 1px 0 rgba(255,255,255,.04)}
+.ol-tourn-card-final.is-finished{border-color:rgba(120,170,255,.2)}
+.ol-tourn-card-head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start}
+.ol-tourn-card-head-main{min-width:0}
+.ol-tourn-card-name-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ol-tourn-inline-flag{display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;font:700 .63rem/1 var(--font-ui,sans-serif);letter-spacing:.02em;background:rgba(255,255,255,.08);color:rgba(255,255,255,.72)}
+.ol-tourn-inline-flag.is-current{background:rgba(240,200,80,.16);color:#f3d36c}
+.ol-tourn-inline-flag.is-member{background:rgba(100,220,120,.14);color:#88e8a0}
+.ol-tourn-card-desc{margin-top:4px;color:rgba(245,245,245,.7);font:500 .78rem/1.45 var(--font-ui,sans-serif)}
+.ol-tourn-card-meta-row{display:flex;flex-wrap:wrap;gap:8px}
+.ol-tourn-metric{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);min-height:34px}
+.ol-tourn-metric-label{color:rgba(245,245,245,.52);font:700 .64rem/1 var(--font-ui,sans-serif);text-transform:uppercase;letter-spacing:.05em}
+.ol-tourn-metric-value{color:var(--text-main,#f5f5f5);font:700 .78rem/1 var(--font-ui,sans-serif)}
+.ol-tourn-card-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.ol-tourn-card-updated{color:rgba(245,245,245,.5);font:600 .68rem/1 var(--font-ui,sans-serif)}
+.ol-tourn-card-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.ol-tourn-btn{appearance:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.9);border-radius:10px;padding:9px 12px;font:700 .76rem/1 var(--font-ui,sans-serif);cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.ol-tourn-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);transform:translateY(-1px)}
+.ol-tourn-btn.primary{border-color:rgba(240,200,80,.32);background:linear-gradient(135deg,rgba(240,200,80,.18),rgba(214,155,42,.16));color:#f3d36c}
+.ol-tourn-btn.primary.is-live{border-color:rgba(100,220,120,.34);background:linear-gradient(135deg,rgba(76,186,107,.18),rgba(100,220,120,.12));color:#9bf2b0}
+.ol-tourn-btn.primary.is-view{border-color:rgba(120,170,255,.3);background:linear-gradient(135deg,rgba(80,120,255,.16),rgba(120,170,255,.1));color:#b7ceff}
+.tourn-overlay-subtitle{margin:-4px 0 12px;color:rgba(245,245,245,.62);font:600 .78rem/1.4 var(--font-ui,sans-serif)}
+.tourn-overlay-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tourn-summary-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.84);font:700 .72rem/1 var(--font-ui,sans-serif)}
+.tourn-summary-chip strong{color:var(--modal-heading,#f0c850);font-weight:800}
+.tourn-participant-chip.winner{border-color:rgba(240,200,80,.45);background:rgba(240,200,80,.16);color:#f6dc8b}
+.tourn-participant-chip.me::before{content:"Vous";display:inline-flex;align-items:center;justify-content:center;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);font:700 .62rem/1 var(--font-ui,sans-serif)}
+.tourn-bracket-empty{display:grid;place-items:center;min-height:120px;border-radius:16px;border:1px dashed rgba(240,200,80,.22);background:rgba(255,255,255,.03);color:rgba(245,245,245,.56);text-align:center;padding:18px;font:600 .82rem/1.5 var(--font-ui,sans-serif)}
+@media (max-width:640px){.ol-tourn-card-final{padding:12px}.ol-tourn-card-head{grid-template-columns:auto 1fr}.ol-tourn-card-head .ol-tourn-card-badge{grid-column:1/-1;justify-self:start}.ol-tourn-card-foot,.ol-tourn-card-actions{width:100%}.ol-tourn-card-actions{justify-content:stretch}.ol-tourn-btn{flex:1 1 150px;justify-content:center}}
+</style>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  if (window.TiddasTournamentFinalUi) return;
+
+  var ui = window.TiddasTournamentFinalUi = {
+    state: {
+      pollMs: 8000,
+      maxResults: 24,
+      bootAttempts: 0,
+      pollTimer: 0,
+      refreshBusy: false,
+      refreshQueued: false,
+      activeList: [],
+      currentOverlayTournament: null,
+      controlsBound: false,
+      lifecycleBound: false,
+      joinBusy: false
+    }
+  };
+
+  ui.esc = function(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  };
+
+  ui.sameId = function(a, b) {
+    a = String(a || '').trim();
+    b = String(b || '').trim();
+    return !!a && a === b;
+  };
+
+  ui.toast = function(message, duration) {
+    try {
+      if (typeof window.showToast === 'function') window.showToast(message, duration || 2000);
+    } catch (_) {}
+  };
+
+  ui.getPlayerId = function() {
+    return String(window.onlinePlayerId || '');
+  };
+
+  ui.getPlayerName = function() {
+    try {
+      if (typeof window.getOnlinePlayerName === 'function') {
+        return String(window.getOnlinePlayerName() || '').trim() || 'Joueur';
+      }
+    } catch (_) {}
+    try {
+      var input = document.getElementById('online-your-name');
+      var typed = input ? String(input.value || '').trim() : '';
+      if (typed) return typed;
+      var saved = localStorage.getItem('tiddas_online_name_v1') || '';
+      return String(saved).trim() || 'Joueur';
+    } catch (_) {
+      return 'Joueur';
+    }
+  };
+
+  ui.getCurrentMatchId = function() {
+    return String(window.online && window.online.matchId || '');
+  };
+
+  ui.parseTournament = function(raw) {
+    if (!raw) return null;
+    if (typeof raw === 'string') {
+      try { return JSON.parse(raw); } catch (_) { return null; }
+    }
+    return raw;
+  };
+
+  ui.normalizeParticipants = function(list) {
+    var out = [];
+    (Array.isArray(list) ? list : []).forEach(function(participant) {
+      if (!participant) return;
+      var id = String(participant.id == null ? '' : participant.id).trim();
+      if (!id) return;
+      var existing = null;
+      for (var i = 0; i < out.length; i++) {
+        if (ui.sameId(out[i].id, id)) {
+          existing = out[i];
+          break;
+        }
+      }
+      var name = String(participant.name || 'Joueur').trim() || 'Joueur';
+      if (existing) {
+        if (!existing.name || /^joueur\b/i.test(existing.name)) existing.name = name;
+        if (participant.ready !== false) existing.ready = true;
+        return;
+      }
+      out.push({ id: id, name: name, ready: participant.ready !== false });
+    });
+    return out;
+  };
+
+  ui.collectParticipantIds = function(match, participants) {
+    var ids = [];
+    function push(id) {
+      id = String(id || '').trim();
+      if (!id || ids.indexOf(id) !== -1) return;
+      ids.push(id);
+    }
+    (participants || []).forEach(function(participant) { push(participant && participant.id); });
+    try {
+      push(match && match.get ? match.get('p1Id') : null);
+      push(match && match.get ? match.get('p2Id') : null);
+      ((match && match.get && match.get('participants')) || []).forEach(push);
+    } catch (_) {}
+    return ids;
+  };
+
+  ui.generateBracket = function(participants) {
+    if (window.TiddasTournament && typeof window.TiddasTournament._generateBracket === 'function') {
+      return window.TiddasTournament._generateBracket(participants);
+    }
+    var players = (participants || []).slice();
+    var size = 1;
+    while (size < players.length) size *= 2;
+    while (players.length < size) players.push({ id: null, name: 'BYE', ready: true });
+    var rounds = [];
+    var current = [];
+    for (var i = 0; i < players.length; i += 2) {
+      current.push({ p1: players[i], p2: players[i + 1], winner: null, status: 'pending' });
+    }
+    rounds.push(current);
+    while (current.length > 1) {
+      var next = [];
+      for (var j = 0; j < current.length; j += 2) next.push({ p1: null, p2: null, winner: null, status: 'pending' });
+      rounds.push(next);
+      current = next;
+    }
+    return rounds;
+  };
+
+  ui.getRoundName = function(roundIndex, totalRounds) {
+    var remaining = Math.max(1, Number(totalRounds || 0) - Number(roundIndex || 0));
+    if (remaining === 1) return 'Finale';
+    if (remaining === 2) return 'Demi-finales';
+    if (remaining === 3) return 'Quarts';
+    return 'Tour ' + (Number(roundIndex || 0) + 1);
+  };
+
+  ui.formatAgo = function(timestamp) {
+    var delta = Math.max(0, Date.now() - Number(timestamp || 0));
+    var seconds = Math.round(delta / 1000);
+    if (seconds < 45) return "a l'instant";
+    if (seconds < 3600) return 'il y a ' + Math.max(1, Math.round(seconds / 60)) + ' min';
+    if (seconds < 86400) return 'il y a ' + Math.max(1, Math.round(seconds / 3600)) + ' h';
+    return 'il y a ' + Math.max(1, Math.round(seconds / 86400)) + ' j';
+  };
+
+  ui.slotClaimable = function(match, slotNumber, myId) {
+    try {
+      var slotId = match.get('p' + slotNumber + 'Id') || null;
+      var slotActive = match.get('p' + slotNumber + 'Active') !== false;
+      if (!slotId) return true;
+      if (ui.sameId(slotId, myId)) return true;
+      if (slotActive) return false;
+      var tournament = ui.parseTournament(match.get('tournament') || null);
+      return !(tournament && tournament.active);
+    } catch (_) {
+      return false;
+    }
+  };
+
+  ui.findLiveTableCount = function(item) {
+    var count = 0;
+    (item.tables || []).forEach(function(table) {
+      if (table && table.status === 'playing') count += 1;
+    });
+    if (count) return count;
+    (item.bracket || []).forEach(function(round) {
+      (round || []).forEach(function(match) {
+        if (match && match.status === 'live') count += 1;
+      });
+    });
+    return count;
+  };
+})();
+</script>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  var ui = window.TiddasTournamentFinalUi;
+  if (!ui) return;
+
+  ui.buildTournamentItem = function(match) {
+    var data = ui.parseTournament(match && match.get ? match.get('tournament') || null : null);
+    if (!data) return null;
+    data.participants = ui.normalizeParticipants(data.participants || []);
+    if (!data.participants.length && !(match.get('p1Id') || match.get('p2Id'))) return null;
+
+    var myId = ui.getPlayerId();
+    var bracket = Array.isArray(data.bracket) ? data.bracket : [];
+    var tables = Array.isArray(data.tables) ? data.tables : [];
+    var status = String(match.get('status') || 'waiting');
+    var active = !!data.active || status === 'playing';
+    var completed = !!(data.completedAt || data.winnerId || (status === 'finished' && !active));
+    var currentRound = Number.isFinite(Number(data.currentRound)) ? Number(data.currentRound) : 0;
+    var tableCount = tables.length || ((bracket[0] && bracket[0].length) ? bracket[0].length : (data.participants.length >= 2 ? 1 : 0));
+    var amIn = data.participants.some(function(participant) {
+      return ui.sameId(participant && participant.id, myId);
+    });
+
+    return {
+      matchId: String(match.id || ''),
+      code: String(match.get('code') || '?'),
+      name: String(data.name || ('Tournoi ' + (match.get('code') || '?'))),
+      status: status,
+      active: active,
+      completed: completed,
+      currentRoom: ui.sameId(match.id, ui.getCurrentMatchId()),
+      amIn: amIn,
+      participants: data.participants,
+      tables: tables,
+      bracket: bracket,
+      tableCount: tableCount,
+      currentRound: currentRound,
+      roundLabel: completed ? 'Resultat final' : ui.getRoundName(currentRound, bracket.length || 1),
+      winnerName: String(data.winnerName || '').trim(),
+      winnerId: String(data.winnerId || '').trim(),
+      liveCount: ui.findLiveTableCount({ tables: tables, bracket: bracket }),
+      openSlot: !active && (ui.slotClaimable(match, 1, myId) || ui.slotClaimable(match, 2, myId)),
+      updatedAt: match.updatedAt ? match.updatedAt.getTime() : (match.createdAt ? match.createdAt.getTime() : Date.now()),
+      rawTournament: data
+    };
+  };
+
+  ui.tournamentRank = function(item) {
+    if (item.currentRoom) return 0;
+    if (item.active && item.amIn) return 1;
+    if (item.active) return 2;
+    if (item.amIn && !item.completed) return 3;
+    if (!item.completed) return 4;
+    return 5;
+  };
+
+  ui.fetchTournaments = async function() {
+    if (!(window.Parse && window.BACK4APP_CLASS)) return [];
+    var query = new window.Parse.Query(window.BACK4APP_CLASS);
+    query.exists('tournament');
+    query.notEqualTo('tournament', null);
+    query.notEqualTo('tournament', '');
+    query.descending('updatedAt');
+    query.limit(ui.state.maxResults);
+    var results = await query.find();
+    var list = [];
+    results.forEach(function(match) {
+      var item = ui.buildTournamentItem(match);
+      if (!item) return;
+      var ageMs = Math.max(0, Date.now() - Number(item.updatedAt || 0));
+      var tooOld = ageMs > 1000 * 60 * 60 * 48 && !item.currentRoom && !item.active && !item.completed;
+      if (!tooOld) list.push(item);
+    });
+    list.sort(function(a, b) {
+      var rank = ui.tournamentRank(a) - ui.tournamentRank(b);
+      if (rank) return rank;
+      var updateRank = Number(b.updatedAt || 0) - Number(a.updatedAt || 0);
+      if (updateRank) return updateRank;
+      return a.name.localeCompare(b.name);
+    });
+    return list;
+  };
+
+  ui.fetchMatch = async function(matchId) {
+    if (!(window.Parse && window.BACK4APP_CLASS) || !matchId) return null;
+    var query = new window.Parse.Query(window.BACK4APP_CLASS);
+    return query.get(matchId);
+  };
+
+  ui.hydrateTournament = async function(matchId) {
+    try {
+      var match = await ui.fetchMatch(matchId);
+      return ui.buildTournamentItem(match);
+    } catch (_) {
+      return null;
+    }
+  };
+
+  ui.joinRoomDirectly = function(matchId, code) {
+    var normalizedCode = String(code || '').trim().toUpperCase();
+    if (!matchId || !normalizedCode) {
+      ui.toast('Code du salon introuvable.', 2200);
+      return;
+    }
+    if (ui.state.joinBusy) return;
+    ui.state.joinBusy = true;
+
+    window.__tiddasDirectJoinHint = { matchId: String(matchId), code: normalizedCode, ts: Date.now() };
+
+    try {
+      var input = document.getElementById('online-room-code');
+      if (input) input.value = normalizedCode;
+      if (typeof window.showScreen === 'function') window.showScreen('online-lobby-area');
+      var preConnect = document.getElementById('ol-pre-connect');
+      var statusPanel = document.getElementById('online-status');
+      if (preConnect) preConnect.style.display = 'none';
+      if (statusPanel) statusPanel.style.display = '';
+    } catch (_) {}
+
+    var connectFn = typeof window.onlineConnectToRoom_Back4App === 'function'
+      ? window.onlineConnectToRoom_Back4App
+      : (typeof window.onlineConnectToRoom === 'function' ? window.onlineConnectToRoom : null);
+
+    window.setTimeout(function() {
+      try {
+        if (!connectFn) throw new Error('connect-unavailable');
+        connectFn(normalizedCode, false);
+      } catch (_) {
+        ui.toast('Impossible de rejoindre ce salon.', 2200);
+      } finally {
+        window.setTimeout(function() { ui.state.joinBusy = false; }, 600);
+      }
+    }, 120);
+  };
+
+  ui.registerParticipant = async function(item, match) {
+    var playerId = ui.getPlayerId();
+    var playerName = ui.getPlayerName();
+    if (!playerId) {
+      ui.toast('Choisissez un pseudo avant de vous inscrire.', 2200);
+      return null;
+    }
+    var tournament = ui.parseTournament(match.get('tournament') || null) || {};
+    tournament.participants = ui.normalizeParticipants((tournament.participants || []).concat([{ id: playerId, name: playerName, ready: true }]));
+    tournament.tables = Array.isArray(tournament.tables) ? tournament.tables : [];
+    if (!tournament.id) tournament.id = playerId + '_' + Date.now().toString(36);
+    if (!tournament.name) tournament.name = item.name || ('Tournoi ' + (match.get('code') || '?'));
+    if (!tournament.createdBy) tournament.createdBy = playerId;
+    if (!tournament.createdAt) tournament.createdAt = Date.now();
+    if (tournament.participants.length >= 2) tournament.bracket = ui.generateBracket(tournament.participants);
+
+    match.set('tournament', JSON.stringify(tournament));
+    match.set('participants', ui.collectParticipantIds(match, tournament.participants));
+    match.increment('rev', 1);
+    await match.save();
+    ui.toast('Inscription au tournoi enregistree.', 2200);
+    return tournament;
+  };
+
+  ui.spectateTournament = function(item) {
+    window._spectatorPendingMatchId = item.matchId;
+    window._spectatorPendingCode = item.code;
+    try {
+      if (window.TiddasSpectator && typeof window.TiddasSpectator.joinAsSpectator === 'function') {
+        window.TiddasSpectator.joinAsSpectator();
+      } else {
+        ui.joinRoomDirectly(item.matchId, item.code);
+      }
+      ui.toast('Connexion en spectateur...', 1600);
+    } catch (_) {
+      ui.joinRoomDirectly(item.matchId, item.code);
+    }
+  };
+
+  ui.joinTournament = async function(item) {
+    var latest = await ui.hydrateTournament(item.matchId);
+    if (!latest) {
+      ui.joinRoomDirectly(item.matchId, item.code);
+      return;
+    }
+    if (latest.completed) {
+      ui.openBracket(latest, false);
+      ui.toast('Ce tournoi est termine.', 1800);
+      return;
+    }
+    if (latest.active && !latest.amIn) {
+      ui.spectateTournament(latest);
+      return;
+    }
+    if (!latest.amIn) {
+      try {
+        var match = await ui.fetchMatch(latest.matchId);
+        if (!match) throw new Error('match-not-found');
+        var fresh = ui.buildTournamentItem(match);
+        if (fresh && (fresh.active || fresh.completed) && !fresh.amIn) {
+          ui.spectateTournament(fresh);
+          return;
+        }
+        await ui.registerParticipant(latest, match);
+      } catch (_) {
+        ui.toast("Impossible d'inscrire ce joueur au tournoi.", 2200);
+        return;
+      }
+    }
+    ui.joinRoomDirectly(latest.matchId, latest.code);
+    ui.refreshSoon();
+  };
+})();
+</script>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  var ui = window.TiddasTournamentFinalUi;
+  if (!ui) return;
+
+  ui.isLobbyVisible = function() {
+    var lobby = document.getElementById('online-lobby-area');
+    if (!lobby) return false;
+    var style = window.getComputedStyle ? window.getComputedStyle(lobby) : null;
+    return lobby.classList.contains('active') || lobby.style.display !== 'none' || (style && style.display !== 'none' && style.visibility !== 'hidden');
+  };
+
+  ui.ensureHeaderStats = function() {
+    var wrap = document.getElementById('ol-tournaments-wrap');
+    var header = wrap ? wrap.querySelector('.ol-tourn-header') : null;
+    if (!wrap || !header) return null;
+    var stats = document.getElementById('ol-tourn-stats');
+    if (!stats) {
+      stats = document.createElement('div');
+      stats.id = 'ol-tourn-stats';
+      header.insertAdjacentElement('afterend', stats);
+    }
+    return stats;
+  };
+
+  ui.ensureOverlayChrome = function() {
+    var overlay = document.getElementById('tournament-bracket-overlay');
+    var inner = overlay ? overlay.querySelector('.tourn-overlay-inner') : null;
+    if (!overlay || !inner) return {};
+
+    var head = inner.querySelector('.tourn-overlay-head');
+    var subtitle = document.getElementById('tourn-overlay-subtitle');
+    if (!subtitle && head) {
+      subtitle = document.createElement('div');
+      subtitle.id = 'tourn-overlay-subtitle';
+      subtitle.className = 'tourn-overlay-subtitle';
+      head.insertAdjacentElement('afterend', subtitle);
+    }
+
+    var summary = document.getElementById('tourn-overlay-summary');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.id = 'tourn-overlay-summary';
+      summary.className = 'tourn-overlay-summary';
+      var participantRow = document.getElementById('tourn-participants-row');
+      if (participantRow) participantRow.insertAdjacentElement('beforebegin', summary);
+      else inner.appendChild(summary);
+    }
+
+    return { overlay: overlay, inner: inner, subtitle: subtitle, summary: summary };
+  };
+
+  ui.patchStaticLabels = function() {
+    var title = document.querySelector('#ol-tournaments-wrap .ol-tourn-title');
+    if (title) title.textContent = 'Tournois en ligne';
+    var refreshBtn = document.getElementById('ol-tourn-refresh');
+    if (refreshBtn) refreshBtn.title = 'Actualiser la liste';
+    var emptyWrap = document.getElementById('ol-tourn-empty');
+    var emptyText = emptyWrap ? emptyWrap.firstElementChild : null;
+    if (emptyText) emptyText.textContent = 'Aucun tournoi disponible pour le moment.';
+    var createBtn = document.getElementById('ol-create-tournament-btn');
+    if (createBtn) {
+      var main = createBtn.querySelector('.ol-btn-main');
+      var sub = createBtn.querySelector('.ol-btn-sub');
+      if (main) main.textContent = 'Creer un tournoi';
+      if (sub) sub.textContent = 'Invitez au moins 2 joueurs';
+    }
+  };
+
+  ui.renderHeaderStats = function(list) {
+    var stats = ui.ensureHeaderStats();
+    if (!stats) return;
+    var activeCount = list.filter(function(item) { return item.active; }).length;
+    var openCount = list.filter(function(item) { return !item.active && !item.completed; }).length;
+    var mineCount = list.filter(function(item) { return item.currentRoom || item.amIn; }).length;
+    var finishedCount = list.filter(function(item) { return item.completed; }).length;
+    var currentItem = list.find(function(item) { return item.currentRoom; }) || null;
+    stats.innerHTML =
+      '<span class="ol-tourn-stat is-live">Live <strong>' + activeCount + '</strong></span>' +
+      '<span class="ol-tourn-stat">Ouverts <strong>' + openCount + '</strong></span>' +
+      '<span class="ol-tourn-stat is-current">Mes tournois <strong>' + mineCount + '</strong></span>' +
+      '<span class="ol-tourn-stat is-finished">Termines <strong>' + finishedCount + '</strong></span>' +
+      (currentItem ? '<span class="ol-tourn-stat is-current">Salon actif <strong>' + ui.esc(currentItem.name) + '</strong></span>' : '');
+  };
+
+  ui.cardBadgeClass = function(item) {
+    if (item.currentRoom) return 'ol-tourn-badge-active';
+    if (item.completed) return 'ol-tourn-badge-spec';
+    if (item.active) return 'ol-tourn-badge-active';
+    return 'ol-tourn-badge-waiting';
+  };
+
+  ui.cardBadgeText = function(item) {
+    if (item.currentRoom) return 'Salon courant';
+    if (item.completed) return 'Termine';
+    if (item.active) return item.liveCount > 0 ? ('Live x' + item.liveCount) : 'En cours';
+    return item.amIn ? 'Inscrit' : 'Ouvert';
+  };
+
+  ui.cardDescription = function(item) {
+    if (item.completed) return item.winnerName ? ('Tournoi termine. Vainqueur : ' + item.winnerName + '.') : 'Tournoi termine.';
+    if (item.active) return item.amIn ? ('Votre tournoi est en cours. ' + item.roundLabel + '.') : ('Tableau en cours. ' + item.roundLabel + '.');
+    return item.amIn ? 'Votre inscription est confirmee. Le tournoi peut etre lance des que les joueurs sont prets.' : 'Inscriptions ouvertes. Rejoignez ce tournoi et partagez le code du salon.';
+  };
+
+  ui.primaryAction = function(item) {
+    if (item.completed) return { mode: 'view', label: 'Voir le tableau', className: 'primary is-view' };
+    if (item.currentRoom) return { mode: 'continue', label: 'Continuer', className: 'primary is-live' };
+    if (item.active) return item.amIn ? { mode: 'continue', label: 'Continuer', className: 'primary is-live' } : { mode: 'spectate', label: 'Observer', className: 'primary is-view' };
+    if (item.amIn) return { mode: 'continue', label: 'Rejoindre', className: 'primary' };
+    return { mode: 'join', label: "S'inscrire", className: 'primary' };
+  };
+
+  ui.metric = function(label, value) {
+    return '<span class="ol-tourn-metric"><span class="ol-tourn-metric-label">' + ui.esc(label) + '</span><span class="ol-tourn-metric-value">' + ui.esc(value) + '</span></span>';
+  };
+
+  ui.buildCardHtml = function(item) {
+    var action = ui.primaryAction(item);
+    var flags = '';
+    if (item.currentRoom) flags += '<span class="ol-tourn-inline-flag is-current">Salon courant</span>';
+    else if (item.amIn) flags += '<span class="ol-tourn-inline-flag is-member">Inscrit</span>';
+
+    return '<div class="ol-tourn-card-head">' +
+      '<span class="ol-tourn-card-icon" aria-hidden="true">🏆</span>' +
+      '<div class="ol-tourn-card-head-main">' +
+        '<div class="ol-tourn-card-name-row"><div class="ol-tourn-card-name">' + ui.esc(item.name) + '</div>' + flags + '</div>' +
+        '<div class="ol-tourn-card-desc">' + ui.esc(ui.cardDescription(item)) + '</div>' +
+      '</div>' +
+      '<span class="ol-tourn-card-badge ' + ui.cardBadgeClass(item) + '">' + ui.esc(ui.cardBadgeText(item)) + '</span>' +
+    '</div>' +
+    '<div class="ol-tourn-card-meta-row">' +
+      ui.metric('Joueurs', item.participants.length) +
+      ui.metric('Tables', item.tableCount || 0) +
+      ui.metric('Code', item.code) +
+      ui.metric(item.completed ? 'Vainqueur' : 'Round', item.completed ? (item.winnerName || '-') : item.roundLabel) +
+    '</div>' +
+    '<div class="ol-tourn-card-foot">' +
+      '<div class="ol-tourn-card-updated">Maj ' + ui.esc(ui.formatAgo(item.updatedAt)) + '</div>' +
+      '<div class="ol-tourn-card-actions">' +
+        '<button class="ol-tourn-btn" type="button" data-role="tourn-bracket">Tableau</button>' +
+        '<button class="ol-tourn-btn ' + ui.esc(action.className) + '" type="button" data-role="tourn-main">' + ui.esc(action.label) + '</button>' +
+      '</div>' +
+    '</div>';
+  };
+
+  ui.summaryChip = function(label, value) {
+    return '<span class="tourn-summary-chip">' + ui.esc(label) + ' <strong>' + ui.esc(value) + '</strong></span>';
+  };
+})();
+</script>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  var ui = window.TiddasTournamentFinalUi;
+  if (!ui) return;
+
+  ui.renderParticipants = function(item) {
+    var row = document.getElementById('tourn-participants-row');
+    if (!row) return;
+    row.innerHTML = '';
+    (item.participants || []).forEach(function(participant) {
+      var chip = document.createElement('div');
+      chip.className = 'tourn-participant-chip' +
+        (ui.sameId(participant && participant.id, ui.getPlayerId()) ? ' me' : '') +
+        (ui.sameId(participant && participant.id, item.winnerId) ? ' winner' : '');
+      chip.textContent = participant && participant.name ? participant.name : 'Joueur';
+      row.appendChild(chip);
+    });
+  };
+
+  ui.renderBracket = function(item) {
+    var container = document.getElementById('tournament-container');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!item || !item.bracket || !item.bracket.length) {
+      container.innerHTML = '<div class="tourn-bracket-empty">Le tableau sera genere des que suffisamment de joueurs seront inscrits.</div>';
+      return;
+    }
+
+    var totalRounds = item.bracket.length;
+    item.bracket.forEach(function(round, roundIndex) {
+      var roundEl = document.createElement('div');
+      roundEl.className = 'bracket-round';
+      var title = document.createElement('div');
+      title.className = 'bracket-round-title';
+      title.textContent = ui.getRoundName(roundIndex, totalRounds);
+      roundEl.appendChild(title);
+
+      (round || []).forEach(function(match) {
+        var matchEl = document.createElement('div');
+        matchEl.className = 'bracket-match' + (match && match.status === 'live' ? ' live' : '');
+
+        function renderPlayer(player, isWinner, isLoser) {
+          var row = document.createElement('div');
+          row.className = 'bracket-player' + (isWinner ? ' winner' : '') + (isLoser ? ' loser' : '');
+          var avatar = document.createElement('div');
+          avatar.className = 'bracket-player-avatar';
+          var label = player && player.name ? player.name : 'TBD';
+          avatar.textContent = label === 'BYE' ? 'B' : label.charAt(0).toUpperCase();
+          var name = document.createElement('span');
+          name.className = 'bracket-player-name';
+          name.textContent = label;
+          var score = document.createElement('span');
+          score.className = 'bracket-player-score';
+          score.textContent = isWinner ? 'W' : (isLoser ? 'L' : '');
+          row.appendChild(avatar);
+          row.appendChild(name);
+          row.appendChild(score);
+          return row;
+        }
+
+        var p1 = match && match.p1 ? match.p1 : { id: null, name: 'TBD' };
+        var p2 = match && match.p2 ? match.p2 : { id: null, name: 'TBD' };
+        var winnerId = String(match && match.winner ? match.winner.id || '' : '');
+        var p1Winner = winnerId && ui.sameId(winnerId, p1 && p1.id);
+        var p2Winner = winnerId && ui.sameId(winnerId, p2 && p2.id);
+        matchEl.appendChild(renderPlayer(p1, p1Winner, p2Winner && !p1Winner));
+        matchEl.appendChild(renderPlayer(p2, p2Winner, p1Winner && !p2Winner));
+        roundEl.appendChild(matchEl);
+      });
+
+      container.appendChild(roundEl);
+    });
+  };
+
+  ui.hideOverlay = function() {
+    var overlay = document.getElementById('tournament-bracket-overlay');
+    if (overlay) overlay.setAttribute('hidden', '');
+    ui.state.currentOverlayTournament = null;
+  };
+
+  ui.renderOverlay = function(item) {
+    var chrome = ui.ensureOverlayChrome();
+    if (!chrome.overlay) return;
+    ui.state.currentOverlayTournament = item;
+    chrome.overlay.removeAttribute('hidden');
+
+    var title = document.getElementById('tourn-overlay-title');
+    if (title) title.textContent = 'Tournoi - ' + item.name;
+    if (chrome.subtitle) chrome.subtitle.textContent = (item.currentRoom ? 'Salon courant' : ('Code ' + item.code)) + ' - ' + (item.completed ? 'tournoi termine' : (item.active ? 'tournoi en cours' : 'inscriptions ouvertes'));
+    if (chrome.summary) chrome.summary.innerHTML =
+      ui.summaryChip('Joueurs', item.participants.length) +
+      ui.summaryChip('Tables', item.tableCount || 0) +
+      ui.summaryChip(item.completed ? 'Vainqueur' : 'Round', item.completed ? (item.winnerName || '-') : item.roundLabel) +
+      ui.summaryChip('Code', item.code);
+
+    ui.renderParticipants(item);
+    ui.renderBracket(item);
+
+    var watchBtn = document.getElementById('tourn-watch-btn');
+    if (watchBtn) {
+      watchBtn.style.display = item.active && !item.currentRoom ? '' : 'none';
+      watchBtn.textContent = item.amIn ? 'Observer une table' : 'Observer le tournoi';
+      watchBtn.onclick = function() { ui.hideOverlay(); ui.spectateTournament(item); };
+    }
+
+    var joinBtn = document.getElementById('tourn-join-btn');
+    if (joinBtn) {
+      var action = ui.primaryAction(item);
+      var showJoin = action.mode !== 'spectate' && action.mode !== 'view';
+      joinBtn.style.display = showJoin ? '' : 'none';
+      joinBtn.textContent = action.label;
+      joinBtn.onclick = function() { ui.hideOverlay(); ui.handlePrimaryAction(item); };
+    }
+  };
+
+  ui.syncOverlayWithList = function() {
+    if (!ui.state.currentOverlayTournament) return;
+    var latest = ui.state.activeList.find(function(item) {
+      return ui.sameId(item.matchId, ui.state.currentOverlayTournament.matchId);
+    });
+    if (latest) ui.renderOverlay(latest);
+  };
+
+  ui.openBracket = async function(item, hydrate) {
+    ui.renderOverlay(item);
+    if (!hydrate) return;
+    var latest = await ui.hydrateTournament(item.matchId);
+    if (!latest) return;
+    var replaced = false;
+    ui.state.activeList = ui.state.activeList.map(function(entry) {
+      if (ui.sameId(entry.matchId, latest.matchId)) {
+        replaced = true;
+        return latest;
+      }
+      return entry;
+    });
+    if (!replaced) ui.state.activeList.push(latest);
+    if (ui.state.currentOverlayTournament && ui.sameId(ui.state.currentOverlayTournament.matchId, latest.matchId)) ui.renderOverlay(latest);
+  };
+
+  ui.handlePrimaryAction = function(item) {
+    var action = ui.primaryAction(item);
+    if (action.mode === 'view') { ui.openBracket(item, true); return; }
+    if (action.mode === 'spectate') { ui.spectateTournament(item); return; }
+    ui.joinTournament(item);
+  };
+
+  ui.renderList = function(list) {
+    ui.patchStaticLabels();
+    ui.renderHeaderStats(list);
+    var wrap = document.getElementById('ol-tournaments-wrap');
+    var listEl = document.getElementById('ol-tournaments-list');
+    var emptyEl = document.getElementById('ol-tourn-empty');
+    if (!wrap || !listEl) return;
+    wrap.style.display = '';
+
+    if (!list.length) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = '';
+      return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+    list.forEach(function(item) {
+      var card = document.createElement('article');
+      card.className = 'ol-tourn-card ol-tourn-card-final' + (item.currentRoom ? ' is-current' : '') + (item.completed ? ' is-finished' : '');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', 'Ouvrir le tournoi ' + item.name);
+      card.dataset.matchId = item.matchId;
+      card.innerHTML = ui.buildCardHtml(item);
+      card.addEventListener('click', function() { ui.openBracket(item, true); });
+      card.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          ui.openBracket(item, true);
+        }
+      });
+      var bracketBtn = card.querySelector('[data-role="tourn-bracket"]');
+      if (bracketBtn) bracketBtn.addEventListener('click', function(event) { event.stopPropagation(); ui.openBracket(item, true); });
+      var mainBtn = card.querySelector('[data-role="tourn-main"]');
+      if (mainBtn) mainBtn.addEventListener('click', function(event) { event.stopPropagation(); ui.handlePrimaryAction(item); });
+      listEl.appendChild(card);
+    });
+  };
+
+  ui.setRefreshState = function(spinning) {
+    var button = document.getElementById('ol-tourn-refresh');
+    if (!button) return;
+    button.classList.toggle('is-spinning', !!spinning);
+    button.disabled = !!spinning;
+  };
+
+  ui.refreshSoon = function() {
+    if (ui.state.refreshBusy) {
+      ui.state.refreshQueued = true;
+      return;
+    }
+    window.setTimeout(function() { ui.refresh(false); }, 120);
+  };
+
+  ui.refresh = async function(forceToast) {
+    if (ui.state.refreshBusy) {
+      ui.state.refreshQueued = true;
+      return ui.state.activeList;
+    }
+    ui.state.refreshBusy = true;
+    ui.setRefreshState(true);
+    try {
+      ui.state.activeList = await ui.fetchTournaments();
+      ui.renderList(ui.state.activeList);
+      ui.syncOverlayWithList();
+      return ui.state.activeList;
+    } catch (error) {
+      console.warn('[Tiddas Tournament Final UI] refresh failed', error);
+      if (forceToast) ui.toast("Impossible d'actualiser les tournois.", 2200);
+      return ui.state.activeList;
+    } finally {
+      ui.state.refreshBusy = false;
+      ui.setRefreshState(false);
+      if (ui.state.refreshQueued) {
+        ui.state.refreshQueued = false;
+        window.setTimeout(function() { ui.refresh(false); }, 80);
+      }
+    }
+  };
+})();
+</script>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  var ui = window.TiddasTournamentFinalUi;
+  if (!ui) return;
+
+  ui.startPolling = function() {
+    if (ui.state.pollTimer) return;
+    ui.refresh(false);
+    ui.state.pollTimer = window.setInterval(function() {
+      if (!document.hidden && ui.isLobbyVisible()) ui.refresh(false);
+    }, ui.state.pollMs);
+  };
+
+  ui.stopPolling = function() {
+    if (!ui.state.pollTimer) return;
+    window.clearInterval(ui.state.pollTimer);
+    ui.state.pollTimer = 0;
+  };
+
+  ui.bindControls = function() {
+    if (ui.state.controlsBound) return;
+    ui.state.controlsBound = true;
+    ui.patchStaticLabels();
+    ui.ensureHeaderStats();
+    ui.ensureOverlayChrome();
+
+    var refreshBtn = document.getElementById('ol-tourn-refresh');
+    if (refreshBtn && refreshBtn.parentNode) {
+      var cleanRefreshBtn = refreshBtn.cloneNode(true);
+      refreshBtn.parentNode.replaceChild(cleanRefreshBtn, refreshBtn);
+      cleanRefreshBtn.addEventListener('click', function() { ui.refresh(true); });
+    }
+
+    var overlay = document.getElementById('tournament-bracket-overlay');
+    if (overlay) {
+      overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) ui.hideOverlay();
+      });
+    }
+
+    var closeBtn = document.getElementById('tourn-overlay-close');
+    if (closeBtn && closeBtn.parentNode) {
+      var cleanCloseBtn = closeBtn.cloneNode(true);
+      closeBtn.parentNode.replaceChild(cleanCloseBtn, closeBtn);
+      cleanCloseBtn.addEventListener('click', ui.hideOverlay);
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') ui.hideOverlay();
+    });
+  };
+
+  ui.bindLifecycle = function() {
+    if (ui.state.lifecycleBound) return;
+    ui.state.lifecycleBound = true;
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) return;
+      if (ui.isLobbyVisible()) ui.refresh(false);
+    });
+
+    window.addEventListener('focus', function() {
+      if (ui.isLobbyVisible()) ui.refresh(false);
+    });
+
+    window.addEventListener('online', function() {
+      if (ui.isLobbyVisible()) ui.refresh(false);
+    });
+
+    try {
+      if (window.TiddasBus && typeof window.TiddasBus.on === 'function') {
+        window.TiddasBus.on('showScreen', function(screenId) {
+          if (screenId === 'online-lobby-area') {
+            ui.startPolling();
+            ui.refresh(false);
+          } else {
+            ui.stopPolling();
+            ui.hideOverlay();
+          }
+        });
+      }
+    } catch (_) {}
+  };
+
+  ui.overridePatch = function() {
+    var patch = window.TiddasPatch && window.TiddasPatch.TournamentLobbyPatch;
+    if (!patch) return false;
+    if (patch.__finalUiPatched) return true;
+    patch.__finalUiPatched = true;
+    try { if (typeof patch.stopPolling === 'function') patch.stopPolling(); } catch (_) {}
+    patch.refresh = function() { return ui.refresh(false); };
+    patch.startPolling = function() { ui.startPolling(); };
+    patch.stopPolling = function() { ui.stopPolling(); };
+    return true;
+  };
+
+  ui.boot = function() {
+    ui.state.bootAttempts += 1;
+    ui.bindControls();
+    ui.bindLifecycle();
+    if (!ui.overridePatch()) {
+      if (ui.state.bootAttempts < 80) window.setTimeout(ui.boot, 250);
+      return;
+    }
+    if (ui.isLobbyVisible()) ui.startPolling();
+    else ui.refresh(false);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ui.boot, { once: true });
+  } else {
+    ui.boot();
+  }
+})();
 </script>
 </body>
 </html>
