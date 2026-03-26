@@ -15263,11 +15263,13 @@ Patrimoine Amazigh • Idles Amaziɣ
     <div id="ol-tournaments-list"></div>
     <div id="ol-tourn-empty" style="display:none;">
       <span>Aucun tournoi actif pour l'instant.</span>
-      <button id="ol-create-tournament-btn" class="ol-big-btn ol-btn-create" type="button" style="margin-top:8px;">
+    </div>
+    <div id="ol-tourn-create-wrap" style="margin-top:8px;">
+      <button id="ol-create-tournament-btn" class="ol-big-btn ol-btn-create" type="button">
         <span class="ol-btn-icon-box" aria-hidden="true">🏆</span>
         <span class="ol-btn-text-box">
           <span class="ol-btn-main">Créer un tournoi</span>
-          <span class="ol-btn-sub">Invitez 3+ joueurs</span>
+          <span class="ol-btn-sub">Invitez au moins 2 joueurs</span>
         </span>
         <span class="ol-btn-arrow" aria-hidden="true">›</span>
       </button>
@@ -30557,6 +30559,103 @@ window.TiddasSpectator       = SpectatorEnhanced;
 [data-theme="desert"]  .ol-tourn-card  { background: rgba(255,255,255,0.6) !important; border-color: rgba(150,80,10,0.14) !important; color: #2c1810 !important; }
 [data-theme="kabylie"] .ol-tourn-card-name,
 [data-theme="desert"]  .ol-tourn-card-name { color: #1c1409 !important; }
+
+/* ── Thèmes clairs : stat chips & métriques ─────────────────────── */
+[data-theme="kabylie"] .ol-tourn-stat,
+[data-theme="desert"]  .ol-tourn-stat {
+  background: rgba(180,100,10,0.08) !important;
+  border-color: rgba(150,80,10,0.28) !important;
+  color: #6b3a0a !important;
+}
+[data-theme="kabylie"] .ol-tourn-stat.is-live,
+[data-theme="desert"]  .ol-tourn-stat.is-live {
+  background: rgba(30,140,60,0.12) !important;
+  border-color: rgba(30,120,50,0.35) !important;
+  color: #1a6b30 !important;
+}
+[data-theme="kabylie"] .ol-tourn-stat.is-current,
+[data-theme="desert"]  .ol-tourn-stat.is-current {
+  background: rgba(180,100,0,0.12) !important;
+  border-color: rgba(150,80,10,0.42) !important;
+  color: #7c3d06 !important;
+}
+[data-theme="kabylie"] .ol-tourn-stat.is-finished,
+[data-theme="desert"]  .ol-tourn-stat.is-finished {
+  background: rgba(50,80,200,0.08) !important;
+  border-color: rgba(60,90,200,0.25) !important;
+  color: #2d3fa0 !important;
+}
+[data-theme="kabylie"] .ol-tourn-stat strong,
+[data-theme="desert"]  .ol-tourn-stat strong { color: inherit !important; }
+
+/* Métriques cartes */
+[data-theme="kabylie"] .ol-tourn-metric,
+[data-theme="desert"]  .ol-tourn-metric {
+  background: rgba(255,255,255,0.55) !important;
+  border-color: rgba(150,80,10,0.14) !important;
+}
+[data-theme="kabylie"] .ol-tourn-metric-label,
+[data-theme="desert"]  .ol-tourn-metric-label { color: rgba(60,30,5,0.55) !important; }
+[data-theme="kabylie"] .ol-tourn-metric-value,
+[data-theme="desert"]  .ol-tourn-metric-value { color: #1c1409 !important; }
+
+/* Description et timestamps */
+[data-theme="kabylie"] .ol-tourn-card-desc,
+[data-theme="desert"]  .ol-tourn-card-desc { color: rgba(40,20,5,0.72) !important; }
+[data-theme="kabylie"] .ol-tourn-card-updated,
+[data-theme="desert"]  .ol-tourn-card-updated { color: rgba(60,30,5,0.52) !important; }
+
+/* Boutons d'action dans la carte */
+[data-theme="kabylie"] .ol-tourn-btn,
+[data-theme="desert"]  .ol-tourn-btn {
+  border-color: rgba(150,80,10,0.22) !important;
+  background: rgba(255,255,255,0.5) !important;
+  color: #3a1c06 !important;
+}
+[data-theme="kabylie"] .ol-tourn-btn.primary,
+[data-theme="desert"]  .ol-tourn-btn.primary {
+  border-color: rgba(160,90,0,0.42) !important;
+  background: linear-gradient(135deg,rgba(200,130,20,0.18),rgba(170,100,10,0.14)) !important;
+  color: #7c3d06 !important;
+}
+[data-theme="kabylie"] .ol-tourn-btn.primary.is-live,
+[data-theme="desert"]  .ol-tourn-btn.primary.is-live {
+  border-color: rgba(30,130,60,0.38) !important;
+  background: linear-gradient(135deg,rgba(40,160,80,0.16),rgba(30,140,60,0.12)) !important;
+  color: #16622c !important;
+}
+[data-theme="kabylie"] .ol-tourn-btn.primary.is-view,
+[data-theme="desert"]  .ol-tourn-btn.primary.is-view {
+  border-color: rgba(50,80,200,0.3) !important;
+  background: linear-gradient(135deg,rgba(60,100,220,0.12),rgba(80,120,220,0.08)) !important;
+  color: #2a3da0 !important;
+}
+
+/* Badges */
+[data-theme="kabylie"] .ol-tourn-badge-waiting,
+[data-theme="desert"]  .ol-tourn-badge-waiting { background: rgba(180,110,10,0.12) !important; color: #7c3d06 !important; border-color: rgba(150,80,10,0.3) !important; }
+[data-theme="kabylie"] .ol-tourn-badge-active,
+[data-theme="desert"]  .ol-tourn-badge-active  { background: rgba(20,140,60,0.12) !important; color: #16622c !important; border-color: rgba(20,130,55,0.3) !important; }
+[data-theme="kabylie"] .ol-tourn-badge-spec,
+[data-theme="desert"]  .ol-tourn-badge-spec    { background: rgba(50,80,200,0.1) !important; color: #2a3da0 !important; border-color: rgba(60,90,200,0.25) !important; }
+
+/* Flags inline */
+[data-theme="kabylie"] .ol-tourn-inline-flag,
+[data-theme="desert"]  .ol-tourn-inline-flag { background: rgba(0,0,0,0.06) !important; color: #3a1c06 !important; }
+[data-theme="kabylie"] .ol-tourn-inline-flag.is-current,
+[data-theme="desert"]  .ol-tourn-inline-flag.is-current { background: rgba(180,110,10,0.14) !important; color: #7c3d06 !important; }
+[data-theme="kabylie"] .ol-tourn-inline-flag.is-member,
+[data-theme="desert"]  .ol-tourn-inline-flag.is-member  { background: rgba(20,140,60,0.1) !important; color: #16622c !important; }
+
+/* Bouton supprimer tournoi */
+[data-theme="kabylie"] .ol-tourn-delete-btn,
+[data-theme="desert"]  .ol-tourn-delete-btn {
+  border-color: rgba(180,40,20,0.28) !important;
+  background: rgba(255,255,255,0.45) !important;
+  color: #9b1a10 !important;
+}
+[data-theme="kabylie"] #ol-tourn-empty,
+[data-theme="desert"]  #ol-tourn-empty { color: rgba(40,20,5,0.6) !important; }
 </style>
 
 <script nonce="tiddas">
@@ -34755,6 +34854,70 @@ window.TiddasSpectator       = SpectatorEnhanced;
 .ol-tourn-stat.is-current{border-color:rgba(240,200,80,.42);color:#f3d36c;background:rgba(240,200,80,.12)}
 .ol-tourn-stat.is-finished{border-color:rgba(120,170,255,.28);color:#9fc0ff;background:rgba(90,130,255,.1)}
 .ol-tourn-refresh-btn.is-spinning{transform:rotate(360deg)}
+/* ── Bouton supprimer tournoi ─────────────────────────────────── */
+.ol-tourn-delete-btn {
+  border-color: rgba(220,60,40,0.28) !important;
+  background: rgba(220,60,40,0.08) !important;
+  color: rgba(255,140,120,0.9) !important;
+  min-width: 34px;
+  padding: 9px 10px;
+}
+.ol-tourn-delete-btn:hover {
+  background: rgba(220,60,40,0.18) !important;
+  border-color: rgba(220,60,40,0.45) !important;
+  color: #ff9080 !important;
+}
+/* ── Modale de confirmation suppression ───────────────────────── */
+#ol-tourn-delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: tdmFadeIn .2s ease;
+}
+@keyframes tdmFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.ol-tdm-inner {
+  background: var(--modal-surface, linear-gradient(160deg,#3a2d25 0%,#2a201a 100%));
+  border: 1.5px solid rgba(220,80,60,0.4);
+  border-radius: 18px;
+  padding: 22px 24px 20px;
+  width: min(92vw, 400px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: tdmSlideIn .22s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes tdmSlideIn { from { transform: scale(.94) translateY(8px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+.ol-tdm-icon  { font-size: 2rem; text-align: center; margin-bottom: 10px; }
+.ol-tdm-title { font: 800 1rem/1.2 var(--font-title,sans-serif); color: rgba(255,140,120,0.95); text-align: center; margin-bottom: 10px; }
+.ol-tdm-desc  { font: 500 .82rem/1.55 var(--font-ui,sans-serif); color: rgba(245,245,245,.72); text-align: center; margin-bottom: 18px; }
+.ol-tdm-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.ol-tdm-btn {
+  appearance: none;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font: 700 .82rem/1 var(--font-ui,sans-serif);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.ol-tdm-cancel  { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: rgba(245,245,245,.8); }
+.ol-tdm-cancel:hover { background: rgba(255,255,255,.1); }
+.ol-tdm-confirm { background: rgba(220,60,40,.22); border: 1px solid rgba(220,80,60,.45); color: rgba(255,140,120,.95); }
+.ol-tdm-confirm:hover { background: rgba(220,60,40,.35); border-color: rgba(220,80,60,.65); }
+/* thèmes clairs */
+[data-theme="kabylie"] .ol-tdm-inner,
+[data-theme="desert"]  .ol-tdm-inner { background: linear-gradient(160deg,#fdf6e8 0%,#f5e8cc 100%) !important; border-color: rgba(180,40,20,0.35) !important; }
+[data-theme="kabylie"] .ol-tdm-title,
+[data-theme="desert"]  .ol-tdm-title { color: #9b1a10 !important; }
+[data-theme="kabylie"] .ol-tdm-desc,
+[data-theme="desert"]  .ol-tdm-desc  { color: rgba(40,20,5,.75) !important; }
+[data-theme="kabylie"] .ol-tdm-cancel,
+[data-theme="desert"]  .ol-tdm-cancel { background: rgba(0,0,0,.04) !important; border-color: rgba(0,0,0,.15) !important; color: #3a1c06 !important; }
+[data-theme="kabylie"] .ol-tdm-confirm,
+[data-theme="desert"]  .ol-tdm-confirm { background: rgba(180,40,20,.12) !important; border-color: rgba(180,40,20,.35) !important; color: #9b1a10 !important; }
 .ol-tourn-card-final{display:grid;gap:10px;padding:14px 14px 12px;margin-bottom:10px}
 .ol-tourn-card-final.is-current{border-color:rgba(240,200,80,.45);box-shadow:0 0 0 1px rgba(240,200,80,.14),inset 0 1px 0 rgba(255,255,255,.04)}
 .ol-tourn-card-final.is-finished{border-color:rgba(120,170,255,.2)}
@@ -35013,7 +35176,8 @@ window.TiddasSpectator       = SpectatorEnhanced;
       liveCount: ui.findLiveTableCount({ tables: tables, bracket: bracket }),
       openSlot: !active && (ui.slotClaimable(match, 1, myId) || ui.slotClaimable(match, 2, myId)),
       updatedAt: match.updatedAt ? match.updatedAt.getTime() : (match.createdAt ? match.createdAt.getTime() : Date.now()),
-      rawTournament: data
+      rawTournament: data,
+      createdBy: String(data.createdBy || match.get('p1Id') || '')
     };
   };
 
@@ -35032,6 +35196,7 @@ window.TiddasSpectator       = SpectatorEnhanced;
     query.exists('tournament');
     query.notEqualTo('tournament', null);
     query.notEqualTo('tournament', '');
+    query.notEqualTo('status', 'deleted');
     query.descending('updatedAt');
     query.limit(ui.state.maxResults);
     var results = await query.find();
@@ -35185,6 +35350,91 @@ window.TiddasSpectator       = SpectatorEnhanced;
   var ui = window.TiddasTournamentFinalUi;
   if (!ui) return;
 
+  /* ── Confirmation et suppression d'un tournoi/salon ─────────────── */
+  ui.confirmDelete = function(item) {
+    var myId = ui.getPlayerId();
+    if (!ui.sameId(item.createdBy, myId)) {
+      ui.toast("Seul le créateur peut supprimer ce tournoi.", 2200);
+      return;
+    }
+
+    // Créer modale de confirmation légère
+    var existing = document.getElementById('ol-tourn-delete-modal');
+    if (existing) existing.parentNode.removeChild(existing);
+
+    var modal = document.createElement('div');
+    modal.id = 'ol-tourn-delete-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.innerHTML =
+      '<div class="ol-tdm-inner">' +
+        '<div class="ol-tdm-icon">🗑</div>' +
+        '<div class="ol-tdm-title">Supprimer ce tournoi ?</div>' +
+        '<div class="ol-tdm-desc">« ' + ui.esc(item.name) + ' » sera définitivement supprimé. Les joueurs connectés à ce salon seront déconnectés.</div>' +
+        '<div class="ol-tdm-actions">' +
+          '<button class="ol-tdm-btn ol-tdm-cancel" type="button">Annuler</button>' +
+          '<button class="ol-tdm-btn ol-tdm-confirm" type="button">Supprimer</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(modal);
+
+    var cancelBtn  = modal.querySelector('.ol-tdm-cancel');
+    var confirmBtn = modal.querySelector('.ol-tdm-confirm');
+    function close() { if (modal.parentNode) modal.parentNode.removeChild(modal); }
+    cancelBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(ev) { if (ev.target === modal) close(); });
+    confirmBtn.addEventListener('click', function() {
+      close();
+      ui.deleteTournament(item);
+    });
+    // fermer avec Escape
+    function onKey(ev) { if (ev.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); } }
+    document.addEventListener('keydown', onKey);
+  };
+
+  ui.deleteTournament = async function(item) {
+    if (!window.Parse || !window.BACK4APP_CLASS) {
+      ui.toast("Suppression impossible : backend non disponible.", 2200);
+      return;
+    }
+    var myId = ui.getPlayerId();
+    if (!myId) { ui.toast("Identifiant joueur manquant.", 2000); return; }
+    ui.toast("Suppression en cours…", 1500);
+    try {
+      var query = new window.Parse.Query(window.BACK4APP_CLASS);
+      var match = await query.get(item.matchId);
+      if (!match) throw new Error('not-found');
+
+      // Vérification côté serveur que c'est bien le créateur
+      var tData = ui.parseTournament(match.get('tournament') || null);
+      var storedCreator = (tData && tData.createdBy) ? String(tData.createdBy) : String(match.get('p1Id') || '');
+      if (storedCreator && !ui.sameId(storedCreator, myId)) {
+        ui.toast("Seul le créateur peut supprimer ce tournoi.", 2200);
+        return;
+      }
+
+      // Nettoyer le champ tournament et marquer comme supprimé
+      match.set('tournament', null);
+      match.set('status', 'deleted');
+      match.set('deletedAt', new Date().toISOString());
+      match.set('deletedBy', myId);
+      await match.save();
+
+      ui.toast("✅ Tournoi supprimé.", 2000);
+      ui.refreshSoon();
+    } catch (err) {
+      console.warn('[Tiddas] deleteTournament error', err);
+      ui.toast("Erreur lors de la suppression.", 2200);
+    }
+  };
+})();
+</script>
+<script nonce="tiddas">
+(function(){
+  'use strict';
+  var ui = window.TiddasTournamentFinalUi;
+  if (!ui) return;
+
   ui.isLobbyVisible = function() {
     var lobby = document.getElementById('online-lobby-area');
     if (!lobby) return false;
@@ -35320,6 +35570,7 @@ window.TiddasSpectator       = SpectatorEnhanced;
     '<div class="ol-tourn-card-foot">' +
       '<div class="ol-tourn-card-updated">Maj ' + ui.esc(ui.formatAgo(item.updatedAt)) + '</div>' +
       '<div class="ol-tourn-card-actions">' +
+        (ui.sameId(item.createdBy, ui.getPlayerId()) ? '<button class="ol-tourn-btn ol-tourn-delete-btn" type="button" data-role="tourn-delete" title="Supprimer ce tournoi">🗑</button>' : '') +
         '<button class="ol-tourn-btn" type="button" data-role="tourn-bracket">Tableau</button>' +
         '<button class="ol-tourn-btn ' + ui.esc(action.className) + '" type="button" data-role="tourn-main">' + ui.esc(action.label) + '</button>' +
       '</div>' +
@@ -35515,6 +35766,8 @@ window.TiddasSpectator       = SpectatorEnhanced;
       if (bracketBtn) bracketBtn.addEventListener('click', function(event) { event.stopPropagation(); ui.openBracket(item, true); });
       var mainBtn = card.querySelector('[data-role="tourn-main"]');
       if (mainBtn) mainBtn.addEventListener('click', function(event) { event.stopPropagation(); ui.handlePrimaryAction(item); });
+      var deleteBtn = card.querySelector('[data-role="tourn-delete"]');
+      if (deleteBtn) deleteBtn.addEventListener('click', function(event) { event.stopPropagation(); ui.confirmDelete(item); });
       listEl.appendChild(card);
     });
   };
@@ -35662,12 +35915,16 @@ window.TiddasSpectator       = SpectatorEnhanced;
     ui.state.bootAttempts += 1;
     ui.bindControls();
     ui.bindLifecycle();
+    // Lancer un refresh immédiat dès le premier boot pour peupler la liste
+    // sans attendre que le joueur crée un salon
+    if (ui.state.bootAttempts === 1) {
+      ui.refresh(false);
+    }
     if (!ui.overridePatch()) {
       if (ui.state.bootAttempts < 80) window.setTimeout(ui.boot, 250);
       return;
     }
     if (ui.isLobbyVisible()) ui.startPolling();
-    else ui.refresh(false);
   };
 
   if (document.readyState === 'loading') {
