@@ -16048,8 +16048,8 @@ const ONLINE_ENABLED = true;
 // ── Back4App (Online Multiplayer) ─────────────────────────
 // Obtenir ces clés dans Back4App → App Settings → Security & Keys
 // NE PAS mettre la Master Key ici.
-const BACK4APP_APP_ID     = "HNFUjKRVKecH7BCRgxJ6qsInm6paFeDzQchUcHH8"; // ← remplacer
-const BACK4APP_JS_KEY     = "yaDloLtSqIlMFYzZTQaNyIs3vwJX5JjkClgkQM1t"; // ← remplacer (JS Key)
+const BACK4APP_APP_ID     = "fGH3NIwrzQVOoVtBtYP7BZMXq0WwyHz1yG8z9SQM"; // ← remplacer
+const BACK4APP_JS_KEY     = "AkExyeRfL663ZAmxY7BV5QTrjD0BJMYm0mPWOjeP"; // ← remplacer (JS Key)
 const BACK4APP_SERVER_URL = "https://parseapi.back4app.com";              // URL API par défaut
 const BACK4APP_CLASS      = "GameMatch"; // Nom de la class/table Back4App
 window.BACK4APP_CLASS = BACK4APP_CLASS;
@@ -19302,10 +19302,10 @@ function showWinnerAnimation(message, name, isDefeat) {
 }
 
 
-function hideWinnerAnimation() {
+function hideWinnerAnimation(nextScreen) {
 stopSpectatorMode();
 winnerOverlay.classList.remove('active', 'wo-defeat');
-showScreen('version-selection-area');
+if (nextScreen) showScreen(nextScreen);
 }
 
 function showStatusError(messageKey) {
@@ -20411,7 +20411,22 @@ function handleReplayClick() {
 
   // Online : déléguer intégralement à RematchSystem (P1-C)
   if (gameMode === 'online' && online && online.connected) {
-    if (window.TiddasPatch && window.TiddasPatch.RematchSystem) {
+    try { showScreen('game-play-area'); } catch(_) {}
+    if (window.TiddasOnlineProd && window.TiddasOnlineProd.rematch && typeof window.TiddasOnlineProd.rematch.setReady === 'function') {
+      try {
+        const prodReady = window.TiddasOnlineProd.rematch.setReady(true);
+        if (prodReady && typeof prodReady.catch === 'function') prodReady.catch(() => {});
+      } catch(_) {}
+      return;
+    }
+    if (typeof window.onlineSetRematchReady === 'function') {
+      try {
+        const legacyReady = window.onlineSetRematchReady(true);
+        if (legacyReady && typeof legacyReady.catch === 'function') legacyReady.catch(() => {});
+      } catch(_) {}
+      return;
+    }
+    if (window.TiddasPatch && window.TiddasPatch.RematchSystem && typeof window.TiddasPatch.RematchSystem.propose === 'function') {
       window.TiddasPatch.RematchSystem.propose();
     }
     return;
@@ -34304,6 +34319,10 @@ window.TiddasSpectator       = SpectatorEnhanced;
         else if (peer) msgEl.textContent = "L'adversaire est prêt — confirme ta revanche.";
         else msgEl.textContent = 'Partie terminée. Clique quand tu es prêt.';
       }
+      if (mine && peer) {
+        try { hideWinnerAnimation(); } catch (_) {}
+        try { showScreen('game-play-area'); } catch (_) {}
+      }
     },
     hideRematchBanner: function() {
       const banner = document.getElementById('tpatch-rematch-banner');
@@ -34688,6 +34707,8 @@ window.TiddasSpectator       = SpectatorEnhanced;
       log('info', 'rematch.autostart', { key: key });
       // Mettre à jour la bannière : les deux joueurs sont prêts → lancement
       UI.syncRematchUi(match);
+      try { hideWinnerAnimation(); } catch(_) {}
+      try { showScreen('game-play-area'); } catch(_) {}
       if (typeof window.onlineStartMatch_Back4App === 'function') {
         try { await window.onlineStartMatch_Back4App(); } catch(e) {
           log('warn', 'rematch.autostart.failed', { err: String(e && e.message || e) });
@@ -35094,6 +35115,17 @@ window.TiddasSpectator       = SpectatorEnhanced;
 .ol-tourn-inline-flag.is-current{background:rgba(240,200,80,.16);color:#f3d36c}
 .ol-tourn-inline-flag.is-member{background:rgba(100,220,120,.14);color:#88e8a0}
 .ol-tourn-card-desc{margin-top:4px;color:rgba(245,245,245,.65);font:400 .75rem/1.45 var(--font-ui,sans-serif)}
+.ol-tourn-stage-line{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ol-tourn-stage-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:rgba(245,245,245,.72);font:700 .64rem/1 var(--font-ui,sans-serif);letter-spacing:.03em;text-transform:uppercase}
+.ol-tourn-stage-pill.is-live{border-color:rgba(100,220,120,.28);background:rgba(76,186,107,.14);color:#9bf2b0}
+.ol-tourn-stage-pill.is-waiting{border-color:rgba(240,200,80,.22);background:rgba(240,200,80,.1);color:#f3d36c}
+.ol-tourn-stage-pill.is-finished{border-color:rgba(120,170,255,.24);background:rgba(80,120,255,.12);color:#b7ceff}
+.ol-tourn-stage-pill.is-ready{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.82)}
+.ol-tourn-progress{display:grid;gap:6px;margin-top:10px}
+.ol-tourn-progress-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:rgba(245,245,245,.55);font:700 .66rem/1 var(--font-ui,sans-serif);letter-spacing:.04em;text-transform:uppercase}
+.ol-tourn-progress-track{position:relative;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06)}
+.ol-tourn-progress-fill{position:absolute;inset:0 auto 0 0;height:100%;border-radius:inherit;background:linear-gradient(90deg,rgba(240,200,80,.72),rgba(240,200,80,.3))}
+.ol-tourn-progress-note{color:rgba(245,245,245,.55);font:600 .7rem/1.4 var(--font-ui,sans-serif)}
 .ol-tourn-card-meta-row{display:flex;flex-wrap:wrap;gap:6px}
 .ol-tourn-metric{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);min-width:52px;text-align:center}
 .ol-tourn-metric-label{color:rgba(245,245,245,.45);font:700 .58rem/1 var(--font-ui,sans-serif);text-transform:uppercase;letter-spacing:.06em}
@@ -35108,13 +35140,37 @@ window.TiddasSpectator       = SpectatorEnhanced;
 .ol-tourn-btn.primary:hover{background:linear-gradient(135deg,rgba(240,200,80,.28),rgba(214,155,42,.22));border-color:rgba(240,200,80,.55)}
 .ol-tourn-btn.primary.is-live{border-color:rgba(100,220,120,.38);background:linear-gradient(135deg,rgba(76,186,107,.2),rgba(100,220,120,.14));color:#9bf2b0}
 .ol-tourn-btn.primary.is-view{border-color:rgba(120,170,255,.32);background:linear-gradient(135deg,rgba(80,120,255,.16),rgba(120,170,255,.12));color:#b7ceff}
+.ol-tourn-btn.primary.is-start{border-color:rgba(90,220,120,.34);background:linear-gradient(135deg,rgba(76,186,107,.22),rgba(90,220,120,.12));color:#9bf2b0}
 .tourn-overlay-subtitle{margin:-4px 0 12px;color:rgba(245,245,245,.62);font:600 .78rem/1.4 var(--font-ui,sans-serif)}
 .tourn-overlay-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .tourn-summary-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.84);font:700 .72rem/1 var(--font-ui,sans-serif)}
 .tourn-summary-chip strong{color:var(--modal-heading,#f0c850);font-weight:800}
+.tourn-overlay-stagebar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.tourn-stage-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:rgba(245,245,245,.8);font:700 .72rem/1 var(--font-ui,sans-serif)}
+.tourn-stage-chip.is-current{border-color:rgba(240,200,80,.34);background:rgba(240,200,80,.12);color:#f3d36c}
+.tourn-stage-chip.is-done{border-color:rgba(90,220,120,.3);background:rgba(76,186,107,.14);color:#9bf2b0}
+.tourn-stage-chip.is-locked{color:rgba(245,245,245,.48)}
 .tourn-participant-chip.winner{border-color:rgba(240,200,80,.45);background:rgba(240,200,80,.16);color:#f6dc8b}
 .tourn-participant-chip.me::before{content:"Vous";display:inline-flex;align-items:center;justify-content:center;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);font:700 .62rem/1 var(--font-ui,sans-serif)}
 .tourn-bracket-empty{display:grid;place-items:center;min-height:120px;border-radius:14px;border:1px dashed rgba(240,200,80,.22);background:rgba(255,255,255,.03);color:rgba(245,245,245,.56);text-align:center;padding:18px;font:600 .82rem/1.5 var(--font-ui,sans-serif)}
+.bracket-container.tourn-bracket-final{display:flex;gap:14px;align-items:stretch;overflow-x:auto;padding:2px 2px 10px}
+.tourn-bracket-final .bracket-round{min-width:220px;display:grid;gap:10px;padding:12px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.tourn-bracket-final .bracket-round-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#f3d36c;font:800 .74rem/1 var(--font-ui,sans-serif);letter-spacing:.05em;text-transform:uppercase}
+.tourn-round-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:rgba(240,200,80,.12);border:1px solid rgba(240,200,80,.18);color:#f3d36c;font:700 .62rem/1 var(--font-ui,sans-serif)}
+.tourn-bracket-final .bracket-match{display:grid;gap:2px;padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.12)}
+.tourn-bracket-final .bracket-match.is-ready{border-color:rgba(240,200,80,.2);background:rgba(240,200,80,.06)}
+.tourn-bracket-final .bracket-match.live{border-color:rgba(90,220,120,.3);background:rgba(76,186,107,.12)}
+.tourn-bracket-final .bracket-match.is-done{border-color:rgba(120,170,255,.22);background:rgba(90,130,255,.08)}
+.tourn-bracket-final .bracket-player{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:7px 0}
+.tourn-bracket-final .bracket-player.is-bye .bracket-player-name{font-style:italic;color:rgba(245,245,245,.42)}
+.tourn-bracket-final .bracket-player-avatar{width:28px;height:28px}
+.tourn-bracket-final .bracket-player-score{min-width:26px;text-align:right;font:800 .66rem/1 var(--font-ui,sans-serif);color:rgba(245,245,245,.55)}
+.tourn-match-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px 3px;color:rgba(245,245,245,.45);font:700 .62rem/1 var(--font-ui,sans-serif);text-transform:uppercase;letter-spacing:.05em}
+.tourn-match-badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(245,245,245,.7)}
+.tourn-match-badge.is-live{border-color:rgba(90,220,120,.28);background:rgba(76,186,107,.14);color:#9bf2b0}
+.tourn-match-badge.is-ready{border-color:rgba(240,200,80,.22);background:rgba(240,200,80,.1);color:#f3d36c}
+.tourn-match-badge.is-done{border-color:rgba(120,170,255,.24);background:rgba(90,130,255,.12);color:#b7ceff}
+.tourn-match-badge.is-locked{color:rgba(245,245,245,.48)}
 /* ── Responsive tournois ─────────────────────────────────────────────── */
 @media (max-width:480px){
   .ol-tourn-card-final{padding:10px 10px 10px}
@@ -35122,11 +35178,17 @@ window.TiddasSpectator       = SpectatorEnhanced;
   .ol-tourn-card-head .ol-tourn-card-badge{grid-column:1/-1;justify-self:start}
   .ol-tourn-card-name{max-width:calc(100vw - 100px)}
   .ol-tourn-card-desc{font-size:.72rem}
+  .ol-tourn-stage-line{gap:4px}
+  .ol-tourn-stage-pill{font-size:.58rem;padding:3px 6px}
+  .ol-tourn-progress-note{font-size:.66rem}
   .ol-tourn-metric{min-width:44px;padding:5px 7px}
   .ol-tourn-metric-value{font-size:.78rem}
   .ol-tourn-card-foot{flex-direction:column;align-items:stretch}
   .ol-tourn-card-actions{justify-content:stretch;gap:6px}
   .ol-tourn-btn{flex:1 1 0;justify-content:center;padding:9px 6px;font-size:.72rem;min-width:0}
+  .tourn-overlay-stagebar{gap:6px}
+  .tourn-stage-chip{padding:7px 8px;font-size:.66rem}
+  .tourn-bracket-final .bracket-round{min-width:min(84vw,240px)}
 }
 @media (max-width:640px) and (min-width:481px){
   .ol-tourn-card-head{grid-template-columns:auto 1fr}
@@ -35153,7 +35215,11 @@ window.TiddasSpectator       = SpectatorEnhanced;
       currentOverlayTournament: null,
       controlsBound: false,
       lifecycleBound: false,
-      joinBusy: false
+      joinBusy: false,
+      syncBusy: false,
+      currentMatchCache: null,
+      lastSyncedTournamentKey: '',
+      lastWinnerSyncKey: ''
     }
   };
 
@@ -35210,6 +35276,39 @@ window.TiddasSpectator       = SpectatorEnhanced;
     return raw;
   };
 
+  ui.clonePlayer = function(player) {
+    if (!player) return null;
+    var id = String(player.id == null ? '' : player.id).trim();
+    var name = String(player.name == null ? '' : player.name).trim();
+    if (!name) name = id ? 'Joueur' : 'TBD';
+    return { id: id, name: name, ready: player.ready !== false };
+  };
+
+  ui.makePlaceholderPlayer = function(label) {
+    return { id: '', name: String(label || 'TBD'), ready: true };
+  };
+
+  ui.isBye = function(player) {
+    return !!player && !String(player.id || '').trim() && String(player.name || '').trim().toUpperCase() === 'BYE';
+  };
+
+  ui.isRealPlayer = function(player) {
+    return !!player && !!String(player.id || '').trim();
+  };
+
+  ui.playerLabel = function(player) {
+    if (!player) return 'TBD';
+    if (ui.isBye(player)) return 'BYE';
+    return String(player.name || 'Joueur').trim() || 'Joueur';
+  };
+
+  ui.playerAvatarText = function(player) {
+    var label = ui.playerLabel(player);
+    if (!label) return '?';
+    if (label === 'BYE') return 'B';
+    return label.charAt(0).toUpperCase();
+  };
+
   ui.normalizeParticipants = function(list) {
     var out = [];
     (Array.isArray(list) ? list : []).forEach(function(participant) {
@@ -35234,6 +35333,26 @@ window.TiddasSpectator       = SpectatorEnhanced;
     return out;
   };
 
+  ui.matchParticipants = function(match) {
+    var out = [];
+    if (!match || !match.get) return out;
+    function push(slot, fallbackName) {
+      var id = String(match.get('p' + slot + 'Id') || '').trim();
+      if (!id) return;
+      var name = String(match.get('p' + slot + 'Name') || '').trim() || fallbackName;
+      out.push({ id: id, name: name, ready: true });
+    }
+    try {
+      push(1, 'Joueur 1');
+      push(2, 'Joueur 2');
+    } catch (_) {}
+    return out;
+  };
+
+  ui.mergeParticipantsWithMatch = function(participants, match) {
+    return ui.normalizeParticipants((Array.isArray(participants) ? participants : []).concat(ui.matchParticipants(match)));
+  };
+
   ui.collectParticipantIds = function(match, participants) {
     var ids = [];
     function push(id) {
@@ -35250,27 +35369,212 @@ window.TiddasSpectator       = SpectatorEnhanced;
     return ids;
   };
 
-  ui.generateBracket = function(participants) {
-    if (window.TiddasTournament && typeof window.TiddasTournament._generateBracket === 'function') {
-      return window.TiddasTournament._generateBracket(participants);
-    }
-    var players = (participants || []).slice();
+  ui.nextBracketSize = function(count) {
     var size = 1;
-    while (size < players.length) size *= 2;
-    while (players.length < size) players.push({ id: null, name: 'BYE', ready: true });
+    var safeCount = Math.max(0, Number(count || 0));
+    while (size < safeCount) size *= 2;
+    return Math.max(2, size);
+  };
+
+  ui.seedOrder = function(size) {
+    if (size <= 1) return [1];
+    var previous = ui.seedOrder(size / 2);
+    var out = [];
+    previous.forEach(function(seed) {
+      out.push(seed);
+      out.push(size + 1 - seed);
+    });
+    return out;
+  };
+
+  ui.seedParticipants = function(participants) {
+    var list = ui.normalizeParticipants(participants || []);
+    var size = ui.nextBracketSize(list.length);
+    var order = ui.seedOrder(size);
+    var pool = list.slice();
+    while (pool.length < size) pool.push(ui.makePlaceholderPlayer('BYE'));
+    var slots = new Array(size);
+    for (var i = 0; i < order.length; i++) {
+      slots[i] = ui.clonePlayer(pool[order[i] - 1]) || ui.makePlaceholderPlayer('BYE');
+    }
+    return slots;
+  };
+
+  ui.normalizeMatchPlayer = function(raw) {
+    if (!raw) return null;
+    var player = ui.clonePlayer(raw);
+    if (!player.id) {
+      var label = String(player.name || '').trim().toUpperCase();
+      if (label === 'BYE') player.name = 'BYE';
+      else if (!label || label === '?' || label === 'PLAYER') player.name = 'TBD';
+    }
+    return player;
+  };
+
+  ui.normalizeMatch = function(raw, roundIndex, matchIndex) {
+    var winnerId = String(
+      raw && raw.winner && raw.winner.id != null
+        ? raw.winner.id
+        : (raw && raw.winnerId != null ? raw.winnerId : '')
+    ).trim();
+    return {
+      id: 'r' + roundIndex + 'm' + matchIndex,
+      roundIndex: roundIndex,
+      matchIndex: matchIndex,
+      p1: ui.normalizeMatchPlayer(raw && raw.p1),
+      p2: ui.normalizeMatchPlayer(raw && raw.p2),
+      winner: null,
+      status: 'locked',
+      savedStatus: String(raw && raw.status || '').trim().toLowerCase(),
+      savedWinnerId: winnerId
+    };
+  };
+
+  ui.cloneBracket = function(bracket) {
+    var rounds = [];
+    (Array.isArray(bracket) ? bracket : []).forEach(function(round, roundIndex) {
+      var normalizedRound = [];
+      (Array.isArray(round) ? round : []).forEach(function(match, matchIndex) {
+        normalizedRound.push(ui.normalizeMatch(match || {}, roundIndex, matchIndex));
+      });
+      if (normalizedRound.length) rounds.push(normalizedRound);
+    });
+    return rounds;
+  };
+
+  ui.generateBracket = function(participants) {
+    var players = ui.seedParticipants(participants || []);
+    if (players.length < 2) return [];
     var rounds = [];
     var current = [];
     for (var i = 0; i < players.length; i += 2) {
-      current.push({ p1: players[i], p2: players[i + 1], winner: null, status: 'pending' });
+      current.push(ui.normalizeMatch({
+        p1: players[i],
+        p2: players[i + 1],
+        winner: null,
+        status: 'ready'
+      }, 0, i / 2));
     }
     rounds.push(current);
     while (current.length > 1) {
       var next = [];
-      for (var j = 0; j < current.length; j += 2) next.push({ p1: null, p2: null, winner: null, status: 'pending' });
+      for (var j = 0; j < current.length; j += 2) {
+        next.push(ui.normalizeMatch({ p1: null, p2: null, winner: null, status: 'locked' }, rounds.length, j / 2));
+      }
       rounds.push(next);
       current = next;
     }
+    return ui.resolveBracket(rounds);
+  };
+
+  ui.resolveBracket = function(bracket) {
+    var rounds = ui.cloneBracket(bracket);
+    if (!rounds.length) return [];
+
+    for (var roundIndex = 1; roundIndex < rounds.length; roundIndex++) {
+      rounds[roundIndex].forEach(function(match) {
+        match.p1 = null;
+        match.p2 = null;
+        match.winner = null;
+        match.status = 'locked';
+      });
+    }
+
+    for (var ri = 0; ri < rounds.length; ri++) {
+      var round = rounds[ri];
+      round.forEach(function(match, matchIndex) {
+        var p1 = ui.normalizeMatchPlayer(match.p1);
+        var p2 = ui.normalizeMatchPlayer(match.p2);
+        var hasP1 = ui.isRealPlayer(p1);
+        var hasP2 = ui.isRealPlayer(p2);
+        var p1Bye = ui.isBye(p1);
+        var p2Bye = ui.isBye(p2);
+        var winner = null;
+        var status = 'locked';
+
+        if (!p1 && !p2) {
+          status = 'locked';
+        } else if ((hasP1 || p1Bye) && (hasP2 || p2Bye)) {
+          if (p1Bye && hasP2) {
+            winner = ui.clonePlayer(p2);
+            status = 'done';
+          } else if (p2Bye && hasP1) {
+            winner = ui.clonePlayer(p1);
+            status = 'done';
+          } else if (p1Bye && p2Bye) {
+            status = 'locked';
+          } else if (hasP1 && hasP2) {
+            if (ui.sameId(match.savedWinnerId, p1.id)) {
+              winner = ui.clonePlayer(p1);
+              status = 'done';
+            } else if (ui.sameId(match.savedWinnerId, p2.id)) {
+              winner = ui.clonePlayer(p2);
+              status = 'done';
+            } else if (match.savedStatus === 'live') {
+              status = 'live';
+            } else {
+              status = 'ready';
+            }
+          }
+        } else if (hasP1 || hasP2) {
+          status = 'locked';
+        }
+
+        match.p1 = p1;
+        match.p2 = p2;
+        match.winner = winner;
+        match.status = status;
+
+        if (winner && rounds[ri + 1]) {
+          var nextMatch = rounds[ri + 1][Math.floor(matchIndex / 2)];
+          if (nextMatch) {
+            if (matchIndex % 2 === 0) nextMatch.p1 = ui.clonePlayer(winner);
+            else nextMatch.p2 = ui.clonePlayer(winner);
+          }
+        }
+      });
+    }
     return rounds;
+  };
+
+  ui.matchPlayerIds = function(match) {
+    var ids = [];
+    if (ui.isRealPlayer(match && match.p1)) ids.push(String(match.p1.id));
+    if (ui.isRealPlayer(match && match.p2)) ids.push(String(match.p2.id));
+    return ids.sort();
+  };
+
+  ui.findBracketMatch = function(bracket, playerAId, playerBId, includeDone) {
+    var target = [String(playerAId || '').trim(), String(playerBId || '').trim()].filter(Boolean).sort();
+    if (target.length !== 2) return null;
+    for (var ri = 0; ri < (bracket || []).length; ri++) {
+      for (var mi = 0; mi < (bracket[ri] || []).length; mi++) {
+        var match = bracket[ri][mi];
+        if (!match) continue;
+        if (!includeDone && match.status === 'done') continue;
+        var ids = ui.matchPlayerIds(match);
+        if (ids.length === 2 && ids[0] === target[0] && ids[1] === target[1]) {
+          return { roundIndex: ri, matchIndex: mi, match: match };
+        }
+      }
+    }
+    return null;
+  };
+
+  ui.markLiveMatch = function(bracket, matchRecord) {
+    var rounds = ui.cloneBracket(bracket);
+    rounds.forEach(function(round) {
+      round.forEach(function(match) {
+        if (match.status === 'live') match.status = 'ready';
+      });
+    });
+    if (!matchRecord || !matchRecord.get) return ui.resolveBracket(rounds);
+    if (String(matchRecord.get('status') || '') !== 'playing') return ui.resolveBracket(rounds);
+    var p1Id = String(matchRecord.get('p1Id') || '').trim();
+    var p2Id = String(matchRecord.get('p2Id') || '').trim();
+    var found = ui.findBracketMatch(rounds, p1Id, p2Id, false);
+    if (found && found.match && found.match.status !== 'done') found.match.status = 'live';
+    return ui.resolveBracket(rounds);
   };
 
   ui.getRoundName = function(roundIndex, totalRounds) {
@@ -35279,6 +35583,66 @@ window.TiddasSpectator       = SpectatorEnhanced;
     if (remaining === 2) return 'Demi-finales';
     if (remaining === 3) return 'Quarts';
     return 'Tour ' + (Number(roundIndex || 0) + 1);
+  };
+
+  ui.summarizeBracket = function(bracket) {
+    var rounds = Array.isArray(bracket) ? bracket : [];
+    var totalRounds = rounds.length;
+    var totalMatches = 0;
+    var completedMatches = 0;
+    var liveMatches = 0;
+    var readyMatches = 0;
+    var lockedMatches = 0;
+    var currentRound = totalRounds ? totalRounds - 1 : 0;
+    var foundOpenRound = false;
+    var roundStates = [];
+
+    rounds.forEach(function(round, roundIndex) {
+      var done = 0;
+      var live = 0;
+      var ready = 0;
+      var locked = 0;
+      totalMatches += round.length;
+      round.forEach(function(match) {
+        if (match.status === 'done') done += 1;
+        else if (match.status === 'live') live += 1;
+        else if (match.status === 'ready') ready += 1;
+        else locked += 1;
+      });
+      completedMatches += done;
+      liveMatches += live;
+      readyMatches += ready;
+      lockedMatches += locked;
+      if (!foundOpenRound && done < round.length) {
+        currentRound = roundIndex;
+        foundOpenRound = true;
+      }
+      roundStates.push({
+        index: roundIndex,
+        label: ui.getRoundName(roundIndex, totalRounds),
+        total: round.length,
+        done: done,
+        live: live,
+        ready: ready,
+        locked: locked
+      });
+    });
+
+    var finalMatch = totalRounds ? rounds[totalRounds - 1][0] : null;
+    var winner = finalMatch && finalMatch.status === 'done' ? ui.clonePlayer(finalMatch.winner) : null;
+
+    return {
+      totalRounds: totalRounds,
+      totalMatches: totalMatches,
+      completedMatches: completedMatches,
+      liveMatches: liveMatches,
+      readyMatches: readyMatches,
+      lockedMatches: lockedMatches,
+      currentRound: currentRound,
+      progressPercent: totalMatches ? Math.max(0, Math.min(100, Math.round((completedMatches / totalMatches) * 100))) : 0,
+      roundStates: roundStates,
+      winner: winner
+    };
   };
 
   ui.formatAgo = function(timestamp) {
@@ -35304,6 +35668,85 @@ window.TiddasSpectator       = SpectatorEnhanced;
     }
   };
 
+  ui.hydrateTournament = function(raw, match) {
+    var source = ui.parseTournament(raw) || {};
+    var participants = ui.normalizeParticipants(source.participants || []);
+    var tables = Array.isArray(source.tables) ? source.tables.slice() : [];
+    var isClosed = !!(source.active || source.completedAt || source.winnerId);
+    var bracket = [];
+
+    if (!isClosed) {
+      bracket = ui.generateBracket(participants);
+    } else if (Array.isArray(source.bracket) && source.bracket.length) {
+      bracket = ui.resolveBracket(source.bracket);
+    } else {
+      bracket = ui.generateBracket(participants);
+    }
+
+    if (match) bracket = ui.markLiveMatch(bracket, match);
+
+    var summary = ui.summarizeBracket(bracket);
+    var winner = summary.winner;
+    var active = !!source.active || (match && String(match.get('status') || '') === 'playing');
+    if (winner) active = false;
+    var completed = !!(source.completedAt || source.winnerId || winner);
+    var statusTone = completed ? 'finished' : (active ? (summary.liveMatches > 0 ? 'live' : 'ready') : 'waiting');
+    var statusText = completed
+      ? (winner ? ('Vainqueur: ' + ui.playerLabel(winner)) : 'Tournoi termine')
+      : (active
+          ? (summary.liveMatches > 0 ? 'Match en cours' : 'Tour pret')
+          : (participants.length >= 2 ? 'Pret a lancer' : 'Inscriptions ouvertes'));
+
+    return {
+      id: String(source.id || ''),
+      name: String(source.name || (match && match.get ? ('Tournoi ' + (match.get('code') || '?')) : 'Tournoi')).trim(),
+      createdBy: String(source.createdBy || ''),
+      createdAt: Number(source.createdAt || Date.now()),
+      startedAt: Number(source.startedAt || 0),
+      completedAt: source.completedAt || (winner ? Date.now() : null),
+      participants: participants,
+      tables: tables,
+      bracket: bracket,
+      currentRound: Number(summary.currentRound || 0),
+      active: !!active,
+      completed: !!completed,
+      winnerId: String((hasStarted && source.winnerId) || (winner && winner.id) || '').trim(),
+      winnerName: String((hasStarted && source.winnerName) || (winner && winner.name) || '').trim(),
+      summary: summary,
+      statusTone: statusTone,
+      statusText: statusText,
+      roundLabel: summary.totalRounds ? ui.getRoundName(summary.currentRound, summary.totalRounds) : 'Tour 1'
+    };
+  };
+
+  ui.serializeTournament = function(tournament) {
+    var hydrated = ui.hydrateTournament(tournament, null);
+    return {
+      active: !!hydrated.active,
+      id: hydrated.id || '',
+      name: hydrated.name || 'Tournoi',
+      participants: ui.normalizeParticipants(hydrated.participants || []),
+      tables: Array.isArray(hydrated.tables) ? hydrated.tables.slice() : [],
+      bracket: (hydrated.bracket || []).map(function(round) {
+        return (round || []).map(function(match) {
+          return {
+            p1: ui.clonePlayer(match.p1),
+            p2: ui.clonePlayer(match.p2),
+            winner: ui.clonePlayer(match.winner),
+            status: String(match.status || 'locked')
+          };
+        });
+      }),
+      currentRound: Number(hydrated.currentRound || 0),
+      createdBy: hydrated.createdBy || '',
+      createdAt: hydrated.createdAt || Date.now(),
+      startedAt: hydrated.startedAt || 0,
+      completedAt: hydrated.completed ? (hydrated.completedAt || Date.now()) : null,
+      winnerId: hydrated.completed ? hydrated.winnerId : '',
+      winnerName: hydrated.completed ? hydrated.winnerName : ''
+    };
+  };
+
   ui.findLiveTableCount = function(item) {
     var count = 0;
     (item.tables || []).forEach(function(table) {
@@ -35325,55 +35768,60 @@ window.TiddasSpectator       = SpectatorEnhanced;
   var ui = window.TiddasTournamentFinalUi;
   if (!ui) return;
 
-  ui.buildTournamentItem = function(match) {
-    // Garde client-side : rejeter les entrées vides/nulles que le filtre Parse ne peut pas exclure
-    var _rawTourn = match && match.get ? match.get('tournament') : null;
-    if (!_rawTourn || _rawTourn === 'null') return null;
-    var data = ui.parseTournament(_rawTourn);
-    if (!data) return null;
-    data.participants = ui.normalizeParticipants(data.participants || []);
-    if (!data.participants.length && !(match.get('p1Id') || match.get('p2Id'))) return null;
+  ui.isLobbyVisible = function() {
+    var lobby = document.getElementById('online-lobby-area');
+    if (!lobby) return false;
+    var style = window.getComputedStyle ? window.getComputedStyle(lobby) : null;
+    return lobby.classList.contains('active') || lobby.style.display !== 'none' || (style && style.display !== 'none' && style.visibility !== 'hidden');
+  };
 
-    var myId = ui.getPlayerId();
-    var bracket = Array.isArray(data.bracket) ? data.bracket : [];
-    var tables = Array.isArray(data.tables) ? data.tables : [];
-    var status = String(match.get('status') || 'waiting');
-    var active = !!data.active || status === 'playing';
-    var completed = !!(data.completedAt || data.winnerId || (status === 'finished' && !active));
-    var currentRound = Number.isFinite(Number(data.currentRound)) ? Number(data.currentRound) : 0;
-    // tableCount = nombre de tables actives ou nombre de matchs du 1er tour du bracket
-    var tableCount = tables.length > 0
-      ? tables.length
-      : (bracket[0] && bracket[0].length > 0
-          ? bracket[0].length
-          : (data.participants.length >= 2 ? Math.max(1, Math.floor(data.participants.length / 2)) : 0));
-    var amIn = data.participants.some(function(participant) {
-      return ui.sameId(participant && participant.id, myId);
-    });
+  ui.patchStaticLabels = function() {
+    var title = document.querySelector('#ol-tournaments-wrap .ol-tourn-title');
+    if (title && !String(title.textContent || '').trim()) title.textContent = 'Tournois';
+    var refreshBtn = document.getElementById('ol-tourn-refresh');
+    if (refreshBtn && !refreshBtn.title) refreshBtn.title = 'Actualiser';
+    var createBtn = document.getElementById('ol-create-tournament-btn');
+    if (createBtn && !createBtn.title) createBtn.title = 'Creer un tournoi';
+  };
 
-    return {
-      matchId: String(match.id || ''),
-      code: String(match.get('code') || '?'),
-      name: String(data.name || ('Tournoi ' + (match.get('code') || '?'))),
-      status: status,
-      active: active,
-      completed: completed,
-      currentRoom: ui.sameId(match.id, ui.getCurrentMatchId()),
-      amIn: amIn,
-      participants: data.participants,
-      tables: tables,
-      bracket: bracket,
-      tableCount: tableCount,
-      currentRound: currentRound,
-      roundLabel: completed ? 'Resultat final' : ui.getRoundName(currentRound, bracket.length || 1),
-      winnerName: String(data.winnerName || '').trim(),
-      winnerId: String(data.winnerId || '').trim(),
-      liveCount: ui.findLiveTableCount({ tables: tables, bracket: bracket }),
-      openSlot: !active && (ui.slotClaimable(match, 1, myId) || ui.slotClaimable(match, 2, myId)),
-      updatedAt: match.updatedAt ? match.updatedAt.getTime() : (match.createdAt ? match.createdAt.getTime() : Date.now()),
-      rawTournament: data,
-      createdBy: String(data.createdBy || match.get('p1Id') || '')
-    };
+  ui.ensureHeaderStats = function() {
+    var wrap = document.getElementById('ol-tournaments-wrap');
+    var header = wrap ? wrap.querySelector('.ol-tourn-header') : null;
+    if (!wrap || !header) return null;
+    var stats = document.getElementById('ol-tourn-stats');
+    if (!stats) {
+      stats = document.createElement('div');
+      stats.id = 'ol-tourn-stats';
+      header.insertAdjacentElement('afterend', stats);
+    }
+    return stats;
+  };
+
+  ui.ensureOverlayChrome = function() {
+    var overlay = document.getElementById('tournament-bracket-overlay');
+    var inner = overlay ? overlay.querySelector('.tourn-overlay-inner') : null;
+    if (!overlay || !inner) return {};
+
+    var head = inner.querySelector('.tourn-overlay-head');
+    var subtitle = document.getElementById('tourn-overlay-subtitle');
+    if (!subtitle && head) {
+      subtitle = document.createElement('div');
+      subtitle.id = 'tourn-overlay-subtitle';
+      subtitle.className = 'tourn-overlay-subtitle';
+      head.insertAdjacentElement('afterend', subtitle);
+    }
+
+    var summary = document.getElementById('tourn-overlay-summary');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.id = 'tourn-overlay-summary';
+      summary.className = 'tourn-overlay-summary';
+      var anchor = subtitle || head;
+      if (anchor) anchor.insertAdjacentElement('afterend', summary);
+      else inner.insertAdjacentElement('afterbegin', summary);
+    }
+
+    return { overlay: overlay, inner: inner, head: head, subtitle: subtitle, summary: summary };
   };
 
   ui.tournamentRank = function(item) {
@@ -35389,12 +35837,10 @@ window.TiddasSpectator       = SpectatorEnhanced;
     if (!(window.Parse && window.BACK4APP_CLASS)) return [];
     var query = new window.Parse.Query(window.BACK4APP_CLASS);
     query.exists('tournament');
-    // notEqualTo(null/'') invalide sur String dans le SDK Parse JS → filtrage client-side
-    // dans buildTournamentItem (qui vérifie _raw && _raw !== 'null').
     query.notEqualTo('status', 'deleted');
-    query.notEqualTo('status', 'finished');
     query.descending('updatedAt');
     query.limit(ui.state.maxResults);
+
     var results = await query.find();
     var list = [];
     results.forEach(function(match) {
@@ -35404,6 +35850,7 @@ window.TiddasSpectator       = SpectatorEnhanced;
       var tooOld = ageMs > 1000 * 60 * 60 * 48 && !item.currentRoom && !item.active && !item.completed;
       if (!tooOld) list.push(item);
     });
+
     list.sort(function(a, b) {
       var rank = ui.tournamentRank(a) - ui.tournamentRank(b);
       if (rank) return rank;
@@ -35411,6 +35858,7 @@ window.TiddasSpectator       = SpectatorEnhanced;
       if (updateRank) return updateRank;
       return a.name.localeCompare(b.name);
     });
+
     return list;
   };
 
@@ -35418,15 +35866,6 @@ window.TiddasSpectator       = SpectatorEnhanced;
     if (!(window.Parse && window.BACK4APP_CLASS) || !matchId) return null;
     var query = new window.Parse.Query(window.BACK4APP_CLASS);
     return query.get(matchId);
-  };
-
-  ui.hydrateTournament = async function(matchId) {
-    try {
-      var match = await ui.fetchMatch(matchId);
-      return ui.buildTournamentItem(match);
-    } catch (_) {
-      return null;
-    }
   };
 
   ui.joinRoomDirectly = function(matchId, code) {
@@ -35466,44 +35905,6 @@ window.TiddasSpectator       = SpectatorEnhanced;
     }, 120);
   };
 
-  ui.registerParticipant = async function(item, match) {
-    var playerId = ui.getPlayerId();
-    // Fallback : générer un ID persistant si onlinePlayerId pas encore renseigné
-    if (!playerId) {
-      try {
-        var _saved = localStorage.getItem('tiddas_pid_v1');
-        if (_saved) { playerId = _saved; }
-        else {
-          playerId = 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
-          localStorage.setItem('tiddas_pid_v1', playerId);
-        }
-        window.onlinePlayerId = playerId;
-      } catch(_) {}
-    }
-    var playerName = ui.getPlayerName();
-    if (!playerId) {
-      ui.toast('Choisissez un pseudo avant de vous inscrire.', 2200);
-      return null;
-    }
-    // Filtrage client-side de la valeur raw (peut être 'null' string)
-    var _rawT = match.get('tournament');
-    var tournament = (_rawT && _rawT !== 'null') ? (ui.parseTournament(_rawT) || {}) : {};
-    tournament.participants = ui.normalizeParticipants((tournament.participants || []).concat([{ id: playerId, name: playerName, ready: true }]));
-    tournament.tables = Array.isArray(tournament.tables) ? tournament.tables : [];
-    if (!tournament.id) tournament.id = playerId + '_' + Date.now().toString(36);
-    if (!tournament.name) tournament.name = item.name || ('Tournoi ' + (match.get('code') || '?'));
-    if (!tournament.createdBy) tournament.createdBy = playerId;
-    if (!tournament.createdAt) tournament.createdAt = Date.now();
-    if (tournament.participants.length >= 2) tournament.bracket = ui.generateBracket(tournament.participants);
-
-    match.set('tournament', JSON.stringify(tournament));
-    match.set('participants', ui.collectParticipantIds(match, tournament.participants));
-    match.increment('rev', 1);
-    await match.save();
-    ui.toast('Inscription au tournoi enregistree.', 2200);
-    return tournament;
-  };
-
   ui.spectateTournament = function(item) {
     window._spectatorPendingMatchId = item.matchId;
     window._spectatorPendingCode = item.code;
@@ -35519,137 +35920,29 @@ window.TiddasSpectator       = SpectatorEnhanced;
     }
   };
 
-  ui.joinTournament = async function(item) {
-    // Toujours hydrater depuis le serveur pour avoir l'état le plus récent (fix BUG 2)
-    var match = await ui.fetchMatch(item.matchId);
-    if (!match) {
-      ui.joinRoomDirectly(item.matchId, item.code);
-      return;
-    }
-    var latest = ui.buildTournamentItem(match);
-    if (!latest) {
-      ui.joinRoomDirectly(item.matchId, item.code);
-      return;
-    }
-
-    if (latest.completed) {
-      ui.openBracket(latest, false);
-      ui.toast('Ce tournoi est termine.', 1800);
-      return;
-    }
-    if (latest.active && !latest.amIn) {
-      ui.spectateTournament(latest);
-      return;
-    }
-    if (!latest.amIn) {
-      try {
-        // registerParticipant écrit en B4A — on attend la confirmation avant joinRoom (fix BUG 1)
-        var saved = await ui.registerParticipant(latest, match);
-        if (!saved) {
-          // registerParticipant a refusé (déjà inscrit côté serveur depuis notre hydratation ?)
-          // → re-hydrater et continuer quand même
-          var recheck = ui.buildTournamentItem(await ui.fetchMatch(latest.matchId));
-          if (recheck && (recheck.active || recheck.completed) && !recheck.amIn) {
-            ui.spectateTournament(recheck);
-            return;
-          }
-        }
-      } catch (_) {
-        // Conflit concurrent : le joueur n'a pas pu s'inscrire, mais on tente quand
-        // même de rejoindre le salon — il pourra spectator si la place est prise (fix BUG 10)
-        ui.toast("Inscription echouee — connexion au salon en spectateur.", 2200);
-        ui.spectateTournament(latest);
-        return;
-      }
-    }
-    // Inscription confirmée (ou déjà inscrit) : rejoindre le salon (fix BUG 1)
-    ui.joinRoomDirectly(latest.matchId, latest.code);
-    ui.refreshSoon();
-  };
-})();
-</script>
-<script nonce="tiddas">
-(function(){
-  'use strict';
-  var ui = window.TiddasTournamentFinalUi;
-  if (!ui) return;
-
-  /* ── Confirmation et suppression d'un tournoi/salon ─────────────── */
-  ui.confirmDelete = function(item) {
-    var myId = ui.getPlayerId();
-    if (!ui.sameId(item.createdBy, myId)) {
-      ui.toast("Seul le créateur peut supprimer ce tournoi.", 2200);
-      return;
-    }
-
-    // Créer modale de confirmation légère
-    var existing = document.getElementById('ol-tourn-delete-modal');
-    if (existing) existing.parentNode.removeChild(existing);
-
-    var modal = document.createElement('div');
-    modal.id = 'ol-tourn-delete-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.innerHTML =
-      '<div class="ol-tdm-inner">' +
-        '<div class="ol-tdm-icon">🗑</div>' +
-        '<div class="ol-tdm-title">Supprimer ce tournoi ?</div>' +
-        '<div class="ol-tdm-desc">« ' + ui.esc(item.name) + ' » sera définitivement supprimé. Les joueurs connectés à ce salon seront déconnectés.</div>' +
-        '<div class="ol-tdm-actions">' +
-          '<button class="ol-tdm-btn ol-tdm-cancel" type="button">Annuler</button>' +
-          '<button class="ol-tdm-btn ol-tdm-confirm" type="button">Supprimer</button>' +
-        '</div>' +
-      '</div>';
-    document.body.appendChild(modal);
-
-    var cancelBtn  = modal.querySelector('.ol-tdm-cancel');
-    var confirmBtn = modal.querySelector('.ol-tdm-confirm');
-    function close() { if (modal.parentNode) modal.parentNode.removeChild(modal); }
-    cancelBtn.addEventListener('click', close);
-    modal.addEventListener('click', function(ev) { if (ev.target === modal) close(); });
-    confirmBtn.addEventListener('click', function() {
-      close();
-      ui.deleteTournament(item);
+  ui.syncOverlayWithList = function() {
+    if (!ui.state.currentOverlayTournament) return;
+    var latest = ui.state.activeList.find(function(item) {
+      return ui.sameId(item.matchId, ui.state.currentOverlayTournament.matchId);
     });
-    // fermer avec Escape
-    function onKey(ev) { if (ev.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); } }
-    document.addEventListener('keydown', onKey);
+    if (latest) ui.renderOverlay(latest);
   };
 
-  ui.deleteTournament = async function(item) {
-    if (!window.Parse || !window.BACK4APP_CLASS) {
-      ui.toast("Suppression impossible : backend non disponible.", 2200);
-      return;
-    }
-    var myId = ui.getPlayerId();
-    if (!myId) { ui.toast("Identifiant joueur manquant.", 2000); return; }
-    ui.toast("Suppression en cours…", 1500);
-    try {
-      var query = new window.Parse.Query(window.BACK4APP_CLASS);
-      var match = await query.get(item.matchId);
-      if (!match) throw new Error('not-found');
-
-      // Vérification côté serveur que c'est bien le créateur
-      var tData = ui.parseTournament(match.get('tournament') || null);
-      var storedCreator = (tData && tData.createdBy) ? String(tData.createdBy) : String(match.get('p1Id') || '');
-      if (storedCreator && !ui.sameId(storedCreator, myId)) {
-        ui.toast("Seul le créateur peut supprimer ce tournoi.", 2200);
-        return;
+  ui.openBracket = async function(item, hydrate) {
+    ui.renderOverlay(item);
+    if (!hydrate) return;
+    var latest = await ui.hydrateTournament(item.matchId);
+    if (!latest) return;
+    var replaced = false;
+    ui.state.activeList = ui.state.activeList.map(function(entry) {
+      if (ui.sameId(entry.matchId, latest.matchId)) {
+        replaced = true;
+        return latest;
       }
-
-      // Nettoyer le champ tournament et marquer comme supprimé
-      match.set('tournament', null);
-      match.set('status', 'deleted');
-      match.set('deletedAt', new Date().toISOString());
-      match.set('deletedBy', myId);
-      await match.save();
-
-      ui.toast("✅ Tournoi supprimé.", 2000);
-      ui.refreshSoon();
-    } catch (err) {
-      console.warn('[Tiddas] deleteTournament error', err);
-      ui.toast("Erreur lors de la suppression.", 2200);
-    }
+      return entry;
+    });
+    if (!replaced) ui.state.activeList.push(latest);
+    if (ui.state.currentOverlayTournament && ui.sameId(ui.state.currentOverlayTournament.matchId, latest.matchId)) ui.renderOverlay(latest);
   };
 })();
 </script>
@@ -35659,85 +35952,310 @@ window.TiddasSpectator       = SpectatorEnhanced;
   var ui = window.TiddasTournamentFinalUi;
   if (!ui) return;
 
-  ui.isLobbyVisible = function() {
-    var lobby = document.getElementById('online-lobby-area');
-    if (!lobby) return false;
-    var style = window.getComputedStyle ? window.getComputedStyle(lobby) : null;
-    return lobby.classList.contains('active') || lobby.style.display !== 'none' || (style && style.display !== 'none' && style.visibility !== 'hidden');
-  };
+  ui.hydrateTournamentData = function(raw, match) {
+    var source = ui.parseTournament(raw) || {};
+    var storedParticipants = ui.normalizeParticipants(source.participants || []);
+    var participants = ui.mergeParticipantsWithMatch(source.participants || [], match);
+    var tables = Array.isArray(source.tables) ? source.tables.slice() : [];
+    var ghostCompletion = !source.startedAt && !source.active && storedParticipants.length < 2;
+    var hasStarted = !!(source.active || source.startedAt || (source.completedAt && !ghostCompletion));
+    var closed = !!hasStarted;
+    var bracket = [];
 
-  ui.ensureHeaderStats = function() {
-    var wrap = document.getElementById('ol-tournaments-wrap');
-    var header = wrap ? wrap.querySelector('.ol-tourn-header') : null;
-    if (!wrap || !header) return null;
-    var stats = document.getElementById('ol-tourn-stats');
-    if (!stats) {
-      stats = document.createElement('div');
-      stats.id = 'ol-tourn-stats';
-      header.insertAdjacentElement('afterend', stats);
-    }
-    return stats;
-  };
-
-  ui.ensureOverlayChrome = function() {
-    var overlay = document.getElementById('tournament-bracket-overlay');
-    var inner = overlay ? overlay.querySelector('.tourn-overlay-inner') : null;
-    if (!overlay || !inner) return {};
-
-    var head = inner.querySelector('.tourn-overlay-head');
-    var subtitle = document.getElementById('tourn-overlay-subtitle');
-    if (!subtitle && head) {
-      subtitle = document.createElement('div');
-      subtitle.id = 'tourn-overlay-subtitle';
-      subtitle.className = 'tourn-overlay-subtitle';
-      head.insertAdjacentElement('afterend', subtitle);
+    if (!hasStarted && participants.length < 2) {
+      bracket = [];
+    } else if (!closed) {
+      bracket = ui.generateBracket(participants);
+    } else if (Array.isArray(source.bracket) && source.bracket.length) {
+      bracket = ui.resolveBracket(source.bracket);
+    } else {
+      bracket = ui.generateBracket(participants);
     }
 
-    var summary = document.getElementById('tourn-overlay-summary');
-    if (!summary) {
-      summary = document.createElement('div');
-      summary.id = 'tourn-overlay-summary';
-      summary.className = 'tourn-overlay-summary';
-      var participantRow = document.getElementById('tourn-participants-row');
-      if (participantRow) participantRow.insertAdjacentElement('beforebegin', summary);
-      else inner.appendChild(summary);
-    }
+    if (match && hasStarted) bracket = ui.markLiveMatch(bracket, match);
 
-    return { overlay: overlay, inner: inner, subtitle: subtitle, summary: summary };
+    var summary = ui.summarizeBracket(bracket);
+    var winner = hasStarted ? summary.winner : null;
+    var active = !!source.active || !!(hasStarted && match && match.get && String(match.get('status') || '') === 'playing');
+    if (winner) active = false;
+    var completed = !ghostCompletion && !!(source.completedAt || (hasStarted && (source.winnerId || winner)));
+    var statusTone = completed ? 'finished' : (active ? (summary.liveMatches > 0 ? 'live' : 'ready') : 'waiting');
+    var statusText = completed
+      ? (winner ? ('Vainqueur: ' + ui.playerLabel(winner)) : 'Tournoi termine')
+      : (active
+          ? (summary.liveMatches > 0 ? 'Match en cours' : 'Round pret')
+          : (participants.length >= 2 ? 'Pret a lancer' : 'Inscriptions ouvertes'));
+
+    return {
+      id: String(source.id || ''),
+      name: String(source.name || (match && match.get ? ('Tournoi ' + (match.get('code') || '?')) : 'Tournoi')).trim(),
+      createdBy: String(source.createdBy || (match && match.get ? (match.get('p1Id') || '') : '')).trim(),
+      createdAt: Number(source.createdAt || Date.now()),
+      startedAt: Number(source.startedAt || 0),
+      completedAt: completed ? (source.completedAt || (winner ? Date.now() : null)) : null,
+      participants: participants,
+      tables: tables,
+      bracket: bracket,
+      currentRound: Number(summary.currentRound || 0),
+      active: !!active,
+      completed: !!completed,
+      winnerId: String((completed && source.winnerId) || (winner && winner.id) || '').trim(),
+      winnerName: String((completed && source.winnerName) || (winner && winner.name) || '').trim(),
+      summary: summary,
+      statusTone: statusTone,
+      statusText: statusText,
+      roundLabel: summary.totalRounds ? ui.getRoundName(summary.currentRound, summary.totalRounds) : 'Tour 1'
+    };
   };
 
-  ui.patchStaticLabels = function() {
-    var title = document.querySelector('#ol-tournaments-wrap .ol-tourn-title');
-    if (title) title.textContent = 'Tournois en ligne';
-    var refreshBtn = document.getElementById('ol-tourn-refresh');
-    if (refreshBtn) refreshBtn.title = 'Actualiser la liste';
-    var emptyWrap = document.getElementById('ol-tourn-empty');
-    var emptyText = emptyWrap ? emptyWrap.firstElementChild : null;
-    if (emptyText) emptyText.textContent = 'Aucun tournoi disponible pour le moment.';
-    var createBtn = document.getElementById('ol-create-tournament-btn');
-    if (createBtn) {
-      var main = createBtn.querySelector('.ol-btn-main');
-      var sub = createBtn.querySelector('.ol-btn-sub');
-      if (main) main.textContent = 'Creer un tournoi';
-      if (sub) sub.textContent = 'Invitez au moins 2 joueurs';
+  ui.serializeTournament = function(tournament) {
+    var hydrated = ui.hydrateTournamentData(tournament, null);
+    return {
+      active: !!hydrated.active,
+      id: hydrated.id || '',
+      name: hydrated.name || 'Tournoi',
+      participants: ui.normalizeParticipants(hydrated.participants || []),
+      tables: Array.isArray(hydrated.tables) ? hydrated.tables.slice() : [],
+      bracket: (hydrated.bracket || []).map(function(round) {
+        return (round || []).map(function(match) {
+          return {
+            p1: ui.clonePlayer(match.p1),
+            p2: ui.clonePlayer(match.p2),
+            winner: ui.clonePlayer(match.winner),
+            status: String(match.status || 'locked')
+          };
+        });
+      }),
+      currentRound: Number(hydrated.currentRound || 0),
+      createdBy: hydrated.createdBy || '',
+      createdAt: hydrated.createdAt || Date.now(),
+      startedAt: hydrated.startedAt || 0,
+      completedAt: hydrated.completed ? (hydrated.completedAt || Date.now()) : null,
+      winnerId: hydrated.completed ? hydrated.winnerId : '',
+      winnerName: hydrated.completed ? hydrated.winnerName : ''
+    };
+  };
+
+  ui.buildTournamentItem = function(match) {
+    var rawTournament = match && match.get ? match.get('tournament') : null;
+    if (!rawTournament || rawTournament === 'null') return null;
+
+    var status = String(match.get('status') || 'waiting');
+    var myId = ui.getPlayerId();
+    var data = ui.hydrateTournamentData(rawTournament, match);
+    if (!data) return null;
+    if (!data.participants.length && !(match.get('p1Id') || match.get('p2Id'))) return null;
+
+    var tableCount = data.tables.length > 0
+      ? data.tables.length
+      : (data.bracket[0] && data.bracket[0].length > 0
+          ? data.bracket[0].length
+          : (data.participants.length >= 2 ? Math.max(1, Math.floor(data.participants.length / 2)) : 0));
+    var amIn = data.participants.some(function(participant) {
+      return ui.sameId(participant && participant.id, myId);
+    });
+    var canStart = !data.completed && !data.active && data.participants.length >= 2 && ui.sameId(data.createdBy, myId);
+    var progressLabel = data.completed
+      ? (data.winnerName ? ('Champion: ' + data.winnerName) : 'Tournoi termine')
+      : (data.summary.liveMatches > 0
+          ? 'Match en cours'
+          : (data.summary.readyMatches > 0
+              ? 'Prochain duel pret'
+              : (data.participants.length >= 2 ? 'Pret a lancer' : 'En attente de joueurs')));
+
+    return {
+      matchId: String(match.id || ''),
+      code: String(match.get('code') || '?'),
+      name: String(data.name || ('Tournoi ' + (match.get('code') || '?'))),
+      status: status,
+      active: !!data.active,
+      completed: !!data.completed,
+      currentRoom: ui.sameId(match.id, ui.getCurrentMatchId()),
+      amIn: amIn,
+      participants: data.participants,
+      tables: data.tables,
+      bracket: data.bracket,
+      tableCount: tableCount,
+      currentRound: Number(data.currentRound || 0),
+      roundLabel: data.completed ? 'Resultat final' : data.roundLabel,
+      winnerName: String(data.winnerName || '').trim(),
+      winnerId: String(data.winnerId || '').trim(),
+      liveCount: ui.findLiveTableCount({ tables: data.tables, bracket: data.bracket }),
+      openSlot: !data.active && (ui.slotClaimable(match, 1, myId) || ui.slotClaimable(match, 2, myId)),
+      canStart: canStart,
+      progressPercent: Number(data.summary.progressPercent || 0),
+      progressLabel: progressLabel,
+      summary: data.summary,
+      statusTone: data.statusTone,
+      statusText: data.statusText,
+      updatedAt: match.updatedAt ? match.updatedAt.getTime() : (match.createdAt ? match.createdAt.getTime() : Date.now()),
+      rawTournament: data,
+      createdBy: String(data.createdBy || match.get('p1Id') || '')
+    };
+  };
+
+  ui.hydrateTournament = async function(matchId) {
+    try {
+      var match = await ui.fetchMatch(matchId);
+      return ui.buildTournamentItem(match);
+    } catch (_) {
+      return null;
     }
   };
 
-  ui.renderHeaderStats = function(list) {
-    var stats = ui.ensureHeaderStats();
-    if (!stats) return;
-    var activeCount = list.filter(function(item) { return item.active; }).length;
-    var openCount = list.filter(function(item) { return !item.active && !item.completed; }).length;
-    var mineCount = list.filter(function(item) { return item.currentRoom || item.amIn; }).length;
-    var finishedCount = list.filter(function(item) { return item.completed; }).length;
-    var currentItem = list.find(function(item) { return item.currentRoom; }) || null;
-    var liveCount = list.reduce(function(s, item) { return s + (item.liveCount || 0); }, 0);
-    stats.innerHTML =
-      (activeCount > 0 ? '<span class="ol-tourn-stat is-live">🔴 Live <strong>' + activeCount + '</strong></span>' : '') +
-      (openCount > 0 ? '<span class="ol-tourn-stat">Ouverts <strong>' + openCount + '</strong></span>' : '') +
-      (mineCount > 0 ? '<span class="ol-tourn-stat is-current">Mes tournois <strong>' + mineCount + '</strong></span>' : '') +
-      (finishedCount > 0 ? '<span class="ol-tourn-stat is-finished">Terminés <strong>' + finishedCount + '</strong></span>' : '') +
-      (currentItem ? '<span class="ol-tourn-stat is-current">📍 <strong>' + ui.esc(currentItem.name) + '</strong></span>' : '');
+  ui.applyTournamentToMatch = function(match, tournament) {
+    var payload = ui.serializeTournament(tournament);
+    match.set('tournament', JSON.stringify(payload));
+    match.set('participants', ui.collectParticipantIds(match, payload.participants));
+    return payload;
+  };
+
+  ui.saveTournamentToMatch = async function(match, tournament) {
+    var payload = ui.applyTournamentToMatch(match, tournament);
+    match.increment('rev', 1);
+    await match.save();
+    return payload;
+  };
+
+  ui.registerParticipant = async function(item, match) {
+    var playerId = ui.getPlayerId();
+    if (!playerId) {
+      try {
+        var savedId = localStorage.getItem('tiddas_pid_v1');
+        if (savedId) playerId = savedId;
+        else {
+          playerId = 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+          localStorage.setItem('tiddas_pid_v1', playerId);
+        }
+        window.onlinePlayerId = playerId;
+      } catch (_) {}
+    }
+    var playerName = ui.getPlayerName();
+    if (!playerId) {
+      ui.toast('Choisissez un pseudo avant de vous inscrire.', 2200);
+      return null;
+    }
+
+    var tournament = ui.hydrateTournamentData(match.get('tournament') || null, match);
+    if (tournament.completed) {
+      ui.toast('Ce tournoi est deja termine.', 2200);
+      return null;
+    }
+    if (tournament.active) {
+      ui.toast('Le tournoi a deja demarre.', 2200);
+      return null;
+    }
+
+    tournament.participants = ui.normalizeParticipants((tournament.participants || []).concat([{ id: playerId, name: playerName, ready: true }]));
+    if (!tournament.id) tournament.id = playerId + '_' + Date.now().toString(36);
+    if (!tournament.name) tournament.name = item.name || ('Tournoi ' + (match.get('code') || '?'));
+    if (!tournament.createdBy) tournament.createdBy = playerId;
+    if (!tournament.createdAt) tournament.createdAt = Date.now();
+    tournament.active = false;
+    tournament.startedAt = 0;
+    tournament.completedAt = null;
+    tournament.winnerId = '';
+    tournament.winnerName = '';
+    tournament.bracket = ui.generateBracket(tournament.participants);
+
+    await ui.saveTournamentToMatch(match, tournament);
+    ui.toast('Inscription au tournoi enregistree.', 2200);
+    return ui.hydrateTournamentData(match.get('tournament') || null, match);
+  };
+
+  ui.startTournament = async function(item) {
+    var match = await ui.fetchMatch(item && item.matchId ? item.matchId : item);
+    if (!match) {
+      ui.toast("Impossible de lancer ce tournoi.", 2200);
+      return null;
+    }
+
+    var tournament = ui.hydrateTournamentData(match.get('tournament') || null, match);
+    var myId = ui.getPlayerId();
+    tournament.participants = ui.mergeParticipantsWithMatch(tournament.participants || [], match);
+    if (!tournament.createdBy) tournament.createdBy = String(match.get('p1Id') || myId || '').trim();
+    if (!ui.sameId(tournament.createdBy, myId)) {
+      ui.toast('Seul le createur peut lancer le tournoi.', 2200);
+      return null;
+    }
+    if (tournament.completed) {
+      ui.toast('Ce tournoi est deja termine.', 2200);
+      return null;
+    }
+    if (tournament.participants.length < 2) {
+      ui.toast('Il faut au moins 2 joueurs.', 2200);
+      return null;
+    }
+
+    tournament.active = true;
+    tournament.startedAt = tournament.startedAt || Date.now();
+    tournament.completedAt = null;
+    tournament.winnerId = '';
+    tournament.winnerName = '';
+    tournament.bracket = ui.generateBracket(tournament.participants);
+
+    await ui.saveTournamentToMatch(match, tournament);
+    ui.toast('Tournoi lance.', 2200);
+    ui.refreshSoon();
+    return ui.buildTournamentItem(match);
+  };
+
+  ui.recordTournamentResult = async function(matchRecord, winnerRef) {
+    if (!matchRecord || !matchRecord.get) return false;
+    var rawTournament = matchRecord.get('tournament');
+    if (!rawTournament || rawTournament === 'null') return false;
+
+    var tournament = ui.hydrateTournamentData(rawTournament, matchRecord);
+    if (!tournament.startedAt && !tournament.active && !tournament.completed) return false;
+    if (!tournament.bracket.length) return false;
+
+    var winnerId = String(
+      winnerRef === 1 || winnerRef === 2
+        ? (matchRecord.get('p' + winnerRef + 'Id') || '')
+        : (winnerRef || '')
+    ).trim();
+    var p1Id = String(matchRecord.get('p1Id') || '').trim();
+    var p2Id = String(matchRecord.get('p2Id') || '').trim();
+    if (!winnerId || !p1Id || !p2Id) return false;
+
+    var target = ui.findBracketMatch(tournament.bracket, p1Id, p2Id, true);
+    if (!target || !target.match) return false;
+    if (target.match.status === 'done' && target.match.winner && ui.sameId(target.match.winner.id, winnerId)) return true;
+
+    var bracket = ui.cloneBracket(tournament.bracket);
+    var bracketMatch = bracket[target.roundIndex][target.matchIndex];
+    if (!bracketMatch) return false;
+
+    if (ui.sameId(winnerId, bracketMatch.p1 && bracketMatch.p1.id)) {
+      bracketMatch.savedWinnerId = winnerId;
+      bracketMatch.winner = ui.clonePlayer(bracketMatch.p1);
+    } else if (ui.sameId(winnerId, bracketMatch.p2 && bracketMatch.p2.id)) {
+      bracketMatch.savedWinnerId = winnerId;
+      bracketMatch.winner = ui.clonePlayer(bracketMatch.p2);
+    } else {
+      return false;
+    }
+    bracketMatch.savedStatus = 'done';
+    bracketMatch.status = 'done';
+
+    tournament.bracket = ui.resolveBracket(bracket);
+    tournament.active = true;
+    tournament.startedAt = tournament.startedAt || Date.now();
+    tournament.completedAt = null;
+    tournament.winnerId = '';
+    tournament.winnerName = '';
+
+    var summary = ui.summarizeBracket(tournament.bracket);
+    tournament.currentRound = summary.currentRound;
+    if (summary.winner) {
+      tournament.active = false;
+      tournament.completedAt = Date.now();
+      tournament.winnerId = String(summary.winner.id || '');
+      tournament.winnerName = String(summary.winner.name || '');
+    }
+
+    await ui.saveTournamentToMatch(matchRecord, tournament);
+    return true;
   };
 
   ui.cardBadgeClass = function(item) {
@@ -35818,146 +36336,10 @@ window.TiddasSpectator       = SpectatorEnhanced;
   var ui = window.TiddasTournamentFinalUi;
   if (!ui) return;
 
-  ui.renderParticipants = function(item) {
-    var row = document.getElementById('tourn-participants-row');
-    if (!row) return;
-    row.innerHTML = '';
-    (item.participants || []).forEach(function(participant) {
-      var chip = document.createElement('div');
-      chip.className = 'tourn-participant-chip' +
-        (ui.sameId(participant && participant.id, ui.getPlayerId()) ? ' me' : '') +
-        (ui.sameId(participant && participant.id, item.winnerId) ? ' winner' : '');
-      chip.textContent = participant && participant.name ? participant.name : 'Joueur';
-      row.appendChild(chip);
-    });
-  };
-
-  ui.renderBracket = function(item) {
-    var container = document.getElementById('tournament-container');
-    if (!container) return;
-    container.innerHTML = '';
-    if (!item || !item.bracket || !item.bracket.length) {
-      container.innerHTML = '<div class="tourn-bracket-empty">Le tableau sera genere des que suffisamment de joueurs seront inscrits.</div>';
-      return;
-    }
-
-    var totalRounds = item.bracket.length;
-    item.bracket.forEach(function(round, roundIndex) {
-      var roundEl = document.createElement('div');
-      roundEl.className = 'bracket-round';
-      var title = document.createElement('div');
-      title.className = 'bracket-round-title';
-      title.textContent = ui.getRoundName(roundIndex, totalRounds);
-      roundEl.appendChild(title);
-
-      (round || []).forEach(function(match) {
-        var matchEl = document.createElement('div');
-        matchEl.className = 'bracket-match' + (match && match.status === 'live' ? ' live' : '');
-
-        function renderPlayer(player, isWinner, isLoser) {
-          var row = document.createElement('div');
-          row.className = 'bracket-player' + (isWinner ? ' winner' : '') + (isLoser ? ' loser' : '');
-          var avatar = document.createElement('div');
-          avatar.className = 'bracket-player-avatar';
-          var label = player && player.name ? player.name : 'TBD';
-          avatar.textContent = label === 'BYE' ? 'B' : label.charAt(0).toUpperCase();
-          var name = document.createElement('span');
-          name.className = 'bracket-player-name';
-          name.textContent = label;
-          var score = document.createElement('span');
-          score.className = 'bracket-player-score';
-          score.textContent = isWinner ? 'W' : (isLoser ? 'L' : '');
-          row.appendChild(avatar);
-          row.appendChild(name);
-          row.appendChild(score);
-          return row;
-        }
-
-        var p1 = match && match.p1 ? match.p1 : { id: null, name: 'TBD' };
-        var p2 = match && match.p2 ? match.p2 : { id: null, name: 'TBD' };
-        var winnerId = String(match && match.winner ? match.winner.id || '' : '');
-        var p1Winner = winnerId && ui.sameId(winnerId, p1 && p1.id);
-        var p2Winner = winnerId && ui.sameId(winnerId, p2 && p2.id);
-        matchEl.appendChild(renderPlayer(p1, p1Winner, p2Winner && !p1Winner));
-        matchEl.appendChild(renderPlayer(p2, p2Winner, p1Winner && !p2Winner));
-        roundEl.appendChild(matchEl);
-      });
-
-      container.appendChild(roundEl);
-    });
-  };
-
   ui.hideOverlay = function() {
     var overlay = document.getElementById('tournament-bracket-overlay');
     if (overlay) overlay.setAttribute('hidden', '');
     ui.state.currentOverlayTournament = null;
-  };
-
-  ui.renderOverlay = function(item) {
-    var chrome = ui.ensureOverlayChrome();
-    if (!chrome.overlay) return;
-    ui.state.currentOverlayTournament = item;
-    chrome.overlay.removeAttribute('hidden');
-
-    var title = document.getElementById('tourn-overlay-title');
-    if (title) title.textContent = 'Tournoi - ' + item.name;
-    if (chrome.subtitle) chrome.subtitle.textContent = (item.currentRoom ? 'Salon courant' : ('Code ' + item.code)) + ' - ' + (item.completed ? 'tournoi termine' : (item.active ? 'tournoi en cours' : 'inscriptions ouvertes'));
-    if (chrome.summary) chrome.summary.innerHTML =
-      ui.summaryChip('Joueurs', item.participants.length) +
-      ui.summaryChip('Tables', item.tableCount || 0) +
-      ui.summaryChip(item.completed ? 'Vainqueur' : 'Round', item.completed ? (item.winnerName || '-') : item.roundLabel) +
-      ui.summaryChip('Code', item.code);
-
-    ui.renderParticipants(item);
-    ui.renderBracket(item);
-
-    var watchBtn = document.getElementById('tourn-watch-btn');
-    if (watchBtn) {
-      watchBtn.style.display = item.active && !item.currentRoom ? '' : 'none';
-      watchBtn.textContent = item.amIn ? 'Observer une table' : 'Observer le tournoi';
-      watchBtn.onclick = function() { ui.hideOverlay(); ui.spectateTournament(item); };
-    }
-
-    var joinBtn = document.getElementById('tourn-join-btn');
-    if (joinBtn) {
-      var action = ui.primaryAction(item);
-      var showJoin = action.mode !== 'spectate' && action.mode !== 'view';
-      joinBtn.style.display = showJoin ? '' : 'none';
-      joinBtn.textContent = action.label;
-      joinBtn.onclick = function() { ui.hideOverlay(); ui.handlePrimaryAction(item); };
-    }
-  };
-
-  ui.syncOverlayWithList = function() {
-    if (!ui.state.currentOverlayTournament) return;
-    var latest = ui.state.activeList.find(function(item) {
-      return ui.sameId(item.matchId, ui.state.currentOverlayTournament.matchId);
-    });
-    if (latest) ui.renderOverlay(latest);
-  };
-
-  ui.openBracket = async function(item, hydrate) {
-    ui.renderOverlay(item);
-    if (!hydrate) return;
-    var latest = await ui.hydrateTournament(item.matchId);
-    if (!latest) return;
-    var replaced = false;
-    ui.state.activeList = ui.state.activeList.map(function(entry) {
-      if (ui.sameId(entry.matchId, latest.matchId)) {
-        replaced = true;
-        return latest;
-      }
-      return entry;
-    });
-    if (!replaced) ui.state.activeList.push(latest);
-    if (ui.state.currentOverlayTournament && ui.sameId(ui.state.currentOverlayTournament.matchId, latest.matchId)) ui.renderOverlay(latest);
-  };
-
-  ui.handlePrimaryAction = function(item) {
-    var action = ui.primaryAction(item);
-    if (action.mode === 'view') { ui.openBracket(item, true); return; }
-    if (action.mode === 'spectate') { ui.spectateTournament(item); return; }
-    ui.joinTournament(item);
   };
 
   ui.renderList = function(list) {
@@ -36167,6 +36549,412 @@ window.TiddasSpectator       = SpectatorEnhanced;
     return true;
   };
 
+  ui.applyTournamentRefonte = function() {
+    if (!ui.hydrateTournamentData) return;
+
+    ui.buildTournamentItem = function(match) {
+      var rawTournament = match && match.get ? match.get('tournament') : null;
+      if (!rawTournament || rawTournament === 'null') return null;
+
+      var status = String(match.get('status') || 'waiting');
+      var myId = ui.getPlayerId();
+      var data = ui.hydrateTournamentData(rawTournament, match);
+      if (!data) return null;
+      if (!data.participants.length && !(match.get('p1Id') || match.get('p2Id'))) return null;
+
+      var tableCount = data.tables.length > 0
+        ? data.tables.length
+        : (data.bracket[0] && data.bracket[0].length > 0
+            ? data.bracket[0].length
+            : (data.participants.length >= 2 ? Math.max(1, Math.floor(data.participants.length / 2)) : 0));
+      var amIn = data.participants.some(function(participant) {
+        return ui.sameId(participant && participant.id, myId);
+      });
+      var canStart = !data.completed && !data.active && data.participants.length >= 2 && ui.sameId(data.createdBy, myId);
+      var progressLabel = data.completed
+        ? (data.winnerName ? ('Champion: ' + data.winnerName) : 'Tournoi termine')
+        : (data.summary.liveMatches > 0
+            ? 'Match en cours'
+            : (data.summary.readyMatches > 0
+                ? 'Prochain duel pret'
+                : (data.participants.length >= 2 ? 'Pret a lancer' : 'En attente de joueurs')));
+
+      return {
+        matchId: String(match.id || ''),
+        code: String(match.get('code') || '?'),
+        name: String(data.name || ('Tournoi ' + (match.get('code') || '?'))),
+        status: status,
+        active: !!data.active,
+        completed: !!data.completed,
+        currentRoom: ui.sameId(match.id, ui.getCurrentMatchId()),
+        amIn: amIn,
+        participants: data.participants,
+        tables: data.tables,
+        bracket: data.bracket,
+        tableCount: tableCount,
+        currentRound: Number(data.currentRound || 0),
+        roundLabel: data.completed ? 'Resultat final' : data.roundLabel,
+        winnerName: String(data.winnerName || '').trim(),
+        winnerId: String(data.winnerId || '').trim(),
+        liveCount: ui.findLiveTableCount({ tables: data.tables, bracket: data.bracket }),
+        openSlot: !data.active && (ui.slotClaimable(match, 1, myId) || ui.slotClaimable(match, 2, myId)),
+        canStart: canStart,
+        progressPercent: Number(data.summary.progressPercent || 0),
+        progressLabel: progressLabel,
+        summary: data.summary,
+        statusTone: data.statusTone,
+        statusText: data.statusText,
+        updatedAt: match.updatedAt ? match.updatedAt.getTime() : (match.createdAt ? match.createdAt.getTime() : Date.now()),
+        rawTournament: data,
+        createdBy: String(data.createdBy || match.get('p1Id') || '')
+      };
+    };
+
+    ui.hydrateTournament = async function(matchId) {
+      try {
+        var match = await ui.fetchMatch(matchId);
+        return ui.buildTournamentItem(match);
+      } catch (_) {
+        return null;
+      }
+    };
+
+    ui.registerParticipant = async function(item, match) {
+      var playerId = ui.getPlayerId();
+      if (!playerId) {
+        try {
+          var savedId = localStorage.getItem('tiddas_pid_v1');
+          if (savedId) playerId = savedId;
+          else {
+            playerId = 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+            localStorage.setItem('tiddas_pid_v1', playerId);
+          }
+          window.onlinePlayerId = playerId;
+        } catch (_) {}
+      }
+      var playerName = ui.getPlayerName();
+      if (!playerId) {
+        ui.toast('Choisissez un pseudo avant de vous inscrire.', 2200);
+        return null;
+      }
+
+      var tournament = ui.hydrateTournamentData(match.get('tournament') || null, match);
+      if (tournament.completed) {
+        ui.toast('Ce tournoi est deja termine.', 2200);
+        return null;
+      }
+      if (tournament.active) {
+        ui.toast('Le tournoi a deja demarre.', 2200);
+        return null;
+      }
+
+      tournament.participants = ui.normalizeParticipants((tournament.participants || []).concat([{ id: playerId, name: playerName, ready: true }]));
+      if (!tournament.id) tournament.id = playerId + '_' + Date.now().toString(36);
+      if (!tournament.name) tournament.name = item.name || ('Tournoi ' + (match.get('code') || '?'));
+      if (!tournament.createdBy) tournament.createdBy = playerId;
+      if (!tournament.createdAt) tournament.createdAt = Date.now();
+      tournament.active = false;
+      tournament.startedAt = 0;
+      tournament.completedAt = null;
+      tournament.winnerId = '';
+      tournament.winnerName = '';
+      tournament.bracket = ui.generateBracket(tournament.participants);
+
+      await ui.saveTournamentToMatch(match, tournament);
+      ui.toast('Inscription au tournoi enregistree.', 2200);
+      return ui.hydrateTournamentData(match.get('tournament') || null, match);
+    };
+
+    ui.joinTournament = async function(item) {
+      var match = await ui.fetchMatch(item.matchId);
+      if (!match) {
+        ui.joinRoomDirectly(item.matchId, item.code);
+        return;
+      }
+      var latest = ui.buildTournamentItem(match);
+      if (!latest) {
+        ui.joinRoomDirectly(item.matchId, item.code);
+        return;
+      }
+
+      if (latest.completed) {
+        ui.openBracket(latest, false);
+        ui.toast('Ce tournoi est termine.', 1800);
+        return;
+      }
+      if (latest.active && !latest.amIn) {
+        ui.spectateTournament(latest);
+        return;
+      }
+      if (!latest.amIn) {
+        try {
+          var saved = await ui.registerParticipant(latest, match);
+          if (!saved) {
+            var recheck = ui.buildTournamentItem(await ui.fetchMatch(latest.matchId));
+            if (recheck && (recheck.active || recheck.completed) && !recheck.amIn) {
+              ui.spectateTournament(recheck);
+              return;
+            }
+          }
+        } catch (_) {
+          ui.toast("Inscription echouee, connexion en spectateur.", 2200);
+          ui.spectateTournament(latest);
+          return;
+        }
+      }
+      ui.joinRoomDirectly(latest.matchId, latest.code);
+      ui.refreshSoon();
+    };
+
+    ui.renderHeaderStats = function(list) {
+      var stats = ui.ensureHeaderStats();
+      if (!stats) return;
+      var activeCount = list.filter(function(item) { return item.active; }).length;
+      var openCount = list.filter(function(item) { return !item.active && !item.completed; }).length;
+      var mineCount = list.filter(function(item) { return item.currentRoom || item.amIn; }).length;
+      var finishedCount = list.filter(function(item) { return item.completed; }).length;
+      var liveTables = list.reduce(function(sum, item) { return sum + Number(item.liveCount || 0); }, 0);
+      stats.innerHTML =
+        (activeCount > 0 ? '<span class="ol-tourn-stat is-live">Live <strong>' + activeCount + '</strong></span>' : '') +
+        (liveTables > 0 ? '<span class="ol-tourn-stat is-live">Tables <strong>' + liveTables + '</strong></span>' : '') +
+        (openCount > 0 ? '<span class="ol-tourn-stat">Ouverts <strong>' + openCount + '</strong></span>' : '') +
+        (mineCount > 0 ? '<span class="ol-tourn-stat is-current">Mes tournois <strong>' + mineCount + '</strong></span>' : '') +
+        (finishedCount > 0 ? '<span class="ol-tourn-stat is-finished">Termines <strong>' + finishedCount + '</strong></span>' : '');
+    };
+
+    ui.cardDescription = function(item) {
+      if (item.completed) return item.winnerName ? ('Tournoi termine. Champion: ' + item.winnerName + '.') : 'Tournoi termine.';
+      if (item.canStart) return 'Le bracket est pret. Vous pouvez lancer le tournoi.';
+      if (item.active) {
+        if (item.summary.liveMatches > 0) return item.roundLabel + ' en cours.';
+        if (item.summary.readyMatches > 0) return item.roundLabel + ' pret.';
+        return 'Tournoi en cours.';
+      }
+      return item.amIn ? 'Inscription confirmee. En attente du lancement.' : 'Inscriptions ouvertes. Rejoignez le bracket.';
+    };
+
+    ui.primaryAction = function(item) {
+      if (item.completed) return { mode: 'view', label: 'Voir le tableau', className: 'primary is-view' };
+      if (item.canStart) return { mode: 'start', label: 'Lancer', className: 'primary is-start' };
+      if (item.currentRoom) return { mode: 'continue', label: 'Continuer', className: 'primary is-live' };
+      if (item.active) return item.amIn ? { mode: 'continue', label: 'Continuer', className: 'primary is-live' } : { mode: 'spectate', label: 'Observer', className: 'primary is-view' };
+      if (item.amIn) return { mode: 'continue', label: 'Rejoindre', className: 'primary' };
+      return { mode: 'join', label: "S'inscrire", className: 'primary' };
+    };
+
+    ui.buildStagePill = function(label, tone) {
+      return '<span class="ol-tourn-stage-pill is-' + ui.esc(tone || 'ready') + '">' + ui.esc(label) + '</span>';
+    };
+
+    ui.buildCardHtml = function(item) {
+      var action = ui.primaryAction(item);
+      var flags = '';
+      if (item.currentRoom) flags += '<span class="ol-tourn-inline-flag is-current">Salon courant</span>';
+      else if (item.amIn) flags += '<span class="ol-tourn-inline-flag is-member">Inscrit</span>';
+
+      var stageLine = '<div class="ol-tourn-stage-line">' +
+        ui.buildStagePill(item.completed ? 'Termine' : (item.active ? 'En cours' : 'Ouvert'), item.statusTone === 'live' ? 'live' : item.statusTone) +
+        ui.buildStagePill(item.completed ? 'Final' : item.roundLabel, item.completed ? 'finished' : (item.active ? 'ready' : 'waiting')) +
+        (item.liveCount > 0 ? ui.buildStagePill(item.liveCount + ' live', 'live') : '') +
+        '</div>';
+
+      var progress = '<div class="ol-tourn-progress">' +
+        '<div class="ol-tourn-progress-top"><span>Progression</span><span>' + ui.esc(item.progressPercent + '%') + '</span></div>' +
+        '<div class="ol-tourn-progress-track"><span class="ol-tourn-progress-fill" style="width:' + Math.max(0, Math.min(100, Number(item.progressPercent || 0))) + '%"></span></div>' +
+        '<div class="ol-tourn-progress-note">' + ui.esc(item.progressLabel || item.statusText || '') + '</div>' +
+        '</div>';
+
+      return '<div class="ol-tourn-card-head">' +
+        '<span class="ol-tourn-card-icon" aria-hidden="true">T</span>' +
+        '<div class="ol-tourn-card-head-main">' +
+          '<div class="ol-tourn-card-name-row"><div class="ol-tourn-card-name">' + ui.esc(item.name) + '</div>' + flags + '</div>' +
+          '<div class="ol-tourn-card-desc">' + ui.esc(ui.cardDescription(item)) + '</div>' +
+          stageLine +
+          progress +
+        '</div>' +
+        '<span class="ol-tourn-card-badge ' + ui.cardBadgeClass(item) + '">' + ui.esc(ui.cardBadgeText(item)) + '</span>' +
+      '</div>' +
+      '<div class="ol-tourn-card-meta-row">' +
+        ui.metric('Joueurs', item.participants.length) +
+        ui.metric('Tables', item.tableCount || 0) +
+        ui.metric('Code', item.code) +
+        ui.metric(item.completed ? 'Champion' : 'Round', item.completed ? (item.winnerName || '-') : item.roundLabel) +
+      '</div>' +
+      '<div class="ol-tourn-card-foot">' +
+        '<div class="ol-tourn-card-updated">Maj ' + ui.esc(ui.formatAgo(item.updatedAt)) + '</div>' +
+        '<div class="ol-tourn-card-actions">' +
+          (ui.sameId(item.createdBy, ui.getPlayerId()) ? '<button class="ol-tourn-btn ol-tourn-delete-btn" type="button" data-role="tourn-delete" title="Supprimer ce tournoi">Supprimer</button>' : '') +
+          '<button class="ol-tourn-btn" type="button" data-role="tourn-bracket">Tableau</button>' +
+          '<button class="ol-tourn-btn ' + ui.esc(action.className) + '" type="button" data-role="tourn-main">' + ui.esc(action.label) + '</button>' +
+        '</div>' +
+      '</div>';
+    };
+
+    ui.summaryChip = function(label, value) {
+      return '<span class="tourn-summary-chip">' + ui.esc(label) + ' <strong>' + ui.esc(value) + '</strong></span>';
+    };
+
+    ui.renderParticipants = function(item) {
+      var row = document.getElementById('tourn-participants-row');
+      if (!row) return;
+      row.innerHTML = '';
+      (item.participants || []).forEach(function(participant) {
+        var chip = document.createElement('div');
+        chip.className = 'tourn-participant-chip' +
+          (ui.sameId(participant && participant.id, ui.getPlayerId()) ? ' me' : '') +
+          (ui.sameId(participant && participant.id, item.winnerId) ? ' winner' : '');
+        chip.textContent = participant && participant.name ? participant.name : 'Joueur';
+        row.appendChild(chip);
+      });
+    };
+
+    ui.getMatchStatusLabel = function(match) {
+      if (!match) return 'En attente';
+      if (match.status === 'done') return 'Termine';
+      if (match.status === 'live') return 'Live';
+      if (match.status === 'ready') return 'Pret';
+      return 'Bloque';
+    };
+
+    ui.getMatchStatusTone = function(match) {
+      if (!match) return 'locked';
+      if (match.status === 'done') return 'done';
+      if (match.status === 'live') return 'live';
+      if (match.status === 'ready') return 'ready';
+      return 'locked';
+    };
+
+    ui.renderBracket = function(item) {
+      var container = document.getElementById('tournament-container');
+      if (!container) return;
+      container.className = 'bracket-container tourn-bracket-final';
+      container.innerHTML = '';
+      if (!item || !item.bracket || !item.bracket.length) {
+        container.innerHTML = '<div class="tourn-bracket-empty">Le tableau sera genere des que suffisamment de joueurs seront inscrits.</div>';
+        return;
+      }
+
+      var totalRounds = item.bracket.length;
+      item.bracket.forEach(function(round, roundIndex) {
+        var roundState = item.summary && item.summary.roundStates ? item.summary.roundStates[roundIndex] : null;
+        var roundEl = document.createElement('div');
+        roundEl.className = 'bracket-round';
+
+        var title = document.createElement('div');
+        title.className = 'bracket-round-title';
+        title.innerHTML = '<span>' + ui.esc(ui.getRoundName(roundIndex, totalRounds)) + '</span>' +
+          '<span class="tourn-round-count">' + ui.esc(roundState ? roundState.done + '/' + roundState.total : String((round || []).length)) + '</span>';
+        roundEl.appendChild(title);
+
+        (round || []).forEach(function(match, matchIndex) {
+          var matchEl = document.createElement('div');
+          matchEl.className = 'bracket-match' + (match && match.status === 'live' ? ' live' : '') +
+            (match && match.status === 'done' ? ' is-done' : '') +
+            (match && match.status === 'ready' ? ' is-ready' : '');
+
+          var meta = document.createElement('div');
+          meta.className = 'tourn-match-meta';
+          meta.innerHTML = '<span>Match ' + ui.esc(matchIndex + 1) + '</span><span class="tourn-match-badge is-' + ui.esc(ui.getMatchStatusTone(match)) + '">' + ui.esc(ui.getMatchStatusLabel(match)) + '</span>';
+          matchEl.appendChild(meta);
+
+          function renderPlayer(player, isWinner, isLoser) {
+            var row = document.createElement('div');
+            row.className = 'bracket-player' + (isWinner ? ' winner' : '') + (isLoser ? ' loser' : '') + (ui.isBye(player) ? ' is-bye' : '');
+            var avatar = document.createElement('div');
+            avatar.className = 'bracket-player-avatar';
+            avatar.textContent = ui.playerAvatarText(player);
+            var name = document.createElement('span');
+            name.className = 'bracket-player-name';
+            name.textContent = ui.playerLabel(player);
+            var score = document.createElement('span');
+            score.className = 'bracket-player-score';
+            score.textContent = isWinner ? 'W' : (isLoser ? 'L' : '');
+            row.appendChild(avatar);
+            row.appendChild(name);
+            row.appendChild(score);
+            return row;
+          }
+
+          var p1 = match && match.p1 ? match.p1 : ui.makePlaceholderPlayer('TBD');
+          var p2 = match && match.p2 ? match.p2 : ui.makePlaceholderPlayer('TBD');
+          var winnerId = String(match && match.winner ? match.winner.id || '' : '');
+          var p1Winner = winnerId && ui.sameId(winnerId, p1 && p1.id);
+          var p2Winner = winnerId && ui.sameId(winnerId, p2 && p2.id);
+          matchEl.appendChild(renderPlayer(p1, p1Winner, p2Winner && !p1Winner));
+          matchEl.appendChild(renderPlayer(p2, p2Winner, p1Winner && !p2Winner));
+          roundEl.appendChild(matchEl);
+        });
+
+        container.appendChild(roundEl);
+      });
+    };
+
+    ui.renderOverlay = function(item) {
+      var chrome = ui.ensureOverlayChrome();
+      if (!chrome.overlay) return;
+      ui.state.currentOverlayTournament = item;
+      chrome.overlay.removeAttribute('hidden');
+
+      var title = document.getElementById('tourn-overlay-title');
+      if (title) title.textContent = 'Tournoi - ' + item.name;
+      if (chrome.subtitle) chrome.subtitle.textContent = item.statusText + ' - Code ' + item.code;
+      if (chrome.summary) chrome.summary.innerHTML =
+        ui.summaryChip('Joueurs', item.participants.length) +
+        ui.summaryChip('Tables', item.tableCount || 0) +
+        ui.summaryChip(item.completed ? 'Champion' : 'Round', item.completed ? (item.winnerName || '-') : item.roundLabel) +
+        ui.summaryChip('Progression', item.progressPercent + '%');
+
+      var stagebar = document.getElementById('tourn-overlay-stagebar');
+      if (!stagebar) {
+        stagebar = document.createElement('div');
+        stagebar.id = 'tourn-overlay-stagebar';
+        stagebar.className = 'tourn-overlay-stagebar';
+        var participantRow = document.getElementById('tourn-participants-row');
+        if (participantRow && participantRow.parentNode) participantRow.parentNode.insertBefore(stagebar, participantRow);
+      }
+      if (stagebar) {
+        stagebar.innerHTML = (item.summary.roundStates || []).map(function(roundState) {
+          var tone = roundState.done === roundState.total ? 'done' : (roundState.index === item.currentRound ? 'current' : 'locked');
+          return '<span class="tourn-stage-chip is-' + tone + '">' + ui.esc(roundState.label) + ' <strong>' + ui.esc(roundState.done + '/' + roundState.total) + '</strong></span>';
+        }).join('');
+      }
+
+      ui.renderParticipants(item);
+      ui.renderBracket(item);
+
+      var watchBtn = document.getElementById('tourn-watch-btn');
+      if (watchBtn) {
+        watchBtn.style.display = item.active && !item.currentRoom ? '' : 'none';
+        watchBtn.textContent = item.amIn ? 'Observer une table' : 'Observer le tournoi';
+        watchBtn.onclick = function() { ui.hideOverlay(); ui.spectateTournament(item); };
+      }
+
+      var joinBtn = document.getElementById('tourn-join-btn');
+      if (joinBtn) {
+        var action = ui.primaryAction(item);
+        var showJoin = action.mode !== 'spectate' && action.mode !== 'view';
+        joinBtn.style.display = showJoin ? '' : 'none';
+        joinBtn.textContent = action.label;
+        joinBtn.onclick = function() { ui.hideOverlay(); ui.handlePrimaryAction(item); };
+      }
+    };
+
+    ui.handlePrimaryAction = function(item) {
+      var action = ui.primaryAction(item);
+      if (action.mode === 'view') { ui.openBracket(item, true); return; }
+      if (action.mode === 'spectate') { ui.spectateTournament(item); return; }
+      if (action.mode === 'start') {
+        ui.startTournament(item).then(function(latest) {
+          if (latest) ui.openBracket(latest, true);
+        }).catch(function() {});
+        return;
+      }
+      ui.joinTournament(item);
+    };
+  };
+
+  ui.applyTournamentRefonte();
+
   ui.boot = function() {
     ui.state.bootAttempts += 1;
     ui.bindControls();
@@ -36192,3 +36980,5 @@ window.TiddasSpectator       = SpectatorEnhanced;
 </script>
 </body>
 </html>
+
+
