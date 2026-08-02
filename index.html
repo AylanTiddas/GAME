@@ -2038,7 +2038,7 @@ flex-direction: column;
    WINNER OVERLAY — REFONTE COMPLÈTE — Thèmes multiples
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Keyframes globaux ───────────────────���������������───────────────────── */
+/* ── Keyframes globaux ───────────────────�������������������������───────────────────── */
 @keyframes woFadeIn     { from{opacity:0} to{opacity:1} }
 @keyframes woSlideUp    { from{opacity:0;transform:translateY(32px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
 @keyframes woPopIn      { 0%{opacity:0;transform:scale(.5) rotate(-12deg)} 65%{transform:scale(1.12) rotate(4deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
@@ -2761,7 +2761,7 @@ transition:
   .pi-track { gap: 4px; min-height: 34px; }
 }
 
-/* ═══════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════���══ */
 
 /* ── Sound button state indicator ── */
 .toolbar-btn[data-snd-state="both"]  .snd-icon { opacity: 1; }
@@ -9282,7 +9282,7 @@ transition: background 0.3s ease, transform 0.25s ease;
   padding: 0.4rem 0.5rem !important;
 }
 
-/* ── Panneau joueur : hauteur réduite ── */
+/* ��─ Panneau joueur : hauteur réduite ── */
 .player-info {
   padding: 0.55rem 0.75rem !important;
 }
@@ -10652,7 +10652,7 @@ h1::after {
   transform: none !important;
 }
 
-/* ── 25. MODAL À PROPOS ──���───���───���───���───���───���───────────────── */
+/* ���─ 25. MODAL À PROPOS ──���───���───���───���───���───���───────────────── */
 .about-book {
   background:
     linear-gradient(160deg, rgba(255,255,255,0.025) 0%, transparent 50%),
@@ -11318,7 +11318,7 @@ body .game-board:not(.ntlata-board)[data-board-theme="jade"] .cell.capturable .s
 
 /* ══════════════════════════════════════════════════════════════════
    CRIMSON — Rubis ardent
-   ════════════════════════════════════════════════════════��══════��══ */
+   ═════════════════════════════════════════��═��═════��══��═��═��══════��══ */
 body .game-board:not(.ntlata-board)[data-board-theme="crimson"] {
   background: linear-gradient(145deg, #2c0606 0%, #480e0e 100%) !important;
   border: 5px solid #c02828 !important;
@@ -11567,7 +11567,7 @@ body .game-board.ntlata-board[data-board-theme="crimson"] {
 /* Ces règles utilisent :has() + fallback body.btheme-* via JS  */
 
 /* ──────────────── THÈMES CLAIRS (parchment, sand) ──────────── */
-/* Fond ivoire/sable → textes sombres, panneaux contrastés */
+/* Fond ivoire/sable → textes sombres, panneaux contrast��s */
 :root:has(#board[data-board-theme="parchment"]) .player-info,
 :root:has(#board[data-board-theme="sand"]) .player-info,
 body.btheme-parchment .player-info,
@@ -14159,7 +14159,7 @@ html[data-theme="modern"]  .ocm.them .ocm-body {
 /* S'assurer que l'ancien système de rendu n'interfère pas */
 .online-chat-msg { display: none !important; }
 
-/* ══════════════════════════════════════════════════════════
+/* ══════════════════════════════���═══════════════════════════
    PATCH v17 — Refonte complète occupation des espaces
    1. Lobby online : layout responsive épanoui sur tous écrans
    2. Setup joueurs : compacité mobile
@@ -15904,6 +15904,7 @@ function _fmtRelativeDate(ms) {
 
 function renderRecentOnlineRooms() {
   try {
+    if (window.TiddasRecentRooms && typeof window.TiddasRecentRooms.render === 'function') { window.TiddasRecentRooms.render(); return; }
     const wrap = document.getElementById('online-recent-wrap');
     const list = document.getElementById('online-recent-list');
     if (!wrap || !list) return;
@@ -16421,6 +16422,7 @@ async function onlineConnectToRoom_Back4App(code, creating) {
       match.set('status', 'waiting');
       match.set('p1Id', onlinePlayerId);
       match.set('p1Name', _getOnlineNameSafe('Joueur 1'));
+      match.set('p1JoinedAt', Date.now());
       match.set('p2Id', null);
       match.set('p2Name', null);
       match.set('variant', variant || 'TIDDEST-no-diag');
@@ -16460,6 +16462,7 @@ async function onlineConnectToRoom_Back4App(code, creating) {
       } else if (!p2) {
         match.set('p2Id', onlinePlayerId);
         match.set('p2Name', _getOnlineNameSafe('Joueur 2'));
+        match.set('p2JoinedAt', Date.now());
         if (status === 'waiting') match.set('status', 'ready');
         await match.save();
         online.role = 2; online.isHost = false;
@@ -17559,7 +17562,7 @@ statsSectionByMode: "S tarrayt",
 modeAI: "IA",
 modeLocal: "Ader",
 statsOnlineMode: "Deg uẓeṭṭa",
-modeSpectator: "Ameskan",
+modeSpectator: "Imfeṛṛeǧ",
 winRateLabel: "Ammud n urbaḥ",
 winsLabel: "Rbaḥ",
 lossesLabel: "Ttfa",
@@ -17571,7 +17574,7 @@ statsByDifficulty: "S uswir",
 statsSectionLastGame: "Urar aneggaru",
 modeLabel: "Tarrayt",
 statsVariantLabel: "Tameslayt",
-winnerLabel: "Aɣellif",
+winnerLabel: "Irbeḥ-itt",
 capturesLabel: "Ttekki",
 millsLabel: "Atellet",
 totalLabel: "Taḥawact",
@@ -17584,7 +17587,7 @@ onlineStatusTwoPlayersGuest: "Sin imdanen qqnen. Ṛǧu i usdukel ad yebdu…",
 onlineChooseAction: "Fren: Bnu taslaḍt neɣ qqim ɣer yiwet.",
 surrender: "Ddem-itt",
 installApp: "Areṣṣi",
-playSpectator: "Anezzeh",
+playSpectator: "Askar Imfeṛṛeǧ",
 playSpectatorDesc: "Urar n yiselkimen",
 spectatorSpeed: "tazla :",
 speedSlow: "s laɛqel",
@@ -17596,7 +17599,7 @@ logMove: "seg",
 logMoveTo: "→",
 logMill: "⚡ Tlata S Ya !",
 logCapture: "💀 Učči",
-savedGameFound: "Urar yettwaskles. Ad d-iban?",
+savedGameFound: "Urar yettwasklesen. Ad d-iban?",
 themeClassic: "Aqdim",
 themeDesert: "Agadir",
 themeNuit: "Timeddit",
@@ -17680,7 +17683,7 @@ ephemeralMill: "Tlata S Ya !",
 ephemeralCaptureNormal: "Awi-d Wa !",
 ephemeralCaptureBessif: "Ddem wa !",
 ephemeralMovePhase: "Tallit n unaqel !",
-newGame: "Afrag",
+newGame: "Axxam",
 restartGame: "Ɛiwed",
 undoMove: "Uɣal",
 gameRulesTitle: "Ilugan n wurar",
@@ -17795,7 +17798,7 @@ themeModern: "Amaynut",
 themeModernDark: "Amaynut qessiḥen",
 themeKabylie: "Taqbaylit",
 // NEW: hardcoded UI elements not previously translated
-spectatorBadgeTxt: "👁 Anezzeh",
+spectatorBadgeTxt: "👁 Imfeṛṛeǧ",
 btnResume: "Kemmel",
 btnDiscard: "Ala",
 ariaRulesClose: "Mdel",
@@ -17811,7 +17814,7 @@ aboutTitle: "Ɣef wurar-a",
 aboutIntro: "Leqdic-ayi ɣef wurar-ayi, illa-d i wakken ad nesseḥbiber ɣef yiwen ugerruj d-ǧǧan lejdud i yidles n yiqbayliyen.",
 aboutP1: "<em>Tiddas</em>, asget n <em>Tiddest</em>, mačči d urar kan. D taẓuri n tmusni, d akayad n tiḥḥerci, yal aqeddim s wazal-is. Zik yal taslaḍt n tɛessast neɣ n tejmaɛt di tudrin n yiqbaliyen, ad tafeḍ tettwajerred tfelwit n Tiddest n 25 texxamin, zzin-d fell-as Qeccic Meccuc, ttemqabalen fel-as sin, tturaren s <em>ileqqafen</em>.",
 aboutP2: "Tasuta-w ahat ad tili gar tneggura i yesnen urar-a s wudem-is aqbuṛ : ɣef teslaḍt n taddert. Ass-a, tasnasit-a tefka-yas tudert tamaynut,  s rriḥa n wurar-nni n zik.",
-aboutP3: "Tiddas d urar yesɛan aṭṭas n useḥseb, yettemcabin i Ddamma neɣ i Umaryun uṛumi. <strong>Sin yimyuraren, 10 yileqqafen i yal yiwen.</strong> Iswi: asedukkel n tlata yileqqafen iwakken ad teččeḍ wid n uxṣim, u ad tḥadreḍ iman-ik seg tfextin-is..",
+aboutP3: "Tiddas d urar yesɛan aṭṭas n useḥseb, yettemcabin i Ddamma neɣ i Umaryun uṛumi. <strong>Sin yimyuraren, 10 yileqqafen i yal yiwen.</strong> Iswi: asedukkel n tlata yileqqafen iwakken ad teččeḍ wid n uxṣim, u ad tḥadre�� iman-ik seg tfextin-is..",
 aboutVariantClassic: "Tawsit tamagnut neɣ taqbuṛt.",
 aboutVariantBessif: "kraḍ n yileqqafen i yal yiwen, ɣef 9 tunddar.",
 aboutP4: "S leqdic-a, nessaram d akken tisutiwin d-iteddun ad urarent Tiddas, w ad zuxxent yes d akken d urar n lejdud nsen.",
@@ -17822,7 +17825,7 @@ winnerLabel: "Win irbeḥen",
 actionsPerGameLabel: "Ambiwel / Timlilit",
 modeAI: "IA",
 modeLocal: "Ameddakel",
-modeSpectator: "Anezzeh",
+modeSpectator: "Imfeṛṛeǧ",
 modeLabel: "Mgal",
 noStatsYet: "Ulac igemmaḍ tura. Urar timlilit !",
 replayMoveLabel: "Tikkelt",
@@ -17852,7 +17855,7 @@ onlineSubtitle: "Urar, qesser d imeddukal-ik",
 onlineCreate: "Bnu taslaḍt",
 onlineCreateSub: "Nced-d ameddakul-ik s tsarut",
 onlineJoinTitle: "Kcem taslaḍt",
-onlineJoinHint: "Kcem tasarut n 4 ysekkilen i ak-d-yefka umeddakel-ik",
+onlineJoinHint: "Sekcem tasarut n 4 ysekkilen i ak-d-yefka umeddakel-ik",
 onlineCreateDesc: "Ceyyeɛ tasarut",
 onlineJoin: "Qqim ɣer taslaḍt",
 onlineJoinDesc: "Sekcem tasarut",
@@ -17879,16 +17882,16 @@ onlineStatusTwoPlayersGuest: "2 yimyuraren qqimen-d, arǧu ad ibdu urar��",
 onlineStatusCreatedHost: "taslaḍt tettwabna. Ceyyeɛ tasarut, rǧu ameddakul-ik…",
 onlineStatusConnecting: "Tuqqna…",
 onlineCreatingRoom: "Asnulfu n teslaḍt {tasarut}…",
-onlineCodeAlreadyUsed: "Tasarut tettwaseqdec yakan. Ԑreḍ tayeḍ.",
+onlineCodeAlreadyUsed: "Tasarut tettwaseqdec yakan. ��reḍ tayeḍ.",
 onlineCreatedShare: "taslaḍt yettwabna. Ceyyeɛ tasarut : {code}",
 onlineConnectingRoom: "Tuqqna ɣer teslaḍt {tasarut}…",
 onlineRoomNotFound: "Ulac taslaḍt-ayi. senqed tasarut-ik.",
 onlineGameFinished: "Yekkfa Wurar.",
 onlineRoomFull: "taslaḍt-ayi yeččur (2 yimyuraren).",
 onlineRoomFullSpectate: "Taslaḍt teččur. Tzemreḍ ad twaliḍ urar.",
-onlineSpectator: "Amfeṛṛeǧ",
-onlineSpectatorConnecting: "Tuqqna d amfeṛṛeǧ…",
-onlineSpectatorConnected: "Askar n umfeṛṛeǧ — wali kan",
+onlineSpectator: "Imfeṛṛeǧ",
+onlineSpectatorConnecting: "Tuqqna d Imfeṛṛeǧ…",
+onlineSpectatorConnected: "Askar Imfeṛṛeǧ — tamuɣli kan",
 onlineWatch: "Wali urar",
 onlineWatchDesc: "Wali urar srid war ma tekkiḍ",
 onlineConnectTimeout: "Tuqqna tegra (12 tasint). Senqed uzeṭṭa-inek tagerralt.",
@@ -17962,7 +17965,7 @@ statsSectionByMode: "S urar",
 modeAI: "IA",
 modeLocal: "Ameddakel",
 statsOnlineMode: "S Internet",
-modeSpectator: "Anezzeh",
+modeSpectator: "Imfeṛṛeǧ",
 winRateLabel: "Ammud n urbaḥ",
 winsLabel: "Tirbɛah",
 lossesLabel: "Taggarin",
@@ -19916,7 +19919,7 @@ const allowed = moves.filter(m => m.from !== forbidden);
 return allowed.length > 0 ? allowed: moves;
 }
 
-// ─────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────���─────���──────���
 
 // Internal helper — called by startGame and startSpectatorGame
 function resetReplayAndSession() {
@@ -22212,7 +22215,7 @@ function ensureAudioGraph() {
 
   const ctx = new Ctor();
 
-  // ── Master gain ──────────────────────────────────────────────────────────
+  // ── Master gain ───────────────��──────────────────────────────────────────
   const master = ctx.createGain();
   master.gain.value = 0.72;
 
@@ -25407,7 +25410,7 @@ if (onlineBtn) {
       }
     } catch(_) {}
 
-    // ── Copier code ────────────────────────���─────────────────
+    // ── Copier code ────────────────────────���───────────────���─
     if (onlineEls.btnCopy) onlineEls.btnCopy.onclick = async () => {
       const c = (online.room || onlineEls.roomCode?.textContent || '').trim();
       if (!c) return;
@@ -28042,7 +28045,7 @@ body #board.game-board[data-board-theme="${theme}"].ntlata-board svg .nt-node{fi
 </script>
 <style id="tiddas-tournament-perfect-css" nonce="tiddas">
 #tt-fab{position:fixed;right:18px;top:16px;z-index:15020;display:none;align-items:center;gap:8px;min-height:44px;padding:9px 14px;border:1px solid rgba(206,157,45,.55);border-radius:10px;background:#2c251d;color:#f4cf66;font:800 14px/1 system-ui,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.22);cursor:pointer}#tt-fab.visible{display:flex}#tt-fab:focus-visible,.tt-btn:focus-visible,.tt-icon-btn:focus-visible{outline:3px solid #2783de;outline-offset:2px}
-body:has(#tt-overlay.open) .toolbar-buttons,body:has(#tt-overlay.open) #settings-fab{visibility:hidden!important}#tt-overlay{position:fixed;inset:0;z-index:2147483647;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(20,16,12,.76);backdrop-filter:blur(8px)}#tt-overlay.open{display:flex}.tt-panel{width:min(940px,100%);max-height:min(860px,94vh);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(208,165,69,.45);border-radius:14px;background:#fbfaf8;color:#2c2c2b;box-shadow:0 24px 70px rgba(0,0,0,.38)}.tt-head::before,.tt-head::after{content:none!important;display:none!important}.tt-head{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #e6e5e3;background:#fff}.tt-head-copy{flex:1;min-width:0}.tt-title{font:800 clamp(21px,3vw,30px)/1.1 Georgia,serif;color:#75480c}.tt-sub{margin-top:5px;color:#7d7a75;font-size:14px}.tt-icon-btn{width:44px;height:44px;border:1px solid #e6e5e3;border-radius:9px;background:#fff;color:#2c2c2b;font-size:20px;cursor:pointer}.tt-body{overflow:auto;padding:20px}.tt-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.tt-btn{min-height:44px;padding:10px 15px;border:1px solid #d8d5d0;border-radius:9px;background:#fff;color:#2c2c2b;font:750 14px/1.15 system-ui,sans-serif;cursor:pointer}.tt-btn.primary{border-color:#b88219;background:#b88219;color:#fff}.tt-btn.success{border-color:#357b57;background:#357b57;color:#fff}.tt-btn.danger{color:#b5473d}.tt-btn:disabled{opacity:.45;cursor:not-allowed}.tt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tt-card{display:flex;align-items:center;gap:12px;min-height:78px;padding:14px;border:1px solid #e6e5e3;border-radius:11px;background:#fff;cursor:pointer;text-align:left}.tt-card:hover{border-color:#c89d45;background:#fffaf0}.tt-card-main{flex:1;min-width:0}.tt-card-title{font-weight:800;color:#4b3417;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tt-meta{margin-top:5px;color:#7d7a75;font-size:13px}.tt-badge{padding:5px 8px;border-radius:6px;background:#f0efed;color:#5d5a55;font-size:12px;font-weight:800}.tt-badge.live{background:#e8f1ec;color:#2d6d4c}.tt-empty{padding:42px 20px;border:1px dashed #d8d5d0;border-radius:11px;text-align:center;color:#7d7a75}.tt-form{display:grid;grid-template-columns:1fr 150px auto;gap:10px;margin-bottom:20px}.tt-input,.tt-select{min-height:44px;border:1px solid #d8d5d0;border-radius:9px;background:#fff;color:#2c2c2b;padding:9px 12px;font:500 15px system-ui,sans-serif}.tt-section-title{margin:22px 0 10px;font:800 15px system-ui,sans-serif;color:#4b3417;text-transform:uppercase;letter-spacing:.06em}.tt-participants{display:flex;flex-wrap:wrap;gap:8px}.tt-chip{padding:7px 10px;border:1px solid #e0ddd8;border-radius:7px;background:#fff;font-size:13px}.tt-chip.me{border-color:#b88219;background:#fff7e3;font-weight:800}.tt-bracket{display:flex;gap:18px;overflow-x:auto;padding:4px 2px 14px}.tt-round{min-width:210px;display:flex;flex-direction:column;gap:10px}.tt-round-title{font-size:12px;font-weight:850;color:#7d7a75;text-transform:uppercase;letter-spacing:.08em}.tt-match{border:1px solid #e3e0dc;border-radius:10px;background:#fff;overflow:hidden}.tt-match.mine{border-color:#b88219;box-shadow:0 0 0 2px rgba(184,130,25,.11)}.tt-player{display:flex;align-items:center;gap:8px;min-height:39px;padding:8px 10px;border-bottom:1px solid #f0efed;font-size:13px}.tt-player:last-child{border-bottom:0}.tt-player.winner{background:#e8f1ec;color:#286244;font-weight:800}.tt-player.bye{color:#aaa;font-style:italic}.tt-player-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tt-status{padding:12px 14px;border:1px solid #e6e5e3;border-radius:10px;background:#f9f8f7;color:#5f5b56}.tt-status.live{border-color:#b7d6c4;background:#eef7f1;color:#2d6d4c}.tt-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.tt-notice{position:fixed;left:50%;bottom:24px;z-index:2147483647;transform:translateX(-50%);display:none;max-width:min(520px,90vw);padding:12px 16px;border:1px solid rgba(208,165,69,.5);border-radius:10px;background:#2c251d;color:#fff3cc;box-shadow:0 8px 28px rgba(0,0,0,.35);font:700 14px/1.35 system-ui,sans-serif}.tt-notice.show{display:block}
+body:has(#tt-overlay.open) .toolbar-buttons,body:has(#tt-overlay.open) #settings-fab{visibility:hidden!important}#tt-overlay{position:fixed;inset:0;z-index:2147483647;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(20,16,12,.76);backdrop-filter:blur(8px)}#tt-overlay.open{display:flex}.tt-panel{width:min(940px,100%);max-height:min(860px,94vh);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(208,165,69,.45);border-radius:14px;background:#fbfaf8;color:#2c2c2b;box-shadow:0 24px 70px rgba(0,0,0,.38)}.tt-head::before,.tt-head::after{content:none!important;display:none!important}.tt-head{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #e6e5e3;background:#fff}.tt-head-copy{flex:1;min-width:0}.tt-title{font:800 clamp(21px,3vw,30px)/1.1 Georgia,serif;color:#75480c}.tt-sub{margin-top:5px;color:#7d7a75;font-size:14px}.tt-icon-btn{width:44px;height:44px;border:1px solid #e6e5e3;border-radius:9px;background:#fff;color:#2c2c2b;font-size:20px;cursor:pointer}.tt-body{overflow:auto;padding:20px}.tt-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.tt-btn{min-height:44px;padding:10px 15px;border:1px solid #d8d5d0;border-radius:9px;background:#fff;color:#2c2c2b;font:750 14px/1.15 system-ui,sans-serif;cursor:pointer}.tt-btn.primary{border-color:#b88219;background:#b88219;color:#fff}.tt-btn.success{border-color:#357b57;background:#357b57;color:#fff}.tt-btn.danger{color:#b5473d;border-color:#e7b8b3;background:#fff8f7}.tt-btn.danger:hover{background:#fce9e7;border-color:#d98e87}.tt-btn:disabled{opacity:.45;cursor:not-allowed}.tt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tt-card{display:flex;align-items:center;gap:12px;min-height:78px;padding:14px;border:1px solid #e6e5e3;border-radius:11px;background:#fff;cursor:pointer;text-align:left}.tt-card:hover{border-color:#c89d45;background:#fffaf0}.tt-card-main{flex:1;min-width:0}.tt-card-title{font-weight:800;color:#4b3417;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tt-meta{margin-top:5px;color:#7d7a75;font-size:13px}.tt-badge{padding:5px 8px;border-radius:6px;background:#f0efed;color:#5d5a55;font-size:12px;font-weight:800}.tt-badge.live{background:#e8f1ec;color:#2d6d4c}.tt-empty{padding:42px 20px;border:1px dashed #d8d5d0;border-radius:11px;text-align:center;color:#7d7a75}.tt-form{display:grid;grid-template-columns:1fr 150px auto;gap:10px;margin-bottom:20px}.tt-input,.tt-select{min-height:44px;border:1px solid #d8d5d0;border-radius:9px;background:#fff;color:#2c2c2b;padding:9px 12px;font:500 15px system-ui,sans-serif}.tt-section-title{margin:22px 0 10px;font:800 15px system-ui,sans-serif;color:#4b3417;text-transform:uppercase;letter-spacing:.06em}.tt-participants{display:flex;flex-wrap:wrap;gap:8px}.tt-chip{padding:7px 10px;border:1px solid #e0ddd8;border-radius:7px;background:#fff;font-size:13px}.tt-chip.me{border-color:#b88219;background:#fff7e3;font-weight:800}.tt-bracket{display:flex;gap:18px;overflow-x:auto;padding:4px 2px 14px}.tt-round{min-width:210px;display:flex;flex-direction:column;gap:10px}.tt-round-title{font-size:12px;font-weight:850;color:#7d7a75;text-transform:uppercase;letter-spacing:.08em}.tt-match{border:1px solid #e3e0dc;border-radius:10px;background:#fff;overflow:hidden}.tt-match.mine{border-color:#b88219;box-shadow:0 0 0 2px rgba(184,130,25,.11)}.tt-player{display:flex;align-items:center;gap:8px;min-height:39px;padding:8px 10px;border-bottom:1px solid #f0efed;font-size:13px}.tt-player:last-child{border-bottom:0}.tt-player.winner{background:#e8f1ec;color:#286244;font-weight:800}.tt-player.bye{color:#aaa;font-style:italic}.tt-player-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tt-status{padding:12px 14px;border:1px solid #e6e5e3;border-radius:10px;background:#f9f8f7;color:#5f5b56}.tt-status.live{border-color:#b7d6c4;background:#eef7f1;color:#2d6d4c}.tt-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.tt-notice{position:fixed;left:50%;bottom:24px;z-index:2147483647;transform:translateX(-50%);display:none;max-width:min(520px,90vw);padding:12px 16px;border:1px solid rgba(208,165,69,.5);border-radius:10px;background:#2c251d;color:#fff3cc;box-shadow:0 8px 28px rgba(0,0,0,.35);font:700 14px/1.35 system-ui,sans-serif}.tt-notice.show{display:block}
 @media(max-width:640px){#tt-fab{top:12px;right:12px;padding:9px 11px}.tt-panel{max-height:96vh;border-radius:12px}.tt-head{padding:14px}.tt-body{padding:14px}.tt-grid{grid-template-columns:1fr}.tt-form{grid-template-columns:1fr}.tt-bracket{gap:12px}.tt-round{min-width:190px}}
 @media(prefers-color-scheme:dark){[data-theme="nuit"] .tt-panel,[data-theme="modern-dark"] .tt-panel{background:#202020;color:#fff}[data-theme="nuit"] .tt-head,[data-theme="modern-dark"] .tt-head,[data-theme="nuit"] .tt-card,[data-theme="modern-dark"] .tt-card,[data-theme="nuit"] .tt-match,[data-theme="modern-dark"] .tt-match,[data-theme="nuit"] .tt-input,[data-theme="modern-dark"] .tt-input,[data-theme="nuit"] .tt-select,[data-theme="modern-dark"] .tt-select{background:#282827;color:#fff;border-color:rgba(255,255,255,.18)}}
 </style>
@@ -28053,7 +28056,7 @@ body:has(#tt-overlay.open) .toolbar-buttons,body:has(#tt-overlay.open) #settings
 'use strict';
 if(window.__TIDDAS_TOURNAMENT_PERFECT__)return;window.__TIDDAS_TOURNAMENT_PERFECT__=true;
 var CONTROL_STATUSES=['tournament_lobby','tournament_active','tournament_done'];
-var RT={controlId:'',data:null,poll:0,busy:false,session:0,connectPromise:null,startPromise:null,reportKey:'',modal:false};
+var RT={controlId:'',data:null,poll:0,busy:false,session:0,connectPromise:null,startPromise:null,reportKey:'',modal:false,resultArmPromise:null};
 var CTX_KEY='tiddas_tournament_context_v1';
 function $(id){return document.getElementById(id)}
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
@@ -28085,15 +28088,18 @@ async function createTournament(ev){ev.preventDefault();if(RT.busy)return;RT.bus
 async function loadDetail(id){if(!(await ensure()))return;try{var m=await control(id),d=parseData(m.get('tournament'));if(!d)throw new Error('Tournoi invalide');RT.controlId=id;RT.data=d;saveCtx(Object.assign(loadCtx(),{controlId:id}));renderDetail();startPoll()}catch(e){notice('Tournoi introuvable.',2400)}}
 function renderDetail(){var d=RT.data;if(!d)return;$('tt-home').hidden=true;$('tt-detail').hidden=false;$('tt-title').textContent=d.name;$('tt-sub').textContent=(d.status==='lobby'?'Inscriptions ouvertes':d.status==='active'?'Tournoi en cours':'Tournoi terminé');var st=$('tt-status');st.className='tt-status'+(d.status==='active'?' live':'');st.textContent=d.status==='lobby'?'En attente du démarrage · '+d.participants.length+'/'+d.maxPlayers+' joueurs':d.status==='active'?'Tour '+(Number(d.currentRound||0)+1)+' sur '+d.bracket.length:(d.champion?'🏆 Champion : '+d.champion.name:'Terminé');var p=$('tt-participants');p.innerHTML='';d.participants.forEach(function(x){var c=document.createElement('span');c.className='tt-chip'+(x.id===me()?' me':'');c.textContent=x.name+(x.id===d.createdBy?' · organisateur':'');p.appendChild(c)});renderBracket(d);renderActions(d)}
 function renderBracket(d){var box=$('tt-bracket');box.innerHTML='';if(!d.bracket.length){box.innerHTML='<div class="tt-empty">Le tableau apparaîtra au démarrage.</div>';return}d.bracket.forEach(function(round,r){var col=document.createElement('section');col.className='tt-round';col.innerHTML='<div class="tt-round-title">'+(r===d.bracket.length-1?'Finale':'Tour '+(r+1))+'</div>';round.forEach(function(m,i){var card=document.createElement('div'),mine=!!(m.p1&&m.p2&&(m.p1.id===me()||m.p2.id===me()));card.className='tt-match'+(mine&&m.status==='pending'?' mine':'');function row(x){var win=m.winner&&x&&m.winner.id===x.id;return '<div class="tt-player '+(win?'winner ':'')+(x&&x.bye?'bye':'')+'"><span>'+(win?'✓':'●')+'</span><span class="tt-player-name">'+esc(x?x.name:'À déterminer')+'</span></div>'}card.innerHTML=row(m.p1)+row(m.p2);if(mine&&m.status==='pending')card.title='Votre match';col.appendChild(card)});box.appendChild(col)})}
-function renderActions(d){var a=$('tt-actions');a.innerHTML='';function btn(txt,cls,fn,disabled){var b=document.createElement('button');b.type='button';b.className='tt-btn '+(cls||'');b.textContent=txt;b.disabled=!!disabled;b.onclick=fn;a.appendChild(b)}var joined=d.participants.some(function(p){return p.id===me()});if(d.status==='lobby'){btn(joined?'Inscrit ✓':'S’inscrire','success',register,joined||d.participants.length>=d.maxPlayers);if(d.createdBy===me())btn('Démarrer le tournoi','primary',startTournament,d.participants.length<2)}if(d.status==='active'){var mm=myMatch(d);if(mm)btn('⚔ Jouer mon match','primary',joinMatch,false);else btn('Aucun match disponible','',function(){},true)}btn('← Liste','',function(){RT.controlId='';showHome();list()},false)}
+function renderActions(d){var a=$('tt-actions');a.innerHTML='';function btn(txt,cls,fn,disabled){var b=document.createElement('button');b.type='button';b.className='tt-btn '+(cls||'');b.textContent=txt;b.disabled=!!disabled;b.onclick=fn;a.appendChild(b)}var joined=d.participants.some(function(p){return p.id===me()}),owner=d.createdBy===me();if(d.status==='lobby'){btn(joined?'Inscrit ✓':'S’inscrire','success',register,joined||d.participants.length>=d.maxPlayers);if(joined&&!owner)btn('Se désinscrire','danger',unregister,false);if(owner){btn('Démarrer le tournoi','primary',startTournament,d.participants.length<2);btn('Supprimer le tournoi','danger',deleteTournament,false)}}if(d.status==='active'){var mm=myMatch(d);if(mm)btn('⚔ Jouer mon match','primary',joinMatch,false);else btn('Aucun match disponible','',function(){},true);if(owner)btn('Supprimer le tournoi','danger',deleteTournament,false)}if(d.status==='done'&&owner)btn('Supprimer le tournoi','danger',deleteTournament,false);btn('← Liste','',function(){RT.controlId='';showHome();list()},false)}
 async function register(){if(RT.busy)return;RT.busy=true;try{await mutate(RT.controlId,function(d){if(d.status!=='lobby')throw new Error('Inscriptions closes');if(d.participants.some(function(p){return p.id===me()}))return d;if(d.participants.length>=d.maxPlayers)throw new Error('Tournoi complet');d.participants.push({id:me(),name:myName()});return d});notice('Inscription confirmée');renderDetail()}catch(e){notice(e.message||String(e),2800)}finally{RT.busy=false}}
+async function unregister(){if(RT.busy)return;RT.busy=true;try{await mutate(RT.controlId,function(d){if(d.status!=='lobby')throw new Error('Désinscription impossible après le démarrage');if(d.createdBy===me())throw new Error('L’organisateur doit supprimer le tournoi');d.participants=d.participants.filter(function(p){return p.id!==me()});return d});notice('Désinscription confirmée');renderDetail()}catch(e){notice(e.message||String(e),3000)}finally{RT.busy=false}}
+async function deleteTournament(){if(RT.busy||!RT.controlId)return;var d=RT.data;if(!d||d.createdBy!==me()){notice('Seul l’organisateur peut supprimer ce tournoi.');return}var dl=(document.documentElement.lang||'fr'),dq=dl==='kab'?'Kkes i lebda « '+d.name+' » ?':dl==='en'?'Permanently delete “'+d.name+'”?':'Supprimer définitivement « '+d.name+' » ?';if(!window.confirm(dq))return;RT.busy=true;try{var id=RT.controlId,m=await control(id),fresh=parseData(m.get('tournament'));if(!fresh||fresh.createdBy!==me())throw new Error('Autorisation refusée');await m.destroy();if(loadCtx().controlId===id)clearCtx();RT.controlId='';RT.data=null;RT.reportKey='';stopPoll();showHome();$('tt-resume').hidden=true;notice('Tournoi supprimé');await list()}catch(e){notice('Suppression impossible : '+(e.message||e),3200)}finally{RT.busy=false}}
 async function startTournament(){if(RT.busy)return;RT.busy=true;try{await mutate(RT.controlId,function(d){if(d.createdBy!==me())throw new Error('Seul l’organisateur peut démarrer');if(d.status!=='lobby')return d;if(d.participants.length<2)throw new Error('Deux joueurs minimum');d.status='active';d.bracket=powerBracket(d.participants);d.currentRound=0;return propagate(d)});notice('🏆 Tournoi démarré');renderDetail()}catch(e){notice(e.message||String(e),2800)}finally{RT.busy=false}}
 var baseConnect=null,baseStart=null;
 function installGuards(){if(!baseConnect)baseConnect=window.__tiddasGetOnlineConnect?window.__tiddasGetOnlineConnect():window.onlineConnectToRoom;if(!baseStart)baseStart=window.__tiddasGetOnlineStart?window.__tiddasGetOnlineStart():window.onlineStartMatch_Back4App;if(typeof baseConnect==='function'&&!window.onlineConnectToRoom.__ttGuard){var wrapped=async function(code,creating){code=String(code||'').toUpperCase();if(RT.connectPromise&&RT.connectPromise.code===code)return RT.connectPromise.p;var token=++RT.session;var p=(async function(){if(online.connected&&String(online.room||'')!==code){try{onlineDisconnect()}catch(_){}await sleep(100)}await baseConnect(code,creating);if(token!==RT.session)return false;return !!(online.connected&&String(online.room||'')===code)})();RT.connectPromise={code:code,p:p};try{return await p}finally{if(RT.connectPromise&&RT.connectPromise.p===p)RT.connectPromise=null}};wrapped.__ttGuard=true;if(window.__tiddasSetOnlineConnect)window.__tiddasSetOnlineConnect(wrapped);else window.onlineConnectToRoom=wrapped;}
 if(typeof baseStart==='function'&&!window.onlineStartMatch_Back4App.__ttGuard){var running=null,sw=async function(){var key=String(online.matchId||'')+'|'+String(online.room||'');if(running&&running.key===key)return running.p;var p=(async function(){try{if(online.matchId){var m=await _fetchMatchById(online.matchId);if(String(m.get('status'))==='playing'&&m.get('payload')){onlineApplyState(m.get('payload'));return true}}return await baseStart()}finally{if(running&&running.p===p)running=null}})();running={key:key,p:p};return p};sw.__ttGuard=true;if(window.__tiddasSetOnlineStart)window.__tiddasSetOnlineStart(sw);else window.onlineStartMatch_Back4App=sw;}}
-async function joinMatch(){if(RT.busy)return;var d=RT.data,mm=myMatch(d);if(!mm){notice('Aucun match disponible.');return}if(mm.opp&&mm.opp.bye){notice('Qualification automatique.');return}RT.busy=true;try{installGuards();var code=codeFor(d.id,mm.r,mm.i),existing=null,token=++RT.session;try{onlineDisconnect()}catch(_){}await sleep(120);if(mm.host)existing=await gameByCode(code);else{for(var n=0;n<32&&!existing;n++){existing=await gameByCode(code);if(!existing)await sleep(500)}if(!existing)throw new Error('Le salon du match n’a pas encore été créé')}var ctx={controlId:RT.controlId,r:mm.r,i:mm.i,code:code,host:mm.host};saveCtx(ctx);var connectFn=window.onlineConnectToRoom||baseConnect;if(typeof connectFn!=='function')throw new Error('Transport en ligne indisponible');await connectFn(code,!!(mm.host&&!existing));if(token!==RT.session&&String(online.room||'')!==code)throw new Error('Connexion remplacée par une autre session');for(var w=0;w<24&&!(online.connected&&String(online.room||'')===code);w++)await sleep(250);if(!(online.connected&&String(online.room||'')===code))throw new Error('Connexion au salon incomplète');close();notice('🎯 Match de tournoi : '+code);if(mm.host)startTournamentGame(code,RT.session)}catch(e){notice('Impossible de rejoindre : '+(e.message||e),3400)}finally{RT.busy=false}}
-async function startTournamentGame(code,token){if(RT.startPromise)return RT.startPromise;RT.startPromise=(async function(){for(var n=0;n<40;n++){if(token!==RT.session||String(online.room||'')!==code)return false;var m=online.matchId?await _fetchMatchById(online.matchId):await gameByCode(code);if(m){if(m.get('status')==='playing')return true;if(m.get('p1Id')&&m.get('p2Id')&&m.get('p1Id')===me()){var startFn=window.onlineStartMatch_Back4App||baseStart;if(typeof startFn!=='function')throw new Error('Démarrage en ligne indisponible');await startFn();return true}}await sleep(500)}notice('Le second joueur ne s’est pas connecté.',3000);return false})().finally(function(){RT.startPromise=null});return RT.startPromise}
-async function reportWinner(){var ctx=loadCtx();if(!ctx.controlId||!ctx.code||!online.connected||String(online.room||'')!==ctx.code||!state||!state.winner)return;var key=ctx.controlId+'|'+ctx.r+'|'+ctx.i+'|'+online.gameId;if(RT.reportKey===key)return;RT.reportKey=key;try{var d=await mutate(ctx.controlId,function(d){var m=d.bracket&&d.bracket[ctx.r]&&d.bracket[ctx.r][ctx.i];if(!m||m.status==='done')return d;var winner=state.winner===1?(online.swapColors?m.p2:m.p1):(online.swapColors?m.p1:m.p2);if(!winner||!winner.id)throw new Error('Vainqueur indéterminé');m.winner=winner;m.status='done';return propagate(d)});RT.controlId=ctx.controlId;RT.data=d;notice(d.status==='done'?'🏆 Tournoi terminé — '+d.champion.name:'Résultat enregistré — prochain tour bientôt.',3600);setTimeout(function(){open();loadDetail(ctx.controlId)},1400)}catch(e){RT.reportKey='';notice('Résultat non synchronisé, nouvelle tentative…',2200)}}
+async function joinMatch(){if(RT.busy)return;var d=RT.data,mm=myMatch(d);if(!mm){notice('Aucun match disponible.');return}if(mm.opp&&mm.opp.bye){notice('Qualification automatique.');return}RT.busy=true;try{installGuards();var code=codeFor(d.id,mm.r,mm.i),existing=null;RT.reportKey='';try{onlineDisconnect()}catch(_){}await sleep(120);if(mm.host)existing=await gameByCode(code);else{for(var n=0;n<32&&!existing;n++){existing=await gameByCode(code);if(!existing)await sleep(500)}if(!existing)throw new Error('Le salon du match n’a pas encore été créé')}var ctx={controlId:RT.controlId,r:mm.r,i:mm.i,code:code,host:mm.host,armed:false,matchId:null,gameId:null};saveCtx(ctx);var connectFn=window.onlineConnectToRoom||baseConnect;if(typeof connectFn!=='function')throw new Error('Transport en ligne indisponible');/* Le garde de connexion crée sa propre session : ne jamais la comparer à un jeton créé avant l’appel. */await connectFn(code,!!(mm.host&&!existing));var token=RT.session;if(String(online.room||'')!==code)throw new Error('Connexion remplacée par une autre session');for(var w=0;w<24&&!(online.connected&&String(online.room||'')===code);w++)await sleep(250);if(!(online.connected&&String(online.room||'')===code))throw new Error('Connexion au salon incomplète');close();notice('🎯 Match de tournoi : '+code);if(mm.host)startTournamentGame(code,token);armTournamentResult(code,token)}catch(e){notice('Impossible de rejoindre : '+(e.message||e),3400)}finally{RT.busy=false}}
+async function startTournamentGame(code,token){if(RT.startPromise)return RT.startPromise;RT.startPromise=(async function(){for(var n=0;n<40;n++){if(token!==RT.session||String(online.room||'')!==code)return false;var m=online.matchId?await _fetchMatchById(online.matchId):await gameByCode(code);if(m){if(m.get('status')==='playing'&&m.get('payload'))return true;if(m.get('p1Id')&&m.get('p2Id')&&m.get('p1Id')===me()){var startFn=window.onlineStartMatch_Back4App||baseStart;if(typeof startFn!=='function')throw new Error('Démarrage en ligne indisponible');await startFn();return true}}await sleep(500)}notice('Le second joueur ne s’est pas connecté.',3000);return false})().finally(function(){RT.startPromise=null});return RT.startPromise}
+async function armTournamentResult(code,token){if(RT.resultArmPromise)return RT.resultArmPromise;RT.resultArmPromise=(async function(){for(var n=0;n<80;n++){if(token!==RT.session||!online.connected||String(online.room||'')!==code)return false;var match=online.matchId?await _fetchMatchById(online.matchId):await gameByCode(code),payload=match&&match.get('payload'),remoteState=payload&&payload.state,remoteGameId=payload&&payload.meta?Number(payload.meta.gameId):Number(match&&match.get('gameId')||0);if(match&&String(match.get('status'))==='playing'&&remoteState&&!remoteState.winner&&remoteGameId>0){var ctx=loadCtx();if(ctx.code!==code)return false;ctx.armed=true;ctx.matchId=match.id;ctx.gameId=remoteGameId;ctx.armedAt=Date.now();saveCtx(ctx);return true}await sleep(400)}notice('Le match n’a pas pu être validé pour le tournoi.',3000);return false})().catch(function(){return false}).finally(function(){RT.resultArmPromise=null});return RT.resultArmPromise}
+async function reportWinner(){var ctx=loadCtx();if(!ctx.controlId||!ctx.code||!ctx.armed||!ctx.matchId||ctx.gameId==null||!online.connected||String(online.room||'')!==ctx.code)return;var remote=await _fetchMatchById(ctx.matchId);if(!remote||remote.id!==ctx.matchId||String(remote.get('code')||'')!==ctx.code||String(remote.get('status')||'')!=='finished')return;var payload=remote.get('payload'),remoteState=payload&&payload.state,meta=payload&&payload.meta,remoteGameId=meta&&meta.gameId!=null?Number(meta.gameId):Number(remote.get('gameId')||0);if(!remoteState||!remoteState.winner||remoteGameId!==Number(ctx.gameId))return;var key=ctx.controlId+'|'+ctx.r+'|'+ctx.i+'|'+ctx.matchId+'|'+remoteGameId;if(RT.reportKey===key)return;RT.reportKey=key;try{var swap=!!(meta&&meta.swapColors),winningStone=Number(remoteState.winner);var d=await mutate(ctx.controlId,function(d){var m=d.bracket&&d.bracket[ctx.r]&&d.bracket[ctx.r][ctx.i];if(!m||m.status==='done')return d;if(!m.p1||!m.p2)throw new Error('Finalistes incomplets');var winner=winningStone===1?(swap?m.p2:m.p1):(swap?m.p1:m.p2);if(!winner||!winner.id||winner.bye)throw new Error('Vainqueur indéterminé');m.winner=winner;m.status='done';m.gameId=remoteGameId;m.matchId=ctx.matchId;m.completedAt=Date.now();return propagate(d)});ctx.armed=false;ctx.reported=true;saveCtx(ctx);RT.controlId=ctx.controlId;RT.data=d;notice(d.status==='done'?'🏆 Tournoi terminé — '+d.champion.name:'Résultat enregistré — prochain tour bientôt.',3600);setTimeout(function(){open();loadDetail(ctx.controlId)},1400)}catch(e){RT.reportKey='';notice('Résultat non synchronisé, nouvelle tentative…',2200)}}
 function startPoll(){if(RT.poll)return;RT.poll=setInterval(async function(){try{if(RT.controlId&&await ensure()){var m=await control(RT.controlId),d=parseData(m.get('tournament'));if(d&&(!RT.data||d.revision!==RT.data.revision)){RT.data=d;if(RT.modal)renderDetail()}}await reportWinner()}catch(_){}},2200)}
 function stopPoll(){if(RT.poll){clearInterval(RT.poll);RT.poll=0}}
 function boot(){var fab=$('tt-fab');if(fab){fab.onclick=open;setInterval(function(){var area=$('online-lobby-area');fab.classList.toggle('visible',!!(area&&area.classList.contains('active')))},500)}$('tt-close').onclick=close;$('tt-overlay').addEventListener('click',function(e){if(e.target===$('tt-overlay'))close()});$('tt-create-form').onsubmit=createTournament;$('tt-refresh').onclick=list;$('tt-resume').onclick=function(){var c=loadCtx();if(c.controlId)loadDetail(c.controlId)};var c=loadCtx();if(c.controlId){$('tt-resume').hidden=false;RT.controlId=c.controlId;startPoll()}installGuards();setInterval(installGuards,2000);window.addEventListener('online',function(){if(RT.modal)list()});document.addEventListener('visibilitychange',function(){if(!document.hidden&&RT.controlId)startPoll()})}
@@ -28104,8 +28110,8 @@ window.TiddasTournament={open:open,refresh:list,joinMatch:joinMatch,state:functi
 <script id="tiddas-display-i18n-fixes" nonce="tiddas">
 (function(){'use strict';
 var K={
- kab:{'Tournois':'Timzizzelt','Tournois en ligne':'Timzizzelt s uẓeṭṭa','Créez, rejoignez et jouez un tableau à élimination directe.':'Rnu, kcem u turar deg tfelwit n timzizzelt.','Nom du tournoi':'Isem n timzizzelt','Créer':'Rnu','↻ Actualiser':'↻ Smiren','Reprendre mon tournoi':'Kemmel timzizzelt-iw','Participants':'Imyurar','Tableau':'Tafelwit','Fermer':'Mdel','joueurs':'imyurar','Inscriptions':'Asekles','En cours':'Tetteddu','Terminé':'Yekfa','Inscriptions ouvertes':'Asekles yeldi','Tournoi en cours':'Timzizzelt tetteddu','Tournoi terminé':'Timzizzelt tekfa','organisateur':'amsuddes','Le tableau apparaîtra au démarrage.':'Tafelwit ad d-tban mi tebda timzizzelt.','Finale':'Taggara','À déterminer':'Mazal ur yettwafren','Votre match':'Timlilit-ik','Inscrit ✓':'Tkecmeḍ ✓','S’inscrire':'Kcem','Démarrer le tournoi':'Bdu timzizzelt','⚔ Jouer mon match':'⚔ Urar timlilit-iw','Aucun match disponible':'Ulac timlilit tura','← Liste':'← Tibdarin','Aucun tournoi disponible.':'Ulac timzizzelt tura.','Créez le premier tableau.':'Rnu tin tamezwarut.','Le serveur en ligne est indisponible.':'Aqeddac s uẓeṭṭa ur yewjid ara.','Impossible de charger les tournois.':'Ur nezmir ara ad d-nawi timzizzelt.','🏆 Tournoi créé':'🏆 Timzizzelt tettwarna','Inscription confirmée':'Asekles yemmed','🏆 Tournoi démarré':'🏆 Timzizzelt tebda','Qualification automatique.':'Tɛeddaḍ s wudem awurman.','Le second joueur ne s’est pas connecté.':'Amyurar wis sin ur d-yeqqin ara.','Résultat non synchronisé, nouvelle tentative…':'Agemmuḍ ur yemṣada ara, ad nɛawed…','Défaut':'Amezwer','Océan':'Agaraw','Bois':'Asɣar','Parchemin':'Akaggal','Obsidienne':'Aberkan','Berbère':'Amaziɣ','Nuit':'Iḍ','Sahara':'Sseḥra','Jade':'Azegzaw','Rubis':'Azeggaɣ'},
- en:{'Tournois':'Tournaments','Tournois en ligne':'Online tournaments','Créez, rejoignez et jouez un tableau à élimination directe.':'Create, join and play a single-elimination bracket.','Nom du tournoi':'Tournament name','Créer':'Create','↻ Actualiser':'↻ Refresh','Reprendre mon tournoi':'Resume my tournament','Participants':'Participants','Tableau':'Bracket','Fermer':'Close','joueurs':'players','Inscriptions':'Registration','En cours':'In progress','Terminé':'Finished','Inscriptions ouvertes':'Registration open','Tournoi en cours':'Tournament in progress','Tournoi terminé':'Tournament finished','organisateur':'organizer','Le tableau apparaîtra au démarrage.':'The bracket will appear when the tournament starts.','Finale':'Final','À déterminer':'To be determined','Votre match':'Your match','Inscrit ✓':'Registered ✓','S’inscrire':'Register','Démarrer le tournoi':'Start tournament','⚔ Jouer mon match':'⚔ Play my match','Aucun match disponible':'No match available','← Liste':'← List','Aucun tournoi disponible.':'No tournaments available.','Créez le premier tableau.':'Create the first bracket.','Le serveur en ligne est indisponible.':'The online server is unavailable.','Impossible de charger les tournois.':'Unable to load tournaments.','🏆 Tournoi créé':'🏆 Tournament created','Inscription confirmée':'Registration confirmed','🏆 Tournoi démarré':'🏆 Tournament started','Qualification automatique.':'Automatic qualification.','Le second joueur ne s’est pas connecté.':'The second player did not connect.','Résultat non synchronisé, nouvelle tentative…':'Result not synced, retrying…','Défaut':'Default','Océan':'Ocean','Bois':'Wood','Parchemin':'Parchment','Obsidienne':'Obsidian','Berbère':'Amazigh','Nuit':'Night','Sahara':'Sahara','Jade':'Jade','Rubis':'Ruby'}
+ kab:{'Tournois':'Timzizzelt','Tournois en ligne':'Timzizzelt s uẓeṭṭa','Créez, rejoignez et jouez un tableau à élimination directe.':'Rnu, kcem u turar deg tfelwit n timzizzelt.','Nom du tournoi':'Isem n timzizzelt','Créer':'Rnu','↻ Actualiser':'↻ Smiren','Reprendre mon tournoi':'Kemmel timzizzelt-iw','Participants':'Imyurar','Tableau':'Tafelwit','Fermer':'Mdel','joueurs':'imyurar','Inscriptions':'Asekles','En cours':'Tetteddu','Terminé':'Yekfa','Inscriptions ouvertes':'Asekles yeldi','Tournoi en cours':'Timzizzelt tetteddu','Tournoi terminé':'Timzizzelt tekfa','organisateur':'amsuddes','Le tableau apparaîtra au démarrage.':'Tafelwit ad d-tban mi tebda timzizzelt.','Finale':'Taggara','À déterminer':'Mazal ur yettwafren','Votre match':'Timlilit-ik','Inscrit ✓':'Tkecmeḍ ✓','S’inscrire':'Kcem','Démarrer le tournoi':'Bdu timzizzelt','⚔ Jouer mon match':'⚔ Urar timlilit-iw','Aucun match disponible':'Ulac timlilit tura','← Liste':'← tabdert','Aucun tournoi disponible.':'Ulac timzizzelt tura.','Créez le premier tableau.':'Rnu tin tamezwarut.','Le serveur en ligne est indisponible.':'Aqeddac s uẓeṭṭa ur yewjid ara.','Impossible de charger les tournois.':'Ur nezmir ara ad d-nawi timzizzelt.','🏆 Tournoi créé':'🏆 Timzizzelt tettwarna','Inscription confirmée':'Asekles yemmed','🏆 Tournoi démarré':'🏆 Timzizzelt tebda','Qualification automatique.':'Tɛeddaḍ s wudem awurman.','Le second joueur ne s’est pas connecté.':'Amyurar wis sin ur d-yeqqin ara.','Résultat non synchronisé, nouvelle tentative…':'Agemmuḍ ur yemṣada ara, ad nɛawed…','Se désinscrire':'Ffeɣ seg usekles','Supprimer le tournoi':'Kkes timzizzelt','Désinscription confirmée':'Tuffɣa seg usekles temmed','Tournoi supprimé':'Timzizzelt tettwakkes','Désinscription impossible après le démarrage':'Ur tezmireḍ ara ad teffeɣ seg usekles seld beddu','L’organisateur doit supprimer le tournoi':'Amsuddes ilaq ad yekkes timzizzelt','Seul l’organisateur peut supprimer ce tournoi.':'Ala amsuddes i izemren ad yekkes timzizzelt-a.','Le match n’a pas pu être validé pour le tournoi.':'Ur nezmir ara ad nsenqed timlilit i timzizzelt.','Autorisation refusée':'Tasiregt tettwagi','Défaut':'Amezwer','Océan':'Agaraw','Bois':'Asɣar','Parchemin':'Akaggal','Obsidienne':'Aberkan','Berbère':'Amaziɣ','Nuit':'Iḍ','Sahara':'Sseḥra','Jade':'Azegzaw','Rubis':'Azeggaɣ'},
+ en:{'Tournois':'Tournaments','Tournois en ligne':'Online tournaments','Créez, rejoignez et jouez un tableau à élimination directe.':'Create, join and play a single-elimination bracket.','Nom du tournoi':'Tournament name','Créer':'Create','↻ Actualiser':'↻ Refresh','Reprendre mon tournoi':'Resume my tournament','Participants':'Participants','Tableau':'Bracket','Fermer':'Close','joueurs':'players','Inscriptions':'Registration','En cours':'In progress','Terminé':'Finished','Inscriptions ouvertes':'Registration open','Tournoi en cours':'Tournament in progress','Tournoi terminé':'Tournament finished','organisateur':'organizer','Le tableau apparaîtra au démarrage.':'The bracket will appear when the tournament starts.','Finale':'Final','À déterminer':'To be determined','Votre match':'Your match','Inscrit ✓':'Registered ✓','S’inscrire':'Register','Démarrer le tournoi':'Start tournament','⚔ Jouer mon match':'⚔ Play my match','Aucun match disponible':'No match available','← Liste':'← List','Aucun tournoi disponible.':'No tournaments available.','Créez le premier tableau.':'Create the first bracket.','Le serveur en ligne est indisponible.':'The online server is unavailable.','Impossible de charger les tournois.':'Unable to load tournaments.','🏆 Tournoi créé':'🏆 Tournament created','Inscription confirmée':'Registration confirmed','🏆 Tournoi démarré':'🏆 Tournament started','Qualification automatique.':'Automatic qualification.','Le second joueur ne s’est pas connecté.':'The second player did not connect.','Résultat non synchronisé, nouvelle tentative…':'Result not synced, retrying…','Se désinscrire':'Withdraw','Supprimer le tournoi':'Delete tournament','Désinscription confirmée':'Withdrawal confirmed','Tournoi supprimé':'Tournament deleted','Désinscription impossible après le démarrage':'You cannot withdraw after the tournament starts','L’organisateur doit supprimer le tournoi':'The organizer must delete the tournament','Seul l’organisateur peut supprimer ce tournoi.':'Only the organizer can delete this tournament.','Le match n’a pas pu être validé pour le tournoi.':'The match could not be validated for the tournament.','Autorisation refusée':'Permission denied','Défaut':'Default','Océan':'Ocean','Bois':'Wood','Parchemin':'Parchment','Obsidienne':'Obsidian','Berbère':'Amazigh','Nuit':'Night','Sahara':'Sahara','Jade':'Jade','Rubis':'Ruby'}
 };
 var src=new WeakMap(),obs,applying=false,last='';
 function lang(){var x=document.documentElement.lang||'fr';return x==='kab'||x==='en'?x:'fr'}
@@ -28120,19 +28126,20 @@ function dyn(x,l){var d=K[l]||{};if(d[x])return d[x];var m;
  if((m=x.match(/^Tournoi (.*)$/)))return (l==='kab'?'Timzizzelt ':'Tournament ')+m[1];
  if((m=x.match(/^Erreur : (.*)$/)))return (l==='kab'?'Tuccḍa: ':'Error: ')+m[1];
  if((m=x.match(/^Impossible de rejoindre : (.*)$/)))return (l==='kab'?'Ur izmir ara ad yekcem: ':'Unable to join: ')+m[1];
+ if((m=x.match(/^Suppression impossible : (.*)$/)))return (l==='kab'?'Ur izmir ara ad yekkes: ':'Unable to delete: ')+m[1];
  if((m=x.match(/^🎯 Match de tournoi : (.*)$/)))return (l==='kab'?'🎯 Timlilit n timzizzelt: ':'🎯 Tournament match: ')+m[1];
  if((m=x.match(/^🏆 Tournoi terminé — (.*)$/)))return (l==='kab'?'🏆 Timzizzelt tekfa — ':'🏆 Tournament finished — ')+m[1];
  if(x==='Résultat enregistré — prochain tour bientôt.')return l==='kab'?'Agemmuḍ yettwaskles — tizit i d-iteddun qrib.':'Result saved — next round soon.';
  return x}
 function leaves(root){return Array.from(root.querySelectorAll('*')).filter(function(e){return !e.children.length&&e.id!=='tt-name'})}
 function syncBoardLabels(l){var boardNames={default:['Défaut','Amezwer','Default'],teal:['Océan','Agaraw','Ocean'],wood:['Bois','Asɣar','Wood'],parchment:['Parchemin','Akaggal','Parchment'],obsidian:['Obsidienne','Aberkan','Obsidian'],berber:['Berbère','Amaziɣ','Amazigh'],night:['Nuit','Iḍ','Night'],sand:['Sahara','Sseḥra','Sahara'],jade:['Jade','Azegzaw','Jade'],crimson:['Rubis','Azeggaɣ','Ruby']};document.querySelectorAll('#btp-inline-grid .btp-dot').forEach(function(b){var a=boardNames[b.dataset.btheme]||[b.dataset.btheme,b.dataset.btheme,b.dataset.btheme],v=a[l==='kab'?1:l==='en'?2:0];b.title=v;b.setAttribute('aria-label',v)})}
-function apply(){var l=lang(),roots=['tt-fab','tt-overlay','tt-notice'];applying=true;obs&&obs.disconnect();roots.forEach(function(id){var r=document.getElementById(id);if(!r)return;leaves(r).forEach(function(e){if(!src.has(e))src.set(e,e.textContent);var base=src.get(e);e.textContent=l==='fr'?base:dyn(base,l)});});
+function apply(){var l=lang(),roots=['tt-fab','tt-overlay','tt-notice'];applying=true;obs&&obs.disconnect();roots.forEach(function(id){var r=document.getElementById(id);if(!r)return;var nodes=r.children.length?leaves(r):[r];nodes.forEach(function(e){if(!src.has(e))src.set(e,e.textContent);var base=src.get(e);e.textContent=l==='fr'?base:dyn(base,l)});});
  var input=document.getElementById('tt-name');if(input){input.placeholder=l==='kab'?'Isem n timzizzelt':l==='en'?'Tournament name':'Nom du tournoi';input.setAttribute('aria-label',input.placeholder)}
  var size=document.getElementById('tt-size');if(size)Array.from(size.options).forEach(function(o){o.textContent=o.value+' '+(l==='kab'?'imyurar':l==='en'?'players':'joueurs')});
- var fab=document.getElementById('tt-fab'),close=document.getElementById('tt-close');if(fab)fab.setAttribute('aria-label',l==='kab'?'Timzizzelt s uẓeṭṭa':l==='en'?'Online tournaments':'Tournois en ligne');if(close)close.setAttribute('aria-label',l==='kab'?'Mdel':l==='en'?'Close':'Fermer');
+ var fab=document.getElementById('tt-fab'),close=document.getElementById('tt-close');if(fab)fab.setAttribute('aria-label',l==='kab'?'Timzizzelt s u��eṭṭa':l==='en'?'Online tournaments':'Tournois en ligne');if(close)close.setAttribute('aria-label',l==='kab'?'Mdel':l==='en'?'Close':'Fermer');
  syncBoardLabels(l);
  applying=false;observe()}
-function observe(){if(!obs){obs=new MutationObserver(function(ms){if(applying)return;obs.disconnect();ms.forEach(function(m){if(m.type==='characterData'&&m.target.parentElement)src.set(m.target.parentElement,m.target.data);if(m.type==='childList')m.addedNodes.forEach(function(n){if(n.nodeType===1)leaves(n).forEach(function(e){src.set(e,e.textContent)})})});apply()})}['tt-fab','tt-overlay','tt-notice'].forEach(function(id){var r=document.getElementById(id);if(r)obs.observe(r,{subtree:true,childList:true,characterData:true})})}
+function observe(){if(!obs){obs=new MutationObserver(function(ms){if(applying)return;obs.disconnect();ms.forEach(function(m){if(m.type==='characterData'&&m.target.parentElement)src.set(m.target.parentElement,m.target.data);if(m.type==='childList'){if(m.target&&m.target.nodeType===1&&!m.target.children.length)src.set(m.target,m.target.textContent);m.addedNodes.forEach(function(n){if(n.nodeType===1)leaves(n).forEach(function(e){src.set(e,e.textContent)})})}});apply()})}['tt-fab','tt-overlay','tt-notice'].forEach(function(id){var r=document.getElementById(id);if(r)obs.observe(r,{subtree:true,childList:true,characterData:true})})}
 function tick(){var l=lang();syncBoardLabels(l);if(l!==last){last=l;apply()}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){apply();setInterval(tick,250)},{once:true});else{apply();setInterval(tick,250)}
 })();
@@ -28640,7 +28647,7 @@ html.tiddas-spectator #game-board{cursor:not-allowed}html.tiddas-spectator #game
 var join=document.getElementById('online-spectator-join'),badge=document.getElementById('tiddas-spectator-badge');
 function tr(k,f){try{return typeof t==='function'?t(k,f):f}catch(_){return f}}
 if(join)join.addEventListener('click',function(){if(typeof window.onlineJoinAsSpectator==='function')window.onlineJoinAsSpectator(window.__tiddasPendingSpectatorCode||'')});
-function sync(){var spec=!!(window.online&&online.connected&&online.spectator);document.documentElement.classList.toggle('tiddas-spectator',spec);if(spec){try{if(typeof setOnlineChatOpen==='function')setOnlineChatOpen(false)}catch(_){}}if(badge){badge.hidden=!spec;var x=badge.querySelector('span');if(x)x.textContent='LIVE · '+tr('onlineSpectator','Spectateur')}}
+function sync(){var spec=!!(window.online&&online.connected&&online.spectator);document.documentElement.classList.toggle('tiddas-spectator',spec);if(spec){try{if(typeof setOnlineChatOpen==='function')setOnlineChatOpen(false)}catch(_){}}if(badge){badge.hidden=!spec;var x=badge.querySelector('span'),l=document.documentElement.lang||'fr',word=l==='kab'?'Imfeṛṛeǧ':l==='en'?'Spectator':'Spectateur';if(x)x.textContent='LIVE · '+word}}
 document.addEventListener('click',function(e){if(!(window.online&&online.spectator))return;var blocked=e.target&&e.target.closest&&e.target.closest('#game-board,#undo-btn,#restart-btn,.surrender-btn');if(blocked){e.preventDefault();e.stopImmediatePropagation()}},true);
 setInterval(sync,750);window.addEventListener('tiddas:lang-changed',sync);sync();
 })();
@@ -28656,9 +28663,39 @@ setInterval(sync,750);window.addEventListener('tiddas:lang-changed',sync);sync()
 #online-chat-list{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important}#online-chat-form{flex:0 0 auto!important;display:grid!important;grid-template-columns:minmax(0,1fr) 46px 46px!important;gap:8px!important;padding:10px!important}#online-chat-input{grid-column:1!important;min-width:0!important;height:46px!important;font-size:16px!important}#online-chat-voice{grid-column:2!important;width:46px!important;height:46px!important;min-width:46px!important;touch-action:manipulation!important}#online-chat-send{grid-column:3!important;width:46px!important;height:46px!important;min-width:46px!important;font-size:0!important;background:#1769e0!important}#online-chat-send:before{content:'➤';font:900 21px/1 system-ui;display:block;transform:rotate(-18deg)}
 #tiddas-online-tools{position:fixed!important;right:78px!important;left:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;z-index:1270!important;max-width:210px!important;transform:none!important}.tot-status{max-width:145px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 </style><script id="tiddas-v11-mic-compat" nonce="tiddas">(function(){'use strict';if(navigator.mediaDevices||!navigator.getUserMedia)return;navigator.mediaDevices={getUserMedia:function(c){return new Promise(function(ok,no){navigator.getUserMedia(c,ok,no)})}}})();</script>
-<style id="tiddas-v14-final" nonce="tiddas">#settings-fab{position:fixed!important;right:14px!important;left:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;z-index:9999!important;display:flex!important;visibility:visible!important;opacity:1!important;transform:none!important}.settings-tray{z-index:9998!important}.tiddas-side-btn{font:600 .72rem var(--font-ui);padding:.4rem .55rem!important;min-height:32px;border-radius:10px!important;opacity:.82}html[data-control-side="left"] #settings-fab{right:auto!important;left:14px!important}html[data-control-side="left"] .toolbar-buttons{right:auto!important;left:14px!important;align-items:flex-start!important}html[data-control-side="left"] #online-chat-fab{right:auto!important;left:14px!important}html[data-control-side="left"] #online-chat-panel{right:auto!important;left:12px!important}.tiddas-history{margin:12px 0;padding:10px;border:1px solid rgba(180,130,30,.25);border-radius:14px;background:rgba(255,255,255,.7)}.tiddas-history button{margin:3px;padding:8px 10px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700}.tiddas-history small{display:block;opacity:.7;margin-top:2px}#online-chat-quick{max-height:88px!important;overflow-y:auto!important;gap:6px!important;padding:4px 0!important}.online-chat-quick-btn{padding:.4rem .65rem!important;min-height:32px!important;font-size:.78rem!important}.ol-quit-btn{min-height:44px!important;padding:.6rem 1rem!important;border-radius:14px!important;font-size:.92rem!important}</style><script id="tiddas-v14-final-js" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_V14__)return;window.__TIDDAS_V14__=true;function L(){try{return(typeof currentLanguage!=='undefined'&&currentLanguage)||localStorage.getItem('tiddas_lang')||'fr'}catch(_){return'fr'}}var V14T={sideL:{fr:'◀ Commandes à gauche',kab:'◀ Tinaḍin ɣer zelmaḍ',en:'◀ Controls on left'},sideR:{fr:'▶ Commandes à droite',kab:'▶ Tinaḍin ɣer yeffus',en:'▶ Controls on right'},sideT:{fr:'Changer le côté des commandes',kab:'Beddel idis n tinaḍin',en:'Switch controls side'},last:{fr:'↻ Reprendre le dernier salon',kab:'↻ Uɣal ɣer teslaḍt taneggarut',en:'↻ Rejoin last room'},recent:{fr:'☷ Salons récents',kab:'☷ Tislaḍin n yakan',en:'☷ Recent rooms'},fallback:{fr:'Salon récent',kab:'Taslaḍt',en:'Recent room'},copied:{fr:'Code copié : ',kab:'Tasarut tettwanɣel : ',en:'Code copied: '}};function T(k){var d=V14T[k]||{};return d[L()]||d.fr||''}function setSide(x){document.documentElement.dataset.controlSide=x;try{localStorage.setItem('tiddas_control_side',x)}catch(_){}}function side(){try{return localStorage.getItem('tiddas_control_side')||'right'}catch(_){return'right'}}function copy(t){if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t);var i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();return Promise.resolve()}function code(){return((window.online||{}).room||document.getElementById('online-roomcode')?.textContent||'').trim()}function rooms(){try{return(JSON.parse(localStorage.getItem('tiddas_online_rooms_v2')||'{"rooms":[]}').rooms||[]).slice(0,3)}catch(_){return[]}}function join(c){if(c&&typeof window.onlineConnectToRoom==='function')window.onlineConnectToRoom(String(c).toUpperCase(),false)}function bind(){var _sb=document.getElementById('tiddas-side-btn');if(_sb)_sb.textContent=side()==='right'?T('sideL'):T('sideR');var _tl=document.getElementById('tiddas-last');if(_tl)_tl.textContent=T('last');var _tr=document.getElementById('tiddas-recent');if(_tr)_tr.textContent=T('recent');var f=document.getElementById('settings-fab'),tray=document.querySelector('.settings-tray');if(tray&&!document.getElementById('tiddas-side-btn')){var b=document.createElement('button');b.id='tiddas-side-btn';b.className='tiddas-side-btn';b.type='button';b.title=T('sideT');b.textContent=side()==='right'?T('sideL'):T('sideR');b.onclick=function(){var n=side()==='right'?'left':'right';setSide(n);b.textContent=n==='right'?T('sideL'):T('sideR')};tray.appendChild(b)}var cp=document.getElementById('online-copy-code');if(cp&&!cp.dataset.v14){cp.dataset.v14='1';cp.addEventListener('click',function(e){e.preventDefault();var c=code();if(c&&c!=='—')copy(c).then(function(){window.showToast&&showToast(T('copied')+c,1800)})},true)}var q=document.getElementById('ol-quit-btn');if(q&&!q.dataset.v14){q.dataset.v14='1';q.addEventListener('click',function(e){e.preventDefault();if(typeof window.onlineDisconnect==='function')window.onlineDisconnect()},true)}var status=document.getElementById('online-status');if(status&&!document.getElementById('tiddas-history-actions')){var d=document.createElement('div');d.id='tiddas-history-actions';d.className='tiddas-history';d.innerHTML='<button id="tiddas-last" type="button"></button><button id="tiddas-recent" type="button"></button>';d.querySelector('#tiddas-last').textContent=T('last');d.querySelector('#tiddas-recent').textContent=T('recent');status.parentNode.insertBefore(d,status.nextSibling);d.querySelector('#tiddas-last').onclick=function(){var r=rooms()[0];if(r)join(r.code)};d.querySelector('#tiddas-recent').onclick=function(){var w=document.getElementById('online-recent-wrap'),l=document.getElementById('online-recent-list');if(!w||!l)return;l.innerHTML='';rooms().forEach(function(r){var b=document.createElement('button');b.innerHTML='<b>'+String(r.code||'').toUpperCase()+'</b><small>'+String(r.opponentName||T('fallback'))+'</small>';b.onclick=function(){join(r.code)};l.appendChild(b)});w.style.display=w.style.display==='none'?'':'none'}}}setSide(side());setInterval(bind,600);bind()})();</script>
+<style id="tiddas-v14-final" nonce="tiddas">#settings-fab{position:fixed!important;right:14px!important;left:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;z-index:9999!important;display:flex!important;visibility:visible!important;opacity:1!important;transform:none!important}.settings-tray{z-index:9998!important}.tiddas-side-btn{font:600 .72rem var(--font-ui);padding:.4rem .55rem!important;min-height:32px;border-radius:10px!important;opacity:.82}html[data-control-side="left"] #settings-fab{right:auto!important;left:14px!important}html[data-control-side="left"] .toolbar-buttons{right:auto!important;left:14px!important;align-items:flex-start!important}html[data-control-side="left"] #online-chat-fab{right:auto!important;left:14px!important}html[data-control-side="left"] #online-chat-panel{right:auto!important;left:12px!important}.tiddas-history{margin:12px 0;padding:10px;border:1px solid rgba(180,130,30,.25);border-radius:14px;background:rgba(255,255,255,.7)}.tiddas-history button{margin:3px;padding:8px 10px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700}.tiddas-history small{display:block;opacity:.7;margin-top:2px}#online-chat-quick{max-height:88px!important;overflow-y:auto!important;gap:6px!important;padding:4px 0!important}.online-chat-quick-btn{padding:.4rem .65rem!important;min-height:32px!important;font-size:.78rem!important}.ol-quit-btn{min-height:44px!important;padding:.6rem 1rem!important;border-radius:14px!important;font-size:.92rem!important}</style><script id="tiddas-v14-final-js" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_V14__)return;window.__TIDDAS_V14__=true;function L(){try{return(typeof currentLanguage!=='undefined'&&currentLanguage)||localStorage.getItem('tiddas_lang')||'fr'}catch(_){return'fr'}}var V14T={sideL:{fr:'◀ Commandes à gauche',kab:'◀ Tiqeffal ɣer zelmaḍ',en:'◀ Controls on left'},sideR:{fr:'▶ Commandes à droite',kab:'▶ Tiqeffal ɣer yeffus',en:'▶ Controls on right'},sideT:{fr:'Changer le côté des commandes',kab:'Beddel idis n tqeffal',en:'Switch controls side'},last:{fr:'↻ Reprendre le dernier salon',kab:'↻ Uɣal ɣer teslaḍt taneggarut',en:'↻ Rejoin last room'},recent:{fr:'☷ Salons récents',kab:'☷ Tislaḍin n yakan',en:'☷ Recent rooms'},fallback:{fr:'Salon récent',kab:'Taslaḍt',en:'Recent room'},copied:{fr:'Code copié : ',kab:'Tasarut tettwanɣel : ',en:'Code copied: '}};function T(k){var d=V14T[k]||{};return d[L()]||d.fr||''}function setSide(x){document.documentElement.dataset.controlSide=x;try{localStorage.setItem('tiddas_control_side',x)}catch(_){}}function side(){try{return localStorage.getItem('tiddas_control_side')||'right'}catch(_){return'right'}}function copy(t){if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t);var i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();return Promise.resolve()}function code(){return((window.online||{}).room||document.getElementById('online-roomcode')?.textContent||'').trim()}function rooms(){try{return(JSON.parse(localStorage.getItem('tiddas_online_rooms_v2')||'{"rooms":[]}').rooms||[]).slice(0,3)}catch(_){return[]}}function join(c){if(c&&typeof window.onlineConnectToRoom==='function')window.onlineConnectToRoom(String(c).toUpperCase(),false)}function bind(){var _sb=document.getElementById('tiddas-side-btn');if(_sb)_sb.textContent=side()==='right'?T('sideL'):T('sideR');var _tl=document.getElementById('tiddas-last');if(_tl)_tl.textContent=T('last');var _tr=document.getElementById('tiddas-recent');if(_tr)_tr.textContent=T('recent');var f=document.getElementById('settings-fab'),tray=document.querySelector('.settings-tray');if(tray&&!document.getElementById('tiddas-side-btn')){var b=document.createElement('button');b.id='tiddas-side-btn';b.className='tiddas-side-btn';b.type='button';b.title=T('sideT');b.textContent=side()==='right'?T('sideL'):T('sideR');b.onclick=function(){var n=side()==='right'?'left':'right';setSide(n);b.textContent=n==='right'?T('sideL'):T('sideR')};tray.appendChild(b)}var cp=document.getElementById('online-copy-code');if(cp&&!cp.dataset.v14){cp.dataset.v14='1';cp.addEventListener('click',function(e){e.preventDefault();var c=code();if(c&&c!=='—')copy(c).then(function(){window.showToast&&showToast(T('copied')+c,1800)})},true)}var q=document.getElementById('ol-quit-btn');if(q&&!q.dataset.v14){q.dataset.v14='1';q.addEventListener('click',function(e){e.preventDefault();if(typeof window.onlineDisconnect==='function')window.onlineDisconnect()},true)}var status=document.getElementById('online-status');if(status&&!document.getElementById('tiddas-history-actions')){var d=document.createElement('div');d.id='tiddas-history-actions';d.className='tiddas-history';d.innerHTML='<button id="tiddas-last" type="button"></button><button id="tiddas-recent" type="button"></button>';d.querySelector('#tiddas-last').textContent=T('last');d.querySelector('#tiddas-recent').textContent=T('recent');status.parentNode.insertBefore(d,status.nextSibling);d.querySelector('#tiddas-last').onclick=function(){var r=rooms()[0];if(r)join(r.code)};d.querySelector('#tiddas-recent').onclick=function(){var w=document.getElementById('online-recent-wrap'),l=document.getElementById('online-recent-list');if(!w||!l)return;l.innerHTML='';rooms().forEach(function(r){var b=document.createElement('button');b.innerHTML='<b>'+String(r.code||'').toUpperCase()+'</b><small>'+String(r.opponentName||T('fallback'))+'</small>';b.onclick=function(){join(r.code)};l.appendChild(b)});w.style.display=w.style.display==='none'?'':'none'}}}setSide(side());setInterval(bind,600);bind()})();</script>
 <!-- couches chat/vocal/relais héritées retirées, remplacées par le module v45 -->
-<script id="tiddas-online-resilience-v22" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_NET_V22__)return;window.__TIDDAS_NET_V22__=1;var K='tiddas_online_resume_v3',fails=0,busy=false,attempt=0,last=0;function mem(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(_){return null}}function save(){var o=window.online||{};if(o.connected&&o.room&&o.matchId)try{localStorage.setItem(K,JSON.stringify({code:String(o.room).toUpperCase(),at:Date.now()}))}catch(_){}}function clear(){try{localStorage.removeItem(K)}catch(_){}}async function recover(){if(busy||!navigator.onLine)return;var o=window.online||{},r=mem();if(o.connected||!r||Date.now()-r.at>86400000||typeof window.onlineConnectToRoom!=='function')return;busy=true;try{await window.onlineConnectToRoom(r.code,false);attempt=0;save()}catch(_){attempt=Math.min(attempt+1,5)}finally{busy=false}}async function health(){var o=window.online||{};if(!o.connected||!o.matchId||typeof window._fetchMatchById!=='function')return;try{await window._fetchMatchById(o.matchId);fails=0;save()}catch(_){fails++;if(fails>=3){fails=0;try{o.connected=false}catch(__){};setTimeout(recover,Math.min(12000,1000*(1<<attempt)))}}}var baseConnect=window.onlineConnectToRoom;if(typeof baseConnect==='function'){window.onlineConnectToRoom=async function(c,newRoom){var out=await baseConnect(c,newRoom);setTimeout(save,350);return out}}var baseDisconnect=window.onlineDisconnect;if(typeof baseDisconnect==='function'){window.onlineDisconnect=function(){clear();return baseDisconnect.apply(this,arguments)}}window.addEventListener('online',function(){setTimeout(recover,350)});document.addEventListener('visibilitychange',function(){if(!document.hidden){health();recover()}});setInterval(health,9000);setInterval(function(){save();if(!window.online?.connected)recover()},5000)})();</script><script id="tiddas-voluntary-room-exit-v25" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_EXIT_V25__)return;window.__TIDDAS_EXIT_V25__=true;var RESUME='tiddas_online_resume_v3',BLOCK='tiddas_online_exit_v25';function leave(){try{localStorage.removeItem(RESUME);sessionStorage.setItem(BLOCK,String(Date.now()))}catch(_){}var o=window.online;if(o){o.connected=false;o.matchId=null;o.room=''}}function isLeave(t){return t&&t.closest&&t.closest('#ol-quit-btn,[data-action="leave-room"],.ol-quit-btn')}document.addEventListener('click',function(e){if(isLeave(e.target))leave()},true);var base=window.onlineDisconnect;if(typeof base==='function'&&!base.__exitV25){var wrap=function(){leave();return base.apply(this,arguments)};wrap.__exitV25=true;window.onlineDisconnect=wrap}var join=window.onlineConnectToRoom;if(typeof join==='function'&&!join.__exitV25){var enter=async function(code,creating){try{sessionStorage.removeItem(BLOCK)}catch(_){}return join.call(this,code,creating)};enter.__exitV25=true;window.onlineConnectToRoom=enter}window.TiddasRoomExit={leave:leave,blocked:function(){try{return!!sessionStorage.getItem(BLOCK)}catch(_){return true}}};})();</script><style id="tiddas-mic-icon-and-no-three-rule-v26" nonce="tiddas">
+<script id="tiddas-online-resilience-v47" nonce="tiddas">
+(function(){'use strict';
+if(window.__TIDDAS_NET_V47__)return;window.__TIDDAS_NET_V47__=true;
+var RESUME='tiddas_online_resume_v4',OLD_RESUME='tiddas_online_resume_v3',INTENT='tiddas_online_intent_v1';
+var busy=false,healthFails=0,attempt=0,retryTimer=0,generation=0,lastHealth=0;
+function read(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(_){return null}}
+function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+function remove(k){try{localStorage.removeItem(k)}catch(_){}}
+function current(){return window.online||{}}
+function intent(){return read(INTENT)||{state:'idle',at:0}}
+function setIntent(state,code,reason){write(INTENT,{state:state,code:String(code||'').toUpperCase(),reason:reason||'',at:Date.now()})}
+function remember(code){var o=current(),c=String(code||o.room||'').toUpperCase();if(o.connected&&c&&o.matchId){write(RESUME,{code:c,matchId:String(o.matchId),at:Date.now()});setIntent('joined',c,'connected')}}
+function cancelRetry(){generation++;if(retryTimer){clearTimeout(retryTimer);retryTimer=0}busy=false;attempt=0}
+function leave(reason){var o=current(),code=String(o.room||intent().code||'').toUpperCase();cancelRetry();remove(RESUME);remove(OLD_RESUME);setIntent('left',code,reason||'user');try{sessionStorage.setItem('tiddas_online_exit_v25',String(Date.now()))}catch(_){}}
+function allow(code,reason){cancelRetry();try{sessionStorage.removeItem('tiddas_online_exit_v25')}catch(_){}setIntent('joining',code,reason||'user');}
+function canRecover(){var i=intent(),r=read(RESUME)||read(OLD_RESUME);if(!navigator.onLine||!r||!r.code)return null;if(i.state==='left'||i.state==='idle')return null;if(i.code&&String(i.code).toUpperCase()!==String(r.code).toUpperCase())return null;if(Date.now()-Number(r.at||0)>86400000)return null;return r}
+function schedule(){var token=generation,delay=Math.min(30000,1000*Math.pow(2,Math.min(attempt,5)));if(retryTimer)clearTimeout(retryTimer);retryTimer=setTimeout(function(){retryTimer=0;if(token===generation)recover('retry')},delay)}
+async function recover(reason){if(busy||current().connected)return false;var r=canRecover();if(!r||typeof baseConnect!=='function')return false;busy=true;var token=generation;setIntent('recovering',r.code,reason||'network');try{await baseConnect(r.code,false);if(token!==generation)return false;var o=current();if(o.connected&&String(o.room||'').toUpperCase()===String(r.code).toUpperCase()){attempt=0;healthFails=0;remember(r.code);return true}throw new Error('reconnect-incomplete')}catch(_){if(token===generation){attempt++;setIntent('recovering',r.code,'retry');schedule()}return false}finally{if(token===generation)busy=false}}
+var baseConnect=window.onlineConnectToRoom;
+if(typeof baseConnect==='function'&&!baseConnect.__intentV47){var connect=async function(code,creating){code=String(code||'').trim().toUpperCase();if(!code)return false;allow(code,creating?'create':'user');var token=generation;try{var out=await baseConnect.call(this,code,creating);if(token!==generation)return false;var o=current();if(o.connected&&String(o.room||'').toUpperCase()===code)remember(code);else setIntent('idle',code,'failed');return out}catch(e){if(token===generation)setIntent('idle',code,'failed');throw e}};connect.__intentV47=true;window.onlineConnectToRoom=connect}
+var baseDisconnect=window.onlineDisconnect;
+if(typeof baseDisconnect==='function'&&!baseDisconnect.__intentV47){var disconnect=function(){leave('user');return baseDisconnect.apply(this,arguments)};disconnect.__intentV47=true;window.onlineDisconnect=disconnect}
+async function health(){var o=current();if(!o.connected||!o.matchId||typeof window._fetchMatchById!=='function')return;lastHealth=Date.now();try{await window._fetchMatchById(o.matchId);healthFails=0;remember()}catch(_){healthFails++;if(healthFails>=3){healthFails=0;var r=read(RESUME);if(r&&intent().state!=='left'){try{o.connected=false}catch(__){};schedule()}}}}
+window.addEventListener('online',function(){if(canRecover())setTimeout(function(){recover('online')},400)});
+window.addEventListener('offline',function(){cancelRetry();var i=intent();if(i.state!=='left'&&current().room)setIntent('recovering',current().room,'offline')});
+document.addEventListener('visibilitychange',function(){if(!document.hidden){health();if(canRecover())recover('visible')}});
+setInterval(function(){var o=current();if(o.connected)remember();else if(canRecover()&&!retryTimer)recover('timer')},7000);
+setInterval(health,10000);
+window.TiddasReconnectControl={leave:leave,reconnect:function(code){code=String(code||(read(RESUME)||{}).code||'').toUpperCase();if(!code)return Promise.resolve(false);allow(code,'explicit');return window.onlineConnectToRoom(code,false)},state:function(){return {intent:intent(),resume:read(RESUME),busy:busy,attempt:attempt,lastHealth:lastHealth}}};
+})();
+</script><script id="tiddas-voluntary-room-exit-v47" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_EXIT_V47__)return;window.__TIDDAS_EXIT_V47__=true;function isLeave(t){return t&&t.closest&&t.closest('#ol-quit-btn,[data-action="leave-room"],.ol-quit-btn')}document.addEventListener('click',function(e){if(isLeave(e.target)&&window.TiddasReconnectControl)window.TiddasReconnectControl.leave('button')},true);window.TiddasRoomExit={leave:function(){if(window.TiddasReconnectControl)window.TiddasReconnectControl.leave('api')},blocked:function(){var s=window.TiddasReconnectControl&&window.TiddasReconnectControl.state();return !!(s&&s.intent&&s.intent.state==='left')}}})();</script><style id="tiddas-mic-icon-and-no-three-rule-v26" nonce="tiddas">
 body > #tot-voice{font-size:0!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23235370' d='M24 30a8 8 0 0 0 8-8V12a8 8 0 0 0-16 0v10a8 8 0 0 0 8 8Zm-13-8a2 2 0 0 1 4 0 9 9 0 0 0 18 0 2 2 0 0 1 4 0 13 13 0 0 1-11 12.8V40h6a2 2 0 0 1 0 4H16a2 2 0 0 1 0-4h6v-5.2A13 13 0 0 1 11 22Z'/%3E%3C/svg%3E")!important;background-position:center!important;background-repeat:no-repeat!important;background-size:30px 30px!important}.voice-note-recording{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='white' d='M14 14h20v20H14z'/%3E%3C/svg%3E")!important}.stone.consecutive-blocked,.consecutive-blocked-cell::after{display:none!important}
 </style><script id="tiddas-remove-three-consecutive-rule-v26" nonce="tiddas">(function(){'use strict';function off(){try{isConsecutiveBlocked=function(){return false};filterConsecutiveMoves=function(player,moves){return Array.isArray(moves)?moves:[]};updateConsecutiveTracking=function(){};resetConsecutiveIfCaptured=function(){}}catch(_){}try{if(window.state){state.consecutivePiece={1:null,2:null};state.consecutiveCount={1:0,2:0}}}catch(_){}}off();setInterval(off,700)})();</script>
 <!-- TIDDAS NOTIFICATIONS UNIFIÉES v32 -->
@@ -28854,8 +28891,8 @@ function myName(){
   try{
     if(typeof window.getOnlinePlayerName==='function'){var n=window.getOnlinePlayerName();if(n)return String(n).slice(0,32)}
   }catch(_){}
-  try{return String(localStorage.getItem('onlinePlayerName')||'').slice(0,32)||(isSpectator()?'Spectateur':'Joueur')}
-  catch(_){return 'Joueur'}
+  try{var saved=String(localStorage.getItem('tiddas_online_name_v1')||localStorage.getItem('onlinePlayerName')||'').trim().slice(0,32);return saved||(isSpectator()?T('spectator'):T('player'))}
+  catch(_){return isSpectator()?T('spectator'):T('player')}
 }
 function lang(){var l=window.currentLanguage||document.documentElement.lang||'fr';return I18N[l]?l:'fr'}
 function T(k){var d=I18N[lang()];return (d&&d[k])||I18N.fr[k]||k}
@@ -28864,7 +28901,7 @@ var I18N={
      call:'Appel vocal',callOn:'Raccrocher',close:'Fermer',rec:'Enregistrement…',recHint:'Envoyer ou annuler',
      tooShort:'Message vocal trop court.',sent:'Envoyé',failed:'Non envoyé',retry:'Réessayer',voiceFail:'Échec de l’envoi vocal.',
      micDenied:'Autorisez le microphone dans votre navigateur.',micNo:'Micro non pris en charge sur cet appareil.',
-     noRoom:'Disponible uniquement dans un salon en ligne.',online:'En ligne',offline:'Hors ligne',
+     noRoom:'Disponible uniquement dans un salon en ligne.',online:'En ligne',offline:'Hors ligne',spectator:'Spectateur',player:'Joueur',relayChecking:'Vérification du relais…',relayAccepted:'Relais confirmé',
      relay:'Remplacer le joueur absent',relayWait:'Demande déjà en cours',relayCancel:'Annuler la demande',relayNone:'Aucun relais disponible',
      relaySent:'Demande envoyée au joueur.',relayFail:'Demande impossible pour le moment.',
      relayTitle:'Demande de relais',relayAsk:'{n} souhaite reprendre la place du joueur absent. La partie continue à la position actuelle.',
@@ -28876,7 +28913,7 @@ var I18N={
      call:'Asiwel',callOn:'Sens asiwel',close:'Mdel',rec:'Asekles…',recHint:'Azen neɣ sefsex',
      tooShort:'Izen s ṣṣut d awezlan aṭas.',sent:'Yettwazen',failed:'Ur yettwazen ara',retry:'Ɛreḍ tikkelt-nniḍen',voiceFail:'Tuzzna n ṣṣut ur teddi ara.',
      micDenied:'Sireg asawaḍ deg iminig-ik.',micNo:'Asawaḍ ur yettusefrak ara.',
-     noRoom:'Yella kan deg texxamt s uẓeṭṭa.',online:'Yeqqen',offline:'Yeffeɣ',
+     noRoom:'Yella kan deg texxamt s uẓeṭṭa.',online:'Yeqqen',offline:'Yeffeɣ',spectator:'Imfeṛṛeǧ',player:'Amyurar',relayChecking:'Asenqed n unnar…',relayAccepted:'Annar yemmed',
      relay:'Semselsi amyurar yeffɣen',relayWait:'Tuttra tettṛaǧu',relayCancel:'Sefsex tuttra',relayNone:'Ulac annar i yellan',
      relaySent:'Tuttra tettwazen.',relayFail:'Tuttra ur teddi ara.',
      relayTitle:'Tuttra n unnar',relayAsk:'{n} yebɣa ad yeṭṭef amkan n umyugar yeffɣen.',
@@ -28888,7 +28925,7 @@ var I18N={
      call:'Voice call',callOn:'Hang up',close:'Close',rec:'Recording…',recHint:'Send or cancel',
      tooShort:'Voice message too short.',sent:'Sent',failed:'Not sent',retry:'Retry',voiceFail:'Voice message failed.',
      micDenied:'Allow microphone access in your browser.',micNo:'Microphone not supported on this device.',
-     noRoom:'Available only inside an online room.',online:'Online',offline:'Offline',
+     noRoom:'Available only inside an online room.',online:'Online',offline:'Offline',spectator:'Spectator',player:'Player',relayChecking:'Checking takeover…',relayAccepted:'Takeover confirmed',
      relay:'Replace absent player',relayWait:'Request already pending',relayCancel:'Cancel request',relayNone:'No takeover available',
      relaySent:'Request sent to the player.',relayFail:'Request failed for now.',
      relayTitle:'Takeover request',relayAsk:'{n} wants to replace the missing player. The game continues from the current position.',
@@ -29360,9 +29397,10 @@ function payloadState(m){
   return (p&&p.state)||{};
 }
 function hb(m,r){return Number(m.get(r===1?'hb1':'hb2')||0)}
-function isStale(m,r){if(r!==1&&r!==2)return false;var h=hb(m,r);return !h||Date.now()-h>STALE}
-function finished(m){return String(m.get('status')||'')==='finished'}
 function slotFree(m,r){return !String(m.get(r===1?'p1Id':'p2Id')||'').trim()}
+function stamp(m,r){var own=Number(m.get(r===1?'p1JoinedAt':'p2JoinedAt')||0),updated=0;try{updated=Number(m.updatedAt&&new Date(m.updatedAt).getTime()||0)}catch(_){}return Math.max(own,updated)}
+function isStale(m,r){if(r!==1&&r!==2)return false;if(slotFree(m,r))return true;var h=hb(m,r);if(h)return Date.now()-h>STALE;var seen=stamp(m,r);return !!seen&&Date.now()-seen>Math.max(90000,STALE*2)}
+function finished(m){return String(m.get('status')||'')==='finished'}
 
 /* Détermine quelle place est reprenable et qui doit approuver */
 function eligibility(m){
@@ -29389,55 +29427,42 @@ function eligibility(m){
 
 async function requestRelay(){
   if(relay.busy||!isSpectator()||!inRoom())return;
-  relay.busy=true;
+  relay.busy=true;syncRelayButton(relay.lastMatch);
   try{
-    var m=await new Parse.Query(cls()).get(O().matchId),now=Date.now();
-    var prev=m.get('spectatorRelayRequest');
-    var ownPending=!!(prev&&prev.status==='pending'&&String(prev.fromId)===me()&&now-Number(prev.requestedAt||0)<90000);
-    /* Second tap cancels the spectator's own pending request. */
-    if(ownPending){
-      m.set('spectatorRelayRequest',Object.assign({},prev,{status:'cancelled',resolvedAt:now}));
-      await m.save();relay.lastRequestId='';toast(T('relayCancel'));return;
-    }
-    var e=eligibility(m);
-    if(!e){toast(T('relayNone'));return}
-    if(prev&&prev.status==='pending'&&now-Number(prev.requestedAt||0)<90000){toast(T('relayWait'));return}
-    var req={version:50,status:'pending',requestId:uid('relay50'),fromId:me(),fromName:myName(),replaceRole:e.replace,approverRole:e.approve,mode:e.mode,requestedAt:now};
-    relay.lastRequestId=req.requestId;
-    /* Empty seats are claimed immediately; replacement of an absent player
-       still requires the remaining player's explicit approval. */
+    var qy=new Parse.Query(cls()),m=await qy.get(O().matchId),now=Date.now();
+    var prev=m.get('spectatorRelayRequest'),prevExpiry=Number(prev&&prev.expiresAt||prev&&prev.requestedAt+90000||0);
+    var ownPending=!!(prev&&prev.status==='pending'&&String(prev.fromId)===me()&&now<prevExpiry);
+    if(ownPending){m.set('spectatorRelayRequest',Object.assign({},prev,{status:'cancelled',resolvedAt:now}));await m.save();relay.lastRequestId='';toast(T('relayCancel'));return}
+    var e=eligibility(m);if(!e){toast(T('relayNone'));return}
+    if(prev&&prev.status==='pending'&&now<prevExpiry){toast(T('relayWait'));return}
+    var req={version:53,status:'pending',requestId:uid('relay53'),fromId:me(),fromName:myName(),replaceRole:e.replace,approverRole:e.approve,mode:e.mode,requestedAt:now,expiresAt:now+90000,roomId:String(O().matchId||'')};
+    relay.lastRequestId=req.requestId;toast(T('relayChecking'),1200);
     if(e.mode==='empty'){
       var role=Number(e.replace)===1?1:2,key=role===1?'p1':'p2';
-      m.set(key+'Id',String(req.fromId));m.set(key+'Name',String(req.fromName||'Joueur'));
-      m.set(role===1?'hb1':'hb2',now);
+      if(!slotFree(m,role))throw new Error('slot-race');
+      m.set(key+'Id',String(req.fromId));m.set(key+'Name',String(req.fromName||T('player')));m.set(key+'JoinedAt',now);
+      m.set(role===1?'hb1':'hb2',now);m.increment('relayEpoch',1);
       m.set('spectatorRelayRequest',Object.assign({},req,{status:'accepted',resolvedAt:now,automatic:true}));
-      await m.save();toast(T('relayMine'),2400);return;
+      await m.save();var verify=await qy.get(O().matchId);if(String(verify.get(key+'Id')||'')!==me())throw new Error('slot-lost');relay.lastMatch=verify;processRelay(verify);toast(T('relayAccepted'),2200);return;
     }
-    m.set('spectatorRelayRequest',req);await m.save();toast(T('relaySent'));
-  }catch(_){toast(T('relayFail'))}
+    m.set('spectatorRelayRequest',req);await m.save();var check=await qy.get(O().matchId),saved=check.get('spectatorRelayRequest');if(!saved||saved.requestId!==req.requestId)throw new Error('request-race');relay.lastMatch=check;toast(T('relaySent'));
+  }catch(_){relay.lastRequestId='';toast(T('relayFail'))}
   finally{relay.busy=false;syncRelayButton(relay.lastMatch)}
 }
 
 function syncRelayButton(m){
-  if(!els.relayFab)return;
-  var base=isSpectator()&&inRoom()&&!state.open;
-  if(!base||!m){els.relayFab.classList.remove('show');return}
-  var e=eligibility(m),pending=m.get('spectatorRelayRequest'),now=Date.now();
-  var fresh=!!(pending&&pending.status==='pending'&&now-Number(pending.requestedAt||0)<90000);
-  var mine=!!(fresh&&String(pending.fromId)===me());
-  var blocked=!!(fresh&&!mine);
-  var show=mine||!!e;
-  els.relayFab.classList.toggle('show',show);
-  if(!show)return;
-  els.relayFab.disabled=relay.busy||blocked||(!e&&!mine);
-  els.relayFab.textContent=mine?T('relayCancel'):(blocked?T('relayWait'):(e?T('relay'):T('relayNone')));
-  els.relayFab.setAttribute('aria-label',els.relayFab.textContent);
+  if(!els.relayFab)return;var base=isSpectator()&&inRoom()&&!state.open;
+  els.relayFab.classList.toggle('show',base);if(!base)return;
+  var e=m?eligibility(m):null,pending=m&&m.get('spectatorRelayRequest'),now=Date.now(),expiry=Number(pending&&pending.expiresAt||pending&&pending.requestedAt+90000||0);
+  var fresh=!!(pending&&pending.status==='pending'&&now<expiry),mine=!!(fresh&&String(pending.fromId)===me()),blocked=!!(fresh&&!mine);
+  var text=relay.busy?T('relayChecking'):(mine?T('relayCancel'):(blocked?T('relayWait'):(e?T('relay'):T('relayNone'))));
+  els.relayFab.disabled=relay.busy||blocked||(!e&&!mine);els.relayFab.textContent=text;els.relayFab.dataset.state=relay.busy?'busy':mine?'pending':blocked?'blocked':e?'ready':'none';els.relayFab.setAttribute('aria-label',text);els.relayFab.title=text;
 }
 function showRelayModal(m,req){
   build();
   if(relay.modalFor===req.requestId)return;
   relay.modalFor=req.requestId;
-  var name=String(req.fromName||'Spectateur');
+  var name=String(req.fromName||T('spectator'));
   q('v45-modal-text').textContent=(req.mode==='finished'?T('relayAskEnd'):T('relayAsk')).replace('{n}',name);
   els.modal.classList.add('show');
   q('v45-accept').onclick=function(){resolveRelay(req,true)};
@@ -29457,8 +29482,10 @@ async function resolveRelay(req,accept){
     var role=Number(req.replaceRole)===1?1:2;
     var key=role===1?'p1':'p2';
     m.set(key+'Id',String(req.fromId));
-    m.set(key+'Name',String(req.fromName||'Joueur'));
+    m.set(key+'Name',String(req.fromName||T('player')));
+    m.set(key+'JoinedAt',Date.now());
     m.set(role===1?'hb1':'hb2',Date.now());
+    m.increment('relayEpoch',1);
     if(req.mode==='finished'){
       m.set('status','lobby');
       m.set('rm1',false);m.set('rm2',false);
@@ -29478,26 +29505,20 @@ function processRelay(m){
   // Promotion du spectateur devenu joueur
   var p1=String(m.get('p1Id')||''),p2=String(m.get('p2Id')||'');
   if(isSpectator()&&me()&&(me()===p1||me()===p2)){
-    o.spectator=false;o.role=me()===p1?1:2;o.ready=true;o.connected=true;o.isHost=Number(m.get('relayRole')||1)===Number(o.role);
-    try{window.gameMode='online'}catch(_){}
-    document.documentElement.classList.remove('tiddas-spectator');
-    els.relayFab.classList.remove('show');
-    hideRelayModal();
-    toast(T('relayMine'),2600);
-    return;
+    var role=me()===p1?1:2,payload=m.get('payload')||{},meta=payload&&payload.meta||{};
+    o.spectator=false;o.role=role;o.ready=!!(p1&&p2);o.connected=true;o.suppressSend=false;o.matchId=o.matchId||m.id;
+    o.swapColors=typeof meta.swapColors!=='undefined'?!!meta.swapColors:!!m.get('swapColors');o.gameId=Number(meta.gameId!=null?meta.gameId:m.get('gameId')||0);o.playerId=o.swapColors?3-role:role;o.isHost=Number(m.get('relayRole')||1)===role;
+    try{gameMode='online';humanPlayerId=o.playerId;aiPlayerId=null}catch(_){}
+    try{if(payload&&payload.state&&typeof window.onlineApplyState==='function')window.onlineApplyState(payload)}catch(_){}
+    document.documentElement.classList.remove('tiddas-spectator');relay.lastRequestId='';relay.modalFor='';els.relayFab.classList.remove('show');hideRelayModal();
+    try{if(typeof window._updateOnlineGameBar==='function')window._updateOnlineGameBar()}catch(_){}try{window.dispatchEvent(new CustomEvent('tiddas:relay-taken',{detail:{role:role,playerId:o.playerId,matchId:o.matchId}}))}catch(_){}
+    toast(T('relayMine'),2600);return;
   }
-  if(!req)return;
-  // Retour au demandeur
-  if(String(req.fromId)===me()&&req.requestId===relay.lastRequestId&&req.status==='declined'){
-    relay.lastRequestId='';toast(T('relayDeclined'),2600);return;
-  }
-  // Approbation côté joueur
-  if(req.status==='pending'&&!isSpectator()&&Number(o.role)===Number(req.approverRole)
-     &&String(req.fromId)!==me()&&Date.now()-Number(req.requestedAt||0)<90000){
-    showRelayModal(m,req);
-  }else if(relay.modalFor&&(!req||req.requestId!==relay.modalFor||req.status!=='pending')){
-    relay.modalFor='';hideRelayModal();
-  }
+  if(!req)return;var now=Date.now(),expiry=Number(req.expiresAt||Number(req.requestedAt||0)+90000),mine=String(req.fromId)===me()&&req.requestId===relay.lastRequestId;
+  if(req.status==='pending'&&now>=expiry){if(mine){relay.lastRequestId='';toast(T('relayExpired'),2400)}if(relay.modalFor===req.requestId){relay.modalFor='';hideRelayModal()}return}
+  if(mine&&(req.status==='declined'||req.status==='expired'||req.status==='cancelled')){relay.lastRequestId='';toast(req.status==='declined'?T('relayDeclined'):T('relayExpired'),2600);return}
+  if(req.status==='pending'&&!isSpectator()&&Number(o.role)===Number(req.approverRole)&&String(req.fromId)!==me()&&now<expiry){showRelayModal(m,req)}
+  else if(relay.modalFor&&req.requestId===relay.modalFor&&req.status!=='pending'){relay.modalFor='';hideRelayModal()}
 }
 
 /* ═══════════ Hook de polling & boucle de synchronisation ═══════════ */
@@ -29586,7 +29607,7 @@ function boot(){
     send:sendText,
     record:startRec,
     requestRelay:requestRelay,
-    state:function(){return{open:state.open,unread:state.unread,messages:sortedMsgs().length,recording:rec.on}}
+    state:function(){return{open:state.open,unread:state.unread,messages:sortedMsgs().length,recording:rec.on,relay:{busy:relay.busy,requestId:relay.lastRequestId,modalFor:relay.modalFor,eligible:!!(relay.lastMatch&&eligibility(relay.lastMatch))}}}
   };
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
@@ -29610,6 +29631,123 @@ else boot();
 #v45-relay-fab{max-width:min(230px,calc(100vw - 36px))!important}
 </style>
 <script id="tiddas-production-v50-js" nonce="tiddas">(function(){'use strict';function stop(){try{var a=window.TiddasOnlineTools;if(a&&a.disableVoice)a.disableVoice()}catch(_){}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',stop,{once:true});else stop()})();</script>
-<script id="tiddas-late-i18n-sweep-v52" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_LATE_I18N__)return;window.__TIDDAS_LATE_I18N__=true;function L(){var l;try{l=document.documentElement.lang||localStorage.getItem('tiddas_lang')||'fr'}catch(_){l='fr'}return(l==='kab'||l==='en')?l:'fr'}var TXT={'swipe-undo-hint':{fr:'↩ Balayez vers la gauche pour annuler',kab:'↩ Sweḍ s azelmaḍ i wesefsex',en:'↩ Swipe left to undo'},'v45-relay-fab':{fr:'Remplacer le joueur absent',kab:'Semselsi amyurar yeffɣen',en:'Replace absent player'},'pwa-banner-title':{fr:'Voulez-vous installer l\'application ?',kab:'Tebɣiḍ ad treṣṣeḍ asnas ?',en:'Would you like to install the app?'},'pwa-banner-sub':{fr:'Profitez de Tiddas hors-ligne, comme une vraie app !',kab:'Urar Tiddas s wanwa, am yiwen urar n tidet!',en:'Play Tiddas offline, just like a native app!'},'pwa-banner-install-btn':{fr:'Installer',kab:'Areṣṣi',en:'Install'}};var SEL={'.v45-empty':{fr:'Aucun message. Dites bonjour 👋',kab:'Ulac izen. Ini azul 👋',en:'No messages yet. Say hello 👋'}};var ATTR=[['new-game','title',{fr:'Retour à l\'accueil',kab:'Tuɣalin ɣer usebter agejdan',en:'Back to home'}],['undo-btn','title',{fr:'Annuler le dernier coup',kab:'Sefsex addad aneggaru',en:'Undo last move'}],['restart','title',{fr:'Recommencer la partie',kab:'Ales urar',en:'Restart game'}],['surrender','title',{fr:'Abandonner la partie',kab:'Ǧǧ urar',en:'Surrender'}],['theme-btn','title',{fr:'Changer de thème',kab:'Beddel asentel',en:'Change theme'}],['theme-btn','aria-label',{fr:'Thème',kab:'Asentel',en:'Theme'}],['drag-btn','title',{fr:'Déplacer les pions par glissement',kab:'Smutti tiɣmatin s uzuɣer',en:'Move pieces by dragging'}],['replay-btn','title',{fr:'Revoir la dernière partie',kab:'Wali urar',en:'Review last game'}],['tiddas-side-btn','title',{fr:'Changer le côté des commandes',kab:'Beddel idis n tinaḍin',en:'Switch controls side'}],['online-copy-code','aria-label',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['online-copy-code','title',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['ogb-copy-code','aria-label',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['ogb-copy-code','title',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['online-connect','aria-label',{fr:'Rejoindre',kab:'Kcem',en:'Join'}],['online-room-code','aria-label',{fr:'Code du salon',kab:'Tasarut n texxamt',en:'Room code'}],['autostart-cancel-btn','aria-label',{fr:'Annuler',kab:'Sefsex',en:'Cancel'}],['cip-open','aria-label',{fr:'Ouvrir le chat',kab:'Ldi adiwenni',en:'Open chat'}],['p1-track','aria-label',{fr:'Pions joueur 1',kab:'Tiɣmatin n umyurar 1',en:'Player 1 pieces'}],['p2-track','aria-label',{fr:'Pions joueur 2',kab:'Tiɣmatin n umyurar 2',en:'Player 2 pieces'}],['tot-quality','aria-label',{fr:'Présence adverse',kab:'Tili n umnaɣ',en:'Opponent presence'}],['replay-exit-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['rules-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['damma-rules-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['about-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['about-close-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['pwa-banner-dismiss-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['replay-exit-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['stray-close-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['online-chat-close','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['settings-fab','title',{fr:'Paramètres',kab:'Iɣewwaren',en:'Settings'}],['install-btn','title',{fr:'Installer l\'application',kab:'Reṣṣi asnas',en:'Install the app'}],['pwa-install-banner','aria-label',{fr:'Installer l\'application',kab:'Reṣṣi asnas',en:'Install the app'}],['player1-name-input','placeholder',{fr:'Votre nom',kab:'Isem-ik',en:'Your name'}],['player2-name-input','placeholder',{fr:'Joueur 2',kab:'Amyurar 2',en:'Player 2'}]];function st(el,v){if(el&&v!=null&&el.textContent!==v)el.textContent=v}function sa(el,a,v){if(el&&v!=null&&el.getAttribute(a)!==v)el.setAttribute(a,v)}function sweep(){var l=L();try{Object.keys(TXT).forEach(function(id){st(document.getElementById(id),TXT[id][l])});Object.keys(SEL).forEach(function(q){var n=document.querySelectorAll(q);for(var i=0;i<n.length;i++)st(n[i],SEL[q][l])});ATTR.forEach(function(r){sa(document.getElementById(r[0]),r[1],r[2][l])})}catch(_){}}sweep();setInterval(sweep,500);document.addEventListener('DOMContentLoaded',sweep,{once:true});})();</script>
+<script id="tiddas-late-i18n-sweep-v52" nonce="tiddas">(function(){'use strict';if(window.__TIDDAS_LATE_I18N__)return;window.__TIDDAS_LATE_I18N__=true;function L(){var l;try{l=document.documentElement.lang||localStorage.getItem('tiddas_lang')||'fr'}catch(_){l='fr'}return(l==='kab'||l==='en')?l:'fr'}var TXT={'swipe-undo-hint':{fr:'↩ Balayez vers la gauche pour annuler',kab:'↩ Sweḍ s azelmaḍ i wesefsex',en:'↩ Swipe left to undo'},'pwa-banner-title':{fr:'Voulez-vous installer l\'application ?',kab:'Tebɣiḍ ad treṣṣeḍ asnas ?',en:'Would you like to install the app?'},'pwa-banner-sub':{fr:'Profitez de Tiddas hors-ligne, comme une vraie app !',kab:'Urar Tiddas s wanwa, am yiwen urar n tidet!',en:'Play Tiddas offline, just like a native app!'},'pwa-banner-install-btn':{fr:'Installer',kab:'Areṣṣi',en:'Install'}};var SEL={'.v45-empty':{fr:'Aucun message. Dites bonjour 👋',kab:'Ulac izen. Ini azul 👋',en:'No messages yet. Say hello 👋'}};var ATTR=[['new-game','title',{fr:'Retour à l\'accueil',kab:'Tuɣalin ɣer usebter agejdan',en:'Back to home'}],['undo-btn','title',{fr:'Annuler le dernier coup',kab:'Sefsex addad aneggaru',en:'Undo last move'}],['restart','title',{fr:'Recommencer la partie',kab:'Ales urar',en:'Restart game'}],['surrender','title',{fr:'Abandonner la partie',kab:'Ǧǧ urar',en:'Surrender'}],['theme-btn','title',{fr:'Changer de thème',kab:'Beddel asentel',en:'Change theme'}],['theme-btn','aria-label',{fr:'Thème',kab:'Asentel',en:'Theme'}],['drag-btn','title',{fr:'Déplacer les pions par glissement',kab:'Naqel ileqqafen s uzuɣer',en:'Move pieces by dragging'}],['replay-btn','title',{fr:'Revoir la dernière partie',kab:'Wali urar',en:'Review last game'}],['tiddas-side-btn','title',{fr:'Changer le côté des commandes',kab:'Beddel idis n tqeffal',en:'Switch controls side'}],['online-copy-code','aria-label',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['online-copy-code','title',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['ogb-copy-code','aria-label',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['ogb-copy-code','title',{fr:'Copier le code',kab:'Nɣel tasarut',en:'Copy code'}],['online-connect','aria-label',{fr:'Rejoindre',kab:'Kcem',en:'Join'}],['online-room-code','aria-label',{fr:'Code du salon',kab:'Tasarut n texxamt',en:'Room code'}],['autostart-cancel-btn','aria-label',{fr:'Annuler',kab:'Sefsex',en:'Cancel'}],['cip-open','aria-label',{fr:'Ouvrir le chat',kab:'Ldi adiwenni',en:'Open chat'}],['p1-track','aria-label',{fr:'Pions joueur 1',kab:'Ileqqafen n umyurar 1',en:'Player 1 pieces'}],['p2-track','aria-label',{fr:'Pions joueur 2',kab:'Ileqqafen n umyurar 2',en:'Player 2 pieces'}],['tot-quality','aria-label',{fr:'Présence adverse',kab:'Tili n umnaɣ',en:'Opponent presence'}],['replay-exit-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['rules-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['damma-rules-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['about-close-btn','title',{fr:'Fermer',kab:'Mdel',en:'Close'}],['about-close-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['pwa-banner-dismiss-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['replay-exit-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['stray-close-btn','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['online-chat-close','aria-label',{fr:'Fermer',kab:'Mdel',en:'Close'}],['settings-fab','title',{fr:'Paramètres',kab:'Iɣewwaren',en:'Settings'}],['install-btn','title',{fr:'Installer l\'application',kab:'Reṣṣi asnas',en:'Install the app'}],['pwa-install-banner','aria-label',{fr:'Installer l\'application',kab:'Reṣṣi asnas',en:'Install the app'}],['player1-name-input','placeholder',{fr:'Votre nom',kab:'Isem-ik',en:'Your name'}],['player2-name-input','placeholder',{fr:'Joueur 2',kab:'Amyurar 2',en:'Player 2'}]];function st(el,v){if(el&&v!=null&&el.textContent!==v)el.textContent=v}function sa(el,a,v){if(el&&v!=null&&el.getAttribute(a)!==v)el.setAttribute(a,v)}function sweep(){var l=L();try{Object.keys(TXT).forEach(function(id){st(document.getElementById(id),TXT[id][l])});Object.keys(SEL).forEach(function(q){var n=document.querySelectorAll(q);for(var i=0;i<n.length;i++)st(n[i],SEL[q][l])});ATTR.forEach(function(r){sa(document.getElementById(r[0]),r[1],r[2][l])})}catch(_){}}sweep();setInterval(sweep,500);document.addEventListener('DOMContentLoaded',sweep,{once:true});})();</script>
+
+<!-- TIDDAS ONLINE UI POLISH v48 -->
+<style id="tiddas-online-ui-polish-v48" nonce="tiddas">
+#online-lobby-area{
+  --olu-ink:#26231f;--olu-muted:#77716a;--olu-line:#ded9d2;--olu-line-strong:#c9a45a;
+  --olu-surface:#fff;--olu-soft:#f8f6f2;--olu-accent:#b87908;--olu-accent-strong:#945b00;
+  --olu-accent-soft:#fff4d8;--olu-blue:#1e5bd7;--olu-danger:#b5473d;--olu-danger-soft:#fff3f1;
+}
+.selection-area.active.online-lobby{
+  width:min(94vw,780px)!important;max-width:780px!important;padding:28px 30px 30px!important;
+  gap:12px!important;border-radius:20px!important;background:rgba(255,255,255,.94)!important;
+  border:1px solid rgba(86,65,38,.13)!important;box-shadow:0 18px 54px rgba(50,36,18,.14)!important;
+}
+.online-lobby .ol-title{font-size:clamp(1.65rem,3.6vw,2.15rem)!important;line-height:1.1!important;letter-spacing:.025em!important;color:var(--olu-blue)!important;margin:0!important}
+.online-lobby .ol-subtitle{margin:4px 0 8px!important;color:var(--olu-muted)!important;opacity:1!important;font-size:.91rem!important}
+.online-lobby .ol-global-msg{margin:0!important;padding:9px 12px!important;border:1px solid #d7e3fb!important;border-radius:9px!important;background:#f2f6fe!important;color:#31568f!important;font:650 .8rem/1.35 var(--font-ui,sans-serif)!important;text-align:center!important}
+.online-lobby .ol-field-wrap{margin-top:2px!important}.online-lobby .ol-input{height:46px!important;border-radius:10px!important;border:1px solid var(--olu-line)!important;background:var(--olu-surface)!important;color:var(--olu-ink)!important;box-shadow:inset 0 1px 1px rgba(0,0,0,.02)!important}
+.online-lobby .ol-input:focus,.online-lobby .ol-code-input:focus{border-color:#4d7fdf!important;box-shadow:0 0 0 3px rgba(30,91,215,.12)!important}
+.online-lobby .ol-field-icon{opacity:.55!important}.online-lobby .ol-variant-label{margin:4px 0 0!important;color:var(--olu-muted)!important;font-size:.7rem!important;font-weight:750!important;letter-spacing:.08em!important}
+.online-lobby .ol-variant-grid{gap:10px!important}.online-lobby .ol-vbtn{min-height:72px!important;padding:11px 12px!important;border-radius:11px!important;border:1px solid var(--olu-line)!important;background:var(--olu-surface)!important;box-shadow:0 3px 10px rgba(40,32,24,.07)!important;justify-content:center!important}
+.online-lobby .ol-vbtn:hover{border-color:#caa558!important;background:#fffdf8!important;transform:translateY(-1px)!important}.online-lobby .ol-vbtn.selected{border-color:#c88920!important;background:var(--olu-accent-soft)!important;box-shadow:0 0 0 2px rgba(184,121,8,.1)!important}
+.online-lobby .ol-vbtn-icon{font-size:1.05rem!important;margin:0 0 3px!important;color:#a46a13!important;filter:none!important}.online-lobby .ol-vbtn-name{font-size:.82rem!important;color:var(--olu-ink)!important}.online-lobby .ol-vbtn.selected .ol-vbtn-name{color:#855006!important}.online-lobby .ol-vbtn-desc{font-size:.66rem!important;color:var(--olu-muted)!important;opacity:1!important}
+.online-lobby #ol-pre-connect{margin-top:2px!important}.online-lobby .ol-big-btn,.online-lobby .ol-join-card{min-height:112px!important;border-radius:12px!important;border:1px solid #d9b777!important;background:linear-gradient(135deg,#fffaf1,#fff)!important;box-shadow:0 5px 16px rgba(63,43,18,.08)!important}
+.online-lobby .ol-big-btn{color:var(--olu-accent-strong)!important}.online-lobby .ol-big-btn:hover{transform:translateY(-1px)!important;background:#fff6e4!important;box-shadow:0 8px 20px rgba(90,58,15,.12)!important}.online-lobby .ol-btn-icon-box{background:#fff3d9!important;border-right:1px solid #ead4a8!important;color:#995d00!important}.online-lobby .ol-btn-main,.online-lobby .ol-join-title{color:#744500!important;font:800 .9rem/1.2 var(--font-title,serif)!important}.online-lobby .ol-btn-sub,.online-lobby .ol-join-hint{color:var(--olu-muted)!important;opacity:1!important}.online-lobby .ol-btn-arrow{color:#a2680c!important}
+.online-lobby .ol-join-card{padding:13px!important;justify-content:center!important}.online-lobby .ol-join-header{margin-bottom:1px!important}.online-lobby .ol-join-row{gap:8px!important}.online-lobby .ol-join-row .ol-code-input{height:46px!important;border-radius:10px!important;border:1px solid #d9b777!important;background:#fff!important;color:var(--olu-ink)!important;font-size:1.08rem!important;letter-spacing:.2em!important}.online-lobby .ol-connect-btn{width:46px!important;min-width:46px!important;height:46px!important;border-radius:10px!important;background:var(--olu-accent)!important;border:1px solid var(--olu-accent)!important;color:#fff!important}.online-lobby .ol-connect-btn:disabled{background:#f1ede6!important;border-color:#e1dbd2!important;color:#aaa198!important;opacity:1!important}.online-lobby .ol-connect-btn:not(:disabled):hover{background:var(--olu-accent-strong)!important;transform:none!important}
+.online-lobby #online-status{position:relative!important;display:flex;flex-direction:column;gap:12px!important;padding:16px!important;border:1px solid #dec78f!important;border-radius:14px!important;background:linear-gradient(180deg,#fffdf9,#fffaf2)!important;box-shadow:0 8px 24px rgba(62,42,17,.08)!important}
+.online-lobby .ol-status-line{min-height:34px!important;width:max-content!important;max-width:calc(100% - 160px)!important;padding:7px 10px!important;border:1px solid #dbe9df!important;border-radius:8px!important;background:#f1f8f3!important;color:#3e654b!important;font:700 .76rem/1.25 var(--font-ui,sans-serif)!important}.online-lobby .ol-dot.connected{animation:none!important;box-shadow:0 0 0 3px rgba(70,161,113,.15)!important;background:#46a171!important}
+.online-lobby .ol-quit-btn{position:absolute!important;top:14px!important;right:14px!important;z-index:2!important;min-height:34px!important;padding:7px 11px!important;border:1px solid #e5b8b3!important;border-radius:8px!important;background:var(--olu-danger-soft)!important;color:var(--olu-danger)!important;font:750 .75rem/1 var(--font-ui,sans-serif)!important}.online-lobby .ol-quit-btn:hover{background:#fce5e2!important;color:#983a32!important}
+.online-lobby .ol-matchup{min-height:112px!important;padding:14px!important;border:1px solid var(--olu-line)!important;border-radius:12px!important;background:#fafafa!important}.online-lobby .ol-player-avatar{width:44px!important;height:44px!important;border:1px solid #d2ad68!important;background:#fff8eb!important;color:#8c5705!important;box-shadow:none!important}.online-lobby .ol-player-name{margin-top:2px!important;color:var(--olu-ink)!important;font-size:.82rem!important}.online-lobby .ol-vs-badge{width:30px!important;height:30px!important;background:#fff8eb!important;border-color:#dbc08c!important;color:#895507!important}
+.online-lobby #online-roomcode-row{gap:8px!important}.online-lobby .ol-code-card{min-height:72px!important;padding:13px 14px!important;border:1px solid #d7b46f!important;border-radius:12px!important;background:#fff8e9!important}.online-lobby .ol-code-label{color:#8d6524!important;font-weight:750!important}.online-lobby .ol-code-val{font-size:2rem!important;letter-spacing:.22em!important;color:#805000!important;text-shadow:none!important}.online-lobby .ol-copy-btn{width:44px!important;height:44px!important;border-radius:10px!important;border-color:#d3ad66!important;background:#fff!important;color:#8b5604!important;box-shadow:0 3px 10px rgba(70,45,10,.08)!important}
+.online-lobby .ol-invite-btn,.online-lobby .ol-start-btn{min-height:46px!important;padding:12px 16px!important;border-radius:10px!important;border:1px solid #9f6705!important;background:#b87908!important;color:#fff!important;font:800 .9rem/1 var(--font-ui,sans-serif)!important;box-shadow:0 6px 14px rgba(142,91,5,.18)!important}.online-lobby .ol-invite-btn:hover,.online-lobby .ol-start-btn:hover{background:#945b00!important;transform:none!important}
+.online-lobby[data-room-active="true"] #online-status-global,.online-lobby[data-room-active="true"] #ol-pre-connect,.online-lobby[data-room-active="true"]>.ol-field-wrap,.online-lobby[data-room-active="true"]>#ol-variant-label,.online-lobby[data-room-active="true"]>#ol-variant-grid,.online-lobby[data-room-active="true"]>#ol-variant-guest-note{display:none!important}
+.online-lobby[data-room-active="true"] .ol-subtitle{margin-bottom:4px!important}.online-lobby[data-room-active="true"] #online-status{margin-top:4px!important}
+.online-lobby .tiddas-history{width:100%!important;box-sizing:border-box!important;margin:2px 0 0!important;padding:10px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;border:1px solid var(--olu-line)!important;border-radius:12px!important;background:var(--olu-soft)!important;box-shadow:none!important}.online-lobby .tiddas-history button{min-height:42px!important;margin:0!important;padding:9px 12px!important;border:1px solid #d8d3cc!important;border-radius:9px!important;background:#fff!important;color:#554b40!important;font:750 .76rem/1.2 var(--font-ui,sans-serif)!important;box-shadow:none!important}.online-lobby .tiddas-history button:hover{border-color:#bd9145!important;background:#fffaf0!important;color:#784800!important}.online-lobby:not([data-room-active="true"]) .tiddas-history{display:none!important}
+.online-lobby #online-recent-wrap{width:100%!important;box-sizing:border-box!important}.online-lobby #back-to-modes-from-online-btn{min-height:42px!important;margin-top:4px!important;border-radius:10px!important;background:transparent!important;border:1px solid var(--olu-line)!important;color:#655f58!important;font-weight:700!important}
+.online-lobby button:focus-visible,.online-lobby input:focus-visible{outline:3px solid rgba(30,91,215,.3)!important;outline-offset:2px!important}
+@media(min-width:760px){.online-lobby .ol-variant-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}.online-lobby[data-room-active="true"] #online-status{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"status status" "players code" "rematch rematch" "banner banner" "start start"!important;align-items:stretch!important}.online-lobby[data-room-active="true"] .ol-status-line{grid-area:status!important}.online-lobby[data-room-active="true"] .ol-matchup{grid-area:players!important}.online-lobby[data-room-active="true"] #online-roomcode-row{grid-area:code!important}.online-lobby[data-room-active="true"] #online-rematch{grid-area:rematch!important}.online-lobby[data-room-active="true"] #online-autostart-banner{grid-area:banner!important}.online-lobby[data-room-active="true"] #online-start{grid-area:start!important}}
+@media(max-width:759px){.selection-area.active.online-lobby{width:calc(100vw - 24px)!important;padding:22px 18px 24px!important;border-radius:16px!important}.online-lobby .ol-title{font-size:1.55rem!important}.online-lobby .ol-variant-grid{grid-template-columns:1fr 1fr!important}.online-lobby #ol-pre-connect{grid-template-columns:1fr!important}.online-lobby .ol-btn-create,.online-lobby .ol-join-card{grid-column:1!important}.online-lobby .ol-big-btn,.online-lobby .ol-join-card{min-height:104px!important}.online-lobby .ol-status-line{max-width:calc(100% - 130px)!important}.online-lobby .ol-code-val{font-size:1.7rem!important}.online-lobby .tiddas-history{grid-template-columns:1fr!important}}
+@media(max-width:420px){.selection-area.active.online-lobby{width:calc(100vw - 16px)!important;padding:18px 14px 22px!important}.online-lobby .ol-title{font-size:1.38rem!important}.online-lobby .ol-subtitle{font-size:.82rem!important}.online-lobby .ol-vbtn{min-height:68px!important;padding:9px 10px!important}.online-lobby .ol-vbtn-desc{font-size:.61rem!important}.online-lobby .ol-quit-btn{position:static!important;align-self:flex-start!important;order:-2!important}.online-lobby .ol-status-line{max-width:100%!important;width:100%!important;box-sizing:border-box!important;order:-1!important}.online-lobby .ol-matchup{min-height:100px!important}.online-lobby .ol-code-val{font-size:1.5rem!important;letter-spacing:.17em!important}}
+[data-theme="nuit"] #online-lobby-area,[data-theme="modern-dark"] #online-lobby-area,[data-theme="contrast"] #online-lobby-area{--olu-ink:#fff;--olu-muted:rgba(255,255,255,.65);--olu-line:rgba(255,255,255,.18);--olu-surface:#262626;--olu-soft:#202020;--olu-accent:#c58a22;--olu-accent-strong:#dfa83e;--olu-accent-soft:rgba(197,138,34,.13);--olu-danger:#ee8177;--olu-danger-soft:rgba(229,100,88,.12)}
+[data-theme="nuit"] .selection-area.active.online-lobby,[data-theme="modern-dark"] .selection-area.active.online-lobby,[data-theme="contrast"] .selection-area.active.online-lobby{background:rgba(25,25,25,.96)!important;border-color:rgba(255,255,255,.18)!important}
+[data-theme="nuit"] .online-lobby #online-status,[data-theme="modern-dark"] .online-lobby #online-status,[data-theme="contrast"] .online-lobby #online-status{background:#202020!important;border-color:rgba(197,138,34,.35)!important}
+[data-theme="nuit"] .online-lobby .ol-matchup,[data-theme="modern-dark"] .online-lobby .ol-matchup,[data-theme="contrast"] .online-lobby .ol-matchup{background:#282828!important;border-color:rgba(255,255,255,.16)!important}
+</style>
+<script id="tiddas-online-ui-polish-v48-js" nonce="tiddas">
+(function(){'use strict';if(window.__TIDDAS_ONLINE_UI_V48__)return;window.__TIDDAS_ONLINE_UI_V48__=true;
+function sync(){var area=document.getElementById('online-lobby-area'),o=window.online||{};if(!area)return;var active=!!(o.connected||o.matchId||o.room);area.dataset.roomActive=active?'true':'false';var status=document.getElementById('online-status');if(status)status.setAttribute('aria-label',active?'Salon connecté':'État du salon')}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();setInterval(sync,400);window.addEventListener('online',sync);window.addEventListener('offline',sync);
+})();
+</script>
+
+
+<!-- TIDDAS RECENT ROOMS UNIFIED v49 -->
+<style id="tiddas-recent-rooms-v49-css" nonce="tiddas">
+#tiddas-history-actions{display:none!important}
+.online-lobby #online-recent-wrap{display:block!important;width:100%!important;box-sizing:border-box!important;margin:2px 0 0!important;padding:14px!important;border:1px solid var(--olu-line,#ded9d2)!important;border-radius:12px!important;background:var(--olu-soft,#f8f6f2)!important;box-shadow:none!important}
+.online-lobby[data-room-active="true"] #online-recent-wrap{display:none!important}
+.orr-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:11px}.orr-head-copy{flex:1;min-width:0}.orr-title{display:block;color:var(--olu-ink,#26231f);font:850 .88rem/1.2 var(--font-ui,sans-serif)}.orr-sub{display:block;margin-top:3px;color:var(--olu-muted,#77716a);font:550 .72rem/1.35 var(--font-ui,sans-serif)}
+.orr-refresh{flex:0 0 auto;min-width:42px;min-height:42px;padding:0 10px;border:1px solid var(--olu-line,#ded9d2);border-radius:9px;background:#fff;color:#645b51;font:800 1rem/1 var(--font-ui,sans-serif);cursor:pointer}.orr-refresh:hover{border-color:#bd9145;background:#fffaf0;color:#784800}.orr-refresh:disabled{opacity:.5;cursor:wait}
+.online-lobby .online-recent-list{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}.orr-card{width:100%;min-height:72px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"main action" "meta action";align-items:center;gap:5px 12px;padding:11px 12px;border:1px solid #ddd7ce;border-radius:10px;background:#fff;color:var(--olu-ink,#26231f);text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(45,34,20,.04);transition:border-color .16s,background .16s,transform .16s}.orr-card:hover{border-color:#c79a4d;background:#fffaf0;transform:translateY(-1px)}.orr-card:first-child{border-color:#d3ae68;background:#fffaf0}.orr-main{grid-area:main;min-width:0;display:flex;align-items:center;gap:10px}.orr-code{flex:0 0 auto;color:#805000;font:900 .88rem/1 var(--font-title,serif);letter-spacing:.14em}.orr-opponent{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--olu-ink,#26231f);font:800 .8rem/1.2 var(--font-ui,sans-serif)}.orr-last{flex:0 0 auto;padding:3px 6px;border-radius:5px;background:#fff0c9;color:#805000;font:800 .61rem/1 var(--font-ui,sans-serif);text-transform:uppercase;letter-spacing:.04em}
+.orr-meta{grid-area:meta;display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;color:var(--olu-muted,#77716a);font:650 .68rem/1.2 var(--font-ui,sans-serif)}.orr-state,.orr-presence{display:inline-flex;align-items:center;gap:5px}.orr-dot{width:7px;height:7px;border-radius:50%;background:#a8a29b}.orr-dot.online{background:#46a171;box-shadow:0 0 0 3px rgba(70,161,113,.13)}.orr-dot.offline{background:#e56458}.orr-dot.waiting{background:#d5803b}.orr-action{grid-area:action;align-self:stretch;min-width:94px;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 10px;border-left:1px solid #eee7dd;color:#7a4a00;font:800 .72rem/1.15 var(--font-ui,sans-serif);text-align:center}.orr-empty{padding:18px 12px;border:1px dashed #d7d0c7;border-radius:9px;background:#fff;color:var(--olu-muted,#77716a);font:650 .76rem/1.4 var(--font-ui,sans-serif);text-align:center}.orr-sync{margin:8px 2px 0;color:var(--olu-muted,#77716a);font:550 .65rem/1.2 var(--font-ui,sans-serif)}
+@media(min-width:760px){.online-lobby .online-recent-list{grid-template-columns:1fr!important}.online-lobby .orr-card{grid-template-columns:minmax(0,1fr) 112px}.online-lobby .orr-action{min-width:112px}}
+@media(max-width:520px){.online-lobby #online-recent-wrap{padding:12px!important}.orr-card{grid-template-columns:minmax(0,1fr);grid-template-areas:"main" "meta" "action"}.orr-action{min-width:0;min-height:38px;margin-top:3px;border-left:0;border-top:1px solid #eee7dd;justify-content:flex-start}.orr-last{display:none}.orr-head{align-items:center}}
+[data-theme="nuit"] .orr-card,[data-theme="modern-dark"] .orr-card,[data-theme="contrast"] .orr-card{background:#282828;color:#fff;border-color:rgba(255,255,255,.16)}[data-theme="nuit"] .orr-card:first-child,[data-theme="modern-dark"] .orr-card:first-child,[data-theme="contrast"] .orr-card:first-child{background:rgba(197,138,34,.1);border-color:rgba(197,138,34,.38)}[data-theme="nuit"] .orr-refresh,[data-theme="modern-dark"] .orr-refresh,[data-theme="contrast"] .orr-refresh{background:#282828;color:#fff;border-color:rgba(255,255,255,.18)}
+</style>
+<script id="tiddas-recent-rooms-v49-js" nonce="tiddas">
+(function(){'use strict';if(window.__TIDDAS_RECENTS_V49__)return;window.__TIDDAS_RECENTS_V49__=true;
+var ROOMS='tiddas_online_rooms_v2',LAST='tiddas_online_last_room_v1',CACHE='tiddas_online_recent_enriched_v1',busy=false,lastSync=0,timer=0;
+var TXT={
+ fr:{title:'Salons récents',sub:'Reprenez une partie sans créer un nouveau salon',refresh:'Actualiser',last:'Dernier',resume:'Reprendre',empty:'Aucun salon récent sur cet appareil.',opponent:'Adversaire non identifié',waitingOpponent:'En attente d’un adversaire',waiting:'En attente',ready:'Prêt',playing:'Partie en cours',finished:'Partie terminée',online:'Adversaire connecté',offline:'Adversaire hors ligne',unknown:'Présence inconnue',noOpponent:'Aucun adversaire connecté',cached:'Informations enregistrées localement',synced:'État actualisé',joining:'Connexion…'},
+ kab:{title:'Tislaḍin n yakan',sub:'Kemmel urar war asnulfu n teslaḍt tamaynut',refresh:'Smiren',last:'Taneggarut',resume:'Kemmel',empty:'Ulac taslaḍt n yakan deg yibenk-a.',opponent:'Amnamar ur yettwassen ara',waitingOpponent:'Yettraǧu amnamar',waiting:'Yettraǧu',ready:'Ihegga',playing:'Urar iteddu',finished:'Urar yekfa',online:'Amnamar yeqqen',offline:'Amnamar ur yeqqin ara',unknown:'Talɣut n tuqqna ur tettwassen ara',noOpponent:'Ulac amnamar yeqqnen',cached:'Talɣut tettwaskles deg yibenk',synced:'Addad yettwasmired',joining:'Tuqqna…'},
+ en:{title:'Recent rooms',sub:'Resume a game without creating a new room',refresh:'Refresh',last:'Latest',resume:'Resume',empty:'No recent rooms on this device.',opponent:'Opponent not identified',waitingOpponent:'Waiting for an opponent',waiting:'Waiting',ready:'Ready',playing:'Game in progress',finished:'Game finished',online:'Opponent online',offline:'Opponent offline',unknown:'Presence unknown',noOpponent:'No opponent connected',cached:'Locally saved information',synced:'Status refreshed',joining:'Connecting…'}
+};
+function lang(){try{var l=(typeof currentLanguage!=='undefined'&&currentLanguage)||document.documentElement.lang||localStorage.getItem('tiddas_lang')||'fr';return l==='kab'||l==='en'?l:'fr'}catch(_){return'fr'}}function tx(k){return (TXT[lang()]||TXT.fr)[k]||TXT.fr[k]||k}function read(k,f){try{return JSON.parse(localStorage.getItem(k)||'null')||f}catch(_){return f}}function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+function rooms(){var raw=read(ROOMS,{rooms:[]}),arr=Array.isArray(raw.rooms)?raw.rooms.slice():[],last=read(LAST,null);if(last&&last.code&&!arr.some(function(r){return String(r.code).toUpperCase()===String(last.code).toUpperCase()}))arr.unshift({code:last.code,at:last.at||0});var seen={};return arr.map(function(r){return Object.assign({},r,{code:String(r.code||'').trim().toUpperCase(),at:Number(r.at||0)})}).filter(function(r){if(!r.code||seen[r.code])return false;seen[r.code]=1;return true}).sort(function(a,b){return b.at-a.at}).slice(0,3)}
+function cache(){var c=read(CACHE,{});return c&&typeof c==='object'?c:{}}function fmt(ms){var d=Date.now()-Number(ms||0),m=Math.floor(d/60000),h=Math.floor(d/3600000),j=Math.floor(d/86400000);return j>0?j+'j':h>0?h+'h':m>0?m+'min':'<1min'}function statusKey(v){v=String(v||'waiting');return v==='playing'?'playing':v==='finished'?'finished':v==='ready'?'ready':'waiting'}
+function prepare(){var wrap=document.getElementById('online-recent-wrap'),pre=document.getElementById('ol-pre-connect');if(!wrap||!pre)return null;var old=document.getElementById('tiddas-history-actions');if(old)old.style.display='none';if(wrap.parentNode===pre.parentNode&&wrap.nextSibling!==pre)pre.parentNode.insertBefore(wrap,pre);wrap.style.display='block';wrap.classList.add('open');if(!document.getElementById('orr-head')){var head=document.createElement('div');head.id='orr-head';head.className='orr-head';head.innerHTML='<div class="orr-head-copy"><strong class="orr-title"></strong><span class="orr-sub"></span></div><button class="orr-refresh" type="button" aria-label=""></button>';wrap.insertBefore(head,wrap.firstChild);var foot=document.createElement('div');foot.id='orr-sync';foot.className='orr-sync';wrap.appendChild(foot);head.querySelector('button').onclick=function(){refresh(true)}}return wrap}
+function labels(){var wrap=prepare();if(!wrap)return;wrap.querySelector('.orr-title').textContent=tx('title');wrap.querySelector('.orr-sub').textContent=tx('sub');var b=wrap.querySelector('.orr-refresh');b.textContent='↻';b.title=tx('refresh');b.setAttribute('aria-label',tx('refresh'))}
+function model(){var c=cache();return rooms().map(function(r,i){var x=c[r.code]||{};return {code:r.code,at:r.at,opponentName:x.opponentName||r.opponentName||'',status:x.status||'',presence:x.presence||'unknown',variant:x.variant||r.variant||'',syncedAt:x.syncedAt||0,last:i===0}})}
+function render(){labels();var list=document.getElementById('online-recent-list'),foot=document.getElementById('orr-sync');if(!list)return;var data=model();list.innerHTML='';if(!data.length){var e=document.createElement('div');e.className='orr-empty';e.textContent=tx('empty');list.appendChild(e);if(foot)foot.textContent='';return}data.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='orr-card';b.setAttribute('aria-label',tx('resume')+' '+r.code);var main=document.createElement('span');main.className='orr-main';var code=document.createElement('span');code.className='orr-code';code.textContent=r.code;var opp=document.createElement('span');opp.className='orr-opponent';opp.textContent=r.opponentName||(r.status==='waiting'?tx('waitingOpponent'):tx('opponent'));main.append(code,opp);if(r.last){var tag=document.createElement('span');tag.className='orr-last';tag.textContent=tx('last');main.appendChild(tag)}var meta=document.createElement('span');meta.className='orr-meta';var st=document.createElement('span');st.className='orr-state';st.textContent=tx(statusKey(r.status));var pr=document.createElement('span');pr.className='orr-presence';var dot=document.createElement('i');dot.className='orr-dot '+r.presence;pr.appendChild(dot);pr.appendChild(document.createTextNode(r.presence==='waiting'?tx('noOpponent'):tx(r.presence)));var age=document.createElement('span');age.textContent=fmt(r.at);meta.append(st,pr,age);var action=document.createElement('span');action.className='orr-action';action.textContent=tx('resume')+'  →';b.append(main,meta,action);b.onclick=function(){join(r.code,b)};list.appendChild(b)});if(foot){var newest=Math.max.apply(null,data.map(function(x){return Number(x.syncedAt||0)}));foot.textContent=newest?tx('synced')+' · '+fmt(newest):tx('cached')}}
+async function query(code){if(typeof window._ensureParseReadyAsync!=='function'||!(await window._ensureParseReadyAsync())||typeof Parse==='undefined')throw new Error('offline');var q=new Parse.Query(window.BACK4APP_CLASS);q.equalTo('code',code);q.descending('createdAt');return await q.first()}
+async function enrich(r){var m=await query(r.code);if(!m)return Object.assign({},r,{status:'waiting',presence:'unknown',syncedAt:Date.now()});var me=String(window.onlinePlayerId||''),p1=String(m.get('p1Id')||''),p2=String(m.get('p2Id')||''),n1=String(m.get('p1Name')||''),n2=String(m.get('p2Name')||''),oppId='',oppName='',oppHb=0;if(me&&me===p1){oppId=p2;oppName=n2;oppHb=Number(m.get('hb2')||0)}else if(me&&me===p2){oppId=p1;oppName=n1;oppHb=Number(m.get('hb1')||0)}else{oppName=n2||n1;oppId=p2||p1;oppHb=Math.max(Number(m.get('hb1')||0),Number(m.get('hb2')||0))}var status=statusKey(m.get('status')),presence=!oppId?'waiting':oppHb?(Date.now()-oppHb<40000?'online':'offline'):'unknown';return {code:r.code,opponentName:oppName,status:status,presence:presence,variant:String(m.get('variant')||r.variant||''),syncedAt:Date.now()}}
+async function refresh(force){if(busy)return;if(!force&&Date.now()-lastSync<15000)return;var data=rooms();render();if(!data.length)return;busy=true;lastSync=Date.now();var btn=document.querySelector('.orr-refresh');if(btn)btn.disabled=true;try{var c=cache(),res=await Promise.all(data.map(function(r){return enrich(r).catch(function(){return null})}));res.forEach(function(x){if(x)c[x.code]=x});write(CACHE,c)}finally{busy=false;if(btn)btn.disabled=false;render()}}
+async function join(code,card){if(!code||typeof window.onlineConnectToRoom!=='function')return;var input=document.getElementById('online-room-code');if(input){input.value=code;input.dispatchEvent(new Event('input',{bubbles:true}))}var a=card&&card.querySelector('.orr-action');if(a)a.textContent=tx('joining');try{await window.onlineConnectToRoom(code,false)}finally{setTimeout(render,500)}}
+function guardLegacy(){var list=document.getElementById('online-recent-list');if(!list||list.__orrGuard)return;list.__orrGuard=true;new MutationObserver(function(){if(list.querySelector('.online-room-chip'))setTimeout(render,0)}).observe(list,{childList:true,subtree:true})}
+function boot(){prepare();labels();render();guardLegacy();setTimeout(function(){refresh(true)},350);timer=setInterval(function(){var area=document.getElementById('online-lobby-area');if(area&&area.classList.contains('active')&&!document.hidden)refresh(false)},15000)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();window.addEventListener('tiddas:lang-changed',render);window.addEventListener('online',function(){refresh(true)});window.renderRecentOnlineRooms=render;window.TiddasRecentRooms={render:render,refresh:function(){return refresh(true)},items:model};
+})();
+</script>
+
+<!-- TIDDAS SPECTATOR RELAY HARDENING v53 -->
+<style id="tiddas-spectator-relay-v53-css" nonce="tiddas">
+#v45-relay-fab[data-state="ready"]{background:linear-gradient(135deg,#2f9e6f,#1d7a54)!important;color:#fff!important}
+#v45-relay-fab[data-state="pending"],#v45-relay-fab[data-state="busy"]{background:linear-gradient(135deg,#d5803b,#a95e22)!important;color:#fff!important}
+#v45-relay-fab[data-state="none"],#v45-relay-fab[data-state="blocked"]{background:#4c4b48!important;color:rgba(255,255,255,.78)!important;opacity:.86!important}
+#v45-modal.show{display:flex!important}#v45-modal .card{border:1px solid var(--v45-line)!important;box-shadow:0 22px 70px rgba(0,0,0,.35)!important}
+html.tiddas-spectator #v45-chat-fab{display:flex!important}html.tiddas-spectator #v45-call-fab{display:none!important}
+@media(prefers-reduced-motion:reduce){#v45-relay-fab{animation:none!important;transition:none!important}}
+</style>
+
+
+<style id="tiddas-relay-placement-v54" nonce="tiddas">
+/* RELAY PLACEMENT v54 */
+/* Commande contextuelle : sous le badge spectateur, centrée et hors des commandes de jeu. */
+#v45-relay-fab{
+  left:50%!important;right:auto!important;
+  top:calc(max(.75rem, env(safe-area-inset-top)) + 44px)!important;bottom:auto!important;
+  transform:translateX(-50%)!important;z-index:1051!important;
+  width:auto!important;max-width:min(310px,calc(100vw - 32px))!important;
+  min-height:42px!important;height:auto!important;padding:10px 14px!important;
+  border-radius:12px!important;box-shadow:0 6px 18px rgba(0,0,0,.25)!important;
+}
+#v45-relay-fab:active{transform:translateX(-50%) scale(.97)!important}
+@media(max-width:600px){
+ #v45-relay-fab{top:calc(max(.7rem, env(safe-area-inset-top)) + 42px)!important;max-width:calc(100vw - 24px)!important;font-size:.72rem!important}
+}
+</style>
 </body>
 </html>
