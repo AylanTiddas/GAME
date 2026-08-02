@@ -1213,7 +1213,7 @@ function dyn(x,l){var d=K[l]||{};if(d[x])return d[x];var m;
  if((m=x.match(/^En attente du démarrage · (\d+\/\d+) joueurs$/)))return l==='kab'?'Yettraǧu beddu · '+m[1]+' imyurar':'Waiting to start · '+m[1]+' players';
  if((m=x.match(/^Tour (\d+) sur (\d+)$/)))return l==='kab'?'Tizit '+m[1]+' seg '+m[2]:'Round '+m[1]+' of '+m[2];
  if((m=x.match(/^Tour (\d+)$/)))return l==='kab'?'Tizit '+m[1]:'Round '+m[1];
- if((m=x.match(/^🏆 Champion : (.*)$/)))return l==='kab'?'🏆 Aɣellif: '+m[1]:'🏆 Champion: '+m[1];
+ if((m=x.match(/^🏆 Champion : (.*)$/)))return l==='kab'?'🏆 irbeḥ-itt: '+m[1]:'🏆 Champion: '+m[1];
  if((m=x.match(/^(.*) · organisateur$/)))return m[1]+' · '+d.organisateur;
  if((m=x.match(/^Tournoi (.*)$/)))return (l==='kab'?'Timzizzelt ':'Tournament ')+m[1];
  if((m=x.match(/^Erreur : (.*)$/)))return (l==='kab'?'Tuccḍa: ':'Error: ')+m[1];
