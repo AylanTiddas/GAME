@@ -4920,7 +4920,7 @@ window.__TIDDAS_V61__=1;
 
 var D={
  fr:{settings:"Paramètres",settingsSub:"Personnalisez votre expérience",history:"Historique",historyMoves:"Historique des coups",moves:"coups",move:"coup",histEmpty:"Aucun coup joué pour l'instant",recentRooms:"Salons récents",messages:"Messages",send:"Envoyer",close:"Fermer",install:"Installer",pwaTitle:"Voulez-vous installer l'application ?",pwaSub:"Tiddas • Jeu Ancestral Amazigh",boardStyle:"Cases",appearance:"Apparence",game:"Jeu",language:"Langue",app:"Application",on:"ACTIVÉ",off:"DÉSACTIVÉ",def:"DÉFAUT"},
- kab:{settings:"Iɣewwaren",settingsSub:"Sagen tarmit-ik",history:"Amezruy",historyMoves:"Amek yedda wurar",moves:"tiddin",move:"Aseddu",histEmpty:"Ulac asddu akka tura",recentRooms:"Tisluḍiyin n melmi kan",messages:"Iznan",send:"Azen",close:"Mdel",install:"Sbedd",pwaTitle:"Tebɣiḍ ad tesbeddeḍ asnas ?",pwaSub:"Tiddas • Urar aqbur amaɣiɣ",boardStyle:"Tixxamin",appearance:"Udem",game:"Urar",language:"Tutlayt",app:"Asnas",on:"YERMED",off:"YENSA",def:"AMEZWER"},
+ kab:{settings:"Iɣewwaren",settingsSub:"Sagen tarmit-ik",history:"Amezruy",historyMoves:"Amek yedda wurar",moves:"tiddin",move:"Aseddu",histEmpty:"Ulac asddu akka tura",recentRooms:"Tislaḍ tineggura",messages:"Iznan",send:"Azen",close:"Mdel",install:"Sbedd",pwaTitle:"Tebɣiḍ ad tesbeddeḍ asnas ?",pwaSub:"Tiddas • Urar aqbur amaɣiɣ",boardStyle:"Tixxamin",appearance:"Udem",game:"Urar",language:"Tutlayt",app:"Asnas",on:"YERMED",off:"YENSA",def:"AMEZWER"},
  en:{settings:"Settings",settingsSub:"Customize your experience",history:"History",historyMoves:"Move history",moves:"moves",move:"move",histEmpty:"No moves yet",recentRooms:"Recent rooms",messages:"Messages",send:"Send",close:"Close",install:"Install",pwaTitle:"Install the app?",pwaSub:"Tiddas • Ancestral Amazigh Game",boardStyle:"Squares",appearance:"Appearance",game:"Game",language:"Language",app:"App",on:"ON",off:"OFF",def:"DEFAULT"}
 };
 var LANGS=["fr","kab","en"];
@@ -6688,7 +6688,7 @@ async function shareInvite(){
     try{await navigator.share({title:'Tiddas – '+d.name,text:text,url:link});return}catch(e){if(e&&e.name==='AbortError')return}
   }
   var ok=await copyText(text+' '+link);
-  toast(ok?T('Invitation copiée ✅','Tinnubga tettwanɣel ✅','Invitation copied ✅'):T('Copie impossible','Ur yezmir ara ad yenɣel','Copy failed'));
+  toast(ok?T('Invitation copiée ✅','Tinnubga tettwazuzer ✅','Invitation copied ✅'):T('Copie impossible','Ur yezmir ara ad yezuzer','Copy failed'));
 }
 function ensureInviteUI(){
   var api=ttApi();if(!api)return;
@@ -6696,7 +6696,7 @@ function ensureInviteUI(){
   if(!acts||!detail||detail.hidden||!d||!id){var old=$('tt-invite-row');if(old)old.remove();return}
   if(!acts.querySelector('[data-v66="invite"]')){
     var b=D.createElement('button');b.type='button';b.className='tt-btn';b.setAttribute('data-v66','invite');
-    b.textContent=T('✉ Inviter des joueurs','✉ Nnec imyuraren','✉ Invite players');
+    b.textContent=T('✉ Inviter des joueurs','✉ Nced-d imyuraren','✉ Invite players');
     b.onclick=shareInvite;acts.insertBefore(b,acts.firstChild);
   }
   var row=$('tt-invite-row');
@@ -6704,7 +6704,7 @@ function ensureInviteUI(){
     var inp=D.createElement('input');inp.className='tt-invite-link';inp.id='tt-invite-link';inp.readOnly=true;
     inp.setAttribute('aria-label',T('Lien d’invitation','Aseɣwen n tinnubga','Invitation link'));
     inp.onclick=function(){this.select()};
-    var cp=D.createElement('button');cp.type='button';cp.className='tt-btn';cp.textContent=T('Copier le lien','Nɣel aseɣwen','Copy link');
+    var cp=D.createElement('button');cp.type='button';cp.className='tt-btn';cp.textContent=T('Copier le lien','Zuzer aseɣwen','Copy link');
     cp.onclick=async function(){var ok=await copyText($('tt-invite-link').value);toast(ok?T('Lien copié ✅','Aseɣwen yettwarfed ✅','Link copied ✅'):T('Copie impossible','Ur yezmir ara','Copy failed'))};
     row.appendChild(inp);row.appendChild(cp);
     acts.parentNode.insertBefore(row,acts.nextSibling);
