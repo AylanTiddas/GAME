@@ -1402,6 +1402,8 @@ Patrimoine Amazigh • Idles Amaziɣ
 </span>
 <span data-i18n="difficultyEasy">Facile</span>
 <span data-i18n="difficultyEasyDesc">L'ordinateur joue au hasard</span>
+<span aria-hidden="true" class="diff-meter"><span class="dm"></span><span class="dm"></span><span class="dm"></span><span class="dm"></span></span>
+<span aria-hidden="true" class="diff-badge">1</span>
 </button>
 <button class="option-btn difficulty-btn" data-level="2">
 <span aria-hidden="true" class="diff-icon">
@@ -1409,6 +1411,8 @@ Patrimoine Amazigh • Idles Amaziɣ
 </span>
 <span data-i18n="difficultyMedium">Moyen</span>
 <span data-i18n="difficultyMediumDesc">L'ordinateur est un adversaire correct</span>
+<span aria-hidden="true" class="diff-meter"><span class="dm"></span><span class="dm"></span><span class="dm"></span><span class="dm"></span></span>
+<span aria-hidden="true" class="diff-badge">2</span>
 </button>
 <button class="option-btn difficulty-btn" data-level="3">
 <span aria-hidden="true" class="diff-icon">
@@ -1416,6 +1420,8 @@ Patrimoine Amazigh • Idles Amaziɣ
 </span>
 <span data-i18n="difficultyHard">Difficile</span>
 <span data-i18n="difficultyHardDesc">L'ordinateur est un vrai stratège</span>
+<span aria-hidden="true" class="diff-meter"><span class="dm"></span><span class="dm"></span><span class="dm"></span><span class="dm"></span></span>
+<span aria-hidden="true" class="diff-badge">3</span>
 </button>
 <button class="option-btn difficulty-btn" data-level="4">
 <span aria-hidden="true" class="diff-icon">
@@ -1423,6 +1429,8 @@ Patrimoine Amazigh • Idles Amaziɣ
 </span>
 <span data-i18n="difficultyImpossible">Expert</span>
 <span data-i18n="difficultyImpossibleDesc">L'IA anticipe vos moindres faits et gestes</span>
+<span aria-hidden="true" class="diff-meter"><span class="dm"></span><span class="dm"></span><span class="dm"></span><span class="dm"></span></span>
+<span aria-hidden="true" class="diff-badge">4</span>
 </button>
 </div>
 <button class="back-btn" data-i18n="backToModes" id="back-to-modes-btn">Retour aux modes</button>
@@ -9302,6 +9310,159 @@ html[data-theme=contrast] .ol-status-line,html[data-theme=modern-dark] .ol-statu
 #v45-mic:disabled{color:#6f86ad!important;background:#f6f8fc!important}
 #v45-send:disabled{background:linear-gradient(135deg,#6f91c9,#5576ad)!important;color:#fff!important}
 #v45-send:before{background:#fff!important}
+</style>
+
+<style id="tiddas-ai-difficulty-modern">
+/* ============================================================
+   TIDDAS · Écran "Choisir la difficulté de l'ordinateur"
+   Modernisation purement visuelle, portée limitée à
+   #ai-difficulty-selection-area (aucune autre fonction touchée).
+   ============================================================ */
+#ai-difficulty-selection-area{
+  --dl1:#5ec27a; --dl2:#5aa9f0; --dl3:#f0a03c; --dl4:#f0555c;
+  gap:clamp(1rem,2.5vw,1.6rem)!important;
+}
+#ai-difficulty-selection-area h2{
+  margin-bottom:.25rem!important;
+  position:relative;
+  padding-bottom:.7rem;
+}
+#ai-difficulty-selection-area h2::after{
+  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:min(190px,55%);height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,currentColor,transparent);
+  opacity:.45;
+}
+/* --- Grille régulière 2×2 (1 colonne en mobile) --- */
+#ai-difficulty-selection-area .options-group{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:clamp(.75rem,2.2vw,1.15rem)!important;
+  width:100%!important;
+  max-width:760px;
+  margin-inline:auto;
+  align-items:stretch;
+}
+@media (max-width:560px){
+  #ai-difficulty-selection-area .options-group{grid-template-columns:1fr!important}
+}
+/* --- Carte de difficulté --- */
+#ai-difficulty-selection-area .difficulty-btn{
+  --dlv:var(--dl1);
+  flex:none!important;
+  min-width:0!important;
+  max-width:none!important;
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:auto 1fr auto;
+  grid-template-areas:"icon title badge" "icon desc badge" "meter meter meter";
+  align-items:center!important;
+  justify-items:start!important;
+  text-align:left!important;
+  gap:.15rem .95rem!important;
+  padding:clamp(.95rem,2.4vw,1.25rem)!important;
+  border-radius:18px!important;
+  border:1px solid color-mix(in srgb,var(--dlv) 34%,transparent)!important;
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--dlv) 12%,transparent),transparent 62%),
+    var(--panel-bg,rgba(0,0,0,.32))!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.28)!important;
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s ease,border-color .22s ease,background .22s ease!important;
+}
+#ai-difficulty-selection-area .difficulty-btn[data-level="2"]{--dlv:var(--dl2)}
+#ai-difficulty-selection-area .difficulty-btn[data-level="3"]{--dlv:var(--dl3)}
+#ai-difficulty-selection-area .difficulty-btn[data-level="4"]{--dlv:var(--dl4)}
+#ai-difficulty-selection-area .difficulty-btn:hover{
+  transform:translateY(-4px)!important;
+  border-color:color-mix(in srgb,var(--dlv) 68%,transparent)!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.34),0 0 0 1px color-mix(in srgb,var(--dlv) 28%,transparent),
+             0 0 26px color-mix(in srgb,var(--dlv) 26%,transparent)!important;
+}
+#ai-difficulty-selection-area .difficulty-btn:focus-visible{
+  outline:2px solid color-mix(in srgb,var(--dlv) 80%,transparent);
+  outline-offset:3px;
+}
+#ai-difficulty-selection-area .difficulty-btn:active{transform:translateY(-1px) scale(.99)!important}
+/* --- Icône --- */
+#ai-difficulty-selection-area .difficulty-btn .diff-icon{
+  grid-area:icon;
+  justify-self:start!important;align-self:center;
+  width:clamp(46px,11vw,54px)!important;height:clamp(46px,11vw,54px)!important;
+  margin-bottom:0!important;
+  border-radius:16px!important;
+  background:color-mix(in srgb,var(--dlv) 16%,transparent)!important;
+  border:1.5px solid color-mix(in srgb,var(--dlv) 40%,transparent)!important;
+  color:var(--dlv)!important;
+  box-shadow:none!important;
+  animation:none!important;
+}
+#ai-difficulty-selection-area .difficulty-btn:hover .diff-icon{
+  transform:scale(1.06)!important;
+  box-shadow:0 0 18px color-mix(in srgb,var(--dlv) 45%,transparent)!important;
+}
+#ai-difficulty-selection-area .difficulty-btn .diff-icon svg{width:26px!important;height:26px!important}
+/* --- Titre / description --- */
+#ai-difficulty-selection-area .difficulty-btn>span:nth-child(2){
+  grid-area:title;
+  align-self:end;
+  justify-self:start!important;
+  margin-bottom:0!important;
+  font-size:clamp(1rem,2.9vw,1.15rem)!important;
+  font-weight:700!important;
+  letter-spacing:.01em!important;
+  color:var(--text-main)!important;
+  text-align:left!important;
+}
+#ai-difficulty-selection-area .difficulty-btn:hover>span:nth-child(2){
+  color:var(--dlv)!important;
+}
+#ai-difficulty-selection-area .difficulty-btn>span:nth-child(3){
+  grid-area:desc;
+  align-self:start;
+  justify-self:start!important;
+  font-size:clamp(.76rem,2vw,.88rem)!important;
+  line-height:1.35!important;
+  opacity:.72!important;
+  text-align:left!important;
+}
+/* --- Badge de niveau --- */
+#ai-difficulty-selection-area .diff-badge{
+  grid-area:badge;
+  align-self:center;justify-self:end!important;
+  display:flex!important;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:9px;
+  font-family:var(--font-title);
+  font-size:.78rem!important;font-weight:700;
+  color:var(--dlv)!important;
+  background:color-mix(in srgb,var(--dlv) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--dlv) 32%,transparent);
+  opacity:.9;
+}
+/* --- Jauge de puissance --- */
+#ai-difficulty-selection-area .diff-meter{
+  grid-area:meter;
+  display:flex!important;
+  gap:5px;width:100%;margin-top:.75rem;
+}
+#ai-difficulty-selection-area .diff-meter .dm{
+  flex:1;height:4px;border-radius:4px;
+  background:color-mix(in srgb,currentColor 14%,transparent);
+  transition:background .25s ease,box-shadow .25s ease;
+}
+#ai-difficulty-selection-area .difficulty-btn[data-level="1"] .dm:nth-child(-n+1),
+#ai-difficulty-selection-area .difficulty-btn[data-level="2"] .dm:nth-child(-n+2),
+#ai-difficulty-selection-area .difficulty-btn[data-level="3"] .dm:nth-child(-n+3),
+#ai-difficulty-selection-area .difficulty-btn[data-level="4"] .dm:nth-child(-n+4){
+  background:var(--dlv);
+  box-shadow:0 0 10px color-mix(in srgb,var(--dlv) 45%,transparent);
+}
+/* --- Bouton retour aligné --- */
+#ai-difficulty-selection-area .back-btn{margin-top:.35rem}
+@media (prefers-reduced-motion:reduce){
+  #ai-difficulty-selection-area .difficulty-btn,
+  #ai-difficulty-selection-area .difficulty-btn .diff-icon{transition:none!important}
+  #ai-difficulty-selection-area .difficulty-btn:hover{transform:none!important}
+}
 </style>
 </body>
 
